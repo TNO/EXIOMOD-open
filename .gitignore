@@ -1,0 +1,7 @@
+commandlog.txt
+*.ppr
+perso*
+*.~rg
+*.DS_Store
+tmp_*
+_tmp_*
