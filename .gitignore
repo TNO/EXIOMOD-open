@@ -5,3 +5,15 @@ perso*
 *.DS_Store
 tmp_*
 _tmp_*
+*.lst
+*.gdx
+*.lsi
+*.*gm
+*.lxi
+*.log
+*.xls
+*.xlsx
+*.txt
+*.~tx
+*.csv
+*.gpr
