@@ -75,7 +75,7 @@ Parameters
          Y(reg,ind)                  output vector by activity
          X(reg,prd)                  output vector by product
          coprodA(reg,prd,regg,ind)   coproduction coefficients with mix per industry - corresponds to product technology assumption
-         coprodB(reg,prd,regg,ind)   coproduction coefficients with mix per product  - correcponds to industry technology assumption
+         coprodB(reg,prd,regg,ind)   coproduction coefficients with mix per product  - corresponds to industry technology assumption
          a(reg,prd,regg,ind)         technical input coefficients
          alpha(reg,va,ind)           value added coefficients
          C(reg,prd,regg,fd)          final demand vector
@@ -159,7 +159,7 @@ EQX(reg,prd)..         X_V(reg,prd)
 
 EQY(reg,ind)..         Y_V(reg,ind)
                        =E=
-                       sum((regg,prd), coprodA(regg,prd,reg,ind) * X_V(regg,prd)) ;
+                       sum((regg,prd), coprodB(regg,prd,reg,ind) * X_V(regg,prd)) ;
 
 EQOBJ..                obj
                        =E=
@@ -175,23 +175,36 @@ X_V.L(reg,prd)     = X(reg,prd) ;
 X_V.UP(reg,prd)    = 100 * X(reg,prd) ;
 
 
+* ========================== Declare model equations ===========================
 
-Model suts_test
+Model product_technology
 /
 EQBAL
-*EQX
+EQX
+EQOBJ
+/ ;
+
+Model industry_technology
+/
+EQBAL
 EQY
 EQOBJ
 / ;
 
 
-* Simulation setup
+* ============================== Simulation setup ==============================
+
+Cshock(reg,prd,regg,"FC")$sameas(reg,regg)   = 1 ;
+
+Display Cshock;
 
 
-         Cshock(fd,prd)         final demand shock
+* =============================== Solve statement ==============================
+
+Solve product_technology using lp maximizing obj ;
+*Solve industry_technology using lp maximizing obj ;
 
 
-Solve suts_test using lp maximizing obj ;
 
 Parameters
          deltaY(j)       change in activity output
