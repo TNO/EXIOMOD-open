@@ -37,6 +37,11 @@ $include sets/valueadded.txt
 $include sets/export.txt
 /
 
+         row(uel)        list of rest of the world regions
+/
+$include sets/restoftheworld.txt
+/
+
          year(uel)       list of time periods
 /
 $include sets/years.txt
@@ -54,47 +59,65 @@ $include sets/useofimportedproducts.txt
 ;
 
 Alias
+         (uel,uel2,uel3,uel4,uel5,uel6)
          (reg,regg,reggg)
          (prd,prdd,prddd)
          (ind,indd,inddd)
 ;
 
 
-Table
-         SUP(*,*) example supply table
-         j1      j2
-i1      130       0
-i2       20     200
-;
-
-Table
-         USE(*,*) example use table
-         j1      j2      fd
-i1        0      80      50
-i2       60      30     130
-va       90      90
-;
+* ========================= Declaration of parameters ==========================
 
 Parameters
-         Y(j)        output vector by activity
-         X(i)        output vector by product
-         coprod1(i,j) coproduction coefficients with mix per industry - corresponds to product technology assumption
-         coprod2(i,j) coproduction coefficients with mix per product  - correcponds to industry technology assumption
-         a(i,j)      input coefficients
-         alpha(j)    value added coefficients
-         C(i)        final demand vector
-         Cshock(i)   final demand shock
+         SUP_data(uel,uel2,uel3,uel4,uel5,uel6,*)      raw supply data
+         USE_data(uel,uel2,uel3,uel4,uel5,uel6,*)      raw use data
+
+         Y(reg,ind)                  output vector by activity
+         X(reg,prd)                  output vector by product
+         coprodA(reg,prd,regg,ind)   coproduction coefficients with mix per industry - corresponds to product technology assumption
+         coprodB(reg,prd,regg,ind)   coproduction coefficients with mix per product  - correcponds to industry technology assumption
+         a(reg,prd,regg,ind)         technical input coefficients
+         alpha(reg,va,ind)           value added coefficients
+         C(reg,prd,regg,fd)          final demand vector
+
+         Cshock(reg,prd,regg,fd)     final demand shock
 ;
 
-Y(j)             = sum(i, SUP(i,j) ) ;
-X(i)             = sum(j, SUP(i,j) ) ;
 
-coprod1(i,j)     = SUP(i,j) / Y(j) ;
-coprod2(i,j)     = SUP(i,j) / X(i) ;
-a(i,j)           = USE(i,j) / Y(j) ;
-alpha(j)         = USE("va",j) / Y(j) ;
-C(i)             = USE(i,"fd") ;
-Cshock(i)        = 1 ;
+* ============================ Read in external data ===========================
+
+$LIBInclude      xlimport        SUP_data        data/SUTdata_long_format.xlsx   Supply!a1..g65
+$LIBInclude      xlimport        USE_data        data/SUTdata_long_format.xlsx   Use!a1..g170
+
+
+* ========================== Definition of parameters ==========================
+
+Y(reg,ind)       = sum((regg,prd), SUP_data("2007","MEUR",regg,prd,reg,ind,"Value")) ;
+X(reg,prd)       = sum((regg,ind), SUP_data("2007","MEUR",reg,prd,regg,ind,"Value")) ;
+
+Display Y,X ;
+
+coprodA(reg,prd,regg,ind)$Y(regg,ind)
+                 = SUP_data("2007","MEUR",reg,prd,regg,ind,"Value") / Y(regg,ind) ;
+coprodB(reg,prd,regg,ind)$X(reg,prd)
+                 = SUP_data("2007","MEUR",reg,prd,regg,ind,"Value") / X(reg,prd) ;
+
+Display coprodA, coprodB ;
+
+a(reg,prd,regg,ind)$Y(regg,ind)
+                 = USE_data("2007","MEUR",reg,prd,regg,ind,"Value") / Y(regg,ind) ;
+
+alpha(reg,va,ind)$Y(reg,ind)
+                 = USE_data("2007","MEUR","N/A",va,reg,ind,"Value") / Y(reg,ind) ;
+
+Display a, alpha ;
+
+C(reg,prd,regg,fd)
+                 = USE_data("2007","MEUR",reg,prd,regg,fd,"Value") ;
+
+Display C ;
+
+
 
 Variables
          V_Y(j)      output vector activities after shock
@@ -129,6 +152,13 @@ EQBAL
 EQY
 EQOBJ
 / ;
+
+
+* Simulation setup
+
+
+         Cshock(fd,prd)         final demand shock
+
 
 Solve suts_test using lp maximizing obj ;
 
