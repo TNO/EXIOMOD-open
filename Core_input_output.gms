@@ -205,14 +205,14 @@ Solve product_technology using lp maximizing obj ;
 *Solve industry_technology using lp maximizing obj ;
 
 
+* ========================= Post-processing of results =========================
 
 Parameters
-         deltaY(j)       change in activity output
-         deltaX(i)       change in product output
+         deltaY(reg,ind)       change in activity output
+         deltaX(reg,prd)       change in product output
 ;
 
-deltaY(j) = V_Y.L(j) - Y(j) ;
-deltaX(i) = V_X.L(i) - X(i) ;
-
+deltaY(reg,ind) = Y_V.L(reg,ind) - Y(reg,ind) ;
+deltaX(reg,prd) = X_V.L(reg,prd) - X(reg,prd) ;
 
 Display deltaY, deltaX ;
