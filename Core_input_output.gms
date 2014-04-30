@@ -79,6 +79,7 @@ Parameters
          a(reg,prd,regg,ind)         technical input coefficients
          alpha(reg,va,ind)           value added coefficients
          C(reg,prd,regg,fd)          final demand vector
+         EX(reg,prd,row,exp)         export vector
 
          Cshock(reg,prd,regg,fd)     final demand shock
 ;
@@ -115,27 +116,57 @@ Display a, alpha ;
 C(reg,prd,regg,fd)
                  = USE_data("2007","MEUR",reg,prd,regg,fd,"Value") ;
 
-Display C ;
+EX(reg,prd,row,exp)
+                 = USE_data("2007","MEUR",reg,prd,row,exp,"Value") ;
+
+Display C, EX ;
 
 
+* ========================== Declaration of variables ==========================
+
+Positive variables
+         Y_V(reg,ind)   output vector activities
+         X_V(reg,prd)   output vector products
+;
 
 Variables
-         V_Y(j)      output vector activities after shock
-         V_X(i)      output vector products after shock
-         obj         aftificial objective value
+         obj            aftificial objective value
 ;
+
+
+* ========================== Declaration of equations ==========================
 
 Equations
-         EQBAL(i)    product market balance
-         EQX(i)      output level products
-         EQY(j)      output level activities
-         EQOBJ       aftificial objective function
+         EQBAL(reg,prd)    product market balance
+         EQX(reg,prd)      output level of products
+         EQY(reg,ind)      output level of activities
+         EQOBJ             aftificial objective function
 ;
 
-EQBAL(i)..       C(i) + Cshock(i) + sum(j, a(i,j) * V_Y(j) ) =e= V_X(i) ;
-EQX(i)..         V_X(i) =e= sum(j, coprod1(i,j) * V_Y(j) ) ;
-EQY(j)..         V_Y(j) =e= sum(i, coprod2(i,j) * V_X(i) ) ;
-EQOBJ..          obj =e= 1 ;
+
+* ========================== Definition of equations ===========================
+
+EQBAL(reg,prd)..       sum((regg,fd), C(reg,prd,regg,fd)) +
+                       sum((regg,fd), Cshock(reg,prd,regg,fd)) +
+                       sum((row,exp), EX(reg,prd,row,exp)) +
+                       sum((regg,ind), a(reg,prd,regg,ind) * Y_V(regg,ind))
+                       =E=
+                       X_V(reg,prd) ;
+
+EQX(reg,prd)..         X_V(reg,prd)
+                       =E=
+                       sum((regg,ind), coprodA(reg,prd,regg,ind) * Y_V(regg,ind)) ;
+
+EQY(reg,ind)..         Y_V(reg,ind)
+                       =E=
+                       sum((regg,prd), coprodA(regg,prd,reg,ind) * X_V(regg,prd)) ;
+
+EQOBJ..                obj
+                       =E=
+                       1 ;
+
+
+
 
 V_Y.L(j)  = Y(j) ;
 V_Y.LO(j) = 0 ;
