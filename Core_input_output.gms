@@ -1,8 +1,64 @@
 
-Sets     uel unique element list /i1,i2,j1,j2,va,fd/
-         i(uel) list of products /i1,i2/
-         j(uel) list of activities /j1,j2/
+*======================== Declaration of sets and alias ========================
+
+Sets
+         uel             unique element list
+/
+$include sets/uel.txt
+/
+
+         reg(uel)        list of regions
+/
+$include sets/regions.txt
+/
+
+         prd(uel)        list of products
+/
+$include sets/products.txt
+/
+
+         ind(uel)        list of industries
+/
+$include sets/industries.txt
+/
+
+         fd(uel)         list of final demand categories
+/
+$include sets/finaldemand.txt
+/
+
+         va(uel)         list of value added categories
+/
+$include sets/valueadded.txt
+/
+
+         exp(uel)        list of export categories
+/
+$include sets/export.txt
+/
+
+         year(uel)       list of time periods
+/
+$include sets/years.txt
+/
+
+         cur(uel)        list of currencies
+/
+$include sets/currencies.txt
+/
+
+         uim(uel)        use of imported products category
+/
+$include sets/useofimportedproducts.txt
+/
 ;
+
+Alias
+         (reg,regg,reggg)
+         (prd,prdd,prddd)
+         (ind,indd,inddd)
+;
+
 
 Table
          SUP(*,*) example supply table
