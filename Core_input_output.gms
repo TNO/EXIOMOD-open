@@ -166,15 +166,15 @@ EQOBJ..                obj
                        1 ;
 
 
+* ======== Define levels and lower and upper bounds and fixed variables ========
+
+Y_V.L(reg,ind)     = Y(reg,ind) ;
+Y_V.UP(reg,ind)    = 100 * Y(reg,ind) ;
+
+X_V.L(reg,prd)     = X(reg,prd) ;
+X_V.UP(reg,prd)    = 100 * X(reg,prd) ;
 
 
-V_Y.L(j)  = Y(j) ;
-V_Y.LO(j) = 0 ;
-V_Y.UP(j) = 100 * Y(j) ;
-
-V_X.L(i)  = X(i) ;
-V_X.LO(i) = 0 ;
-V_X.UP(i) = 100 * X(i) ;
 
 Model suts_test
 /
