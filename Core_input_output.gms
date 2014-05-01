@@ -130,7 +130,7 @@ Positive variables
 ;
 
 Variables
-         obj            aftificial objective value
+         obj            artificial objective value
 ;
 
 
@@ -140,7 +140,7 @@ Equations
          EQBAL(reg,prd)    product market balance
          EQX(reg,prd)      output level of products
          EQY(reg,ind)      output level of activities
-         EQOBJ             aftificial objective function
+         EQOBJ             artificial objective function
 ;
 
 
