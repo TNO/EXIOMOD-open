@@ -4,72 +4,72 @@
 Sets
          reg_data        list of regions in the database
 /
-$include sets/database/regions.txt
+$include sets/database/regions_database.txt
 /
 
          prd_data       list of products in the database
 /
-$include sets/database/products.txt
+$include sets/database/products_database.txt
 /
 
          ind_data        list of industries in the database
 /
-$include sets/database/industries.txt
+$include sets/database/industries_database.txt
 /
 
          fd_data         list of final demand categories in the database
 /
-$include sets/database/finaldemand.txt
+$include sets/database/finaldemand_database.txt
 /
 
          va_data         list of value added categories in the database
 /
-$include sets/database/valueadded.txt
+$include sets/database/valueadded_database.txt
 /
 
          exp_data        list of export categories in the database
 /
-$include sets/database/export.txt
+$include sets/database/export_database.txt
 /
 
          row_data        list of rest of the world regions in the database
 /
-$include sets/database/restoftheworld.txt
+$include sets/database/restoftheworld_database.txt
 /
 
          year_data       list of time periods in the database
 /
-$include sets/database/years.txt
+$include sets/database/years_database.txt
 /
 
          cur_data        list of currencies in the databse
 /
-$include sets/database/currencies.txt
+$include sets/database/currencies_database.txt
 /
 
          uim_data        use of imported products categories in the database
 /
-$include sets/database/useofimportedproducts.txt
+$include sets/database/useofimportedproducts_database.txt
 /
 
          full_reg_list   full region list for reading-in the database
 /
-$include sets/database/regions.txt
-$include sets/database/restoftheworld.txt
+$include sets/database/regions_database.txt
+$include sets/database/restoftheworld_database.txt
 /
 
          full_row_list   full rows list (products value-added etc) for reading-in the database
 /
-$include sets/database/products.txt
-$include sets/database/valueadded.txt
-$include sets/database/useofimportedproducts.txt
+$include sets/database/products_database.txt
+$include sets/database/valueadded_database.txt
+$include sets/database/useofimportedproducts_database.txt
 /
 
          full_col_list   full columns list (industries final-demand etc) for reading-in the database
 /
-$include sets/database/industries.txt
-$include sets/database/finaldemand.txt
-$include sets/database/export.txt
+$include sets/database/industries_database.txt
+$include sets/database/finaldemand_database.txt
+$include sets/database/export_database.txt
 /
 
 ;
