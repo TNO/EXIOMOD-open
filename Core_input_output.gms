@@ -1,62 +1,94 @@
 
-*======================== Declaration of sets and alias ========================
+* ==================== Declaration of sets for the database ====================
 
 Sets
-         uel             unique element list
+         reg_data        list of regions in the database
 /
-$include sets/uel.txt
-/
-
-         reg(uel)        list of regions
-/
-$include sets/regions.txt
+$include sets/database/regions.txt
 /
 
-         prd(uel)        list of products
+         prd_data       list of products in the database
 /
-$include sets/products.txt
-/
-
-         ind(uel)        list of industries
-/
-$include sets/industries.txt
+$include sets/database/products.txt
 /
 
-         fd(uel)         list of final demand categories
+         ind_data        list of industries in the database
 /
-$include sets/finaldemand.txt
-/
-
-         va(uel)         list of value added categories
-/
-$include sets/valueadded.txt
+$include sets/database/industries.txt
 /
 
-         exp(uel)        list of export categories
+         fd_data         list of final demand categories in the database
 /
-$include sets/export.txt
-/
-
-         row(uel)        list of rest of the world regions
-/
-$include sets/restoftheworld.txt
+$include sets/database/finaldemand.txt
 /
 
-         year(uel)       list of time periods
+         va_data         list of value added categories in the database
 /
-$include sets/years.txt
-/
-
-         cur(uel)        list of currencies
-/
-$include sets/currencies.txt
+$include sets/database/valueadded.txt
 /
 
-         uim(uel)        use of imported products category
+         exp_data        list of export categories in the database
 /
-$include sets/useofimportedproducts.txt
+$include sets/database/export.txt
 /
+
+         row_data        list of rest of the world regions in the database
+/
+$include sets/database/restoftheworld.txt
+/
+
+         year_data       list of time periods in the database
+/
+$include sets/database/years.txt
+/
+
+         cur_data        list of currencies in the databse
+/
+$include sets/database/currencies.txt
+/
+
+         uim_data        use of imported products category in the database
+/
+$include sets/database/useofimportedproducts.txt
+/
+
+         full_reg_list   full region list for reading-in the database
+/
+$include sets/database/regions.txt
+$include sets/database/restoftheworld.txt
+/
+
+         full_row_list   full rows list (products value-added etc) for reading-in the database
+/
+$include sets/database/products.txt
+$include sets/database/valueadded.txt
+$include sets/database/useofimportedproducts.txt
+/
+
+         full_col_list   full columns list (industries final-demand etc) for reading-in the database
+/
+$include sets/database/industries.txt
+$include sets/database/finaldemand.txt
+$include sets/database/export.txt
+/
+
 ;
+
+Alias
+         (full_reg_list,full_reg_list2)
+;
+
+
+* ============================ Read in the database ============================
+Parameters
+         SUP_data(year_data,cur_data,full_reg_list,full_row_list,full_reg_list2,full_col_list,*)      raw supply data
+         USE_data(year_data,cur_data,full_reg_list,full_row_list,full_reg_list2,full_col_list,*)      raw use data
+;
+
+$LIBInclude      xlimport        SUP_data        data/SUTdata_long_format.xlsx   Supply!a1..g65
+$LIBInclude      xlimport        USE_data        data/SUTdata_long_format.xlsx   Use!a1..g170
+
+
 
 Alias
          (uel,uel2,uel3,uel4,uel5,uel6)
@@ -69,9 +101,6 @@ Alias
 * ========================= Declaration of parameters ==========================
 
 Parameters
-         SUP_data(uel,uel2,uel3,uel4,uel5,uel6,*)      raw supply data
-         USE_data(uel,uel2,uel3,uel4,uel5,uel6,*)      raw use data
-
          Y(reg,ind)                  output vector by activity
          X(reg,prd)                  output vector by product
          coprodA(reg,prd,regg,ind)   coproduction coefficients with mix per industry - corresponds to product technology assumption
@@ -83,12 +112,6 @@ Parameters
 
          Cshock(reg,prd,regg,fd)     final demand shock
 ;
-
-
-* ============================ Read in external data ===========================
-
-$LIBInclude      xlimport        SUP_data        data/SUTdata_long_format.xlsx   Supply!a1..g65
-$LIBInclude      xlimport        USE_data        data/SUTdata_long_format.xlsx   Use!a1..g170
 
 
 * ========================== Definition of parameters ==========================
