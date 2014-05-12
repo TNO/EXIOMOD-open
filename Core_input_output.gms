@@ -47,7 +47,7 @@ $include sets/database/years.txt
 $include sets/database/currencies.txt
 /
 
-         uim_data        use of imported products category in the database
+         uim_data        use of imported products categories in the database
 /
 $include sets/database/useofimportedproducts.txt
 /
@@ -89,9 +89,102 @@ $LIBInclude      xlimport        SUP_data        data/SUTdata_long_format.xlsx  
 $LIBInclude      xlimport        USE_data        data/SUTdata_long_format.xlsx   Use!a1..g170
 
 
+* ===================== Declaration of sets for the model ======================
+
+Sets
+         reg        list of regions in the model
+/
+$include sets/model/regions_model.txt
+/
+
+         prd       list of products in the model
+/
+$include sets/model/products_model.txt
+/
+
+         ind        list of industries in the model
+/
+$include sets/model/industries_model.txt
+/
+
+         fd         list of final demand categories in the model
+/
+$include sets/model/finaldemand_model.txt
+/
+
+         va         list of value added categories in the model
+/
+$include sets/model/valueadded_model.txt
+/
+
+         exp        list of export categories in the model
+/
+$include sets/model/export_model.txt
+/
+
+         row        list of rest of the world regions in the model
+/
+$include sets/model/restoftheworld_model.txt
+/
+
+         uim        use of imported products categories in the model
+/
+$include sets/model/useofimportedproducts_model.txt
+/
+
+         year_base(year_data)    base year for the model
+/
+$include sets/model/year_base.txt
+/
+
+         cur_base(cur_data)      base currency for the model
+/
+$include sets/model/currency_base.txt
+/
+
+         reg_aggr(reg_data,reg)  aggregation scheme for regions
+/
+$include sets/model/aggregation/regions_database_to_model.txt
+/
+
+         prd_aggr(prd_data,prd)  aggregation scheme for products
+/
+$include sets/model/aggregation/products_database_to_model.txt
+/
+
+         ind_aggr(ind_data,ind)  aggregation scheme for industries
+/
+$include sets/model/aggregation/industries_database_to_model.txt
+/
+
+         fd_aggr(fd_data,fd)     aggregation scheme for final demand categories
+/
+$include sets/model/aggregation/finaldemand_database_to_model.txt
+/
+
+         va_aggr(va_data,va)     aggregation scheme for value added categories
+/
+$include sets/model/aggregation/valueadded_database_to_model.txt
+/
+
+         exp_aggr(exp_data,exp)  aggregation scheme for export categories
+/
+$include sets/model/aggregation/export_database_to_model.txt
+/
+
+         row_aggr(row_data,row)  aggregation scheme for rest of the world regions
+/
+$include sets/model/aggregation/restoftheworld_database_to_model.txt
+/
+
+         uim_aggr(uim_data,uim)  aggregation scheme for use of imported products categories
+/
+$include sets/model/aggregation/useofimportedproducts_database_to_model.txt
+/
+
+;
 
 Alias
-         (uel,uel2,uel3,uel4,uel5,uel6)
          (reg,regg,reggg)
          (prd,prdd,prddd)
          (ind,indd,inddd)
