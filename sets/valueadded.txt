@@ -1,4 +1,0 @@
-TSP
-COE
-NTP
-OPS
