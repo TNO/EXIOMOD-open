@@ -1,0 +1,4 @@
+TSP             "Taxes less subsidies on products"
+COE             "Compensation of employees"
+NTP             "Other net taxes on production"
+OPS             "Operating surplus, gross"

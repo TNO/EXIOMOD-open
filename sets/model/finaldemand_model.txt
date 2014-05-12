@@ -1,0 +1,2 @@
+FC              "Final consumption expenditure"
+GCF             "Gross capital formation"
