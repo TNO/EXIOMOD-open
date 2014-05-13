@@ -344,8 +344,6 @@ Parameters
          coprodA(reg,prd,regg,ind)   coproduction coefficients with mix per industry - corresponds to product technology assumption
          coprodB(reg,prd,regg,ind)   coproduction coefficients with mix per product  - corresponds to industry technology assumption
          a(reg,prd,regg,ind)         technical input coefficients
-
-         Cshock(reg,prd,regg,fd)     final demand shock
 ;
 
 
@@ -384,6 +382,8 @@ Positive variables
 ;
 
 Variables
+         Cshock(reg,prd,regg,fd)     final demand shock
+
          obj            artificial objective value
 ;
 
@@ -400,9 +400,9 @@ Equations
 
 * ========================== Definition of equations ===========================
 
-EQBAL(reg,prd)..       sum((regg,fd), C(reg,prd,regg,fd)) +
+EQBAL(reg,prd)..       sum((regg,fd), FINAL_USE_model(reg,prd,regg,fd)) +
                        sum((regg,fd), Cshock(reg,prd,regg,fd)) +
-                       sum((row,exp), EX(reg,prd,row,exp)) +
+                       sum((row,exp), EXPORT_model(reg,prd,row,exp)) +
                        sum((regg,ind), a(reg,prd,regg,ind) * Y_V(regg,ind))
                        =E=
                        X_V(reg,prd) ;
@@ -448,9 +448,12 @@ EQOBJ
 
 * ============================== Simulation setup ==============================
 
-Cshock(reg,prd,regg,"FC")$sameas(reg,regg)   = 1 ;
+Cshock.FX(reg,prd,regg,fd)                      = 0 ;
+Cshock.FX(reg,prd,regg,"FC")$sameas(reg,regg)   = 1 ;
 
-Display Cshock;
+Display
+Cshock.L
+;
 
 
 * =============================== Solve statement ==============================
@@ -469,4 +472,7 @@ Parameters
 deltaY(reg,ind) = Y_V.L(reg,ind) - Y(reg,ind) ;
 deltaX(reg,prd) = X_V.L(reg,prd) - X(reg,prd) ;
 
-Display deltaY, deltaX ;
+Display
+deltaY
+deltaX
+;
