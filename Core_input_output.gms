@@ -2,87 +2,90 @@
 * ==================== Declaration of sets for the database ====================
 
 Sets
-         reg_data        list of regions in the database
+         full_reg_list           full region list for reading-in the database
+/
+$include sets/database/regions_database.txt
+$include sets/database/restoftheworld_database.txt
+/
+
+         reg_data(full_reg_list) list of regions in the database
 /
 $include sets/database/regions_database.txt
 /
 
-         prd_data       list of products in the database
-/
-$include sets/database/products_database.txt
-/
-
-         ind_data        list of industries in the database
-/
-$include sets/database/industries_database.txt
-/
-
-         fd_data         list of final demand categories in the database
-/
-$include sets/database/finaldemand_database.txt
-/
-
-         va_data         list of value added categories in the database
-/
-$include sets/database/valueadded_database.txt
-/
-
-         exp_data        list of export categories in the database
-/
-$include sets/database/export_database.txt
-/
-
-         row_data        list of rest of the world regions in the database
+         row_data(full_reg_list) list of rest of the world regions in the database
 /
 $include sets/database/restoftheworld_database.txt
 /
 
-         year_data       list of time periods in the database
+
+         full_row_list           full rows list (products value-added etc) for reading-in the database
+/
+$include sets/database/products_database.txt
+$include sets/database/valueadded_database.txt
+$include sets/database/useofimportedproducts_database.txt
+/
+
+         prd_data(full_row_list) list of products in the database
+/
+$include sets/database/products_database.txt
+/
+
+         va_data(full_row_list)  list of value added categories in the database
+/
+$include sets/database/valueadded_database.txt
+/
+
+         uip_data(full_row_list) use of imported products categories in the database
+/
+$include sets/database/useofimportedproducts_database.txt
+/
+
+
+         full_col_list           full columns list (industries final-demand etc) for reading-in the database
+/
+$include sets/database/industries_database.txt
+$include sets/database/finaldemand_database.txt
+$include sets/database/export_database.txt
+/
+
+         ind_data(full_col_list) list of industries in the database
+/
+$include sets/database/industries_database.txt
+/
+
+         fd_data(full_col_list)  list of final demand categories in the database
+/
+$include sets/database/finaldemand_database.txt
+/
+
+         exp_data(full_col_list) list of export categories in the database
+/
+$include sets/database/export_database.txt
+/
+
+
+         year_data               list of time periods in the database
 /
 $include sets/database/years_database.txt
 /
 
-         cur_data        list of currencies in the databse
+         cur_data                list of currencies in the databse
 /
 $include sets/database/currencies_database.txt
 /
-
-         uim_data        use of imported products categories in the database
-/
-$include sets/database/useofimportedproducts_database.txt
-/
-
-         full_reg_list   full region list for reading-in the database
-/
-$include sets/database/regions_database.txt
-$include sets/database/restoftheworld_database.txt
-/
-
-         full_row_list   full rows list (products value-added etc) for reading-in the database
-/
-$include sets/database/products_database.txt
-$include sets/database/valueadded_database.txt
-$include sets/database/useofimportedproducts_database.txt
-/
-
-         full_col_list   full columns list (industries final-demand etc) for reading-in the database
-/
-$include sets/database/industries_database.txt
-$include sets/database/finaldemand_database.txt
-$include sets/database/export_database.txt
-/
-
 ;
 
 Alias
-         (full_reg_list,full_reg_list2)
+         (reg_data,regg_data)
+         (full_reg_list,full_regg_list)
 ;
 
 
 * ============================ Read in the database ============================
 Parameters
-         SUP_data(year_data,cur_data,full_reg_list,full_row_list,full_reg_list2,full_col_list,*)      raw supply data
-         USE_data(year_data,cur_data,full_reg_list,full_row_list,full_reg_list2,full_col_list,*)      raw use data
+         SUP_data(year_data,cur_data,full_reg_list,full_row_list,full_regg_list,full_col_list,*)      raw supply data
+         USE_data(year_data,cur_data,full_reg_list,full_row_list,full_regg_list,full_col_list,*)      raw use data
 ;
 
 $LIBInclude      xlimport        SUP_data        data/SUTdata_long_format.xlsx   Supply!a1..g65
@@ -92,96 +95,107 @@ $LIBInclude      xlimport        USE_data        data/SUTdata_long_format.xlsx  
 * ===================== Declaration of sets for the model ======================
 
 Sets
-         reg        list of regions in the model
+         reg             list of regions in the model
 /
 $include sets/model/regions_model.txt
 /
 
-         prd       list of products in the model
-/
-$include sets/model/products_model.txt
-/
-
-         ind        list of industries in the model
-/
-$include sets/model/industries_model.txt
-/
-
-         fd         list of final demand categories in the model
-/
-$include sets/model/finaldemand_model.txt
-/
-
-         va         list of value added categories in the model
-/
-$include sets/model/valueadded_model.txt
-/
-
-         exp        list of export categories in the model
-/
-$include sets/model/export_model.txt
-/
-
-         row        list of rest of the world regions in the model
+         row             list of rest of the world regions in the model
 /
 $include sets/model/restoftheworld_model.txt
 /
 
-         uim        use of imported products categories in the model
+         prd             list of products in the model
+/
+$include sets/model/products_model.txt
+/
+
+         va              list of value added categories in the model
+/
+$include sets/model/valueadded_model.txt
+/
+
+         uip             use of imported products categories in the model
 /
 $include sets/model/useofimportedproducts_model.txt
 /
 
-         year_base(year_data)    base year for the model
+         use_col         columns is use table - declared for convenience
+/
+$include sets/model/industries_model.txt
+$include sets/model/finaldemand_model.txt
+$include sets/model/export_model.txt
+/
+
+         ind(use_col)    list of industries in the model
+/
+$include sets/model/industries_model.txt
+/
+
+         fd(use_col)     list of final demand categories in the model
+/
+$include sets/model/finaldemand_model.txt
+/
+
+         exp(use_col)    list of export categories in the model
+/
+$include sets/model/export_model.txt
+/
+
+         year_base(year_data)            base year for the model
 /
 $include sets/model/year_base.txt
 /
 
-         cur_base(cur_data)      base currency for the model
+         cur_base(cur_data)              base currency for the model
 /
 $include sets/model/currency_base.txt
 /
 
-         reg_aggr(reg_data,reg)  aggregation scheme for regions
+         reg_aggr(reg_data,reg)          aggregation scheme for regions
 /
 $include sets/model/aggregation/regions_database_to_model.txt
 /
 
-         prd_aggr(prd_data,prd)  aggregation scheme for products
+         prd_aggr(prd_data,prd)          aggregation scheme for products
 /
 $include sets/model/aggregation/products_database_to_model.txt
 /
 
-         ind_aggr(ind_data,ind)  aggregation scheme for industries
+         ind_aggr(ind_data,ind)          aggregation scheme for industries
 /
 $include sets/model/aggregation/industries_database_to_model.txt
 /
 
-         fd_aggr(fd_data,fd)     aggregation scheme for final demand categories
+         fd_aggr(fd_data,fd)             aggregation scheme for final demand categories
 /
 $include sets/model/aggregation/finaldemand_database_to_model.txt
 /
 
-         va_aggr(va_data,va)     aggregation scheme for value added categories
+         va_aggr(va_data,va)             aggregation scheme for value added categories
 /
 $include sets/model/aggregation/valueadded_database_to_model.txt
 /
 
-         exp_aggr(exp_data,exp)  aggregation scheme for export categories
+         exp_aggr(exp_data,exp)          aggregation scheme for export categories
 /
 $include sets/model/aggregation/export_database_to_model.txt
 /
 
-         row_aggr(row_data,row)  aggregation scheme for rest of the world regions
+         row_aggr(full_reg_list,row)     aggregation scheme for rest of the world regions
 /
 $include sets/model/aggregation/restoftheworld_database_to_model.txt
 /
 
-         uim_aggr(uim_data,uim)  aggregation scheme for use of imported products categories
+         uip_aggr(uip_data,uip)          aggregation scheme for use of imported products categories
 /
 $include sets/model/aggregation/useofimportedproducts_database_to_model.txt
 /
 
+         prd_uip_aggr(prd_data,uip)      aggregation scheme from products to imported products categories
+/
+$include sets/model/aggregation/products_to_uip_model.txt
+/
 ;
 
 Alias
@@ -199,7 +213,8 @@ Parameters
          coprodA(reg,prd,regg,ind)   coproduction coefficients with mix per industry - corresponds to product technology assumption
          coprodB(reg,prd,regg,ind)   coproduction coefficients with mix per product  - corresponds to industry technology assumption
          a(reg,prd,regg,ind)         technical input coefficients
-         alpha(reg,va,ind)           value added coefficients
+         V(reg,va,ind)               value added vector
+         IM(reg,use_col,row,uip)     use of imported products vector
          C(reg,prd,regg,fd)          final demand vector
          EX(reg,prd,row,exp)         export vector
 
@@ -209,31 +224,76 @@ Parameters
 
 * ========================== Definition of parameters ==========================
 
-Y(reg,ind)       = sum((regg,prd), SUP_data("2007","MEUR",regg,prd,reg,ind,"Value")) ;
-X(reg,prd)       = sum((regg,ind), SUP_data("2007","MEUR",reg,prd,regg,ind,"Value")) ;
+Y(reg,ind)       = sum((year_base,cur_base,regg_data,prd_data,reg_data,ind_data)$
+                       ( reg_aggr(reg_data,reg) and ind_aggr(ind_data,ind) ),
+                       SUP_data(year_base,cur_base,regg_data,prd_data,reg_data,ind_data,"Value")) ;
+
+X(reg,prd)       = sum((year_base,cur_base,reg_data,prd_data,regg_data,ind_data)$
+                       ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) ),
+                       SUP_data(year_base,cur_base,reg_data,prd_data,regg_data,ind_data,"Value")) ;
 
 Display Y,X ;
 
 coprodA(reg,prd,regg,ind)$Y(regg,ind)
-                 = SUP_data("2007","MEUR",reg,prd,regg,ind,"Value") / Y(regg,ind) ;
+                 = sum((year_base,cur_base,reg_data,prd_data,regg_data,ind_data)$
+                       ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
+                         reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
+                       SUP_data(year_base,cur_base,reg_data,prd_data,regg_data,ind_data,"Value") ) / Y(regg,ind) ;
+
 coprodB(reg,prd,regg,ind)$X(reg,prd)
-                 = SUP_data("2007","MEUR",reg,prd,regg,ind,"Value") / X(reg,prd) ;
+                 = sum((year_base,cur_base,reg_data,prd_data,regg_data,ind_data)$
+                       ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
+                         reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
+                       SUP_data(year_base,cur_base,reg_data,prd_data,regg_data,ind_data,"Value") ) / X(reg,prd) ;
 
 Display coprodA, coprodB ;
 
 a(reg,prd,regg,ind)$Y(regg,ind)
-                 = USE_data("2007","MEUR",reg,prd,regg,ind,"Value") / Y(regg,ind) ;
+                 = sum((year_base,cur_base,reg_data,prd_data,regg_data,ind_data)$
+                       ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
+                         reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
+                       USE_data(year_base,cur_base,reg_data,prd_data,regg_data,ind_data,"Value") ) / Y(regg,ind) ;
 
-alpha(reg,va,ind)$Y(reg,ind)
-                 = USE_data("2007","MEUR","N/A",va,reg,ind,"Value") / Y(reg,ind) ;
+V(reg,va,ind)$Y(reg,ind)
+                 = sum((year_base,cur_base,reg_data,va_data,ind_data)$
+                       ( reg_aggr(reg_data,reg) and va_aggr(va_data,va) and
+                         ind_aggr(ind_data,ind) ),
+                       USE_data(year_base,cur_base,reg_data,va_data,reg_data,ind_data,"Value") ) ;
 
-Display a, alpha ;
+IM(reg,ind,row,uip)
+                 = sum((year_base,cur_base,row_data,uip_data,reg_data,ind_data)$
+                       ( row_aggr(row_data,row) and uip_aggr(uip_data,uip) and
+                         reg_aggr(reg_data,reg) and ind_aggr(ind_data,ind) ),
+                       USE_data(year_base,cur_base,row_data,uip_data,reg_data,ind_data,"Value") )
+                   +
+                   sum((year_base,cur_base,regg_data,prd_data,reg_data,ind_data)$
+                       ( row_aggr(regg_data,row) and prd_uip_aggr(prd_data,uip) and
+                         reg_aggr(reg_data,reg) and ind_aggr(ind_data,ind) ),
+                       USE_data(year_base,cur_base,regg_data,prd_data,reg_data,ind_data,"Value") ) ;
+
+Display a, V, IM ;
 
 C(reg,prd,regg,fd)
-                 = USE_data("2007","MEUR",reg,prd,regg,fd,"Value") ;
+                 = sum((year_base,cur_base,reg_data,prd_data,regg_data,fd_data)$
+                       ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
+                         reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
+                       USE_data(year_base,cur_base,reg_data,prd_data,regg_data,fd_data,"Value") ) ;
 
 EX(reg,prd,row,exp)
-                 = USE_data("2007","MEUR",reg,prd,row,exp,"Value") ;
+                 = sum((year_base,cur_base,reg_data,prd_data,row_data,exp_data)$
+                       ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
+                         row_aggr(row_data,row) and exp_aggr(exp_data,exp) ),
+                       USE_data(year_base,cur_base,reg_data,prd_data,row_data,exp_data,"Value") )
+                   +
+                   sum((year_base,cur_base,reg_data,prd_data,regg_data,ind_data)$
+                       ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
+                         row_aggr(regg_data,row) ),
+                       USE_data(year_base,cur_base,reg_data,prd_data,regg_data,ind_data,"Value") )
+                   +
+                   sum((year_base,cur_base,reg_data,prd_data,regg_data,fd_data)$
+                       ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
+                         row_aggr(regg_data,row) ),
+                       USE_data(year_base,cur_base,reg_data,prd_data,regg_data,fd_data,"Value") ) ;
 
 Display C, EX ;
 
