@@ -344,11 +344,6 @@ Parameters
          coprodA(reg,prd,regg,ind)   coproduction coefficients with mix per industry - corresponds to product technology assumption
          coprodB(reg,prd,regg,ind)   coproduction coefficients with mix per product  - corresponds to industry technology assumption
          a(reg,prd,regg,ind)         technical input coefficients
-         V(reg,va,ind)               value added vector
-         TS(reg,tsp,use_col)         taxes and subsidies on products vector
-         IM(reg,use_col,row,uip)     use of imported products vector
-         C(reg,prd,regg,fd)          final demand vector
-         EX(reg,prd,row,exp)         export vector
 
          Cshock(reg,prd,regg,fd)     final demand shock
 ;
@@ -356,115 +351,29 @@ Parameters
 
 * ========================== Definition of parameters ==========================
 
-Y(reg,ind)       = sum((year_base,cur_base,regg_data,prd_data,reg_data,ind_data)$
-                       ( reg_aggr(reg_data,reg) and ind_aggr(ind_data,ind) ),
-                       SUP_data(year_base,cur_base,regg_data,prd_data,reg_data,ind_data,"Value")) ;
+Y(reg,ind)       = sum((regg,prd), SUP_model(regg,prd,reg,ind) ) ;
 
-X(reg,prd)       = sum((year_base,cur_base,reg_data,prd_data,regg_data,ind_data)$
-                       ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) ),
-                       SUP_data(year_base,cur_base,reg_data,prd_data,regg_data,ind_data,"Value")) ;
+X(reg,prd)       = sum((regg,ind), SUP_model(reg,prd,regg,ind) ) ;
 
-Display Y,X ;
+Display
+Y
+X
+;
 
 coprodA(reg,prd,regg,ind)$Y(regg,ind)
-                 = sum((year_base,cur_base,reg_data,prd_data,regg_data,ind_data)$
-                       ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
-                         reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
-                       SUP_data(year_base,cur_base,reg_data,prd_data,regg_data,ind_data,"Value") ) / Y(regg,ind) ;
+                 = SUP_model(reg,prd,regg,ind) / Y(regg,ind) ;
 
 coprodB(reg,prd,regg,ind)$X(reg,prd)
-                 = sum((year_base,cur_base,reg_data,prd_data,regg_data,ind_data)$
-                       ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
-                         reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
-                       SUP_data(year_base,cur_base,reg_data,prd_data,regg_data,ind_data,"Value") ) / X(reg,prd) ;
-
-Display coprodA, coprodB ;
+                 = SUP_model(reg,prd,regg,ind) / X(reg,prd) ;
 
 a(reg,prd,regg,ind)$Y(regg,ind)
-                 = sum((year_base,cur_base,reg_data,prd_data,regg_data,ind_data)$
-                       ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
-                         reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
-                       USE_data(year_base,cur_base,reg_data,prd_data,regg_data,ind_data,"Value") ) / Y(regg,ind) ;
+                 = INTER_USE_model(reg,prd,regg,ind) / Y(regg,ind) ;
 
-V(reg,va,ind)$Y(reg,ind)
-                 = sum((year_base,cur_base,reg_data,va_data,ind_data)$
-                       ( reg_aggr(reg_data,reg) and va_aggr(va_data,va) and
-                         ind_aggr(ind_data,ind) ),
-                       USE_data(year_base,cur_base,reg_data,va_data,reg_data,ind_data,"Value") ) ;
-
-TS(reg,tsp,ind)  = sum((year_base,cur_base,reg_data,tsp_data,ind_data)$
-                       ( reg_aggr(reg_data,reg) and tsp_aggr(tsp_data,tsp) and
-                         ind_aggr(ind_data,ind) ),
-                       USE_data(year_base,cur_base,reg_data,tsp_data,reg_data,ind_data,"Value") ) ;
-
-TS(reg,tsp,fd)   = sum((year_base,cur_base,reg_data,tsp_data,fd_data)$
-                       ( reg_aggr(reg_data,reg) and tsp_aggr(tsp_data,tsp) and
-                         fd_aggr(fd_data,fd) ),
-                       USE_data(year_base,cur_base,reg_data,tsp_data,reg_data,fd_data,"Value") ) ;
-
-TS(reg,tsp,exp)  = sum((year_base,cur_base,reg_data,tsp_data,exp_data)$
-                       ( reg_aggr(reg_data,reg) and tsp_aggr(tsp_data,tsp) and
-                         exp_aggr(exp_data,exp) ),
-                       USE_data(year_base,cur_base,reg_data,tsp_data,reg_data,exp_data,"Value") ) ;
-
-IM(reg,ind,row,uip)
-                 = sum((year_base,cur_base,row_data,uip_data,reg_data,ind_data)$
-                       ( row_aggr(row_data,row) and uip_aggr(uip_data,uip) and
-                         reg_aggr(reg_data,reg) and ind_aggr(ind_data,ind) ),
-                       USE_data(year_base,cur_base,row_data,uip_data,reg_data,ind_data,"Value") )
-                   +
-                   sum((year_base,cur_base,regg_data,prd_data,reg_data,ind_data)$
-                       ( row_aggr(regg_data,row) and prd_uip_aggr(prd_data,uip) and
-                         reg_aggr(reg_data,reg) and ind_aggr(ind_data,ind) ),
-                       USE_data(year_base,cur_base,regg_data,prd_data,reg_data,ind_data,"Value") ) ;
-
-IM(reg,fd,row,uip)
-                 = sum((year_base,cur_base,row_data,uip_data,reg_data,fd_data)$
-                       ( row_aggr(row_data,row) and uip_aggr(uip_data,uip) and
-                         reg_aggr(reg_data,reg) and fd_aggr(fd_data,fd) ),
-                       USE_data(year_base,cur_base,row_data,uip_data,reg_data,fd_data,"Value") )
-                   +
-                   sum((year_base,cur_base,regg_data,prd_data,reg_data,fd_data)$
-                       ( row_aggr(regg_data,row) and prd_uip_aggr(prd_data,uip) and
-                         reg_aggr(reg_data,reg) and fd_aggr(fd_data,fd) ),
-                       USE_data(year_base,cur_base,regg_data,prd_data,reg_data,fd_data,"Value") ) ;
-
-IM(reg,exp,row,uip)
-                 = sum((year_base,cur_base,row_data,uip_data,reg_data,exp_data)$
-                       ( row_aggr(row_data,row) and uip_aggr(uip_data,uip) and
-                         reg_aggr(reg_data,reg) and exp_aggr(exp_data,exp) ),
-                       USE_data(year_base,cur_base,row_data,uip_data,reg_data,exp_data,"Value") )
-                   +
-                   sum((year_base,cur_base,regg_data,prd_data,reg_data,exp_data)$
-                       ( row_aggr(regg_data,row) and prd_uip_aggr(prd_data,uip) and
-                         reg_aggr(reg_data,reg) and exp_aggr(exp_data,exp) ),
-                       USE_data(year_base,cur_base,regg_data,prd_data,reg_data,exp_data,"Value") ) ;
-
-Display a, V, TS, IM ;
-
-C(reg,prd,regg,fd)
-                 = sum((year_base,cur_base,reg_data,prd_data,regg_data,fd_data)$
-                       ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
-                         reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
-                       USE_data(year_base,cur_base,reg_data,prd_data,regg_data,fd_data,"Value") ) ;
-
-EX(reg,prd,row,exp)
-                 = sum((year_base,cur_base,reg_data,prd_data,row_data,exp_data)$
-                       ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
-                         row_aggr(row_data,row) and exp_aggr(exp_data,exp) ),
-                       USE_data(year_base,cur_base,reg_data,prd_data,row_data,exp_data,"Value") )
-                   +
-                   sum((year_base,cur_base,reg_data,prd_data,regg_data,ind_data)$
-                       ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
-                         row_aggr(regg_data,row) ),
-                       USE_data(year_base,cur_base,reg_data,prd_data,regg_data,ind_data,"Value") )
-                   +
-                   sum((year_base,cur_base,reg_data,prd_data,regg_data,fd_data)$
-                       ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
-                         row_aggr(regg_data,row) ),
-                       USE_data(year_base,cur_base,reg_data,prd_data,regg_data,fd_data,"Value") ) ;
-
-Display C, EX ;
+Display
+coprodA
+coprodB
+a
+;
 
 
 * ========================== Declaration of variables ==========================
