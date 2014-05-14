@@ -76,7 +76,7 @@ $include sets/database/export_database.txt
 $include sets/database/years_database.txt
 /
 
-         cur_data                list of currencies in the databse
+         cur_data                list of currencies in the database
 /
 $include sets/database/currencies_database.txt
 /
@@ -345,8 +345,8 @@ IMPORT_USE_model
 Parameters
          Y(reg,ind)                  output vector by activity
          X(reg,prd)                  output vector by product
-         coprodA(reg,prd,regg,ind)   coproduction coefficients with mix per industry - corresponds to product technology assumption
-         coprodB(reg,prd,regg,ind)   coproduction coefficients with mix per product  - corresponds to industry technology assumption
+         coprodA(reg,prd,regg,ind)   co-production coefficients with mix per industry - corresponds to product technology assumption
+         coprodB(reg,prd,regg,ind)   co-production coefficients with mix per product  - corresponds to industry technology assumption
          a(reg,prd,regg,ind)         technical input coefficients
          v(reg,va,ind)               value added coefficients
 ;
