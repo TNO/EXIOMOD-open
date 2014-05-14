@@ -212,6 +212,10 @@ $include sets/model/aggregation/useofimportedproducts_database_to_model.txt
 /
 $include sets/model/aggregation/products_to_uip_model.txt
 /
+
+         reg_sim(reg)                    list of regions used in simulation setup
+
+         prd_sim(prd)                    list of products used in simulation setup
 ;
 
 Alias
@@ -344,6 +348,7 @@ Parameters
          coprodA(reg,prd,regg,ind)   coproduction coefficients with mix per industry - corresponds to product technology assumption
          coprodB(reg,prd,regg,ind)   coproduction coefficients with mix per product  - corresponds to industry technology assumption
          a(reg,prd,regg,ind)         technical input coefficients
+         v(reg,va,ind)               value added coefficients
 ;
 
 
@@ -367,10 +372,14 @@ coprodB(reg,prd,regg,ind)$X(reg,prd)
 a(reg,prd,regg,ind)$Y(regg,ind)
                  = INTER_USE_model(reg,prd,regg,ind) / Y(regg,ind) ;
 
+v(reg,va,ind)$Y(reg,ind)
+                 = VALUE_ADDED_model(reg,va,ind) / Y(reg,ind) ;
+
 Display
 coprodA
 coprodB
 a
+v
 ;
 
 
@@ -379,6 +388,13 @@ a
 Positive variables
          Y_V(reg,ind)   output vector activities
          X_V(reg,prd)   output vector products
+
+         OUTPUTmult_intrareg(reg,prd)            intra-regional output multiplier
+         OUTPUTmult_interreg(reg,prd)            inter-regional output multiplier
+         OUTPUTmult_global(reg,prd)              global output multiplier
+
+         VALUEADDEDmult_global(reg,prd)          global value-added multiplier
+         VALUEADDEDmultT1_global(reg,prd)        global value-added multiplier of Type I
 ;
 
 Variables
@@ -448,8 +464,13 @@ EQOBJ
 
 * ============================== Simulation setup ==============================
 
-Cshock.FX(reg,prd,regg,fd)                      = 0 ;
-Cshock.FX(reg,prd,regg,"FC")$sameas(reg,regg)   = 1 ;
+reg_sim(reg) = yes ;
+prd_sim(prd) = yes ;
+
+loop((reg_sim,prd_sim),
+
+Cshock.FX(reg,prd,regg,fd)              = 0 ;
+Cshock.FX(reg_sim,prd_sim,reg_sim,"FC") = 1 ;
 
 Display
 Cshock.L
@@ -458,21 +479,31 @@ Cshock.L
 
 * =============================== Solve statement ==============================
 
-Solve product_technology using lp maximizing obj ;
-*Solve industry_technology using lp maximizing obj ;
+*Solve product_technology using lp maximizing obj ;
+Solve industry_technology using lp maximizing obj ;
 
 
 * ========================= Post-processing of results =========================
 
-Parameters
-         deltaY(reg,ind)       change in activity output
-         deltaX(reg,prd)       change in product output
-;
+OUTPUTmult_intrareg.L(reg_sim,prd_sim)
+                 = sum(ind, Y_V.L(reg_sim,ind) - Y(reg_sim,ind) ) ;
+OUTPUTmult_interreg.L(reg_sim,prd_sim)
+                 = sum((reg,ind)$(not sameas(reg_sim,reg)), Y_V.L(reg,ind) - Y(reg,ind) ) ;
+OUTPUTmult_global.L(reg_sim,prd_sim)
+                 = sum((reg,ind), Y_V.L(reg,ind) - Y(reg,ind) ) ;
 
-deltaY(reg,ind) = Y_V.L(reg,ind) - Y(reg,ind) ;
-deltaX(reg,prd) = X_V.L(reg,prd) - X(reg,prd) ;
+VALUEADDEDmult_global.L(reg_sim,prd_sim)
+                 = sum((va,reg,ind), Y_V.L(reg,ind) * v(reg,va,ind) - VALUE_ADDED_model(reg,va,ind) ) ;
+VALUEADDEDmultT1_global.L(reg_sim,prd_sim)
+                 = VALUEADDEDmult_global.L(reg_sim,prd_sim) / sum((va,regg,ind), v(reg_sim,va,ind) * coprodB(reg_sim,prd_sim,regg,ind) ) ;
 
 Display
-deltaY
-deltaX
+OUTPUTmult_intrareg.L
+OUTPUTmult_interreg.L
+OUTPUTmult_global.L
+
+VALUEADDEDmult_global.L
+VALUEADDEDmultT1_global.L
 ;
+
+) ;
