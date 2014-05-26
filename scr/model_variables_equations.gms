@@ -4,13 +4,6 @@
 Positive variables
          Y_V(reg,ind)   output vector activities
          X_V(reg,prd)   output vector products
-
-         OUTPUTmult_intrareg(reg,prd)            intra-regional output multiplier
-         OUTPUTmult_interreg(reg,prd)            inter-regional output multiplier
-         OUTPUTmult_global(reg,prd)              global output multiplier
-
-         VALUEADDEDmult_global(reg,prd)          global value-added multiplier
-         VALUEADDEDmultT1_global(reg,prd)        global value-added multiplier of Type I
 ;
 
 Variables

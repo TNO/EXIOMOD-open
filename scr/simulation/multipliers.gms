@@ -1,4 +1,28 @@
 
+* ======== Declaration and definition of simulation specific parameters ========
+
+Parameters
+         v(reg,va,ind)               value added coefficients
+;
+
+v(reg,va,ind)$Y(reg,ind)
+                 = VALUE_ADDED_model(reg,va,ind) / Y(reg,ind) ;
+
+Display
+v
+;
+
+* ================ Declaration of simulation specific variables ================
+
+Positive variables
+         OUTPUTmult_intrareg(reg,prd)            intra-regional output multiplier
+         OUTPUTmult_interreg(reg,prd)            inter-regional output multiplier
+         OUTPUTmult_global(reg,prd)              global output multiplier
+
+         VALUEADDEDmult_global(reg,prd)          global value-added multiplier
+         VALUEADDEDmultT1_global(reg,prd)        global value-added multiplier of Type I
+;
+
 * ============================== Simulation setup ==============================
 
 reg_sim(reg) = yes ;
@@ -16,18 +40,8 @@ Cshock.L
 
 * =============================== Solve statement ==============================
 
-$if %io_type% == "product_technology"    $goto product_technology
-$if %io_type% == "industry_technology"   $goto industry_technology
+Solve %io_type% using lp maximizing obj ;
 
-$label product_technology
-Solve product_technology using lp maximizing obj ;
-$goto post_processing
-
-$label industry_technology
-Solve industry_technology using lp maximizing obj ;
-$goto post_processing
-
-$label post_processing
 * ========================= Post-processing of results =========================
 
 OUTPUTmult_intrareg.L(reg_sim,prd_sim)
