@@ -60,11 +60,6 @@ $include sets/model/export_model.txt
 ;
 
 Sets
-         year_base(year_data)            base year for the model
-/
-$include sets/model/year_base.txt
-/
-
          cur_base(cur_data)              base currency for the model
 /
 $include sets/model/currency_base.txt
