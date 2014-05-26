@@ -1,4 +1,13 @@
 
+* ======== Declaration and definition of simulation specific parameters ========
+
+* ================ Declaration of simulation specific variables ================
+
+Positive variables
+         deltaY(reg,ind)       change in activity output
+         deltaX(reg,prd)       change in product output
+;
+
 * ============================== Simulation setup ==============================
 
 Parameter
@@ -13,32 +22,16 @@ Display
 Cshock.L
 ;
 
-
 * =============================== Solve statement ==============================
 
-$if %io_type% == "product_technology"    $goto product_technology
-$if %io_type% == "industry_technology"   $goto industry_technology
+Solve %io_type% using lp maximizing obj ;
 
-$label product_technology
-Solve product_technology using lp maximizing obj ;
-$goto post_processing
-
-$label industry_technology
-Solve industry_technology using lp maximizing obj ;
-$goto post_processing
-
-$label post_processing
 * ========================= Post-processing of results =========================
 
-Parameters
-         deltaY(reg,ind)       change in activity output
-         deltaX(reg,prd)       change in product output
-;
-
-deltaY(reg,ind) = Y_V.L(reg,ind) - Y(reg,ind) ;
-deltaX(reg,prd) = X_V.L(reg,prd) - X(reg,prd) ;
+deltaY.L(reg,ind) = Y_V.L(reg,ind) - Y(reg,ind) ;
+deltaX.L(reg,prd) = X_V.L(reg,prd) - X(reg,prd) ;
 
 Display
-deltaY
-deltaX
+deltaY.L
+deltaX.L
 ;
