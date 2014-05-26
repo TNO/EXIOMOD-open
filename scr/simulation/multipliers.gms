@@ -67,3 +67,10 @@ VALUEADDEDmultT1_global.L
 
 * end loop over regions and products
 ) ;
+
+* =========================== Write results to Excel ===========================
+
+$LIBInclude xldump       OUTPUTmult_intrareg.L   results/multipliers.xls output_intraregional!a1
+$LIBInclude xldump       OUTPUTmult_interreg.L   results/multipliers.xls output_interregional!a1
+$LIBInclude xldump       VALUEADDEDmult_global.L results/multipliers.xls valueadded!a1
+$LIBInclude xldump       VALUEADDEDmultT1_global.L       results/multipliers.xls valueadded_typeI!a1
