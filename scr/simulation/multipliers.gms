@@ -28,6 +28,7 @@ Positive variables
 reg_sim(reg) = yes ;
 prd_sim(prd) = yes ;
 
+* start loop over regions and products
 loop((reg_sim,prd_sim),
 
 Cshock.FX(reg,prd,regg,fd)              = 0 ;
@@ -36,7 +37,6 @@ Cshock.FX(reg_sim,prd_sim,reg_sim,"FC") = 1 ;
 Display
 Cshock.L
 ;
-
 
 * =============================== Solve statement ==============================
 
@@ -65,4 +65,5 @@ VALUEADDEDmult_global.L
 VALUEADDEDmultT1_global.L
 ;
 
+* end loop over regions and products
 ) ;
