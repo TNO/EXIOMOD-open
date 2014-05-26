@@ -13,95 +13,95 @@ Parameters
 ;
 
 SUP_model(reg,prd,regg,ind)
-                 = sum((cur_base,reg_data,prd_data,regg_data,ind_data)$
+                 = sum((reg_data,prd_data,regg_data,ind_data)$
                        ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
                          reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
-                       SUP_data("%base_year%",cur_base,reg_data,prd_data,regg_data,ind_data,"Value") ) ;
+                       SUP_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,ind_data,"Value") ) ;
 
 INTER_USE_model(reg,prd,regg,ind)
-                 = sum((cur_base,reg_data,prd_data,regg_data,ind_data)$
+                 = sum((reg_data,prd_data,regg_data,ind_data)$
                        ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
                          reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
-                       USE_data("%base_year%",cur_base,reg_data,prd_data,regg_data,ind_data,"Value") ) ;
+                       USE_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,ind_data,"Value") ) ;
 
 FINAL_USE_model(reg,prd,regg,fd)
-                 = sum((cur_base,reg_data,prd_data,regg_data,fd_data)$
+                 = sum((reg_data,prd_data,regg_data,fd_data)$
                        ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
                          reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
-                       USE_data("%base_year%",cur_base,reg_data,prd_data,regg_data,fd_data,"Value") ) ;
+                       USE_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,fd_data,"Value") ) ;
 
 EXPORT_model(reg,prd,row,exp)
-                 = sum((cur_base,reg_data,prd_data,row_data,exp_data)$
+                 = sum((reg_data,prd_data,row_data,exp_data)$
                        ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
                          row_aggr(row_data,row) and exp_aggr(exp_data,exp) ),
-                       USE_data("%base_year%",cur_base,reg_data,prd_data,row_data,exp_data,"Value") )
+                       USE_data("%base_year%","%base_cur%",reg_data,prd_data,row_data,exp_data,"Value") )
                    +
-                   sum((cur_base,reg_data,prd_data,regg_data,ind_data)$
+                   sum((reg_data,prd_data,regg_data,ind_data)$
                        ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
                          row_aggr(regg_data,row) ),
-                       USE_data("%base_year%",cur_base,reg_data,prd_data,regg_data,ind_data,"Value") )
+                       USE_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,ind_data,"Value") )
                    +
-                   sum((cur_base,reg_data,prd_data,regg_data,fd_data)$
+                   sum((reg_data,prd_data,regg_data,fd_data)$
                        ( reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
                          row_aggr(regg_data,row) ),
-                       USE_data("%base_year%",cur_base,reg_data,prd_data,regg_data,fd_data,"Value") ) ;
+                       USE_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,fd_data,"Value") ) ;
 
 VALUE_ADDED_model(reg,va,ind)
-                 = sum((cur_base,reg_data,va_data,ind_data)$
+                 = sum((reg_data,va_data,ind_data)$
                        ( reg_aggr(reg_data,reg) and va_aggr(va_data,va) and
                          ind_aggr(ind_data,ind) ),
-                       USE_data("%base_year%",cur_base,reg_data,va_data,reg_data,ind_data,"Value") ) ;
+                       USE_data("%base_year%","%base_cur%",reg_data,va_data,reg_data,ind_data,"Value") ) ;
 
 TAX_SUB_model(reg,tsp,ind)
-                 = sum((cur_base,reg_data,tsp_data,ind_data)$
+                 = sum((reg_data,tsp_data,ind_data)$
                        ( reg_aggr(reg_data,reg) and tsp_aggr(tsp_data,tsp) and
                          ind_aggr(ind_data,ind) ),
-                       USE_data("%base_year%",cur_base,reg_data,tsp_data,reg_data,ind_data,"Value") ) ;
+                       USE_data("%base_year%","%base_cur%",reg_data,tsp_data,reg_data,ind_data,"Value") ) ;
 
 TAX_SUB_model(reg,tsp,fd)
-                 = sum((cur_base,reg_data,tsp_data,fd_data)$
+                 = sum((reg_data,tsp_data,fd_data)$
                        ( reg_aggr(reg_data,reg) and tsp_aggr(tsp_data,tsp) and
                          fd_aggr(fd_data,fd) ),
-                       USE_data("%base_year%",cur_base,reg_data,tsp_data,reg_data,fd_data,"Value") ) ;
+                       USE_data("%base_year%","%base_cur%",reg_data,tsp_data,reg_data,fd_data,"Value") ) ;
 
 TAX_SUB_model(reg,tsp,exp)
-                 = sum((cur_base,reg_data,tsp_data,exp_data)$
+                 = sum((reg_data,tsp_data,exp_data)$
                        ( reg_aggr(reg_data,reg) and tsp_aggr(tsp_data,tsp) and
                          exp_aggr(exp_data,exp) ),
-                       USE_data("%base_year%",cur_base,reg_data,tsp_data,reg_data,exp_data,"Value") ) ;
+                       USE_data("%base_year%","%base_cur%",reg_data,tsp_data,reg_data,exp_data,"Value") ) ;
 
 IMPORT_USE_model(reg,uip,row,ind)
-                 = sum((cur_base,row_data,uip_data,reg_data,ind_data)$
+                 = sum((row_data,uip_data,reg_data,ind_data)$
                        ( row_aggr(row_data,row) and uip_aggr(uip_data,uip) and
                          reg_aggr(reg_data,reg) and ind_aggr(ind_data,ind) ),
-                       USE_data("%base_year%",cur_base,row_data,uip_data,reg_data,ind_data,"Value") )
+                       USE_data("%base_year%","%base_cur%",row_data,uip_data,reg_data,ind_data,"Value") )
                    +
-                   sum((cur_base,regg_data,prd_data,reg_data,ind_data)$
+                   sum((regg_data,prd_data,reg_data,ind_data)$
                        ( row_aggr(regg_data,row) and prd_uip_aggr(prd_data,uip) and
                          reg_aggr(reg_data,reg) and ind_aggr(ind_data,ind) ),
-                       USE_data("%base_year%",cur_base,regg_data,prd_data,reg_data,ind_data,"Value") ) ;
+                       USE_data("%base_year%","%base_cur%",regg_data,prd_data,reg_data,ind_data,"Value") ) ;
 
 IMPORT_USE_model(reg,uip,row,fd)
-                 = sum((cur_base,row_data,uip_data,reg_data,fd_data)$
+                 = sum((row_data,uip_data,reg_data,fd_data)$
                        ( row_aggr(row_data,row) and uip_aggr(uip_data,uip) and
                          reg_aggr(reg_data,reg) and fd_aggr(fd_data,fd) ),
-                       USE_data("%base_year%",cur_base,row_data,uip_data,reg_data,fd_data,"Value") )
+                       USE_data("%base_year%","%base_cur%",row_data,uip_data,reg_data,fd_data,"Value") )
                    +
-                   sum((cur_base,regg_data,prd_data,reg_data,fd_data)$
+                   sum((regg_data,prd_data,reg_data,fd_data)$
                        ( row_aggr(regg_data,row) and prd_uip_aggr(prd_data,uip) and
                          reg_aggr(reg_data,reg) and fd_aggr(fd_data,fd) ),
-                       USE_data("%base_year%",cur_base,regg_data,prd_data,reg_data,fd_data,"Value") ) ;
+                       USE_data("%base_year%","%base_cur%",regg_data,prd_data,reg_data,fd_data,"Value") ) ;
 
 IMPORT_USE_model(reg,uip,row,exp)
-                 = sum((cur_base,row_data,uip_data,reg_data,exp_data)$
+                 = sum((row_data,uip_data,reg_data,exp_data)$
                        ( row_aggr(row_data,row) and uip_aggr(uip_data,uip) and
                          reg_aggr(reg_data,reg) and exp_aggr(exp_data,exp) ),
-                       USE_data("%base_year%",cur_base,row_data,uip_data,reg_data,exp_data,"Value") )
+                       USE_data("%base_year%","%base_cur%",row_data,uip_data,reg_data,exp_data,"Value") )
                    +
-                   sum((cur_base,regg_data,prd_data,reg_data,exp_data)$
+                   sum((regg_data,prd_data,reg_data,exp_data)$
                        ( row_aggr(regg_data,row) and prd_uip_aggr(prd_data,uip) and
                          reg_aggr(reg_data,reg) and exp_aggr(exp_data,exp) ),
-                       USE_data("%base_year%",cur_base,regg_data,prd_data,reg_data,exp_data,"Value") ) ;
+                       USE_data("%base_year%","%base_cur%",regg_data,prd_data,reg_data,exp_data,"Value") ) ;
 
 Display
 SUP_model

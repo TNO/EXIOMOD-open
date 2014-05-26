@@ -60,13 +60,6 @@ $include sets/model/export_model.txt
 ;
 
 Sets
-         cur_base(cur_data)              base currency for the model
-/
-$include sets/model/currency_base.txt
-/
-;
-
-Sets
          reg_aggr(reg_data,reg)          aggregation scheme for regions
 /
 $include sets/model/aggregation/regions_database_to_model.txt
