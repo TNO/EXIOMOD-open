@@ -8,6 +8,9 @@ commandlog.txt
 xllink.gdx
 xllink.log
 xllink.txt
+xllink.err
 *.gpr
 *.dat
 *.ppr
+results*
+
