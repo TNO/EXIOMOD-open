@@ -7,3 +7,5 @@ Parameters
 
 $LIBInclude      xlimport        SUP_data        data/SUTdata_long_format.xlsx   Supply!a1..g65
 $LIBInclude      xlimport        USE_data        data/SUTdata_long_format.xlsx   Use!a1..g170
+
+$include scr/checks_database.gms
