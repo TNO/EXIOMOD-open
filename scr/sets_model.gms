@@ -123,3 +123,15 @@ Alias
          (prd,prdd,prddd)
          (ind,indd,inddd)
 ;
+
+* Check that all aggregation schemes are correct
+
+$BATINCLUDE "scr/snippets/setaggregationcheck" full_reg_list   full_reg_m   reg_full_aggr
+$BATINCLUDE "scr/snippets/setaggregationcheck" prd_data        prd          prd_aggr
+$BATINCLUDE "scr/snippets/setaggregationcheck" ind_data        ind          ind_aggr
+$BATINCLUDE "scr/snippets/setaggregationcheck" fd_data         fd           fd_aggr
+$BATINCLUDE "scr/snippets/setaggregationcheck" va_data         va           va_aggr
+$BATINCLUDE "scr/snippets/setaggregationcheck" exp_data        exp          exp_aggr
+$BATINCLUDE "scr/snippets/setaggregationcheck" tsp_data        tsp          tsp_aggr
+$BATINCLUDE "scr/snippets/setaggregationcheck" uip_data        uip          uip_aggr
+$BATINCLUDE "scr/snippets/setaggregationcheck" prd_data        uip          prd_uip_aggr
