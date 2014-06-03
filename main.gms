@@ -40,5 +40,3 @@ $include scr/model_parameters.gms
 $include scr/model_variables_equations.gms
 
 $include scr/simulation/%simulation_setup%.gms
-
-execute "del scr\*.~gm"
