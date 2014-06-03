@@ -89,3 +89,13 @@ Alias
          (reg_data,regg_data)
          (full_reg_list,full_regg_list)
 ;
+
+
+* Check that base year and base currency defined in configuration.gms is in the
+* year_data and cur_data lists correspondingly
+
+ABORT$(SUM(sameas(year_data,"%base_year%"), 1) ne 1)
+   "Base year is not in the database"
+
+ABORT$(SUM(sameas(cur_data,"%base_cur%"), 1) ne 1)
+   "Base currency is not in the database"
