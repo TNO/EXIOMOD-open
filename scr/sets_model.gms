@@ -124,6 +124,9 @@ Alias
          (ind,indd,inddd)
 ;
 
+
+$if not '%agg_check%' == 'yes' $goto endofcode
+
 * Check that all aggregation schemes are correct
 
 $BATINCLUDE "scr/snippets/setaggregationcheck" full_reg_list   full_reg_m   reg_full_aggr
@@ -135,3 +138,6 @@ $BATINCLUDE "scr/snippets/setaggregationcheck" exp_data        exp          exp_
 $BATINCLUDE "scr/snippets/setaggregationcheck" tsp_data        tsp          tsp_aggr
 $BATINCLUDE "scr/snippets/setaggregationcheck" uip_data        uip          uip_aggr
 $BATINCLUDE "scr/snippets/setaggregationcheck" prd_data        uip          prd_uip_aggr
+
+
+$label endofcode
