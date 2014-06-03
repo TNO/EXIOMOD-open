@@ -2,12 +2,18 @@
 * ===================== Declaration of sets for the model ======================
 
 Sets
-         reg             list of regions in the model
+         full_reg_m      full list of regions in the model
+/
+$include sets/model/regions_model.txt
+$include sets/model/restoftheworld_model.txt
+/
+
+         reg(full_reg_m)  list of regions in the model
 /
 $include sets/model/regions_model.txt
 /
 
-         row             list of rest of the world regions in the model
+         row(full_reg_m)  list of rest of the world regions in the model
 /
 $include sets/model/restoftheworld_model.txt
 /
@@ -60,9 +66,9 @@ $include sets/model/export_model.txt
 ;
 
 Sets
-         reg_aggr(reg_data,reg)          aggregation scheme for regions
+         reg_full_aggr(full_reg_list,full_reg_m)  aggregation scheme for full list of regions
 /
-$include sets/model/aggregation/regions_database_to_model.txt
+$include sets/model/aggregation/regions_full_database_to_model.txt
 /
 
          prd_aggr(prd_data,prd)          aggregation scheme for products
@@ -90,11 +96,6 @@ $include sets/model/aggregation/valueadded_database_to_model.txt
 $include sets/model/aggregation/export_database_to_model.txt
 /
 
-         row_aggr(full_reg_list,row)     aggregation scheme for rest of the world regions
-/
-$include sets/model/aggregation/restoftheworld_database_to_model.txt
-/
-
          tsp_aggr(tsp_data,tsp)          aggregation scheme for taxes and subsidies on products
 /
 $include sets/model/aggregation/taxesandsubsidiesonproducts_database_to_model.txt
@@ -109,6 +110,7 @@ $include sets/model/aggregation/useofimportedproducts_database_to_model.txt
 /
 $include sets/model/aggregation/products_to_uip_model.txt
 /
+;
 
 Sets
          reg_sim(reg)                    list of regions used in simulation setup
