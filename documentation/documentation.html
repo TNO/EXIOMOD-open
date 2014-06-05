@@ -1,0 +1,364 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+</head>
+<body>
+<h1 id="documentation-of-main.gms">Documentation of main.gms</h1>
+<h2 id="file-loading-structure">File loading structure</h2>
+<ul>
+<li><a href="#main.gms-index"><code>main.gms</code></a>
+<ul>
+<li><a href="#configuration.gms-index"><code>configuration.gms</code></a></li>
+<li><a href="#scrsets_database.gms-index"><code>scr/sets_database.gms</code></a></li>
+<li><a href="#scrload_database.gms-index"><code>scr/load_database.gms</code></a></li>
+<li><a href="#scrsets_model.gms-index"><code>scr/sets_model.gms</code></a></li>
+<li><a href="#scraggregate_database.gms-index"><code>scr/aggregate_database.gms</code></a></li>
+<li><a href="#scrmodel_parameters.gms-index"><code>scr/model_parameters.gms</code></a></li>
+<li><a href="#scrmodel_variables_equations.gms-index"><code>scr/model_variables_equations.gms</code></a></li>
+<li><a href="#scrsimulationmultipliers.gms-index"><code>scr/simulation/multipliers.gms</code></a></li>
+</ul></li>
+</ul>
+<h2 id="values-of-global-variables">Values of global variables</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Global</th>
+<th align="left">Value</th>
+<th align="left">Defined in file</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>base_year</code></td>
+<td align="left"><code>2007</code></td>
+<td align="left"><a href="#configuration.gms-index"><code>configuration.gms</code></a></td>
+</tr>
+<tr class="even">
+<td align="left"><code>base_cur</code></td>
+<td align="left"><code>MEUR</code></td>
+<td align="left"><a href="#configuration.gms-index"><code>configuration.gms</code></a></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>io_type</code></td>
+<td align="left"><code>industry_technology</code></td>
+<td align="left"><a href="#configuration.gms-index"><code>configuration.gms</code></a></td>
+</tr>
+<tr class="even">
+<td align="left"><code>simulation_setup</code></td>
+<td align="left"><code>multipliers</code></td>
+<td align="left"><a href="#configuration.gms-index"><code>configuration.gms</code></a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="main.gms-index">main.gms (<a href="#file-loading-structure">index</a>)</h2>
+<ul>
+<li><code>main.gms</code></li>
+</ul>
+<p>This is the <code>main.gms</code> code for the core input-output model. The code consists of the following parts:</p>
+<ul>
+<li>Include <code>configuration.gms</code>, where some key parameters relevant for data, model and simulation choices are set.</li>
+<li>Include <code>sets_database.gms</code>, where sets used in the database are declared.</li>
+<li>Include <code>load_database.gms</code>, where external input-output/supply-use database is loaded.</li>
+<li>Include <code>sets_model.gms</code>, where sets used in the model are declared and their relations for the sets in the database are defined.</li>
+<li>Include <code>aggregate_database.gms</code>, where the database is aggregated to the dimensions of the model, identified in <code>sets_model.gms</code>.</li>
+<li>Include <code>model_parameters.gms</code>, where key parameters of input-output model are defined.</li>
+<li>Include <code>model_variables_equations.gms</code>, where variables, equations and the model itself are defined.</li>
+<li>Include <code>%simulation_setup%.gms</code>, where simulation setup, solve statement and post-processing of the results are defined. <code>%simulation%</code> is set within <code>configuration.gms</code></li>
+<li>Clear up possible temporary files produced by GAMS.</li>
+</ul>
+<p>More specific explanation of each of the included part of the script can be found in the corresponding <code>.gms</code> file. These explanation blocks include which inputs are necessary for the scripts to run and which changes are possible.</p>
+<h2 id="configuration.gms-index">configuration.gms (<a href="#file-loading-structure">index</a>)</h2>
+<ul>
+<li><code>main.gms</code>
+<ul>
+<li><code>configuration.gms</code></li>
+</ul></li>
+</ul>
+<p>This is the configuration file for the core input-output model. The file allows to configure the following control variables:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Variable</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>base_year</code></td>
+<td align="left">select one of the years available in the database.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>base_cur</code></td>
+<td align="left">select one of the currencies available in the database.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>io_type</code></td>
+<td align="left">select one of input-output model types.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>simulation_setup</code></td>
+<td align="left">select out of one of the preprogrammed simulation setup available in <code>scr/simulation/</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="scrsets_database.gms-index">scr/sets_database.gms (<a href="#file-loading-structure">index</a>)</h2>
+<ul>
+<li><code>main.gms</code>
+<ul>
+<li><code>scr/sets_database.gms</code></li>
+</ul></li>
+</ul>
+<p>Documentation for this file is missing.</p>
+<h2 id="scrload_database.gms-index">scr/load_database.gms (<a href="#file-loading-structure">index</a>)</h2>
+<ul>
+<li><code>main.gms</code>
+<ul>
+<li><code>scr/load_database.gms</code></li>
+</ul></li>
+</ul>
+<p>Documentation for this file is missing.</p>
+<h2 id="scrsets_model.gms-index">scr/sets_model.gms (<a href="#file-loading-structure">index</a>)</h2>
+<ul>
+<li><code>main.gms</code>
+<ul>
+<li><code>scr/sets_model.gms</code></li>
+</ul></li>
+</ul>
+<p>This <code>.gms</code> file is one of the <code>.gms</code> files part of the <code>main.gms</code> file and includes the equations and model formulation. Please start from <code>main.gms</code>.</p>
+<p>This <code>.gms</code> file consists of the following parts:</p>
+<h3 id="declaration-of-sets-for-the-model">Declaration of sets for the model</h3>
+<p>The following sets are defined:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Set name</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>reg</code></td>
+<td align="left">regions used for the model <code>regions_model.txt</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>row</code></td>
+<td align="left">rest of the world regions used in the model <code>restoftheworld_model.txt</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>prd</code></td>
+<td align="left">products <code>products_model.txt</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>va</code></td>
+<td align="left">value added <code>valueadded_model.txt</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>tsp</code></td>
+<td align="left">taxes and subsidies <code>taxesandsubsidiesonproducts_model.txt</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>uip</code></td>
+<td align="left">imports <code>useofimportedproducts_model.txt</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>inm</code></td>
+<td align="left">international margins <code>internationalmargins_model.txt</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>val</code></td>
+<td align="left">valuation categories <code>valuation_model.txt</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>use_col</code></td>
+<td align="left">use table (columns) consists of <code>ind</code>, <code>fd</code> and <code>exp</code> explaned on the next lines</td>
+</tr>
+<tr class="even">
+<td align="left"><code>ind(use_col)</code></td>
+<td align="left">19 industries <code>industries_model.txt</code>, a subset of <code>use_col</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>fd(use_col)</code></td>
+<td align="left">final demand <code>finaldemand_model.txt</code>, a subset of <code>use_col</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>exp(use_col)</code></td>
+<td align="left">exports <code>export_model.txt</code>, a subset of <code>use_col</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>reg_sim(reg)</code></td>
+<td align="left">list of regions used in simulation setup, a subset of <code>reg</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>prd_sim(prd)</code></td>
+<td align="left">list of products used in simulation setup, a subset of <code>prd</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="declaration-of-aggregation-scheme">Declaration of aggregation scheme</h3>
+<p>The aggregation scheme consists of mappings used for aggregations of the (above) sets from dimension1 to dimension2:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">map name (dimension1, dimension2)</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>reg_aggr(reg_data,reg)</code></td>
+<td align="left">Aggregates scheme for regions <code>regions_database_to_model.txt</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>prd_aggr(prd_data,prd)</code></td>
+<td align="left">Aggregates scheme for products <code>products_database_to_model.txt</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>ind_aggr(ind_data,ind)</code></td>
+<td align="left">Aggregates scheme for industries <code>industries_database_to_model.txt</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>fd_aggr(fd_data,fd)</code></td>
+<td align="left">Aggregates scheme for final demand <code>finaldemand_database_to_model.txt</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>va_aggr(va_data,va)</code></td>
+<td align="left">Aggregates scheme for value added <code>valueadded_database_to_model.txt</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>exp_aggr(exp_data,exp)</code></td>
+<td align="left">Aggregates scheme for exports <code>export_database_to_model.txt</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>val_aggr(val_data,val)</code></td>
+<td align="left">Aggregates scheme for valuation categories <code>valuation_database_to_model.txt</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>row_aggr(full_reg_list,row)</code></td>
+<td align="left">Aggregates scheme for rest of the world <code>restoftheworld_database_to_model.txt</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>tsp_aggr(tsp_data,tsp)</code></td>
+<td align="left">Aggregates scheme for taxes and subsidies <code>taxesandsubsidiesonproducts_database_to_model.txt</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>uip_aggr(uip_data,uip)</code></td>
+<td align="left">Aggregates scheme for imports <code>useofimportedproducts_database_to_model.txt</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>prd_uip_aggr(prd_data,uip)</code></td>
+<td align="left">Aggregates scheme from products to imported products categories <code>products_to_uip_model.txt</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>inm_aggr(inm_data,inm)</code></td>
+<td align="left">Aggregates scheme for international margins categories <code>internationalmargins_database_to_model.txt</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="declaration-of-aliases">Declaration of aliases</h3>
+<p>Sometimes it is necessary to have more than one name for the same set. Aliases are created by repeating the last character of the original set a number of times. We define the following aliases:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Original set</th>
+<th align="left">Aliases (new names for the original set)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>reg</code></td>
+<td align="left"><code>regg</code>, <code>reggg</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>prd</code></td>
+<td align="left"><code>prdd</code>, <code>prddd</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>ind</code></td>
+<td align="left"><code>indd</code>, <code>inddd</code></td>
+</tr>
+</tbody>
+</table>
+<p>More detailed information about the sets and mappings can be found in the corresponding <code>.txt</code> file. All sets and maps can be changed to any level of details. For this the <code>.txt</code> files should be changed (sets and/or maps). This sets and maps in this file are mainly used in <code>aggregate_database.gms</code>, <code>model_parameters.gms</code> and <code>model_variables_equations.gms</code></p>
+<h2 id="scraggregate_database.gms-index">scr/aggregate_database.gms (<a href="#file-loading-structure">index</a>)</h2>
+<ul>
+<li><code>main.gms</code>
+<ul>
+<li><code>scr/aggregate_database.gms</code></li>
+</ul></li>
+</ul>
+<p>Documentation for this file is missing.</p>
+<h2 id="scrmodel_parameters.gms-index">scr/model_parameters.gms (<a href="#file-loading-structure">index</a>)</h2>
+<ul>
+<li><code>main.gms</code>
+<ul>
+<li><code>scr/model_parameters.gms</code></li>
+</ul></li>
+</ul>
+<p>This GAMS file defines the parameters that are used in the model. Please start from <code>main.gms</code>.</p>
+<p>Parameters are fixed and are declared (in a first block) and defined (in the second block) in this file. The following parameters are defined:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Variable</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>Y(reg,ind)</code></td>
+<td align="left">This is the output vector by activity. It is defined from the supply table in model format, by summing <code>SUP_model(regg,prd,reg,ind)</code> over <code>regg</code> and <code>prd</code>.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>X(reg,ind)</code></td>
+<td align="left">This is the output vector by product. It is defined from the supply table in model format, by summing <code>SUP_model(reg,prd,regg,ind)</code> over <code>regg</code> and <code>ind</code>.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>coprodA(reg,prd,regg,ind)</code></td>
+<td align="left">These are the co-production coefficients with mix per industry. Using these coefficients in the analysis corresponds to the product technology assumption. The coefficients are defined as <code>SUP_model(reg,prd,regg,ind) / Y(regg,ind)</code>. if <code>Y(regg,ind)</code> is nonzero.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>coprodA(reg,prd,regg,ind)</code></td>
+<td align="left">These are the co-production coefficients with mix per product. Using these coefficients in the analysis corresponds to the industry technology assumption. The coefficients are defined as <code>SUP_model(reg,prd,regg,ind) / X(reg,prd)</code>. if <code>X(reg,prd)</code> is nonzero.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>a(reg,prd,regg,ind)</code></td>
+<td align="left">These are the technical input coefficients. They are defined as <code>INTER_USE_model(reg,prd,regg,ind) / Y(regg,ind)</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>No changes should be made in this file, as the parameters declared here are all defined using their standard definitions.</p>
+<h2 id="scrmodel_variables_equations.gms-index">scr/model_variables_equations.gms (<a href="#file-loading-structure">index</a>)</h2>
+<ul>
+<li><code>main.gms</code>
+<ul>
+<li><code>scr/model_variables_equations.gms</code></li>
+</ul></li>
+</ul>
+<p>This <code>.gms</code> file is one of the <code>.gms</code> files part of the <code>main.gms</code> file and includes the equations and model formulation. Please start from <code>main.gms</code>.</p>
+<p>This <code>.gms</code> file consists of the following parts:</p>
+<ol style="list-style-type: decimal">
+<li><p><em>Declaration of variables</em></p>
+<p>Output by activity and product are here the variables which can be adjusted in the model. The variable <code>Cshock</code> is defined later in the <code>%simulation%</code> gms file.</p></li>
+<li><p><em>Declaration of equations</em></p>
+<p>One of the equations is an artificial objective function. This is because GAMS only understands a model run with an objective function. If you would like to run it without one, you can use such an artificial objective function which is basically put to any value such as 1.</p></li>
+<li><p><em>Definition of equations</em></p></li>
+<li><p><em>Definition of levels and lower and upper bounds and fixed variables</em></p>
+<p>Upper and lower bounds can be adjusted when needed.</p></li>
+<li><p><em>Declaration of equations in the model</em></p>
+<p>This states which equations are included in which model. The models are based on either product technology or activity technology. The <code>main.gms</code> file includes the option to choose one of the two types of technologies.</p></li>
+</ol>
+<h2 id="scrsimulationmultipliers.gms-index">scr/simulation/multipliers.gms (<a href="#file-loading-structure">index</a>)</h2>
+<ul>
+<li><code>main.gms</code>
+<ul>
+<li><code>scr/simulation/multipliers.gms</code> (included from GAMS as <code>scr/simulation/%simulation_setup%.gms</code>)</li>
+</ul></li>
+</ul>
+<p>Documentation for this file is missing.</p>
+</body>
+</html>
