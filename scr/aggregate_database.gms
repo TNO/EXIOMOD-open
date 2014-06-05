@@ -1,19 +1,29 @@
+* File:   scr/aggregate_database.gms
+* Author: Tatyana Bulavskaya
+* Date:   14 May 2014
 
-*This is the 'main.gms' code for the core input-output model. This is the part where the database is aggregated to the
-*dimensions of the model, identified in 'sets_model.gms'.
+$ontext startdoc
+This is the `main.gms` code for the core input-output model. This is the part where the database is aggregated to the
+dimensions of the model, identified in `sets_model.gms`.
 
-* The code consists of the following parts:
-* Parameters declaration, the data i.e. sets they consists of
+The code consists of the following parts:
 
-* SUP_model             = the supply and use table
-* INTER_USE_model       = the intermediate use table
-* FINAL_USE_model       = the final use table, discerning final consumption, fixed asset formation and export to defined regions (not rest of the world)
-* EXPORT_model          = the export to the rest of the world table
-* VALUE_ADDED_model     = the value added table i.e. vector
-* TAX_SUB_model (for industries, exports and final demands)              = taxes table, for industries (specific taxes), final demands and exports (as data here is not "free on board")
-* IMPORT_USE_model (both for industries, exports and final demands       = imports from rest of the world use table, for industries, final demands and exports (i.e. re-exports)
+### Parameters declaration
 
-* display commands for parameters
+The data i.e. sets they consists of
+
+Parameter             | Explanation
+--------------------- | -----------
+SUP_model             | the supply and use table
+INTER_USE_model       | the intermediate use table
+FINAL_USE_model       | the final use table, discerning final consumption, fixed asset formation and export to defined regions (not rest of the world)
+EXPORT_model          | the export to the rest of the world table
+VALUE_ADDED_model     | the value added table i.e. vector
+TAX_SUB_model (for industries, exports and final demands)              | taxes table, for industries (specific taxes), final demands and exports (as data here is not "free on board")
+IMPORT_USE_model (both for industries, exports and final demands       | imports from rest of the world use table, for industries, final demands and exports (i.e. re-exports)
+
+display commands for parameters
+$offtext
 
 * ============ Aggregation of the database to the model dimensions =============
 

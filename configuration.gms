@@ -1,16 +1,17 @@
+* File:   configuration.gms
+* Author: Tatyana Bulavskaya
+* Date:   26 May 2014
 
-*' configuration.gms
-*' author: Tatyana Bulavskaya
-*' date: 26 May 2014
-
-$ontext
+$ontext startdoc
 This is the configuration file for the core input-output model. The file allows
 to configure the following control variables:
- - base_year, select one of the years available in the database.
- - base_cur, select one of the currencies available in the database.
- - io_type, select one of input-output model types.
- - simulation_setup, select out of one of the preprogrammed simulation setup
-   available in scr/simulation/.
+
+Variable           | Explanation
+------------------ | -----------
+`base_year`        | select one of the years available in the database.
+`base_cur`         | select one of the currencies available in the database.
+`io_type`          | select one of input-output model types.
+`simulation_setup` | select out of one of the preprogrammed simulation setup available in `scr/simulation/`.
 $offtext
 
 * base year

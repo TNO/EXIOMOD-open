@@ -1,17 +1,29 @@
-$ontext
-This gms file is one of the gms files part of the “main.gms” file and includes the equations and model formulation. Please start from “main.gms”.
+* File:   scr/model_variables_equations.gms
+* Author: Tatyana Bulavskaya
+* Date:   14 May 2014
 
-This gms file consists of the following parts:
-1. Declaration of variables
-	Output by activity and product are here the variables which can be 	adjusted in the model.
-The variable Cshock is defined later in the “simulation” gms file.	
-2. Declaration of equations
-One of the equations is an artificial objective function. This is because GAMS only understands a model run with an objective function. If you would like to run it without one, you can use such an artificial objective function which is basically put to any value such as 1.
-3. Definition of equations
-4. Definition of levels and lower and upper bounds and fixed variables
-Upper and lower bounds can be adjusted when needed.
-5. Declaration of equations in the model
-This states which equations are included in which model. The models are based on either product technology or activity technology. The “main.gms” file includes the option to choose one of the two types of technologies.
+$ontext startdoc
+This `.gms` file is one of the `.gms` files part of the `main.gms` file and includes the equations and model formulation. Please start from `main.gms`.
+
+This `.gms` file consists of the following parts:
+
+1. *Declaration of variables*
+
+    Output by activity and product are here the variables which can be adjusted in the model. The variable `Cshock` is defined later in the `%simulation%` gms file.
+
+2. *Declaration of equations*
+
+    One of the equations is an artificial objective function. This is because GAMS only understands a model run with an objective function. If you would like to run it without one, you can use such an artificial objective function which is basically put to any value such as 1.
+
+3. *Definition of equations*
+
+4. *Definition of levels and lower and upper bounds and fixed variables*
+
+    Upper and lower bounds can be adjusted when needed.
+
+5. *Declaration of equations in the model*
+
+    This states which equations are included in which model. The models are based on either product technology or activity technology. The `main.gms` file includes the option to choose one of the two types of technologies.
 
 $offtext
 

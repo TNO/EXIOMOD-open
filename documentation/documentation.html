@@ -20,7 +20,7 @@
 <li><a href="#scraggregate_database.gms-index"><code>scr/aggregate_database.gms</code></a></li>
 <li><a href="#scrmodel_parameters.gms-index"><code>scr/model_parameters.gms</code></a></li>
 <li><a href="#scrmodel_variables_equations.gms-index"><code>scr/model_variables_equations.gms</code></a></li>
-<li><a href="#scrsimulationmultipliers.gms-index"><code>scr/simulation/multipliers.gms</code></a></li>
+<li><a href="#scrsimulationfinal_demand_shock.gms-index"><code>scr/simulation/final_demand_shock.gms</code></a></li>
 </ul></li>
 </ul>
 <h2 id="values-of-global-variables">Values of global variables</h2>
@@ -50,7 +50,7 @@
 </tr>
 <tr class="even">
 <td align="left"><code>simulation_setup</code></td>
-<td align="left"><code>multipliers</code></td>
+<td align="left"><code>final_demand_shock</code></td>
 <td align="left"><a href="#configuration.gms-index"><code>configuration.gms</code></a></td>
 </tr>
 </tbody>
@@ -113,7 +113,16 @@
 <li><code>scr/sets_database.gms</code></li>
 </ul></li>
 </ul>
-<p>Documentation for this file is missing.</p>
+<p>This code is used for declaration and definition of sets which are used in the database underlying the input-output/CGE model.</p>
+<p>The current version of the code includes sets relevant for inter-regional supply and use tables. The code includes:</p>
+<ul>
+<li>declaration of sets including lists of regions, products, industries, etc.</li>
+<li>loading contents of the sets from external .txt files.</li>
+<li>declaration of super-sets where needed for loading the database.</li>
+<li>declaration of alias.</li>
+</ul>
+<p>The code is split into blocks according to the supersets needed for loading the database: full list of regions, full list of row elements (in the matrix version), full list of column elements (in the matrix version), auxiliary identifiers.</p>
+<p>In case the structure of the database is changed and a set should be updated, all the corrections should be done in the corresponding external .txt file. If a new element is introduced in a set, it should include both the element name and the element description. If a completely new set is introduced, it should be given a name, a description, a new external .txt file with the list and it should be included into one of the super-sets.</p>
 <h2 id="scrload_database.gms-index">scr/load_database.gms (<a href="#file-loading-structure">index</a>)</h2>
 <ul>
 <li><code>main.gms</code>
@@ -121,7 +130,13 @@
 <li><code>scr/load_database.gms</code></li>
 </ul></li>
 </ul>
-<p>Documentation for this file is missing.</p>
+<p>This gms file is one of the gms files called from the <code>main.gms</code> file.</p>
+<p>It defines two types of parameters:</p>
+<ol style="list-style-type: decimal">
+<li>SUP_data</li>
+<li>USE_data</li>
+</ol>
+<p>It calibrates these parameters by loading the input-output/supply-use database from an xlsx file.</p>
 <h2 id="scrsets_model.gms-index">scr/sets_model.gms (<a href="#file-loading-structure">index</a>)</h2>
 <ul>
 <li><code>main.gms</code>
@@ -291,7 +306,49 @@
 <li><code>scr/aggregate_database.gms</code></li>
 </ul></li>
 </ul>
-<p>Documentation for this file is missing.</p>
+<p>This is the <code>main.gms</code> code for the core input-output model. This is the part where the database is aggregated to the dimensions of the model, identified in <code>sets_model.gms</code>.</p>
+<p>The code consists of the following parts:</p>
+<h3 id="parameters-declaration">Parameters declaration</h3>
+<p>The data i.e. sets they consists of</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Parameter</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">SUP_model</td>
+<td align="left">the supply and use table</td>
+</tr>
+<tr class="even">
+<td align="left">INTER_USE_model</td>
+<td align="left">the intermediate use table</td>
+</tr>
+<tr class="odd">
+<td align="left">FINAL_USE_model</td>
+<td align="left">the final use table, discerning final consumption, fixed asset formation and export to defined regions (not rest of the world)</td>
+</tr>
+<tr class="even">
+<td align="left">EXPORT_model</td>
+<td align="left">the export to the rest of the world table</td>
+</tr>
+<tr class="odd">
+<td align="left">VALUE_ADDED_model</td>
+<td align="left">the value added table i.e. vector</td>
+</tr>
+<tr class="even">
+<td align="left">TAX_SUB_model (for industries, exports and final demands)</td>
+<td align="left">taxes table, for industries (specific taxes), final demands and exports (as data here is not &quot;free on board&quot;)</td>
+</tr>
+<tr class="odd">
+<td align="left">IMPORT_USE_model (both for industries, exports and final demands</td>
+<td align="left">imports from rest of the world use table, for industries, final demands and exports (i.e. re-exports)</td>
+</tr>
+</tbody>
+</table>
+<p>display commands for parameters</p>
 <h2 id="scrmodel_parameters.gms-index">scr/model_parameters.gms (<a href="#file-loading-structure">index</a>)</h2>
 <ul>
 <li><code>main.gms</code>
@@ -352,11 +409,11 @@
 <li><p><em>Declaration of equations in the model</em></p>
 <p>This states which equations are included in which model. The models are based on either product technology or activity technology. The <code>main.gms</code> file includes the option to choose one of the two types of technologies.</p></li>
 </ol>
-<h2 id="scrsimulationmultipliers.gms-index">scr/simulation/multipliers.gms (<a href="#file-loading-structure">index</a>)</h2>
+<h2 id="scrsimulationfinal_demand_shock.gms-index">scr/simulation/final_demand_shock.gms (<a href="#file-loading-structure">index</a>)</h2>
 <ul>
 <li><code>main.gms</code>
 <ul>
-<li><code>scr/simulation/multipliers.gms</code> (included from GAMS as <code>scr/simulation/%simulation_setup%.gms</code>)</li>
+<li><code>scr/simulation/final_demand_shock.gms</code> (included from GAMS as <code>scr/simulation/%simulation_setup%.gms</code>)</li>
 </ul></li>
 </ul>
 <p>Documentation for this file is missing.</p>

@@ -10,7 +10,7 @@
     * [`scr/aggregate_database.gms`](#scraggregate_database.gms-index)
     * [`scr/model_parameters.gms`](#scrmodel_parameters.gms-index)
     * [`scr/model_variables_equations.gms`](#scrmodel_variables_equations.gms-index)
-    * [`scr/simulation/multipliers.gms`](#scrsimulationmultipliers.gms-index)
+    * [`scr/simulation/final_demand_shock.gms`](#scrsimulationfinal_demand_shock.gms-index)
 
 ## Values of global variables
 
@@ -19,7 +19,7 @@ Global        | Value         | Defined in file
 `base_year` | `2007` | [`configuration.gms`](#configuration.gms-index)
 `base_cur` | `MEUR` | [`configuration.gms`](#configuration.gms-index)
 `io_type` | `industry_technology` | [`configuration.gms`](#configuration.gms-index)
-`simulation_setup` | `multipliers` | [`configuration.gms`](#configuration.gms-index)
+`simulation_setup` | `final_demand_shock` | [`configuration.gms`](#configuration.gms-index)
 
 
 ## main.gms ([index](#file-loading-structure))
@@ -71,14 +71,43 @@ Variable           | Explanation
 * `main.gms`
     * `scr/sets_database.gms`
 
-Documentation for this file is missing.
+This code is used for declaration and definition of sets which are used in the
+database underlying the input-output/CGE model.
+
+The current version of the code includes sets relevant for inter-regional supply
+and use tables. The code includes:
+
+ - declaration of sets including lists of regions, products, industries, etc.
+ - loading contents of the sets from external .txt files.
+ - declaration of super-sets where needed for loading the database.
+ - declaration of alias.
+
+The code is split into blocks according to the supersets needed for loading the
+database: full list of regions, full list of row elements (in the matrix
+version), full list of column elements (in the matrix version), auxiliary
+identifiers.
+
+In case the structure of the database is changed and a set should be updated,
+all the corrections should be done in the corresponding external .txt file. If a
+new element is introduced in a set, it should include both the element name and
+the element description. If a completely new set is introduced, it should be
+given a name, a description, a new external .txt file with the list and it
+should be included into one of the super-sets.
 
 ## scr/load_database.gms ([index](#file-loading-structure))
 
 * `main.gms`
     * `scr/load_database.gms`
 
-Documentation for this file is missing.
+This gms file is one of the gms files called from the `main.gms` file. 
+
+It defines two types of parameters:
+
+  1. SUP_data
+  2. USE_data
+
+It calibrates these parameters by loading the input-output/supply-use database from an xlsx file.
+
 
 ## scr/sets_model.gms ([index](#file-loading-structure))
 
@@ -151,7 +180,26 @@ For this the `.txt` files should be changed (sets and/or maps). This sets and ma
 * `main.gms`
     * `scr/aggregate_database.gms`
 
-Documentation for this file is missing.
+This is the `main.gms` code for the core input-output model. This is the part where the database is aggregated to the
+dimensions of the model, identified in `sets_model.gms`.
+
+The code consists of the following parts:
+
+### Parameters declaration
+
+The data i.e. sets they consists of
+
+Parameter             | Explanation
+--------------------- | -----------
+SUP_model             | the supply and use table
+INTER_USE_model       | the intermediate use table
+FINAL_USE_model       | the final use table, discerning final consumption, fixed asset formation and export to defined regions (not rest of the world)
+EXPORT_model          | the export to the rest of the world table
+VALUE_ADDED_model     | the value added table i.e. vector
+TAX_SUB_model (for industries, exports and final demands)              | taxes table, for industries (specific taxes), final demands and exports (as data here is not "free on board")
+IMPORT_USE_model (both for industries, exports and final demands       | imports from rest of the world use table, for industries, final demands and exports (i.e. re-exports)
+
+display commands for parameters
 
 ## scr/model_parameters.gms ([index](#file-loading-structure))
 
@@ -200,9 +248,9 @@ This `.gms` file consists of the following parts:
     This states which equations are included in which model. The models are based on either product technology or activity technology. The `main.gms` file includes the option to choose one of the two types of technologies.
 
 
-## scr/simulation/multipliers.gms ([index](#file-loading-structure))
+## scr/simulation/final_demand_shock.gms ([index](#file-loading-structure))
 
 * `main.gms`
-    * `scr/simulation/multipliers.gms` (included from GAMS as `scr/simulation/%simulation_setup%.gms`)
+    * `scr/simulation/final_demand_shock.gms` (included from GAMS as `scr/simulation/%simulation_setup%.gms`)
 
 Documentation for this file is missing.

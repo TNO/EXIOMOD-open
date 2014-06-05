@@ -1,3 +1,10 @@
+* File:   scr/simulation/final_demand_shock.gms
+* Author: Tatyana Bulavskaya
+* Date:   14 May 2014
+
+$ontext startdoc
+Documentation for this file is missing.
+$offtext
 
 * ======== Declaration and definition of simulation specific parameters ========
 

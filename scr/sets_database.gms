@@ -1,11 +1,8 @@
+* File:   scr/sets_database.gms
+* Author: Tatyana Bulavskaya
+* Date:   14 May 2014
 
-*' sets_database.gms
-*' author: Tatyana Bulavskaya
-*' date: 14 May 2014
-
-* gams-master-file: main.gms
-
-$ontext
+$ontext startdoc
 This code is used for declaration and definition of sets which are used in the
 database underlying the input-output/CGE model.
 

@@ -1,7 +1,12 @@
-$ontext
-This gms file is one of the gms files called from the 'main.gms' file. 
+* File:   scr/load_database.gms
+* Author: Tatyana Bulavskaya
+* Date:   14 May 2014
+
+$ontext startdoc
+This gms file is one of the gms files called from the `main.gms` file. 
 
 It defines two types of parameters:
+
   1. SUP_data
   2. USE_data
 
