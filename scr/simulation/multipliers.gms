@@ -1,6 +1,12 @@
 
 * ======== Declaration and definition of simulation specific parameters ========
 
+Sets
+         reg_sim(reg)                list of regions used in loop of simulation setup
+         prd_sim(prd)                list of products used in loop of simulation setup
+;
+
+
 Parameters
          v(reg,va,ind)               value added coefficients
 ;

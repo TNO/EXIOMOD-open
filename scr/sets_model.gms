@@ -112,12 +112,6 @@ $include sets/model/aggregation/products_to_uip_model.txt
 /
 ;
 
-Sets
-         reg_sim(reg)                    list of regions used in simulation setup
-
-         prd_sim(prd)                    list of products used in simulation setup
-;
-
 Alias
          (reg,regg,reggg)
          (prd,prdd,prddd)
