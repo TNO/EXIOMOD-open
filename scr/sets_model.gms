@@ -119,9 +119,18 @@ Alias
 ;
 
 
-$if not '%agg_check%' == 'yes' $goto endofcode
+* If product technology is used, check that number of products is equal to
+* number of sectors
 
+$if not '%io_type%' == 'product_technology' $goto aggregation_check
+
+ABORT$(CARD(prd) ne CARD(ind)) "number of products and industries should be the same for Product technology assumption"
+
+
+$label aggregation_check
 * Check that all aggregation schemes are correct
+
+$if not '%agg_check%' == 'yes' $goto endofcode
 
 $BATINCLUDE "scr/snippets/setaggregationcheck" full_reg_list   full_reg_m   reg_full_aggr
 $BATINCLUDE "scr/snippets/setaggregationcheck" prd_data        prd          prd_aggr
