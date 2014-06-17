@@ -37,16 +37,17 @@ prd_sim(prd) = yes ;
 * start loop over regions and products
 loop((reg_sim,prd_sim),
 
-Cshock.FX(reg,prd,regg,fd)              = 0 ;
-Cshock.FX(reg_sim,prd_sim,reg_sim,"FC") = 1 ;
+FINAL_USE_V.FX(reg,prd,regg,fd)                = FINAL_USE_model(reg,prd,regg,fd) ;
+FINAL_USE_V.FX(reg_sim,prd_sim,reg_sim,"FC")   =
+                                FINAL_USE_model(reg_sim,prd_sim,reg_sim,"FC") + 1 ;
 
 Display
-Cshock.L
+FINAL_USE_V.L
 ;
 
 * =============================== Solve statement ==============================
 
-Solve %io_type% using lp maximizing obj ;
+Solve %io_type% using nlp maximizing obj ;
 
 * ========================= Post-processing of results =========================
 
