@@ -1,13 +1,16 @@
 * File:   scr/sets_database.gms
 * Author: Tatyana Bulavskaya
 * Date:   14 May 2014
+* Adjusted:   22 June 2014
+
+* gams-master-file: load_database.gms
 
 $ontext startdoc
 This code is used for declaration and definition of sets which are used in the
 database underlying the input-output/CGE model.
 
-The current version of the code includes sets relevant for inter-regional supply
-and use tables. The code includes:
+The current version of the code includes sets relevant for inter-regional social
+accounting matrix. The code includes:
 
  - declaration of sets including lists of regions, products, industries, etc.
  - loading contents of the sets from external .txt files.
@@ -15,9 +18,8 @@ and use tables. The code includes:
  - declaration of alias.
 
 The code is split into blocks according to the supersets needed for loading the
-database: full list of regions, full list of row elements (in the matrix
-version), full list of column elements (in the matrix version), auxiliary
-identifiers.
+database: full list of regions, full list of row/column elements (in the matrix
+version), auxiliary identifiers.
 
 In case the structure of the database is changed and a set should be updated,
 all the corrections should be done in the corresponding external .txt file. If a
@@ -32,80 +34,70 @@ $offtext
 * corresponding super-set
 
 Sets
-         full_reg_list           full region list for reading-in the database
+         all_reg_data           full region list for reading-in the database
 /
 $include sets/database/regions_database.txt
 $include sets/database/restoftheworld_database.txt
 /
 
-         reg_data(full_reg_list) list of regions in the database
+         reg_data(all_reg_data) list of regions in the database
 /
 $include sets/database/regions_database.txt
 /
 
-         row_data(full_reg_list) list of rest of the world regions in the database
+         row_data(all_reg_data) list of rest of the world regions in the database
 /
 $include sets/database/restoftheworld_database.txt
 /
 ;
 
 
-* Declaration of product, value added elements lists and other elements in the
-* rows of a use table, and the corresponding super-set
+* Declaration of elements in defining dimensions of social accounting matrix,
+* and the corresponding super-set
 
 Sets
-         full_row_list           full rows list (products value-added etc) for reading-in the database
+         full_cat_list           full rows list (products value-added etc) for reading-in the database
 /
 $include sets/database/products_database.txt
-$include sets/database/valueadded_database.txt
-$include sets/database/taxesandsubsidiesonproducts_database.txt
-$include sets/database/useofimportedproducts_database.txt
-/
-
-         prd_data(full_row_list) list of products in the database
-/
-$include sets/database/products_database.txt
-/
-
-         va_data(full_row_list)  list of value added categories in the database
-/
-$include sets/database/valueadded_database.txt
-/
-
-         tsp_data(full_row_list) list of taxes and subsidies on products in the database
-/
-$include sets/database/taxesandsubsidiesonproducts_database.txt
-/
-
-         uip_data(full_row_list) use of imported products categories in the database
-/
-$include sets/database/useofimportedproducts_database.txt
-/
-;
-
-
-* Declaration of industry, final demand elements list and other elements in the
-* columns of a use table, and the corresponding super-set
-
-Sets
-         full_col_list           full columns list (industries final-demand etc) for reading-in the database
-/
 $include sets/database/industries_database.txt
+$include sets/database/taxesandsubsidiesonproducts_database.txt
+$include sets/database/valueadded_database.txt
 $include sets/database/finaldemand_database.txt
+$include sets/database/useofimportedproducts_database.txt
 $include sets/database/export_database.txt
 /
 
-         ind_data(full_col_list) list of industries in the database
+         prd_data(full_cat_list) list of products in the database
+/
+$include sets/database/products_database.txt
+/
+
+         ind_data(full_cat_list) list of industries in the database
 /
 $include sets/database/industries_database.txt
 /
 
-         fd_data(full_col_list)  list of final demand categories in the database
+         tsp_data(full_cat_list) list of taxes and subsidies on products in the database
+/
+$include sets/database/taxesandsubsidiesonproducts_database.txt
+/
+
+         va_data(full_cat_list)  list of value added categories in the database
+/
+$include sets/database/valueadded_database.txt
+/
+
+         fd_data(full_cat_list)  list of final demand categories in the database
 /
 $include sets/database/finaldemand_database.txt
 /
 
-         exp_data(full_col_list) list of export categories in the database
+         uip_data(full_cat_list) use of imported products categories in the database
+/
+$include sets/database/useofimportedproducts_database.txt
+/
+
+         exp_data(full_cat_list) list of export categories in the database
 /
 $include sets/database/export_database.txt
 /
@@ -131,7 +123,9 @@ $include sets/database/currencies_database.txt
 
 Alias
          (reg_data,regg_data)
-         (full_reg_list,full_regg_list)
+         (all_reg_data,all_regg_data)
+         (full_cat_list,full_catt_list)
+         (fd_data,fdd_data)
 ;
 
 

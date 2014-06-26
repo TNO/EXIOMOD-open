@@ -1,25 +1,34 @@
 * File:   scr/load_database.gms
 * Author: Tatyana Bulavskaya
 * Date:   14 May 2014
+* Adjusted:   22 June 2014
+
+* gams-master-file: load_database.gms
 
 $ontext startdoc
-This gms file is one of the gms files called from the `main.gms` file. 
+This gms file is one of the gms files called from the `main.gms` file.
 
-It defines two types of parameters:
+It defines three types of parameters:
 
-  1. SUP_data
-  2. USE_data
+  1. SAM_bp_data - social accounting matrix (SAM) expressed in basic prices.
+  2. SAM_tx_data - tax layer showing next taxes on produces associated with
+     transactions in the social accounting matrix.
+  3. SAM_pp_data - social accounting matrix expressed in producers prices, it is
+     equal to sum of the SAM in basic prices and the tax layer.
 
-It calibrates these parameters by loading the input-output/supply-use database from an xlsx file.
+It calibrates these parameters by loading the social accounting matrix database
+from an xlsx file.
 
 $offtext
 * ============================= Load the database ==============================
 Parameters
-         SUP_data(year_data,cur_data,full_reg_list,full_row_list,full_regg_list,full_col_list,*)      raw supply data
-         USE_data(year_data,cur_data,full_reg_list,full_row_list,full_regg_list,full_col_list,*)      raw use data
+         SAM_bp_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,*)      raw SAM expressed in basic prices
+         SAM_ts_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,*)      raw SAM taxes and subsidies on products layer
+         SAM_pp_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,*)      raw SAM expressed in producer prices
 ;
 
-$LIBInclude      xlimport        SUP_data        data/SUTdata_long_format.xlsx   Supply!a1..g65
-$LIBInclude      xlimport        USE_data        data/SUTdata_long_format.xlsx   Use!a1..g170
+$LIBInclude      xlimport        SAM_bp_data        data/SAMdata_long_format.xlsx   basic_price!a1..g962
+$LIBInclude      xlimport        SAM_ts_data        data/SAMdata_long_format.xlsx   tax_layer!a1..g962
+$LIBInclude      xlimport        SAM_pp_data        data/SAMdata_long_format.xlsx   producer_price!a1..g962
 
 $if '%db_check%' == 'yes' $include scr/checks_database.gms
