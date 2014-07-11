@@ -38,7 +38,6 @@ $include scr/sets_model.gms
 $include scr/aggregate_database.gms
 
 $include scr/model_parameters.gms
-$exit
 $include scr/model_variables_equations.gms
 
 $include scr/simulation/%simulation_setup%.gms
