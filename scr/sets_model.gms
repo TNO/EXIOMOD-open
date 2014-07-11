@@ -3,7 +3,7 @@
 * Date:   14 May 2014
 * Adjusted:   23 June 2014
 
-* gams-master-file: load_database.gms
+* gams-master-file: main.gms
 
 $ontext startdoc
 This `.gms` file is one of the `.gms` files part of the `main.gms` file and

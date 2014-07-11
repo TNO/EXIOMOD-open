@@ -3,7 +3,7 @@
 * Date:   14 May 2014
 * Adjusted: 23 June 2014
 
-* gams-master-file: load_database.gms
+* gams-master-file: main.gms
 
 $ontext startdoc
 This is the `main.gms` code for the input-output/CGE model. This is the part
@@ -30,7 +30,7 @@ TAX_SUB_PRD_DISTR_model  | income of taxes and subsidies on products becomes inc
 VALUE_ADDED_DISTR_model  | income of value added categories becomes income of the final demand categories
 INCOME_DISTR_model    | income re-distribution flows between the final demand categories (flows from reg-fd to regg-fdd)
 IMPORT_USE_FD_model   | imports from the rest of the world, for use by the final demand categories
-TRANSFERS_ROW_molel   | transfers between the rest of the world regions and the final demand categories (positive - from row to fd, negative - from fd to row)
+TRANSFERS_ROW_model   | transfers between the rest of the world regions and the final demand categories (positive - from row to fd, negative - from fd to row)
 
 
 ### Display commands for parameters
@@ -56,7 +56,7 @@ Parameters
 
          INCOME_DISTR_model(reg,fd,regg,fdd)     re-distribution of income between final damand categories in model aggregation
          IMPORT_USE_FD_model(reg,fd,row,uip)     use of imported products by final demand categories in model aggregation
-         TRANSFERS_ROW_molel(reg,fd,row,exp)     transfers between rest of the world regions and final demand categories in model aggregation
+         TRANSFERS_ROW_model(reg,fd,row,exp)     transfers between rest of the world regions and final demand categories in model aggregation
 ;
 
 * The parameters as defined above are depending on given data.
@@ -155,6 +155,10 @@ INCOME_DISTR_model(reg,fd,regg,fdd)
                          all_reg_aggr(reg_data,reg) and fd_aggr(fd_data,fd) ),
                        SAM_bp_data("%base_year%","%base_cur%",regg_data,fdd_data,reg_data,fd_data,"Value") ) ;
 
+* exclude income redistribution from the same agent
+INCOME_DISTR_model(reg,fd,reg,fd) = 0 ;
+
+
 IMPORT_USE_FD_model(reg,fd,row,uip)
                  = sum((row_data,uip_data,reg_data,fd_data)$
                        ( all_reg_aggr(row_data,row) and uip_aggr(uip_data,uip) and
@@ -166,7 +170,7 @@ IMPORT_USE_FD_model(reg,fd,row,uip)
                          all_reg_aggr(reg_data,reg) and fd_aggr(fd_data,fd) ),
                        SAM_bp_data("%base_year%","%base_cur%",regg_data,prd_data,reg_data,fd_data,"Value") ) ;
 
-TRANSFERS_ROW_molel(reg,fd,row,exp)
+TRANSFERS_ROW_model(reg,fd,row,exp)
                  = sum((reg_data,fd_data,row_data,exp_data)$
                        ( all_reg_aggr(reg_data,reg) and fd_aggr(fd_data,fd) and
                          all_reg_aggr(row_data,row) and exp_aggr(exp_data,exp) ),
@@ -195,5 +199,5 @@ TAX_SUB_PRD_DISTR_model
 VALUE_ADDED_DISTR_model
 INCOME_DISTR_model
 IMPORT_USE_FD_model
-TRANSFERS_ROW_molel
+TRANSFERS_ROW_model
 ;
