@@ -2,7 +2,7 @@
 * Author: Tatyana Bulavskaya
 * Date:   26 May 2014
 
-* gams-master-file: load_database.gms
+* gams-master-file: main.gms
 
 $ontext startdoc
 This is the configuration file for the core input-output model. The file allows
@@ -34,10 +34,11 @@ $if not set base_year    $setglobal      base_year       '2007'
 $if not set base_cur     $setglobal      base_cur        'MEUR'
 
 * model type
-*$if not set io_type      $setglobal      io_type   'product_technology'
-$if not set io_type      $setglobal      io_type   'industry_technology'
+*$if not set model_type   $setglobal      model_type   'IO_product_technology'
+*$if not set model_type   $setglobal      model_type   'IO_industry_technology'
+*$if not set model_type   $setglobal      model_type   'CGE_TRICK'
+$if not set model_type   $setglobal      model_type   'CGE_MCP'
 
 * simulation setup
 *$if not set simulation_setup     $setglobal      simulation_setup        'multipliers'
 $if not set simulation_setup     $setglobal      simulation_setup        'final_demand_shock'
-
