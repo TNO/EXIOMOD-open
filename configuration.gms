@@ -41,4 +41,5 @@ $if not set model_type   $setglobal      model_type   'CGE_MCP'
 
 * simulation setup
 *$if not set simulation_setup     $setglobal      simulation_setup        'multipliers'
-$if not set simulation_setup     $setglobal      simulation_setup        'final_demand_shock'
+*$if not set simulation_setup     $setglobal      simulation_setup        'final_demand_shock'
+$if not set simulation_setup     $setglobal      simulation_setup        'trial_CGE'
