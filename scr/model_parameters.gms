@@ -39,7 +39,7 @@ Parameters
         KLS(reg,kl)                 supply of production factors
         INC(reg,fd)                 total income of final demand categories
 
-*        coprodA(reg,prd,regg,ind)   co-production coefficients with mix per industry - corresponds to product technology assumption
+        coprodA(reg,prd,regg,ind)   co-production coefficients with mix per industry - corresponds to product technology assumption
         coprodB(reg,prd,regg,ind)   co-production coefficients with mix per product  - corresponds to industry technology assumption (relationin volume)
         a(reg,prd,regg,ind)         technical input coefficients for intermediate inputs (relation in volume)
         aVA(regg,ind)               technical input coefficients for factors of production (relation in volume)
@@ -83,9 +83,9 @@ INC
 *## Parameters of production function ##
 
 * Leontief co-production coefficients according to product technology assumption
-* (not used at the moment)
-*coprodA(reg,prd,regg,ind)$Y(regg,ind)
-*                 = SUP_model(reg,prd,regg,ind) / Y(regg,ind) ;
+* (not used at the moment in the CGE version)
+coprodA(reg,prd,regg,ind)$Y(regg,ind)
+                 = SUP_model(reg,prd,regg,ind) / Y(regg,ind) ;
 
 * Leontief co-production coefficients according to industry technology
 * assumption
@@ -113,7 +113,7 @@ facA(regg,ind)$sum((reg,kl), VALUE_ADDED_model(reg,kl,regg,ind) )
                   prod((reg,kl), VALUE_ADDED_model(reg,kl,regg,ind)**facC(reg,kl,regg,ind) ) ;
 
 Display
-*coprodA
+coprodA
 coprodB
 a
 aVA

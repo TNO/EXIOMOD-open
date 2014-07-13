@@ -70,7 +70,7 @@ Variables
 
 * Exogenous variables
 Variables
-*        coprodA_V(reg,prd,regg,ind)     co-production coefficients with mix per industry
+        coprodA_V(reg,prd,regg,ind)     co-production coefficients with mix per industry
         coprodB_V(reg,prd,regg,ind)     co-production coefficients with mix per product
         a_V(reg,prd,regg,ind)           technical input coefficients for intermediate inputs
         aVA_V(regg,ind)                 technical input coefficients for factors of production
@@ -104,7 +104,7 @@ Variables
 Equations
         EQBAL(reg,prd)              product market balance
         EQINTU(reg,prd,regg,ind)    demand for intermediate inputs
-*        EQX(reg,prd)                output level of products with mix per industry
+        EQX(reg,prd)                output level of products with mix per industry
         EQY(reg,ind)                output level of activities with mix per product
 
         EQKL(reg,kl,regg,ind)       demand for production factors
@@ -148,10 +148,12 @@ EQINTU(reg,prd,regg,ind)..
         =E=
         a_V(reg,prd,regg,ind) * Y_V(regg,ind) ;
 
-*EQX(reg,prd)..
-*        X_V(reg,prd)
-*        =E=
-*        sum((regg,ind), coprodA_V(reg,prd,regg,ind) * Y_V(regg,ind)) ;
+* Output level of products: given total amount of output per activity, output
+* per product is derived based on fixed output shares of each industry.
+EQX(reg,prd)..
+        X_V(reg,prd)
+        =E=
+        sum((regg,ind), coprodA_V(reg,prd,regg,ind) * Y_V(regg,ind)) ;
 
 * Output level of activities: given total amount of output per product required
 * output per activity is derived based on fixed sales structure on each market.
@@ -286,7 +288,7 @@ PFD_V.FX('US','FU') = 1 ;
 
 
 * Exogenous variables
-*coprodA_V.FX(reg,prd,regg,ind)   = coprodA(reg,prd,regg,ind)        ;
+coprodA_V.FX(reg,prd,regg,ind)   = coprodA(reg,prd,regg,ind)        ;
 coprodB_V.FX(reg,prd,regg,ind)   = coprodB(reg,prd,regg,ind)        ;
 a_V.FX(reg,prd,regg,ind)         = a(reg,prd,regg,ind)              ;
 aVA_V.FX(regg,ind)               = aVA(regg,ind)                    ;
