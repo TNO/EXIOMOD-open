@@ -23,7 +23,7 @@ Parameter
 
 $LIBInclude      xlimport        Cshock_data     simulation/shock.xlsx   long!a1..e33
 
-FINAL_USE_V.FX(reg,prd,regg,fd)   = FINAL_USE_model(reg,prd,regg,fd) +
+FINAL_USE_V.FX(reg,prd,regg,fd)   = FINAL_USE_bp_model(reg,prd,regg,fd) +
                                     Cshock_data(reg,prd,regg,fd,"Value") ;
 
 Display
@@ -32,7 +32,7 @@ FINAL_USE_V.L
 
 * =============================== Solve statement ==============================
 
-Solve %io_type% using nlp maximizing obj ;
+Solve %model_type% using nlp maximizing obj ;
 
 * ========================= Post-processing of results =========================
 

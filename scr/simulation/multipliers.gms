@@ -15,11 +15,11 @@ Sets
 
 
 Parameters
-         v(reg,va,ind)               value added coefficients
+         v(reg,va,regg,ind)               value added coefficients
 ;
 
-v(reg,va,ind)$Y(reg,ind)
-                 = VALUE_ADDED_model(reg,va,ind) / Y(reg,ind) ;
+v(reg,va,regg,ind)$Y(regg,ind)
+                 = VALUE_ADDED_model(reg,va,regg,ind) / Y(regg,ind) ;
 
 Display
 v
@@ -44,9 +44,9 @@ prd_sim(prd) = yes ;
 * start loop over regions and products
 loop((reg_sim,prd_sim),
 
-FINAL_USE_V.FX(reg,prd,regg,fd)                = FINAL_USE_model(reg,prd,regg,fd) ;
-FINAL_USE_V.FX(reg_sim,prd_sim,reg_sim,"FC")   =
-                                FINAL_USE_model(reg_sim,prd_sim,reg_sim,"FC") + 1 ;
+FINAL_USE_V.FX(reg,prd,regg,fd)                = FINAL_USE_bp_model(reg,prd,regg,fd) ;
+FINAL_USE_V.FX(reg_sim,prd_sim,reg_sim,"FU")   =
+                                FINAL_USE_bp_model(reg_sim,prd_sim,reg_sim,"FU") + 1 ;
 
 Display
 FINAL_USE_V.L
@@ -54,7 +54,7 @@ FINAL_USE_V.L
 
 * =============================== Solve statement ==============================
 
-Solve %io_type% using nlp maximizing obj ;
+Solve %model_type% using nlp maximizing obj ;
 
 * ========================= Post-processing of results =========================
 
@@ -66,9 +66,9 @@ OUTPUTmult_global.L(reg_sim,prd_sim)
                  = sum((reg,ind), Y_V.L(reg,ind) - Y(reg,ind) ) ;
 
 VALUEADDEDmult_global.L(reg_sim,prd_sim)
-                 = sum((va,reg,ind), Y_V.L(reg,ind) * v(reg,va,ind) - VALUE_ADDED_model(reg,va,ind) ) ;
+                 = sum((reg,va,regg,ind), Y_V.L(regg,ind) * v(reg,va,regg,ind) - VALUE_ADDED_model(reg,va,regg,ind) ) ;
 VALUEADDEDmultT1_global.L(reg_sim,prd_sim)
-                 = VALUEADDEDmult_global.L(reg_sim,prd_sim) / sum((va,regg,ind), v(reg_sim,va,ind) * coprodB(reg_sim,prd_sim,regg,ind) ) ;
+                 = VALUEADDEDmult_global.L(reg_sim,prd_sim) / sum((va,regg,ind), v(reg_sim,va,regg,ind) * coprodB(reg_sim,prd_sim,regg,ind) ) ;
 
 Display
 OUTPUTmult_intrareg.L
@@ -83,6 +83,7 @@ VALUEADDEDmultT1_global.L
 ) ;
 
 * =========================== Write results to Excel ===========================
+execute 'mkdir results'
 
 $LIBInclude xldump       OUTPUTmult_intrareg.L   results/multipliers.xls output_intraregional!a1
 $LIBInclude xldump       OUTPUTmult_interreg.L   results/multipliers.xls output_interregional!a1
