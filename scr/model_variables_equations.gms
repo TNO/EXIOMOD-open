@@ -72,16 +72,16 @@ Variables
 Variables
         coprodA_V(reg,prd,regg,ind)     co-production coefficients with mix per industry
         coprodB_V(reg,prd,regg,ind)     co-production coefficients with mix per product
-        a_V(reg,prd,regg,ind)           technical input coefficients for intermediate inputs
+        ioc_V(reg,prd,regg,ind)         technical input coefficients for intermediate inputs
         aVA_V(regg,ind)                 technical input coefficients for factors of production
         facC_V(reg,kl,regg,ind)         Cobb-Douglas share coefficients for factors of production
         facA_V(regg,ind)                Cobb-Douglas scale parameter for factor of production
 
         fdL_V(reg,prd,regg,fd)          leontief coefficients for final demand
 
-        tsp_ind_V(reg,prd,regg,ind)     tax and subsidies on products rates for industries
-        tsp_fd_V(reg,prd,regg,fd)       tax and subsidies on products rates for final demand
-        ntp_ind_V(reg,ntp,regg,ind)     net taxes on production rates
+        tc_ind_V(reg,prd,regg,ind)      tax and subsidies on products rates for industries
+        tc_fd_V(reg,prd,regg,fd)        tax and subsidies on products rates for final demand
+        txd_ind_V(reg,ntp,regg,ind)     net taxes on production rates
 
         fac_distr_V(reg,kl,regg,fd)     distribution shares of factor income to budgets of final demand
         tsp_distr_V(reg,tsp,regg,fd)    distribution shares of taxes and subsidies on products income to budgets of final demand
@@ -146,7 +146,7 @@ EQBAL(reg,prd)..
 EQINTU(reg,prd,regg,ind)..
         INTER_USE_V(reg,prd,regg,ind)
         =E=
-        a_V(reg,prd,regg,ind) * Y_V(regg,ind) ;
+        ioc_V(reg,prd,regg,ind) * Y_V(regg,ind) ;
 
 * Output level of products: given total amount of output per activity, output
 * per product is derived based on fixed output shares of each industry.
@@ -208,9 +208,9 @@ EQTSPREV(reg,tsp)..
         TSPREV_V(reg,tsp)
         =E=
         sum((regg,prd,ind), INTER_USE_V(regg,prd,reg,ind) * P_V(regg,prd) *
-        tsp_ind_V(regg,prd,reg,ind) ) +
+        tc_ind_V(regg,prd,reg,ind) ) +
         sum((regg,prd,fd), FINAL_USE_V(regg,prd,reg,fd) * P_V(regg,prd) *
-        tsp_fd_V(regg,prd,reg,fd) ) ;
+        tc_fd_V(regg,prd,reg,fd) ) ;
 
 * Net tax on production revenue: net tax revenue earned from production
 * activities.
@@ -218,7 +218,7 @@ EQNTPREV(reg,ntp)..
         NTPREV_V(reg,ntp)
         =E=
         sum((regg,ind), Y_V(regg,ind) * PY_V(regg,ind) *
-        ntp_ind_V(reg,ntp,regg,ind) ) ;
+        txd_ind_V(reg,ntp,regg,ind) ) ;
 
 * Balance between price per product and price per activity: price per product is
 * equal to weighted average of prices per activity.
@@ -234,7 +234,7 @@ EQPFD(reg,fd)$((not sameas(reg,'US')) or (not sameas(fd,'FU')))..
         PFD_V(reg,fd)
         =E=
         sum((regg,prd), P_V(regg,prd) * fdL_V(regg,prd,reg,fd) *
-        ( 1 + tsp_fd_V(regg,prd,reg,fd) ) ) ;
+        ( 1 + tc_fd_V(regg,prd,reg,fd) ) ) ;
 
 * Production factors market balance: supply of each factor is equal to the
 * demand on this factor plus, if modeled, unemployment.
@@ -248,10 +248,10 @@ EQPKL(reg,kl)..
 * modeled, excessive profit margins.
 EQPY(reg,ind)..
         Y_V(reg,ind) * PY_V(reg,ind) *
-        ( 1 - sum((regg,ntp), ntp_ind_V(regg,ntp,reg,ind) ) )
+        ( 1 - sum((regg,ntp), txd_ind_V(regg,ntp,reg,ind) ) )
         =E=
         sum((regg,prd), INTER_USE_V(regg,prd,reg,ind) * P_V(regg,prd) *
-        ( 1 + tsp_ind_V(regg,prd,reg,ind) ) ) +
+        ( 1 + tc_ind_V(regg,prd,reg,ind) ) ) +
         sum((regg,kl), KL_V(regg,kl,reg,ind) * PKL_V(regg,kl) ) ;
 
 * Artificial objective function: only relevant for users of conopt solver.
@@ -281,7 +281,7 @@ P_V.L(reg,prd) = 1 ;
 PY_V.L(reg,ind) = 1 ;
 PKL_V.L(reg,kl) = 1 ;
 
-PFD_V.L(reg,fd) = sum((regg,prd), fdL(regg,prd,reg,fd) * ( 1 + tsp_fd(regg,prd,reg,fd) ) ) ; ;
+PFD_V.L(reg,fd) = sum((regg,prd), fdL(regg,prd,reg,fd) * ( 1 + tc_fd(regg,prd,reg,fd) ) ) ; ;
 
 * One endogenous variable is chosen to be a numeraire
 PFD_V.FX('US','FU') = 1 ;
@@ -290,16 +290,16 @@ PFD_V.FX('US','FU') = 1 ;
 * Exogenous variables
 coprodA_V.FX(reg,prd,regg,ind)   = coprodA(reg,prd,regg,ind)        ;
 coprodB_V.FX(reg,prd,regg,ind)   = coprodB(reg,prd,regg,ind)        ;
-a_V.FX(reg,prd,regg,ind)         = a(reg,prd,regg,ind)              ;
+ioc_V.FX(reg,prd,regg,ind)       = ioc(reg,prd,regg,ind)            ;
 aVA_V.FX(regg,ind)               = aVA(regg,ind)                    ;
 facC_V.FX(reg,kl,regg,ind)       = facC(reg,kl,regg,ind)            ;
 facA_V.FX(regg,ind)              = facA(regg,ind)                   ;
 
 fdL_V.FX(reg,prd,regg,fd)        = fdL(reg,prd,regg,fd)             ;
 
-tsp_ind_V.FX(reg,prd,regg,ind)   = tsp_ind(reg,prd,regg,ind)        ;
-tsp_fd_V.FX(reg,prd,regg,fd)     = tsp_fd(reg,prd,regg,fd)          ;
-ntp_ind_V.FX(reg,ntp,regg,ind)   = ntp_ind(reg,ntp,regg,ind)        ;
+tc_ind_V.FX(reg,prd,regg,ind)    = tc_ind(reg,prd,regg,ind)         ;
+tc_fd_V.FX(reg,prd,regg,fd)      = tc_fd(reg,prd,regg,fd)           ;
+txd_ind_V.FX(reg,ntp,regg,ind)   = txd_ind(reg,ntp,regg,ind)        ;
 
 fac_distr_V.FX(reg,kl,regg,fd)   = fac_distr(reg,kl,regg,fd)        ;
 tsp_distr_V.FX(reg,tsp,regg,fd)  = tsp_distr(reg,tsp,regg,fd)       ;

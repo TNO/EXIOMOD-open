@@ -41,16 +41,16 @@ Parameters
 
         coprodA(reg,prd,regg,ind)   co-production coefficients with mix per industry - corresponds to product technology assumption
         coprodB(reg,prd,regg,ind)   co-production coefficients with mix per product  - corresponds to industry technology assumption (relationin volume)
-        a(reg,prd,regg,ind)         technical input coefficients for intermediate inputs (relation in volume)
+        ioc(reg,prd,regg,ind)       technical input coefficients for intermediate inputs (relation in volume)
         aVA(regg,ind)               technical input coefficients for factors of production (relation in volume)
         facC(reg,kl,regg,ind)       Cobb-Douglas share coefficients for factors of production (relation in value)
         facA(regg,ind)              Cobb-Douglas scale parameter for factor of production
 
         fdL(reg,prd,regg,fd)        leontief coefficients for final demand (relation in volume)
 
-        tsp_ind(reg,prd,regg,ind)   tax and subsidies on products rates for industries (relation in value)
-        tsp_fd(reg,prd,regg,fd)     tax and subsidies on products rates for final demand (relation in value)
-        ntp_ind(reg,ntp,regg,ind)   net taxes on production rates (relation in value)
+        tc_ind(reg,prd,regg,ind)    tax and subsidies on products rates for industries (relation in value)
+        tc_fd(reg,prd,regg,fd)      tax and subsidies on products rates for final demand (relation in value)
+        txd_ind(reg,ntp,regg,ind)   net taxes on production rates (relation in value)
 
         fac_distr(reg,kl,regg,fd)   distribution shares of factor income to budgets of final demand (shares)
         tsp_distr(reg,tsp,regg,fd)  distribution shares of taxes and subsidies on products income to budgets of final demand (shares)
@@ -93,7 +93,7 @@ coprodB(reg,prd,regg,ind)$SUP_model(reg,prd,regg,ind)
                 = SUP_model(reg,prd,regg,ind) / X(reg,prd) ;
 
 * Leontief technical input coefficients for intermediate inputs
-a(reg,prd,regg,ind)$INTER_USE_bp_model(reg,prd,regg,ind)
+ioc(reg,prd,regg,ind)$INTER_USE_bp_model(reg,prd,regg,ind)
                 = INTER_USE_bp_model(reg,prd,regg,ind) / Y(regg,ind) ;
 
 * Leontief technical input coefficients for the nest of aggregated factors of
@@ -115,7 +115,7 @@ facA(regg,ind)$sum((reg,kl), VALUE_ADDED_model(reg,kl,regg,ind) )
 Display
 coprodA
 coprodB
-a
+ioc
 aVA
 facC
 facA
@@ -137,23 +137,23 @@ fdL
 *## Tax rates ##
 
 * Net product tax (taxes less subsidies) rates on intermediate consumption
-tsp_ind(reg,prd,regg,ind)$INTER_USE_ts_model(reg,prd,regg,ind)
+tc_ind(reg,prd,regg,ind)$INTER_USE_ts_model(reg,prd,regg,ind)
                 = INTER_USE_ts_model(reg,prd,regg,ind) /
                   INTER_USE_bp_model(reg,prd,regg,ind) ;
 
 * Net product tax (taxes less subsidies) rates on final demand
-tsp_fd(reg,prd,regg,fd)$FINAL_USE_ts_model(reg,prd,regg,fd)
+tc_fd(reg,prd,regg,fd)$FINAL_USE_ts_model(reg,prd,regg,fd)
                 = FINAL_USE_ts_model(reg,prd,regg,fd) /
                   FINAL_USE_bp_model(reg,prd,regg,fd) ;
 
 * Net production tax (taxes less subsidies) rates
-ntp_ind(reg,ntp,regg,ind)$VALUE_ADDED_model(reg,ntp,regg,ind)
+txd_ind(reg,ntp,regg,ind)$VALUE_ADDED_model(reg,ntp,regg,ind)
                 = VALUE_ADDED_model(reg,ntp,regg,ind) / Y(regg,ind) ;
 
 Display
-tsp_ind
-tsp_fd
-ntp_ind
+tc_ind
+tc_fd
+txd_ind
 ;
 
 
