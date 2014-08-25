@@ -25,6 +25,7 @@ $offtext
 Sets
         ntp(va)   net taxes on production categories    /"NTP"/
         kl(va)    capital and labour categories         /"COE","OPS"/
+*        kl(va)    capital and labour categories         /"COE"/
 ;
 
 Alias
@@ -47,6 +48,7 @@ Parameters
         facA(regg,ind)              Cobb-Douglas scale parameter for factor of production
 
         fdL(reg,prd,regg,fd)        leontief coefficients for final demand (relation in volume)
+        theta(reg,prd,regg,fd)      share of consumption in total final demand
 
         tc_ind(reg,prd,regg,ind)    tax and subsidies on products rates for industries (relation in value)
         tc_fd(reg,prd,regg,fd)      tax and subsidies on products rates for final demand (relation in value)
@@ -59,6 +61,17 @@ Parameters
 
 
 * ========================== Definition of parameters ==========================
+
+Parameter
+elas(regg,ind)
+elasF(regg,fd)
+;
+
+elas(regg,ind) = 0.9 ;
+elasF(regg,fd) = 1.4 ;
+
+
+
 
 *## Aggregates ##
 Y(reg,ind)      = sum((regg,prd), SUP_model(regg,prd,reg,ind) ) ;
@@ -112,6 +125,18 @@ facA(regg,ind)$sum((reg,kl), VALUE_ADDED_model(reg,kl,regg,ind) )
                 = sum((reg,kl), VALUE_ADDED_model(reg,kl,regg,ind) ) /
                   prod((reg,kl), VALUE_ADDED_model(reg,kl,regg,ind)**facC(reg,kl,regg,ind) ) ;
 
+* CES share parameters
+Parameter gamma(reg,kl,regg,ind);
+gamma(reg,kl,regg,ind) = VALUE_ADDED_model(reg,kl,regg,ind)**(1/elas(regg,ind))
+                         / sum((reggg,kll), VALUE_ADDED_model(reggg,kll,regg,ind)**(1/elas(regg,ind)) ) ;
+* CES scale parameters
+Parameter aCES(regg,ind);
+aCES(regg,ind) = sum((reg,kl), VALUE_ADDED_model(reg,kl,regg,ind) ) /
+                sum((reg,kl), gamma(reg,kl,regg,ind) * VALUE_ADDED_model(reg,kl,regg,ind)**((elas(regg,ind)-1)/elas(regg,ind))
+                    )**(elas(regg,ind)/(elas(regg,ind)-1));
+
+Display gamma, aCES ;
+
 Display
 coprodA
 coprodB
@@ -154,6 +179,16 @@ Display
 tc_ind
 tc_fd
 txd_ind
+;
+
+
+theta(reg,prd,regg,fd)$FINAL_USE_bp_model(reg,prd,regg,fd)
+                = FINAL_USE_bp_model(reg,prd,regg,fd) /
+                  sum((reggg,prdd), FINAL_USE_bp_model(reggg,prdd,regg,fd) ) *
+                  ( ( 1 + tc_fd(reg,prd,regg,fd) )**elasF(regg,fd) ) ;
+
+Display
+theta
 ;
 
 
