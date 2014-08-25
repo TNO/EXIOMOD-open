@@ -1,0 +1,4 @@
+A1              "Agriculture, hunting and fishing"
+A2              "Industry incl. Energy"
+A3              "Construction"
+A4              "Services"
