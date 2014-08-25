@@ -38,6 +38,7 @@ Variables
         X_V(reg,prd)                    output vector products
 
         INTER_USE_V(reg,prd,regg,ind)   use of intermediate inputs
+        VA_V(reg,ind)                   use of value added
         KL_V(reg,kl,regg,ind)           use of production factors
 
         FINAL_USE_V(reg,prd,regg,fd)    final use
@@ -50,22 +51,25 @@ Variables
 
         P_V(reg,prd)                    vector of basic product prices
         PY_V(reg,ind)                   vector on total industry output prices
+        SCLFD_V(reg,fd)                 scale parameter for final consumption
+        PVA_V(reg,ind)                  vector of value added prices
         PKL_V(reg,kl)                   vector of factor prices
 
         PFD_V(reg,fd)                   final use price index
 ;
 
-*Positive variables
+Positive variables
 *Y_V
 *X_V
 *INTER_USE_V
 *KL_V
 *CBUD_V
 *INC_V
-*P_V
-*PY_V
-*PKL_V
-*PFD_V
+P_V
+PY_V
+PKL_V
+PVA_V
+PFD_V
 ;
 
 * Exogenous variables
@@ -78,6 +82,7 @@ Variables
         facA_V(regg,ind)                Cobb-Douglas scale parameter for factor of production
 
         fdL_V(reg,prd,regg,fd)          leontief coefficients for final demand
+        theta_V(reg,prd,regg,fd)        share of consumption
 
         tc_ind_V(reg,prd,regg,ind)      tax and subsidies on products rates for industries
         tc_fd_V(reg,prd,regg,fd)        tax and subsidies on products rates for final demand
@@ -107,6 +112,7 @@ Equations
         EQX(reg,prd)                output level of products with mix per industry
         EQY(reg,ind)                output level of activities with mix per product
 
+        EQVA(reg,ind)               demand for value added
         EQKL(reg,kl,regg,ind)       demand for production factors
 
         EQFU(reg,prd,regg,fd)       demand for final use of products
@@ -121,6 +127,8 @@ Equations
         EQP(reg,prd)                balance between price per product and price per activity
         EQPFD(reg,fd)               price index for final use
 
+        EQSCLFD(reg,fd)             scale parameter for final demand
+        EQPVA(reg,ind)              price of value added equals cost of factors
         EQPKL(reg,kl)               production factors market balance
         EQPY(reg,ind)               revenues equals costs (including possible excessive profit)
 
@@ -162,29 +170,54 @@ EQY(reg,ind)..
         =E=
         sum((regg,prd), coprodB_V(regg,prd,reg,ind) * X_V(regg,prd)) ;
 
+* Demandv for value added:
+EQVA(reg,ind)..
+        VA_V(reg,ind)
+        =E=
+        aVA_V(reg,ind) * Y_V(reg,ind) ;
+
 * Demand for production factors: corresponds to the first order conditions of
 * the selected production function.
-EQKL(reg,kl,regg,ind)..
+*EQKL(reg,kl,regg,ind)$VALUE_ADDED_model(reg,kl,regg,ind)..
+*        KL_V(reg,kl,regg,ind)
+*        =E=
+*        facC_V(reg,kl,regg,ind) / prod((reggg,kll)$facC(reggg,kll,regg,ind),
+*        facC_V(reggg,kll,regg,ind)**facC_V(reggg,kll,regg,ind) ) *
+*        ( 1 / PKL_V(reg,kl) ) * aVA_V(regg,ind) * Y_V(regg,ind) / facA_V(regg,ind) *
+*        prod((reggg,kll), PKL_V(reggg,kll)**facC_V(reggg,kll,regg,ind) ) ;
+
+*EQKL(reg,kl,regg,ind)$VALUE_ADDED_model(reg,kl,regg,ind)..
+*        KL_V(reg,kl,regg,ind)
+*        =E=
+*        VA_V(regg,ind) * facC_V(reg,kl,regg,ind) *
+*        ( PKL_V(reg,kl) / PVA_V(regg,ind) )**( (-1) * elas(regg,ind) ) ;
+
+EQKL(reg,kl,regg,ind)$VALUE_ADDED_model(reg,kl,regg,ind)..
         KL_V(reg,kl,regg,ind)
         =E=
-        facC_V(reg,kl,regg,ind) / prod((reggg,kll)$facC(reggg,kll,regg,ind),
-        facC_V(reggg,kll,regg,ind)**facC_V(reggg,kll,regg,ind) ) *
-        ( 1 / PKL_V(reg,kl) ) * aVA_V(regg,ind) * Y_V(regg,ind) / facA_V(regg,ind) *
-        prod((reggg,kll), PKL_V(reggg,kll)**facC_V(reggg,kll,regg,ind) ) ;
+        VA_V(regg,ind) * (gamma(reg,kl,regg,ind)/PKL_V(reg,kl))**elas(regg,ind) *
+        PVA_V(regg,ind)**elas(regg,ind) * aCES(regg,ind)**(elas(regg,ind)-1) ;
 
 * Demand for final use of products: corresponds to the first order conditions of
 * the selected utility function.
+*EQFU(reg,prd,regg,fd)..
+*        FINAL_USE_V(reg,prd,regg,fd)
+*        =E=
+*        fdL_V(reg,prd,regg,fd) * CBUD_V(regg,fd) / PFD_V(regg,fd) ;
+
 EQFU(reg,prd,regg,fd)..
         FINAL_USE_V(reg,prd,regg,fd)
         =E=
-        fdL_V(reg,prd,regg,fd) * CBUD_V(regg,fd) / PFD_V(regg,fd) ;
+        SCLFD_V(regg,fd) * theta_V(reg,prd,regg,fd) *
+        ( P_V(reg,prd) * ( 1 + tc_fd_V(reg,prd,regg,fd) ) )**( (-1) * elasF(regg,fd) ) ;
+*        ( P_V(reg,prd) )**( (-1) * elasF(regg,fd) ) ;
 
 * Budget available for final use: gross income minus transfers to other
 * institutional agents.
 EQCBUD(reg,fd)..
         CBUD_V(reg,fd)
         =E=
-        INC_V(reg,fd) - sum((regg,fdd), INCTRANSFER_V(reg,fd,regg,fdd) ) ;
+        INC_V(reg,fd) - sum((regg,fdd), INCTRANSFER_V(reg,fd,regg,fdd) * PFD_V(reg,fd) ) ;
 
 * Gross income: composed of factor and tax revenues transfers to the agent, as
 * well as income transfers from other institutional agents.
@@ -194,7 +227,7 @@ EQINC(reg,fd)..
         sum((regg,kl), FACREV_V(regg,kl) * fac_distr_V(regg,kl,reg,fd) ) +
         sum((regg,tsp), TSPREV_V(regg,tsp) * tsp_distr_V(regg,tsp,reg,fd) ) +
         sum((regg,ntp), NTPREV_V(regg,ntp) * ntp_distr_V(regg,ntp,reg,fd) ) +
-        sum((regg,fdd), INCTRANSFER_V(regg,fdd,reg,fd)) ;
+        sum((regg,fdd), INCTRANSFER_V(regg,fdd,reg,fd) * PFD_V(regg,fdd) ) ;
 
 * Factors of production revenue: sum of revenue earned by each production
 * factor.
@@ -230,11 +263,36 @@ EQP(reg,prd)..
 
 * Price index for final use: weighted average of products' purchaser prices.
 * At the moment the equation is not defined to the price choses as a numeraire.
-EQPFD(reg,fd)$((not sameas(reg,'US')) or (not sameas(fd,'FU')))..
+EQPFD(reg,fd)..
         PFD_V(reg,fd)
         =E=
         sum((regg,prd), P_V(regg,prd) * fdL_V(regg,prd,reg,fd) *
         ( 1 + tc_fd_V(regg,prd,reg,fd) ) ) ;
+*        1 ) ;
+
+EQSCLFD(reg,fd)..
+        CBUD_V(reg,fd)
+        =E=
+        sum((regg,prd), P_V(regg,prd) * FINAL_USE_V(regg,prd,reg,fd) *
+        ( 1 + tc_fd_V(regg,prd,reg,fd) ) ) ;
+*        1 ) ;
+
+* Price of value added:
+*EQPVA(reg,ind)..
+*        PVA_V(reg,ind) * VA_V(reg,ind)
+*        =E=
+*        sum((regg,kl), PKL_V(regg,kl) * KL_V(regg,kl,reg,ind)) ;
+
+EQPVA(reg,ind)..
+        PVA_V(reg,ind)
+        =E=
+        1/aCES(reg,ind) * sum((regg,kl)$gamma(regg,kl,reg,ind), gamma(regg,kl,reg,ind)**elas(reg,ind) *
+        PKL_V(regg,kl)**(1-elas(reg,ind)) )**(1/(1-elas(reg,ind))) ;
+
+*EQPVA(reg,ind)..
+*         PVA_V(reg,ind)
+*         =E=
+*        ( sum((regg,kl), facC_V(regg,kl,reg,ind) * PKL_V(regg,kl)**( 1 - elas(reg,ind) ) ) )**( 1 / ( 1 - elas(reg,ind) ) ) ;
 
 * Production factors market balance: supply of each factor is equal to the
 * demand on this factor plus, if modeled, unemployment.
@@ -246,12 +304,15 @@ EQPKL(reg,kl)..
 * Revenues equals costs: revenues earned from product sales equal to cost of
 * intermediate products, factors of production, all associated taxes and, if
 * modeled, excessive profit margins.
-EQPY(reg,ind)..
+*EQPY(reg,ind)..
+EQPY(reg,ind)$((not sameas(reg,'US')) or (not sameas(ind,'A1')))..
         Y_V(reg,ind) * PY_V(reg,ind) *
         ( 1 - sum((regg,ntp), txd_ind_V(regg,ntp,reg,ind) ) )
+*        ( 1 )
         =E=
         sum((regg,prd), INTER_USE_V(regg,prd,reg,ind) * P_V(regg,prd) *
         ( 1 + tc_ind_V(regg,prd,reg,ind) ) ) +
+*        ( 1 ) ) +
         sum((regg,kl), KL_V(regg,kl,reg,ind) * PKL_V(regg,kl) ) ;
 
 * Artificial objective function: only relevant for users of conopt solver.
@@ -267,7 +328,10 @@ Y_V.L(reg,ind)     = Y(reg,ind) ;
 X_V.L(reg,prd)     = X(reg,prd) ;
 
 INTER_USE_V.L(reg,prd,regg,ind)    = INTER_USE_bp_model(reg,prd,regg,ind) ;
+VA_V.L(reg,ind) = sum((regg,kl), VALUE_ADDED_model(regg,kl,reg,ind) ) ;
 KL_V.L(reg,kl,regg,ind) = VALUE_ADDED_model(reg,kl,regg,ind) ;
+
+KL_V.FX(reg,kl,regg,ind)$(VALUE_ADDED_model(reg,kl,regg,ind) eq 0 ) = 0 ;
 
 FINAL_USE_V.L(reg,prd,regg,fd) = FINAL_USE_bp_model(reg,prd,regg,fd) ;
 CBUD_V.L(reg,fd) = sum((regg,prd), FINAL_USE_bp_model(regg,prd,reg,fd) + FINAL_USE_ts_model(regg,prd,reg,fd) ) ;
@@ -279,13 +343,18 @@ NTPREV_V.L(reg,ntp) = sum((regg,fd), VALUE_ADDED_DISTR_model(reg,ntp,regg,fd) ) 
 
 P_V.L(reg,prd) = 1 ;
 PY_V.L(reg,ind) = 1 ;
+PVA_V.L(reg,ind) = 1 ;
 PKL_V.L(reg,kl) = 1 ;
 
 PFD_V.L(reg,fd) = sum((regg,prd), fdL(regg,prd,reg,fd) * ( 1 + tc_fd(regg,prd,reg,fd) ) ) ; ;
+SCLFD_V.L(reg,fd) = sum((regg,prd), FINAL_USE_bp_model(regg,prd,reg,fd) ) ;
+
+P_V.LO(reg,prd) = 0.01 ;
+PKL_V.LO(reg,kl)  = 0.01 ;
+PVA_V.LO(reg,ind)  = 0.01 ;
 
 * One endogenous variable is chosen to be a numeraire
-PFD_V.FX('US','FU') = 1 ;
-
+PY_V.FX('US','A1') = 1 ;
 
 * Exogenous variables
 coprodA_V.FX(reg,prd,regg,ind)   = coprodA(reg,prd,regg,ind)        ;
@@ -296,6 +365,7 @@ facC_V.FX(reg,kl,regg,ind)       = facC(reg,kl,regg,ind)            ;
 facA_V.FX(regg,ind)              = facA(regg,ind)                   ;
 
 fdL_V.FX(reg,prd,regg,fd)        = fdL(reg,prd,regg,fd)             ;
+theta_V.FX(reg,prd,regg,fd)      = theta(reg,prd,regg,fd)           ;
 
 tc_ind_V.FX(reg,prd,regg,ind)    = tc_ind(reg,prd,regg,ind)         ;
 tc_fd_V.FX(reg,prd,regg,fd)      = tc_fd(reg,prd,regg,fd)           ;
@@ -308,6 +378,55 @@ ntp_distr_V.FX(reg,ntp,regg,fd)  = ntp_distr(reg,ntp,regg,fd)       ;
 KLS_V.FX(reg,kl)                 = KLS(reg,kl)                      ;
 INCTRANSFER_V.FX(reg,fd,regg,fdd) = INCOME_DISTR_model(reg,fd,regg,fdd) ;
 
+* ======================= Scale variables and equations ========================
+
+X_V.SCALE(reg,prd)   = X_V.L(reg,prd)  ;
+EQBAL.SCALE(reg,prd) = X_V.L(reg,prd) ;
+
+INTER_USE_V.SCALE(reg,prd,regg,ind)$INTER_USE_V.L(reg,prd,regg,ind) = INTER_USE_V.L(reg,prd,regg,ind) ;
+EQINTU.SCALE(reg,prd,regg,ind)$INTER_USE_V.L(reg,prd,regg,ind)      = INTER_USE_V.L(reg,prd,regg,ind) ;
+
+VA_V.SCALE(reg,ind) = VA_V.L(reg,ind) ;
+EQVA.SCALE(reg,ind) = VA_V.L(reg,ind) ;
+
+Y_V.SCALE(reg,ind) = Y_V.L(reg,ind) ;
+EQY.SCALE(reg,ind) = Y_V.L(reg,ind) ;
+
+KL_V.SCALE(reg,kl,regg,ind)$KL_V.L(reg,kl,regg,ind)  = KL_V.L(reg,kl,regg,ind) ;
+EQKL.SCALE(reg,kl,regg,ind)$KL_V.L(reg,kl,regg,ind)  = KL_V.L(reg,kl,regg,ind) ;
+
+FINAL_USE_V.SCALE(reg,prd,regg,fd) = FINAL_USE_V.L(reg,prd,regg,fd) ;
+EQFU.SCALE(reg,prd,regg,fd)        = FINAL_USE_V.L(reg,prd,regg,fd) ;
+
+CBUD_V.SCALE(reg,fd) = CBUD_V.L(reg,fd) ;
+EQCBUD.SCALE(reg,fd) = CBUD_V.L(reg,fd) ;
+
+INC_V.SCALE(reg,fd) = INC_V.L(reg,fd) ;
+EQINC.SCALE(reg,fd) = INC_V.L(reg,fd) ;
+
+FACREV_V.SCALE(reg,kl) = FACREV_V.L(reg,kl) ;
+EQFACREV.SCALE(reg,kl) = FACREV_V.L(reg,kl) ;
+
+TSPREV_V.SCALE(reg,tsp)$TSPREV_V.L(reg,tsp) = TSPREV_V.L(reg,tsp) ;
+EQTSPREV.SCALE(reg,tsp)$TSPREV_V.L(reg,tsp) = TSPREV_V.L(reg,tsp) ;
+
+NTPREV_V.SCALE(reg,ntp) = NTPREV_V.L(reg,ntp) ;
+EQNTPREV.SCALE(reg,ntp) = NTPREV_V.L(reg,ntp) ;
+
+SCLFD_V.SCALE(reg,fd) = SCLFD_V.L(reg,fd) ;
+EQSCLFD.SCALE(reg,fd) = SCLFD_V.L(reg,fd) ;
+
+EQP.SCALE(reg,prd) = X_V.L(reg,prd)  ;
+
+*EQPVA.SCALE(reg,ind) = VA_V.L(reg,ind) ;
+
+EQPKL.SCALE(reg,kl)  = KLS_V.L(reg,kl) ;
+
+EQPY.SCALE(reg,ind)  = Y_V.L(reg,ind) ;
+
+KLS_V.SCALE(reg,kl)   = KLS_V.L(reg,kl) ;
+
+INCTRANSFER_V.SCALE(reg,fd,regg,fdd)$INCTRANSFER_V.L(reg,fd,regg,fdd) = INCTRANSFER_V.L(reg,fd,regg,fdd) ;
 
 * ========================== Declare model equations ===========================
 
@@ -333,6 +452,7 @@ Model CGE_TRICK
 /
 EQBAL
 EQINTU
+EQVA
 EQY
 EQKL
 EQFU
@@ -343,6 +463,8 @@ EQTSPREV
 EQNTPREV
 EQP
 EQPFD
+EQSCLFD
+EQPVA
 EQPKL
 EQPY
 EQOBJ
@@ -353,6 +475,7 @@ Model CGE_MCP
 /
 EQBAL.X_V
 EQINTU.INTER_USE_V
+EQVA.VA_V
 EQY.Y_V
 EQKL.KL_V
 EQFU.FINAL_USE_V
@@ -363,6 +486,8 @@ EQTSPREV.TSPREV_V
 EQNTPREV.NTPREV_V
 EQP.P_V
 EQPFD.PFD_V
+EQSCLFD.SCLFD_V
+EQPVA.PVA_V
 EQPKL.PKL_V
 EQPY.PY_V
 /
