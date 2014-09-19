@@ -39,16 +39,25 @@ Parameters
         X(reg,prd)                  output vector by product
         KLS(reg,kl)                 supply of production factors
         INC(reg,fd)                 total income of final demand categories
+        IU_PRD(prd,regg,ind)        intermediate use on product level
+        IU_DOM(prd,regg,ind)        intermediate use of domestic products on product level
+        IU_IMP(prd,regg,ind)        intermediate use of importer products on product level
+        FU_PRD(prd,regg,fd)         final use on product level
+        FU_DOM(prd,regg,fd)         final use of domestic products on product level
+        FU_IMP(prd,regg,fd)         final use of importer products on product level
+
 
         coprodA(reg,prd,regg,ind)   co-production coefficients with mix per industry - corresponds to product technology assumption
         coprodB(reg,prd,regg,ind)   co-production coefficients with mix per product  - corresponds to industry technology assumption (relationin volume)
-        ioc(reg,prd,regg,ind)       technical input coefficients for intermediate inputs (relation in volume)
+*        ioc(reg,prd,regg,ind)       technical input coefficients for intermediate inputs (relation in volume)
+        ioc(prd,regg,ind)           technical input coefficients for intermediate inputs (relation in volume)
         aVA(regg,ind)               technical input coefficients for factors of production (relation in volume)
         facC(reg,kl,regg,ind)       Cobb-Douglas share coefficients for factors of production (relation in value)
         facA(regg,ind)              Cobb-Douglas scale parameter for factor of production
 
         fdL(reg,prd,regg,fd)        leontief coefficients for final demand (relation in volume)
-        theta(reg,prd,regg,fd)      share of consumption in total final demand
+        theta_L1(prd,regg,fd)       share of consumption on product level in total demand
+        theta(reg,prd,regg,fd)      share of consumption in total final demand on product region level
 
         tc_ind(reg,prd,regg,ind)    tax and subsidies on products rates for industries (relation in value)
         tc_fd(reg,prd,regg,fd)      tax and subsidies on products rates for final demand (relation in value)
@@ -63,14 +72,80 @@ Parameters
 * ========================== Definition of parameters ==========================
 
 Parameter
-elas(regg,ind)
+elas(regg,ind)              subsitution between capital and labour
+elasIU_dom(prd,regg,ind)    subsitution btween domestic and import intermediate use
+
 elasF(regg,fd)
+elasF_L1(regg,fd)           substitution between products in final use
+elasF_L2(prd,regg,fd)       substitution between domestic and import intermediate use
+
+elasIMP(prd,regg)           subsitution between imports from different regions
+
 ;
 
-elas(regg,ind) = 0.9 ;
-elasF(regg,fd) = 1.4 ;
+elas(regg,ind) = 0.5;
+elasIU_dom(prd,regg,ind) = 0.0 ;
 
 
+elasF(regg,fd) = 1.0 ;
+elasF_L1(regg,fd)      = 1.0 ;
+elasF_L2(prd,regg,fd)  = 0.0 ;
+
+elasIMP(prd,regg) = 0.0 ;
+
+Parameter
+      TRADE(reg,prd,regg)     trade flows (in volume) - basic price equal to 1 and not taxes on export yet
+;
+
+TRADE(reg,prd,regg) = sum(ind, INTER_USE_bp_model(reg,prd,regg,ind) ) +
+                      sum(fd, FINAL_USE_bp_model(reg,prd,regg,fd) ) ;
+
+* DEFINED ONLY BETWEEN DIFFERENT COUNTRIES
+TRADE(reg,prd,reg) = 0 ;
+
+Display TRADE ;
+
+Parameter
+      IMPORT(prd,regg)        import - basic price equal to 1
+;
+
+IMPORT(prd,regg) = sum(reg, TRADE(reg,prd,regg) ) ;
+
+Display IMPORT ;
+
+
+IU_DOM(prd,regg,ind)
+                = INTER_USE_bp_model(regg,prd,regg,ind) ;
+*                  + INTER_USE_ts_model(regg,prd,regg,ind) ;
+
+IU_IMP(prd,regg,ind)
+                = sum(reg$(not sameas(reg,regg)), INTER_USE_bp_model(reg,prd,regg,ind) ) ;
+*                  + sum(reg$(not sameas(reg,regg)), INTER_USE_ts_model(reg,prd,regg,ind) ) ;
+
+IU_PRD(prd,regg,ind)
+                = IU_DOM(prd,regg,ind) + IU_IMP(prd,regg,ind) ;
+
+
+FU_DOM(prd,regg,fd)
+                = FINAL_USE_bp_model(regg,prd,regg,fd) ;
+*                  + FINAL_USE_ts_model(regg,prd,regg,fd) ;
+
+FU_IMP(prd,regg,fd)
+                = sum(reg$(not sameas(reg,regg)), FINAL_USE_bp_model(reg,prd,regg,fd) ) ;
+*                  + sum(reg$(not sameas(reg,regg)), FINAL_USE_ts_model(reg,prd,regg,fd) ) ;
+
+FU_PRD(prd,regg,fd)
+                = FU_DOM(prd,regg,fd) + FU_IMP(prd,regg,fd) ;
+
+
+Display
+IU_PRD
+IU_DOM
+IU_IMP
+FU_PRD
+FU_DOM
+FU_IMP
+;
 
 
 *## Aggregates ##
@@ -93,6 +168,33 @@ INC
 ;
 
 
+
+*## Tax rates ##
+* DEFINED HERE BEACUSE NEEDED FOR PRICES
+* SWITCHED OFF FOR DATA WITHOUT TAXES
+* SHOULD BE DEFINED ON DIMENSIONS (prd,regg,ind) and (prd,regg,fd)
+* Net product tax (taxes less subsidies) rates on intermediate consumption
+*tc_ind(reg,prd,regg,ind)$INTER_USE_ts_model(reg,prd,regg,ind)
+*                = INTER_USE_ts_model(reg,prd,regg,ind) /
+*                  INTER_USE_bp_model(reg,prd,regg,ind) ;
+
+* Net product tax (taxes less subsidies) rates on final demand
+*tc_fd(reg,prd,regg,fd)$FINAL_USE_ts_model(reg,prd,regg,fd)
+*                = FINAL_USE_ts_model(reg,prd,regg,fd) /
+*                  FINAL_USE_bp_model(reg,prd,regg,fd) ;
+
+* Net production tax (taxes less subsidies) rates
+*txd_ind(reg,ntp,regg,ind)$VALUE_ADDED_model(reg,ntp,regg,ind)
+*                = VALUE_ADDED_model(reg,ntp,regg,ind) / Y(regg,ind) ;
+
+*Display
+*tc_ind
+*tc_fd
+*txd_ind
+*;
+
+
+
 *## Parameters of production function ##
 
 * Leontief co-production coefficients according to product technology assumption
@@ -106,13 +208,38 @@ coprodB(reg,prd,regg,ind)$SUP_model(reg,prd,regg,ind)
                 = SUP_model(reg,prd,regg,ind) / X(reg,prd) ;
 
 * Leontief technical input coefficients for intermediate inputs
-ioc(reg,prd,regg,ind)$INTER_USE_bp_model(reg,prd,regg,ind)
-                = INTER_USE_bp_model(reg,prd,regg,ind) / Y(regg,ind) ;
+*ioc(reg,prd,regg,ind)$INTER_USE_bp_model(reg,prd,regg,ind)
+*                = INTER_USE_bp_model(reg,prd,regg,ind) / Y(regg,ind) ;
+ioc(prd,regg,ind)$IU_PRD(prd,regg,ind)
+                = IU_PRD(prd,regg,ind) / Y(regg,ind) ;
 
 * Leontief technical input coefficients for the nest of aggregated factors of
 * production
 aVA(regg,ind)$sum((reg,kl), VALUE_ADDED_model(reg,kl,regg,ind) )
                 = sum((reg,kl), VALUE_ADDED_model(reg,kl,regg,ind) ) / Y(regg,ind) ;
+
+* Leontief technical input coefficients for intermediate inputs on product level
+*Parameter ioc_prd(prd,regg,ind)
+*;
+*ioc_prd(prd,regg,ind)$IU_PRD(prd,regg,ind)
+*                = IU_PRD(prd,regg,ind) / Y(regg,ind) ;
+
+* Share coefficients for domestic vs import intermediate input
+Parameters
+phi_dom(prd,regg,ind)
+phi_imp(prd,regg,ind)
+;
+
+phi_dom(prd,regg,ind)$IU_DOM(prd,regg,ind)
+                = IU_DOM(prd,regg,ind) / IU_PRD(prd,regg,ind) ;
+phi_imp(prd,regg,ind)$IU_IMP(prd,regg,ind)
+                = IU_IMP(prd,regg,ind) / IU_PRD(prd,regg,ind) ;
+
+Display
+ioc
+phi_dom
+phi_imp
+;
 
 * Cobb-Douglas share coefficients for factors of production within the
 * aggregated nest
@@ -158,38 +285,64 @@ Display
 fdL
 ;
 
+* Share coefficients for final demand on product level
+Parameter
+theta_prd(prd,regg,fd)
+;
 
-*## Tax rates ##
+theta_prd(prd,regg,fd)$FU_PRD(prd,regg,fd)
+                = FU_PRD(prd,regg,fd) /
+                  sum(prdd, FU_PRD(prdd,regg,fd) ) ;
 
-* Net product tax (taxes less subsidies) rates on intermediate consumption
-tc_ind(reg,prd,regg,ind)$INTER_USE_ts_model(reg,prd,regg,ind)
-                = INTER_USE_ts_model(reg,prd,regg,ind) /
-                  INTER_USE_bp_model(reg,prd,regg,ind) ;
 
-* Net product tax (taxes less subsidies) rates on final demand
-tc_fd(reg,prd,regg,fd)$FINAL_USE_ts_model(reg,prd,regg,fd)
-                = FINAL_USE_ts_model(reg,prd,regg,fd) /
-                  FINAL_USE_bp_model(reg,prd,regg,fd) ;
+* Share coefficients for domestic vs import final demand
+Parameters
+theta_dom(prd,regg,fd)
+theta_imp(prd,regg,fd)
+;
 
-* Net production tax (taxes less subsidies) rates
-txd_ind(reg,ntp,regg,ind)$VALUE_ADDED_model(reg,ntp,regg,ind)
-                = VALUE_ADDED_model(reg,ntp,regg,ind) / Y(regg,ind) ;
+theta_dom(prd,regg,fd)$FU_DOM(prd,regg,fd)
+                = FU_DOM(prd,regg,fd) / FU_PRD(prd,regg,fd) ;
+theta_imp(prd,regg,fd)$FU_IMP(prd,regg,fd)
+                = FU_IMP(prd,regg,fd) / FU_PRD(prd,regg,fd) ;
 
 Display
-tc_ind
-tc_fd
-txd_ind
+theta_prd
+theta_dom
+theta_imp
 ;
 
 
-theta(reg,prd,regg,fd)$FINAL_USE_bp_model(reg,prd,regg,fd)
-                = FINAL_USE_bp_model(reg,prd,regg,fd) /
-                  sum((reggg,prdd), FINAL_USE_bp_model(reggg,prdd,regg,fd) ) *
-                  ( ( 1 + tc_fd(reg,prd,regg,fd) )**elasF(regg,fd) ) ;
 
-Display
-theta
+*theta_L1(prd,regg,fd)
+*                = sum(reg, FINAL_USE_bp_model(reg,prd,regg,fd) + FINAL_USE_ts_model(reg,prd,regg,fd) ) /
+*                  sum((reggg,prdd), FINAL_USE_bp_model(reggg,prdd,regg,fd) ) ;
+
+*theta(reg,prd,regg,fd)$FINAL_USE_bp_model(reg,prd,regg,fd)
+*                = FINAL_USE_bp_model(reg,prd,regg,fd) /
+*                  sum((reggg,prdd), FINAL_USE_bp_model(reggg,prdd,regg,fd) ) *
+*                  ( ( 1 + tc_fd(reg,prd,regg,fd) )**elasF(regg,fd) ) ;
+
+*theta(reg,prd,regg,fd)$FINAL_USE_bp_model(reg,prd,regg,fd)
+*                = FINAL_USE_bp_model(reg,prd,regg,fd) /
+*                  sum(reggg, FINAL_USE_bp_model(reggg,prd,regg,fd) + FINAL_USE_ts_model(reggg,prd,regg,fd) ) *
+*                  ( ( 1 + tc_fd(reg,prd,regg,fd) )**elasF_L2(prd,regg,fd) ) ;
+
+*Display
+*theta_L1
+*theta
+*;
+
+
+*## Import shares ##
+Parameter
+gammaT(reg,prd,regg)     share parameter for import from reg to regg (for now no taxes)
 ;
+
+gammaT(reg,prd,regg)$TRADE(reg,prd,regg)
+                 = TRADE(reg,prd,regg) / IMPORT(prd,regg) ;
+
+Display gammaT ;
 
 
 *## Distribution of value added and tax revenues to final consumers ##

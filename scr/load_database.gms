@@ -27,8 +27,8 @@ Parameters
          SAM_pp_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,*)      raw SAM expressed in producer prices
 ;
 
-$LIBInclude      xlimport        SAM_bp_data        data/SAMdata_closed_economy_long_format.xlsx   basic_price!a1..g962
-$LIBInclude      xlimport        SAM_ts_data        data/SAMdata_closed_economy_long_format.xlsx   tax_layer!a1..g962
-$LIBInclude      xlimport        SAM_pp_data        data/SAMdata_closed_economy_long_format.xlsx   producer_price!a1..g962
+$LIBInclude      xlimport        SAM_bp_data        data/SAMdata_closed_economy_simplified_long_format.xlsx   basic_price!a1..g962
+$LIBInclude      xlimport        SAM_ts_data        data/SAMdata_closed_economy_simplified_long_format.xlsx   tax_layer!a1..g962
+$LIBInclude      xlimport        SAM_pp_data        data/SAMdata_closed_economy_simplified_long_format.xlsx   producer_price!a1..g962
 
 $if '%db_check%' == 'yes' $include scr/checks_database.gms

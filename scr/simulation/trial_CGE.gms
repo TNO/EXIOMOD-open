@@ -16,9 +16,9 @@ CGE_TRICK.scaleopt = 1 ;
 CGE_MCP.scaleopt = 1 ;
 
 
-*Solve CGE_TRICK using nlp maximizing obj ;
-*Solve CGE_TRICK using cns
-Solve CGE_MCP using mcp ;
+*Solve CGE_TRICK using nlp maximizing obj;
+*Solve CGE_TRICK using cns ;
+Solve CGE_MCP using MCP ;
 
 Parameter
 Y_change(reg,ind)
@@ -49,7 +49,8 @@ CBUD_check(reg,fd)
 ;
 
 CBUD_check(reg,fd) = sum((regg,prd), FINAL_USE_V.L(regg,prd,reg,fd) * P_V.L(regg,prd) *
-                                    ( 1 + tc_fd_V.L(regg,prd,reg,fd) ) )
+*                                    ( 1 + tc_fd_V.L(regg,prd,reg,fd) ) )
+                                    ( 1 ) )
                      / CBUD_V.L(reg,fd) ;
 
 Display CBUD_check ;
@@ -58,9 +59,11 @@ Parameter numer_check(reg,ind)
 ;
 
 numer_check(reg,ind) =  Y_V.L(reg,ind) * PY_V.L(reg,ind) *
-        ( 1 - sum((regg,ntp), txd_ind_V.L(regg,ntp,reg,ind) ) ) / (
+*        ( 1 - sum((regg,ntp), txd_ind_V.L(regg,ntp,reg,ind) ) ) / (
+        ( 1 ) / (
         sum((regg,prd), INTER_USE_V.L(regg,prd,reg,ind) * P_V.L(regg,prd) *
-        ( 1 + tc_ind_V.L(regg,prd,reg,ind) ) ) +
+*        ( 1 + tc_ind_V.L(regg,prd,reg,ind) ) ) +
+        ( 1 ) ) +
         sum((regg,kl), KL_V.L(regg,kl,reg,ind) * PKL_V.L(regg,kl) )  ) ;
 
 Display numer_check ;
