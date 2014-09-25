@@ -30,568 +30,938 @@ This `.gms` file consists of the following parts:
 
 $offtext
 
+* activate end of line comment and specify the activating character
+$oneolcom
+$eolcom #
+
 * ========================== Declaration of variables ==========================
 
 * Endogenous variables
 Variables
-        Y_V(reg,ind)                    output vector industries
-        X_V(reg,prd)                    output vector products
+    Y_V(regg,ind)                   output vector on industry level
+    X_V(reg,prd)                    output vector on product level
 
-        INTER_USE_V(reg,prd,regg,ind)   use of intermediate inputs
-        INTER_USE_T_V(prd,regg,ind)     use of intermediate inputs on product level
-        INTER_USE_D_V(prd,regg,ind)     use of domestic intermediate inputs
-        INTER_USE_M_V(prd,regg,ind)     use of imported intermediate inputs
+    INTER_USE_T_V(prd,regg,ind)     use of intermediate inputs on aggregated
+                                    # product level
+    INTER_USE_D_V(prd,regg,ind)     use of domestically produced intermediate
+                                    # inputs
+    INTER_USE_M_V(prd,regg,ind)     use of aggregated imported intermediate
+                                    # inputs
+    INTER_USE_V(reg,prd,regg,ind)   use of intermediate inputs on the most
+                                    # detailed level
 
-        VA_V(reg,ind)                   use of value added
-        KL_V(reg,kl,regg,ind)           use of production factors
+    VA_V(regg,ind)                  use of aggregated production factors
+    KL_V(reg,kl,regg,ind)           use of specific production factors
 
-        FINAL_USE_V(reg,prd,regg,fd)    final use
-        FINAL_USE_T_V(prd,regg,fd)      final use on product level
-        FINAL_USE_D_V(prd,regg,fd)      final use of domestic products
-        FINAL_USE_M_V(prd,regg,fd)      final use of imported products
-        CBUD_V(reg,fd)                  budget available for final use
-        INC_V(reg,fd)                   gross income (after recieving all revenues and transfers, but before paying transfers)
+    FINAL_USE_T_V(prd,regg,fd)      final use on aggregated product level
+    FINAL_USE_D_V(prd,regg,fd)      final use of domestically produced products
+    FINAL_USE_M_V(prd,regg,fd)      final use of aggregated imported products
+    FINAL_USE_V(reg,prd,regg,fd)    final use on the most detailed level
 
-        TRADE_V(reg,prd,regg)           trade between regions reg and regg
-        IMPORT_V(prd,regg)              import into region reg
+    IMPORT_V(prd,regg)              total use of aggregated imported products
+    TRADE_V(reg,prd,regg)           bi-lateral trade flows
 
-        FACREV_V(reg,kl)                factors of production revenue
-        TSPREV_V(reg,tsp)               net tax on products revenue
-        NTPREV_V(reg,ntp)               net tax on production revenue
+    FACREV_V(reg,kl)                revenue from factors of production
+    TSPREV_V(reg,tsp)               revenue from net tax on products
+    NTPREV_V(reg,ntp)               revenue from net tax on production
 
-        P_V(reg,prd)                    vector of basic product prices
-        PY_V(reg,ind)                   vector on total industry output prices
-        SCLFD_V(reg,fd)                 scale parameter for final consumption
+    INC_V(regg,fd)                  gross income of final consumers
+    CBUD_V(regg,fd)                 budget available for final use
 
-        PIU_V(prd,regg,ind)             aggregate price of intermediate input per product
-        PIMP_V(prd,regg)                aggregate price of import of product prd into region regg
-
-        PVA_V(reg,ind)                  vector of value added prices
-        PKL_V(reg,kl)                   vector of factor prices
-
-        PFU_V(prd,regg,fd)              aggregate price of final use per product
-
-        PFD_V(reg,fd)                   final use price index
+    PY_V(regg,ind)                  industry output price
+    P_V(reg,prd)                    basic product price
+    PKL_V(reg,kl)                   production factor price
+    PVA_V(regg,ind)                 aggregate production factors price
+    PIU_V(prd,regg,ind)             aggregate product price for intermediate use
+    PFU_V(prd,regg,fd)              aggregate product price for final use
+    PIMP_V(prd,regg)                aggregate imported product price
+    SCLFD_V(regg,fd)                scale parameter for final users
+    PAASCHE_V(regg,fd)              Paasche price index for final users
+    LASPEYRES_V(regg,fd)            Laspeyres price index for final users
 ;
 
-Positive variables
-*Y_V
-*X_V
-*INTER_USE_V
-*KL_V
-*CBUD_V
-*INC_V
-P_V
-PY_V
-PKL_V
-PVA_V
-*PFD_L1_V
-PFD_V
-;
+*Positive variables
+*;
 
 * Exogenous variables
 Variables
-        coprodA_V(reg,prd,regg,ind)     co-production coefficients with mix per industry
-        coprodB_V(reg,prd,regg,ind)     co-production coefficients with mix per product
-        ioc_V(reg,prd,regg,ind)         technical input coefficients for intermediate inputs
-        aVA_V(regg,ind)                 technical input coefficients for factors of production
-        facC_V(reg,kl,regg,ind)         Cobb-Douglas share coefficients for factors of production
-        facA_V(regg,ind)                Cobb-Douglas scale parameter for factor of production
-
-        fdL_V(reg,prd,regg,fd)          leontief coefficients for final demand
-        theta_L1_V(prd,regg,fd)         share of consumption on product level
-        theta_V(reg,prd,regg,fd)        share of consumption
-
-        tc_ind_V(reg,prd,regg,ind)      tax and subsidies on products rates for industries
-        tc_fd_V(reg,prd,regg,fd)        tax and subsidies on products rates for final demand
-        txd_ind_V(reg,ntp,regg,ind)     net taxes on production rates
-
-        fac_distr_V(reg,kl,regg,fd)     distribution shares of factor income to budgets of final demand
-        tsp_distr_V(reg,tsp,regg,fd)    distribution shares of taxes and subsidies on products income to budgets of final demand
-        ntp_distr_V(reg,ntp,regg,fd)    distribution shares of taxes and subsidies on production income to budgets of final demand
-
-        KLS_V(reg,kl)                   supply of production factors
-        INCTRANSFER_V(regg,fdd,reg,fd)  income transfers
+    KLS_V(reg,kl)                   supply of production factors
+    INCTRANSFER_V(reg,fd,regg,fdd)  income transfers
 ;
 
 * Artificial objective
-* See explanation on artificial objective function above.
 Variables
-        obj            artificial objective value
+    OBJ                             artificial objective value
 
 ;
-
 
 * ========================== Declaration of equations ==========================
 
 Equations
-        EQBAL(reg,prd)              product market balance
-        EQINTU(reg,prd,regg,ind)    demand for intermediate inputs on product and region level
-        EQX(reg,prd)                output level of products with mix per industry
-        EQY(reg,ind)                output level of activities with mix per product
+    EQBAL(reg,prd)              product market balance
+    EQX(reg,prd)                supply of products with mix per industry
+    EQY(regg,ind)               supply of activities with mix per product
 
-        EQINTU_T(prd,regg,ind)      demand for intermediate inputs on product level
-        EQINTU_D(prd,regg,ind)      demand for domestic intermediate inputs
-        EQINTU_M(prd,regg,ind)      demand for imported intermediate inputs
-        EQVA(reg,ind)               demand for value added
-        EQKL(reg,kl,regg,ind)       demand for production factors
+    EQINTU_T(prd,regg,ind)      demand for intermediate inputs on aggregated
+                                # product level
+    EQINTU_D(prd,regg,ind)      demand for domestically produced intermediate
+                                # inputs
+    EQINTU_M(prd,regg,ind)      demand for aggregated imported intermediate
+                                # inputs
+    EQINTU(reg,prd,regg,ind)    demand for intermediate inputs on the most
+                                # detailed level
 
-        EQFU(reg,prd,regg,fd)       demand for final use of products on product and region level
-        EQFU_T(prd,regg,fd)         demand for final use of products on product level
-        EQFU_D(prd,regg,fd)         demand for domestic final use of products
-        EQFU_M(prd,regg,fd)         demand for import final use of products
+    EQVA(regg,ind)              demand for aggregated production factors
+    EQKL(reg,kl,regg,ind)       demand for specific production factors
 
-        EQIMP(prd,regg)             import of product prd into region regg
-        EQTRADE(reg,prd,regg)       trade of product prd from reg to regg
+    EQFU_T(prd,regg,fd)         demand for final use of products on aggregated
+                                # product level
+    EQFU_D(prd,regg,fd)         demand for final use of domesrically produced
+                                # products
+    EQFU_M(prd,regg,fd)         demand for final use of aggregated imported
+                                # products
+    EQFU(reg,prd,regg,fd)       demand for final use of products on the most
+                                # detailed level
 
-        EQCBUD(reg,fd)              budget available for final use
-        EQINC(reg,fd)               gross income
+    EQIMP(prd,regg)             total demand for aggregared imported products
+    EQTRADE(reg,prd,regg)       demand for bi-lateral trade transactions
 
-        EQFACREV(reg,kl)            factors of production revenue
-        EQTSPREV(reg,tsp)           net tax on products revenue
-        EQNTPREV(reg,ntp)           net tax on production revenue
+    EQFACREV(reg,kl)            revenue from factors of production
+    EQTSPREV(reg,tsp)           revenue from net tax on products
+    EQNTPREV(reg,ntp)           revenue from net tax on production
 
-        EQP(reg,prd)                balance between price per product and price per activity
-        EQPFD(reg,fd)               price index for final use
+    EQINC(regg,fd)              gross income of final consumers
+    EQCBUD(regg,fd)             budget available for final use
 
-        EQPFU(prd,regg,fd)          price index for final use on product level
+    EQPY(regg,ind)              zero-profit condition (including possible
+                                # margins)
+    EQP(reg,prd)                balance between product price and industry price
+    EQPKL(reg,kl)               balance on production factors market
+    EQPVA(regg,ind)             balance between specific production factors
+                                # price and aggregate production factors price
+    EQPIU(prd,regg,ind)         balance between specific product price and
+                                # aggregate product price for intermediate use
+    EQPFU(prd,regg,fd)          balance between specific product price and
+                                # aggregate product price for final use
+    EQPIMP(prd,regg)            balance between specific imported product price
+                                # and aggregated imported product price
+    EQSCLFD(regg,fd)            budget constraint of final users
+    EQPAASCHE(regg,fd)          Paasche price index for final users
+    EQLASPEYRES(regg,fd)        Laspeyres price index for final users
 
-        EQPIU(prd,regg,ind)         price index for intermediate input on product level
-
-        EQPIMP(prd,regg)            price index for aggregate imports
-
-        EQSCLFD(reg,fd)             scale parameter for final demand
-        EQPVA(reg,ind)              price of value added equals cost of factors
-        EQPKL(reg,kl)               production factors market balance
-        EQPY(reg,ind)               revenues equals costs (including possible excessive profit)
-
-        EQOBJ                       artificial objective function
+    EQOBJ                       artificial objective function
 ;
 
 
 * ========================== Definition of equations ===========================
 
-* ## Input-output block ##
+* ## Beginning Input-output block ##
 
-* Product market balance: product output is equal to total uses, including
-* intermediate use, final use and, in case of an open economy, export. Product
-* market balance is expressed in volume.
+* EQUATION 1: Product market balance: product output is equal to total uses,
+* including intermediate use, final use and, in case of an open economy, export.
+* Product market balance is expressed in volume. Product market balance should
+* hold for each product (prd) produced in each region.
 EQBAL(reg,prd)..
-        sum((regg,fd), FINAL_USE_V(reg,prd,regg,fd)) +
-        sum((regg,ind), INTER_USE_V(reg,prd,regg,ind) )
-        =E=
-        X_V(reg,prd) ;
+    sum((regg,fd), FINAL_USE_V(reg,prd,regg,fd) ) +
+    sum((regg,ind), INTER_USE_V(reg,prd,regg,ind) )
+    =E=
+    X_V(reg,prd) ;
 
-* Demand for intermediate inputs: corresponds to the first order conditions of
-* the selected production function.
-EQINTU(reg,prd,regg,ind)..
-        INTER_USE_V(reg,prd,regg,ind)
-        =E=
-*        ioc_V(reg,prd,regg,ind) * Y_V(regg,ind) ;
-        ( INTER_USE_D_V(prd,regg,ind) )$sameas(reg,regg) +
-        ( TRADE_V(reg,prd,regg) * INTER_USE_M_V(prd,regg,ind) / IMPORT_V(prd,regg) )$(not sameas(reg,regg)) ;
-
-* Output level of products: given total amount of output per activity, output
-* per product is derived based on fixed output shares of each industry.
+* EQUATION 2A: Output level of products: given total amount of output per
+* activity, output per product (reg,prd) is derived based on fixed output shares
+* of each industry (regg,ind). EQUATION 2A corresponds to product technology
+* assumption in input-output analysis, EQUATION 2B corresponds to industry
+* technology assumption in input-output analysis. EQUATION 2A is only suitable
+* for input-output analysis where number of product (prd) is equal to number
+* number of industries (ind). EQUATION 2A cannot be used in MCP setup.
 EQX(reg,prd)..
-        X_V(reg,prd)
-        =E=
-        sum((regg,ind), coprodA_V(reg,prd,regg,ind) * Y_V(regg,ind)) ;
+    X_V(reg,prd)
+    =E=
+    sum((regg,ind), coprodA(reg,prd,regg,ind) * Y_V(regg,ind) ) ;
 
-* Output level of activities: given total amount of output per product required
-* output per activity is derived based on fixed sales structure on each market.
-EQY(reg,ind)..
-        Y_V(reg,ind)
-        =E=
-        sum((regg,prd), coprodB_V(regg,prd,reg,ind) * X_V(regg,prd)) ;
+* EQUATION 2B: Output level of activities: given total amount of output per
+* product, required output per activity (regg,ind) is derived based on fixed
+* sales structure on each product market (reg,prd). EQUATION 2A corresponds to
+* product technology assumption in input-output analysis, EQUATION 2B
+* corresponds to industry technology assumption in input-output analysis.
+* EQUATION 2B is suitable for input-output and CGE analysis.
+EQY(regg,ind)..
+    Y_V(regg,ind)
+    =E=
+    sum((reg,prd), coprodB(reg,prd,regg,ind) * X_V(reg,prd) ) ;
 
-* Demand for intermediate inputs on product level
+* EQUATION 3: Demand for intermediate inputs on aggregated product level. The
+* demand function follows Leontief form, where the relation between intermediate
+* inputs of aggregated product (prd) and output of the industry (regg,ind) in
+* volume is kept constant.
 EQINTU_T(prd,regg,ind)..
-        INTER_USE_T_V(prd,regg,ind)
-        =E=
-        ioc(prd,regg,ind) * Y_V(regg,ind) ;
+    INTER_USE_T_V(prd,regg,ind)
+    =E=
+    ioc(prd,regg,ind) * Y_V(regg,ind) ;
 
-* Demand for domestic intermediate inputs
+* EQUATION 4: Demand for domestically produced intermediate inputs. The demand
+* function follows CES form, where demand of each industry (regg,ind) for each
+* domestically produced product (prd) depends linearly on the demand of the same
+* industry for the corresponding aggregated product and with certain elasticity
+* on relative prices of domestically produced product and aggregated imported
+* product
 EQINTU_D(prd,regg,ind)..
-        INTER_USE_D_V(prd,regg,ind)
-        =E=
-        INTER_USE_T_V(prd,regg,ind) * phi_dom(prd,regg,ind) *
-        ( P_V(regg,prd) / PIU_V(prd,regg,ind) )**( -elasIU_dom(prd,regg,ind) ) ;
+    INTER_USE_D_V(prd,regg,ind)
+    =E=
+    INTER_USE_T_V(prd,regg,ind) * phi_dom(prd,regg,ind) *
+    ( P_V(regg,prd) / PIU_V(prd,regg,ind) )**( -elasIU_DM(prd,regg,ind) ) ;
 
-* Demand for imported intermediate inputs
+* EQUAION 5: Demand for aggregated imported intermediate inputs. The demand
+* function follows CES form, where demand of each industry (regg,ind) for each
+* aggregated imported product (prd) depends linearly on the demand of the same
+* industry for the corresponding aggregated product and with certain elasticity
+* on relative prices of aggregated imported product and domestically produced
+* product
 EQINTU_M(prd,regg,ind)..
-        INTER_USE_M_V(prd,regg,ind)
-        =E=
-        INTER_USE_T_V(prd,regg,ind) * phi_imp(prd,regg,ind) *
-        ( PIMP_V(prd,regg) / PIU_V(prd,regg,ind) )**( -elasIU_dom(prd,regg,ind) ) ;
+    INTER_USE_M_V(prd,regg,ind)
+    =E=
+    INTER_USE_T_V(prd,regg,ind) * phi_imp(prd,regg,ind) *
+    ( PIMP_V(prd,regg) / PIU_V(prd,regg,ind) )**( -elasIU_DM(prd,regg,ind) ) ;
+
+* EQUATION 6: Demand for intermediate inputs on the most detailed level. In case
+* the region of demand (regg) is the same as region of product (reg), the
+* demand function is equal to demand for domestically produced product. In case
+* the regions of demand and production differ, the demand function depends on
+* the demand for aggregated imported product and share of import from region
+* regg in the aggregated import.
+EQINTU(reg,prd,regg,ind)..
+    INTER_USE_V(reg,prd,regg,ind)
+    =E=
+    ( INTER_USE_D_V(prd,regg,ind) )$sameas(reg,regg) +
+    ( TRADE_V(reg,prd,regg) * INTER_USE_M_V(prd,regg,ind) /
+    IMPORT_V(prd,regg) )$(not sameas(reg,regg)) ;
+
+* ## End Input-output block ##
 
 
-* Demand for value added:
-EQVA(reg,ind)..
-        VA_V(reg,ind)
-        =E=
-        aVA_V(reg,ind) * Y_V(reg,ind) ;
 
-* Demand for production factors: corresponds to the first order conditions of
-* the selected production function.
-*EQKL(reg,kl,regg,ind)$VALUE_ADDED_model(reg,kl,regg,ind)..
-*        KL_V(reg,kl,regg,ind)
-*        =E=
-*        facC_V(reg,kl,regg,ind) / prod((reggg,kll)$facC(reggg,kll,regg,ind),
-*        facC_V(reggg,kll,regg,ind)**facC_V(reggg,kll,regg,ind) ) *
-*        ( 1 / PKL_V(reg,kl) ) * aVA_V(regg,ind) * Y_V(regg,ind) / facA_V(regg,ind) *
-*        prod((reggg,kll), PKL_V(reggg,kll)**facC_V(reggg,kll,regg,ind) ) ;
+* ## Beginning Factor demand block ##
 
+* EQUATION 7: Demand for aggregated production factors. The demand function
+* follows Leontief form, where the relation between aggregated value added and
+* output of the industry (regg,ind) in volume is kept constant.
+EQVA(regg,ind)..
+    VA_V(regg,ind)
+    =E=
+    aVA(regg,ind) * Y_V(regg,ind) ;
+
+* EQUAION 8: Demand for specific production factors. The demand function follows
+* CES form, where demand of each industry (regg,ind) for each factor of
+* production (reg,kl) depends linearly on the demand of the same industry for
+* aggregated production factors and with certain elasticity on relative prices
+* of specific factors of production.
 EQKL(reg,kl,regg,ind)$VALUE_ADDED_model(reg,kl,regg,ind)..
-        KL_V(reg,kl,regg,ind)
-        =E=
-        VA_V(regg,ind) * facC_V(reg,kl,regg,ind) *
-        ( PKL_V(reg,kl) / PVA_V(regg,ind) )**( (-1) * elas(regg,ind) ) ;
+    KL_V(reg,kl,regg,ind)
+    =E=
+    VA_V(regg,ind) * alpha(reg,kl,regg,ind) *
+    ( PKL_V(reg,kl) / PVA_V(regg,ind) )**( -elasKL(regg,ind) ) ;
 
+
+* EQUATION 8 COBB-DOUGLAS: Demand for specific production factors in explicit
+* Cobb-Douglas form.
 *EQKL(reg,kl,regg,ind)$VALUE_ADDED_model(reg,kl,regg,ind)..
-*        KL_V(reg,kl,regg,ind)
-*        =E=
-*        VA_V(regg,ind) * (gamma(reg,kl,regg,ind)/PKL_V(reg,kl))**elas(regg,ind) *
-*        PVA_V(regg,ind)**elas(regg,ind) * aCES(regg,ind)**(elas(regg,ind)-1) ;
+*    KL_V(reg,kl,regg,ind)
+*    =E=
+*    facC(reg,kl,regg,ind) / prod((reggg,kll)$facC(reggg,kll,regg,ind),
+*    facC(reggg,kll,regg,ind)**facC(reggg,kll,regg,ind) ) *
+*    ( 1 / PKL_V(reg,kl) ) * VA_V(regg,ind) / facA(regg,ind) *
+*    prod((reggg,kll), PKL_V(reggg,kll)**facC(reggg,kll,regg,ind) ) ;
 
-* Demand for final use of products: corresponds to the first order conditions of
-* the selected utility function.
-*EQFU(reg,prd,regg,fd)..
-*        FINAL_USE_V(reg,prd,regg,fd)
-*        =E=
-*        fdL_V(reg,prd,regg,fd) * CBUD_V(regg,fd) / PFD_V(regg,fd) ;
+* EQUATION 8 CONSTANT ELASTICITY OF SUBSTITUTION: Demand for specific production
+* factors in explicit CES form.
+*EQKL(reg,kl,regg,ind)$VALUE_ADDED_model(reg,kl,regg,ind)..
+*    KL_V(reg,kl,regg,ind)
+*    =E=
+*    VA_V(regg,ind) *
+*    ( gammaCES(reg,kl,regg,ind) / PKL_V(reg,kl) )**elasKL(regg,ind) *
+*    PVA_V(regg,ind)**elasKL(regg,ind) *
+*    aCES(regg,ind)**( elasKL(regg,ind) - 1 ) ;
 
-EQFU(reg,prd,regg,fd)..
-        FINAL_USE_V(reg,prd,regg,fd)
-        =E=
-*        SCLFD_V(regg,fd) * theta_V(reg,prd,regg,fd) *
-*        ( P_V(reg,prd) * ( 1 + tc_fd_V(reg,prd,regg,fd) ) )**( (-1) * elasF(regg,fd) ) ;
-*        ( P_V(reg,prd) )**( (-1) * elasF(regg,fd) ) ;
-        ( FINAL_USE_D_V(prd,regg,fd) )$sameas(reg,regg) +
-        ( TRADE_V(reg,prd,regg) * FINAL_USE_M_V(prd,regg,fd) / IMPORT_V(prd,regg) )$(not sameas(reg,regg)) ;
+* ## End Factor demand block ##
 
+
+
+* ## Beginning Final demand for products block ##
+
+* EQUATION 9: Final demand for aggregated products. The demand function follows
+* CES form, where demand by each final user (regg,fd) for each aggregated
+* product (prd) depends with certain elasticity on relative prices of different
+* aggregated products. The final demand function is derived from utility
+* optimization, but there is no market for utility and corresponding price
+* doesn't exist, contrary to CES demand functions derived from optimization of
+* a production function. Scaling parameter (SCLDF_V) is introduced in order to
+* ensure budget constraint (see EQUATION 27).
 EQFU_T(prd,regg,fd)..
-        FINAL_USE_T_V(prd,regg,fd)
-        =E=
-        SCLFD_V(regg,fd) * theta_prd(prd,regg,fd) *
-        PFU_V(prd,regg,fd)**( (-1) * elasF_L1(regg,fd) ) ;
+    FINAL_USE_T_V(prd,regg,fd)
+    =E=
+    SCLFD_V(regg,fd) * theta(prd,regg,fd) *
+    PFU_V(prd,regg,fd)**( -elasFU(regg,fd) ) ;
 
+* EQUATION 10: Final demand for domestically produced products. The demand
+* function follows CES form, where demand by each final user (regg,fd) for each
+* domestically produced product (prd) depends linearly on the demand by the same
+* final user for the corresponding aggregated product and with certain
+* elasticity on relative prices of domestically produced products and aggregated
+* imported product.
 EQFU_D(prd,regg,fd)..
-        FINAL_USE_D_V(prd,regg,fd)
-        =E=
-        FINAL_USE_T_V(prd,regg,fd) * theta_dom(prd,regg,fd) *
-        ( P_V(regg,prd) / PFU_V(prd,regg,fd) )**( -elasF_L2(prd,regg,fd) ) ;
+    FINAL_USE_D_V(prd,regg,fd)
+    =E=
+    FINAL_USE_T_V(prd,regg,fd) * theta_dom(prd,regg,fd) *
+    ( P_V(regg,prd) / PFU_V(prd,regg,fd) )**( -elasFU_DM(prd,regg,fd) ) ;
 
+* EQUATION 11: Final demand for aggregated imported products. The demand
+* function follows CES form, where demand by each final user (regg,fd) for each
+* aggregated imported product (prd) depends linearly on the demand by the same
+* final user for the corresponding aggregated product and with certain
+* elasticity on relative prices of aggregated imported product and domestically
+* produced products.
 EQFU_M(prd,regg,fd)..
-        FINAL_USE_M_V(prd,regg,fd)
-        =E=
-        FINAL_USE_T_V(prd,regg,fd) * theta_imp(prd,regg,fd) *
-        ( PIMP_V(prd,regg) / PFU_V(prd,regg,fd) )**( -elasF_L2(prd,regg,fd) ) ;
+    FINAL_USE_M_V(prd,regg,fd)
+    =E=
+    FINAL_USE_T_V(prd,regg,fd) * theta_imp(prd,regg,fd) *
+    ( PIMP_V(prd,regg) / PFU_V(prd,regg,fd) )**( -elasFU_DM(prd,regg,fd) ) ;
 
-* Total import (import in aggregated terms, so not really physical import)
+* EQUATION 12: Final demand for products on the most detailed level. In case
+* the region of demand (regg) is the same as region of product (reg), the
+* demand function is equal to demand for domestically produced product. In case
+* the regions of demand and production differ, the demand function depends on
+* the demand for aggregated imported product and share of import from region
+* regg in the aggregated import.
+EQFU(reg,prd,regg,fd)..
+    FINAL_USE_V(reg,prd,regg,fd)
+    =E=
+    ( FINAL_USE_D_V(prd,regg,fd) )$sameas(reg,regg) +
+    ( TRADE_V(reg,prd,regg) * FINAL_USE_M_V(prd,regg,fd) /
+    IMPORT_V(prd,regg) )$(not sameas(reg,regg)) ;
+
+* ## End Final demand for products block ##
+
+
+
+* ## Beginning Inter-regional trade block ##
+
+* EQUATION 13: Total demand for aggregate imported products. The demand for each
+* aggregated imported product (prd) in each region (regg) is a sum of the
+* corresponding demand of industries and final consumers in this region.
 EQIMP(prd,regg)..
-        IMPORT_V(prd,regg)
-        =E=
-        sum(ind, INTER_USE_M_V(prd,regg,ind) ) + sum(fd, FINAL_USE_M_V(prd,regg,fd) ) ;
+    IMPORT_V(prd,regg)
+    =E=
+    sum(ind, INTER_USE_M_V(prd,regg,ind) ) +
+    sum(fd, FINAL_USE_M_V(prd,regg,fd) ) ;
 
-* Bi-lateral trade flows
+* EQUATION 14: Demand for bi-lateral trade transactions. The demand function
+* follows CES form, where demand from importing each region (regg) for each
+* product type (prd) produced in each exporting region (reg) depends linearly
+* on the total demand for aggregated imported product in the same importing
+* region and with certain elasticity on relative prices of the same product
+* types produced by different exporting regions.
 EQTRADE(reg,prd,regg)..
-        TRADE_V(reg,prd,regg)
-        =E=
-        IMPORT_V(prd,regg) * gammaT(reg,prd,regg) *
-        ( P_V(reg,prd) / PIMP_V(prd,regg) )**( -elasIMP(prd,regg) ) ;
+    TRADE_V(reg,prd,regg)
+    =E=
+    IMPORT_V(prd,regg) * gamma(reg,prd,regg) *
+    ( P_V(reg,prd) / PIMP_V(prd,regg) )**( -elasIMP(prd,regg) ) ;
 
-* Budget available for final use: gross income minus transfers to other
-* institutional agents.
-EQCBUD(reg,fd)..
-        CBUD_V(reg,fd)
-        =E=
-        INC_V(reg,fd) - sum((regg,fdd), INCTRANSFER_V(reg,fd,regg,fdd) * PFD_V(reg,fd) ) ;
+* ## End Inter-regional trade block ##
 
-* Gross income: composed of factor and tax revenues transfers to the agent, as
-* well as income transfers from other institutional agents.
-EQINC(reg,fd)..
-        INC_V(reg,fd)
-        =E=
-        sum((regg,kl), FACREV_V(regg,kl) * fac_distr_V(regg,kl,reg,fd) ) +
-*        sum((regg,tsp), TSPREV_V(regg,tsp) * tsp_distr_V(regg,tsp,reg,fd) ) +
-*        sum((regg,ntp), NTPREV_V(regg,ntp) * ntp_distr_V(regg,ntp,reg,fd) ) +
-        sum((regg,fdd), INCTRANSFER_V(regg,fdd,reg,fd) * PFD_V(regg,fdd) ) ;
 
-* Factors of production revenue: sum of revenue earned by each production
-* factor.
+
+* ## Beginning Factor and tax revenue block ##
+
+* EQUATION 15: Revenue from factors of production. The revenue of each specific
+* factor (reg,kl) is a sum of revenues earned by the corresponding factor in
+* each industry (ind) in each region (regg).
 EQFACREV(reg,kl)..
-        FACREV_V(reg,kl)
-        =E=
-        sum((regg,ind), KL_V(reg,kl,regg,ind) * PKL_V(reg,kl) ) ;
+    FACREV_V(reg,kl)
+    =E=
+    sum((regg,ind), KL_V(reg,kl,regg,ind) * PKL_V(reg,kl) ) ;
 
-* Net tax on products revenue: net tax revenue earned from sales of products.
+* EQUATION 16: Revenue from net taxes on products. The revenue from each
+* specific tax type (tsp) is a sum of revenues earned from sales of products
+* to industries (reg,ind) for intermediate use and to final consumers (reg,fd)
+* for final use. Net tax revenues ends up in the consumption region (reg)
 EQTSPREV(reg,tsp)..
-        TSPREV_V(reg,tsp)
-        =E=
-        sum((regg,prd,ind), INTER_USE_V(regg,prd,reg,ind) * P_V(regg,prd) *
-        tc_ind_V(regg,prd,reg,ind) ) +
-        sum((regg,prd,fd), FINAL_USE_V(regg,prd,reg,fd) * P_V(regg,prd) *
-        tc_fd_V(regg,prd,reg,fd) ) ;
+    TSPREV_V(reg,tsp)
+    =E=
+    sum((prd,ind), sum(regg, INTER_USE_V(regg,prd,reg,ind) * P_V(regg,prd) ) *
+    tc_ind(prd,reg,ind) ) +
+    sum((prd,fd), sum(regg, FINAL_USE_V(regg,prd,reg,fd) * P_V(regg,prd) ) *
+    tc_fd(prd,reg,fd) ) ;
 
-* Net tax on production revenue: net tax revenue earned from production
-* activities.
+* EQUATION 17: Revenue from net taxes on production. The revenue from each
+* specific tax type (reg,ntp) is a sum of revenue earned from production
+* activities of each industry (ind) in each region (regg).
+
 EQNTPREV(reg,ntp)..
-        NTPREV_V(reg,ntp)
-        =E=
-        sum((regg,ind), Y_V(regg,ind) * PY_V(regg,ind) *
-        txd_ind_V(reg,ntp,regg,ind) ) ;
+    NTPREV_V(reg,ntp)
+    =E=
+    sum((regg,ind), Y_V(regg,ind) * PY_V(regg,ind) *
+    txd_ind(reg,ntp,regg,ind) ) ;
 
-* Balance between price per product and price per activity: price per product is
-* equal to weighted average of prices per activity.
+* ## End Factor and tax revenue block ##
+
+
+
+* ## Beginning Final consumers budgets block ##
+
+* EQUATION 18: Gross income of final consumers. Gross income is composed of
+* shares of factor and tax revenues attributable to each final user (regg,fd),
+* and well as income transfers from other final users. At the moment income
+* transfers is one of the exogenous variables of the model, therefore it is
+* multiplied by a price index in order to preserve model homogeneity in prices
+* of degree zero.
+EQINC(regg,fd)..
+    INC_V(regg,fd)
+    =E=
+    sum((reg,kl), FACREV_V(reg,kl) * fac_distr(reg,kl,regg,fd) ) +
+    sum((reg,tsp), TSPREV_V(reg,tsp) * tsp_distr(reg,tsp,regg,fd) ) +
+    sum((reg,ntp), NTPREV_V(reg,ntp) * ntp_distr(reg,ntp,regg,fd) ) +
+    sum((reg,fdd), INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg,fdd) ) ;
+
+* EQUATION 19: Budget available for final use. Budget is composed of gross
+* income of the corresponding final user (regg,fd) less income transfers to
+* other final users. At the moment income transfers is one of the exogenous
+* variables of the model, therefore it is multiplied by a price index in order
+* to preserve model homogeneity in prices of degree zero.
+EQCBUD(regg,fd)..
+    CBUD_V(regg,fd)
+    =E=
+    INC_V(regg,fd) -
+    sum((reg,fdd), INCTRANSFER_V(regg,fd,reg,fdd) * LASPEYRES_V(regg,fd) ) ;
+
+* ## End Final consumers budgets block ##
+
+
+
+* ## Beginning Price block ##
+
+* EQUATION 20: Zero-profit condition. Industry output price for each industry
+* (ind) in each region (regg) is defined in such a way that revenues earned from
+* product sales less possible production net taxes are equal to the cost of
+* intermediate inputs and factors of production, including possible product and
+* factor taxes, plus, if modeled, excessive profit margins. Output price for one
+* industry in one country is chosen as a numéraire (exogenous variable), so in
+* order to keep the system square, the equation is not defined for this specific
+* industry in this specific region.
+EQPY(regg,ind)$((not sameas(regg,'US')) or (not sameas(ind,'A1')))..
+    Y_V(regg,ind) * PY_V(regg,ind) *
+    ( 1 - sum((reg,ntp), txd_ind(reg,ntp,regg,ind) ) )
+    =E=
+    sum((reg,prd), INTER_USE_V(reg,prd,regg,ind) * P_V(reg,prd) *
+    ( 1 + tc_ind(prd,regg,ind) ) ) +
+    sum((reg,kl), KL_V(reg,kl,regg,ind) * PKL_V(reg,kl) ) ;
+
+* EQUATION 21: Balance between product price and industry price. Price of each
+* product (prd) in each region of production (reg) is defined as a weighted
+* average of industry prices, where weights are defined as output of the product
+* by the corresponding industry . Price equation are only relevant for CGE
+* model, and since only EQUATION 2B is suitable for CGE model, the co-production
+* coefficients of EQUATION 2B are used.
 EQP(reg,prd)..
-        P_V(reg,prd) * X_V(reg,prd)
-        =E=
-        sum((regg,ind), PY_V(regg,ind) * coprodB_V(reg,prd,regg,ind) *
-        X_V(reg,prd) ) ;
+    P_V(reg,prd) * X_V(reg,prd)
+    =E=
+    sum((regg,ind), PY_V(regg,ind) *
+    ( coprodB(reg,prd,regg,ind) * X_V(reg,prd) ) ) ;
 
-* Price index for final use: weighted average of products' purchaser prices.
-* At the moment the equation is not defined to the price choses as a numeraire.
-EQPFD(reg,fd)..
-        PFD_V(reg,fd)
-        =E=
-        sum((regg,prd), P_V(regg,prd) * fdL_V(regg,prd,reg,fd) *
-*        ( 1 + tc_fd_V(regg,prd,reg,fd) ) ) ;
-        1 ) ;
-
-EQPFU(prd,regg,fd)..
-        PFU_V(prd,regg,fd) * FINAL_USE_T_V(prd,regg,fd)
-        =E=
-        P_V(regg,prd) * FINAL_USE_D_V(prd,regg,fd) +
-        PIMP_V(prd,regg) * FINAL_USE_M_V(prd,regg,fd) ;
-
-EQPIU(prd,regg,ind)..
-        PIU_V(prd,regg,ind) * INTER_USE_T_V(prd,regg,ind)
-        =E=
-        P_V(regg,prd) * INTER_USE_D_V(prd,regg,ind) +
-        PIMP_V(prd,regg) * INTER_USE_M_V(prd,regg,ind) ;
-
-EQPIMP(prd,regg)..
-        PIMP_V(prd,regg) * IMPORT_V(prd,regg)
-        =E=
-        sum(reg, P_V(reg,prd) * TRADE_V(reg,prd,regg) ) ;
-
-EQSCLFD(reg,fd)..
-        CBUD_V(reg,fd)
-        =E=
-        sum((regg,prd), P_V(regg,prd) * FINAL_USE_V(regg,prd,reg,fd) *
-*        ( 1 + tc_fd_V(regg,prd,reg,fd) ) ) ;
-        1 ) ;
-
-* Price of value added:
-EQPVA(reg,ind)..
-        PVA_V(reg,ind) * VA_V(reg,ind)
-        =E=
-        sum((regg,kl), PKL_V(regg,kl) * KL_V(regg,kl,reg,ind)) ;
-
-*EQPVA(reg,ind)..
-*        PVA_V(reg,ind)
-*        =E=
-*        1/aCES(reg,ind) * sum((regg,kl)$gamma(regg,kl,reg,ind), gamma(regg,kl,reg,ind)**elas(reg,ind) *
-*        PKL_V(regg,kl)**(1-elas(reg,ind)) )**(1/(1-elas(reg,ind))) ;
-
-*EQPVA(reg,ind)..
-*         PVA_V(reg,ind)
-*         =E=
-*        ( sum((regg,kl), facC_V(regg,kl,reg,ind) * PKL_V(regg,kl)**( 1 - elas(reg,ind) ) ) )**( 1 / ( 1 - elas(reg,ind) ) ) ;
-
-* Production factors market balance: supply of each factor is equal to the
-* demand on this factor plus, if modeled, unemployment.
+* EQUATION 22: Balance on production factors market. Price of each production
+* factor (reg,kl) is defined in such a way that total demand for the
+* corresponding production factor is equal to the supply of the factor less,
+* if modeled, unemployment. Supply of production factors is one of the
+* exogenous variables of the model.
 EQPKL(reg,kl)..
-        KLS_V(reg,kl)
-        =E=
-        sum((regg,ind), KL_V(reg,kl,regg,ind) ) ;
+    KLS_V(reg,kl)
+    =E=
+    sum((regg,ind), KL_V(reg,kl,regg,ind) ) ;
 
-* Revenues equals costs: revenues earned from product sales equal to cost of
-* intermediate products, factors of production, all associated taxes and, if
-* modeled, excessive profit margins.
-*EQPY(reg,ind)..
-EQPY(reg,ind)$((not sameas(reg,'US')) or (not sameas(ind,'A1')))..
-        Y_V(reg,ind) * PY_V(reg,ind) *
-*        ( 1 - sum((regg,ntp), txd_ind_V(regg,ntp,reg,ind) ) )
-        ( 1 )
-        =E=
-        sum((regg,prd), INTER_USE_V(regg,prd,reg,ind) * P_V(regg,prd) *
-*        ( 1 + tc_ind_V(regg,prd,reg,ind) ) ) +
-        ( 1 ) ) +
-        sum((regg,kl), KL_V(regg,kl,reg,ind) * PKL_V(regg,kl) ) ;
+* EQUATION 23: Balance between specific production factors price and aggregate
+* production factors price. The aggregate price is different in each industry
+* (ind) in each region (regg) and is a weighted average of the price of specific
+* production factors, where weights are defined as demand by the industry for
+* corresponding production factors.
+EQPVA(regg,ind)..
+    PVA_V(regg,ind) * VA_V(regg,ind)
+    =E=
+    sum((reg,kl), PKL_V(reg,kl) * KL_V(reg,kl,regg,ind)) ;
 
-* Artificial objective function: only relevant for users of conopt solver.
-EQOBJ.. obj
-        =E=
-        1 ;
+* EQUATION 23 COBB-DOUGLAS: Price of aggregate production factors defines in
+* explicit Cobb-Douglas form, can be only used in combination with EQUATION 8
+* COBB DOUGLAS.
+*EQPVA(regg,ind)..
+*    PVA_V(regg,ind)
+*    =E=
+*    sum((reg,kl), facC(reg,kl,regg,ind) *
+*    PKL_V(reg,kl)**( 1 - elasKL(regg,ind) ) )**
+*    ( 1 / ( 1 - elasKL(regg,ind) ) ) ;
+
+* EQUATION 23 CONSTANT ELASTICITY OF SUBSTITUTION: Price of aggregate
+* production factors defines in explicit CES form, can be only used in
+* combination with EQUATION 8 CONSTANT ELASTICITY OF SUBSTITUTION.
+*EQPVA(regg,ind)..
+*    PVA_V(regg,ind)
+*    =E=
+*    1 / aCES(regg,ind) *
+*    sum((reg,kl)$gammaCES(reg,kl,regg,ind),
+*    gammaCES(reg,kl,regg,ind)**elasKL(regg,ind) *
+*    PKL_V(reg,kl)**( 1 - elasKL(regg,ind) ) )**
+*    ( 1 / ( 1 - elasKL(regg,ind) ) ) ;
+
+* EQUATION 24: Balance between specific product price and aggregate product
+* price for intermediate use. The aggregate price is different for each
+* aggregated product (prd) in each industry (ind) in each region (regg) and is
+* a weighted average of the price of domestically produced product and the
+* aggregate import price, where weights are defined as corresponding demands for
+* intermediate use.
+EQPIU(prd,regg,ind)..
+    PIU_V(prd,regg,ind) * INTER_USE_T_V(prd,regg,ind)
+    =E=
+    P_V(regg,prd) * INTER_USE_D_V(prd,regg,ind) +
+    PIMP_V(prd,regg) * INTER_USE_M_V(prd,regg,ind) ;
+
+* EQUATION 25: Balance between specific product price and aggregate product
+* price for final use. The aggregate price is different for each aggregated
+* product (prd) demanded by each final user (regg,fd) and is a weighted average
+* of the price of domestically produced product and the aggregate import price,
+* where weights are defined as corresponding demands for final use.
+EQPFU(prd,regg,fd)..
+    PFU_V(prd,regg,fd) * FINAL_USE_T_V(prd,regg,fd)
+    =E=
+    P_V(regg,prd) * FINAL_USE_D_V(prd,regg,fd) +
+    PIMP_V(prd,regg) * FINAL_USE_M_V(prd,regg,fd) ;
+
+* EQUATION 26: Balance between specific imported product price and aggregated
+* imported product price. The aggregate price is different for each product
+* (prd) in each importing region (regg) and is a weighed average of specific
+* product prices of exporting regions, where weights are defined as bi-lateral
+* trade flows between the importing regions and the corresponding exporting
+* regions.
+EQPIMP(prd,regg)..
+    PIMP_V(prd,regg) * IMPORT_V(prd,regg)
+    =E=
+    sum(reg, P_V(reg,prd) * TRADE_V(reg,prd,regg) ) ;
+
+* EQUATION 27: Budget constraint of final users. The equation ensures that the
+* total budget available for final use is spent on purchase of products. The
+* equation defines scaling parameter of final users, see also explanation for
+* EQUATION 9.
+EQSCLFD(regg,fd)..
+    CBUD_V(regg,fd)
+    =E=
+    sum((reg,prd), P_V(reg,prd) * ( 1 + tc_fd(prd,regg,fd) ) *
+    FINAL_USE_V(reg,prd,regg,fd) ) ;
+
+* EQUATION 28: Paasche price index for final users. The price index is
+* calculated separately for each type of final user (regg,fd).
+EQPAASCHE(regg,fd)..
+    PAASCHE_V(regg,fd)
+    =E=
+    sum((reg,prd), P_V(reg,prd) * ( 1 + tc_fd(prd,regg,fd) ) *
+    FINAL_USE_V(reg,prd,regg,fd) ) /
+    sum((reg,prd), 1 * ( 1 + tc_fd(prd,regg,fd) ) *
+    FINAL_USE_V(reg,prd,regg,fd) ) ;
+
+* EQUATION 29: Laspeyres price index for final users. The price index is
+* calculated separately for each type of final user (regg,fd).
+EQLASPEYRES(regg,fd)..
+    LASPEYRES_V(regg,fd)
+    =E=
+    sum((reg,prd), P_V(reg,prd) * ( 1 + tc_fd(prd,regg,fd) ) *
+    FINAL_USE_bp_model(reg,prd,regg,fd) ) /
+    sum((reg,prd), 1 * ( 1 + tc_fd(prd,regg,fd) ) *
+    FINAL_USE_bp_model(reg,prd,regg,fd) ) ;
+
+* ## End Price block ##
+
+
+
+* EQUATION 30: Artificial objective function: only relevant for users of
+* conopt solver in combination with NLP type of mathematical problem.
+EQOBJ..
+    OBJ
+    =E=
+    1 ;
 
 
 * ======== Define levels and lower and upper bounds and fixed variables ========
 
 * Endogenous variables
-Y_V.L(reg,ind)     = Y(reg,ind) ;
-X_V.L(reg,prd)     = X(reg,prd) ;
+Y_V.L(regg,ind) = Y(regg,ind) ;
+X_V.L(reg,prd)  = X(reg,prd) ;
+Y_V.FX(regg,ind)$(Y(regg,ind) eq 0) = 0 ;
+X_V.FX(reg,prd)$(X(reg,prd) eq 0)   = 0 ;
 
-INTER_USE_V.L(reg,prd,regg,ind)    = INTER_USE_bp_model(reg,prd,regg,ind) ;
-INTER_USE_T_V.L(prd,regg,ind)      = IU_PRD(prd,regg,ind) ;
-INTER_USE_D_V.L(prd,regg,ind)      = IU_DOM(prd,regg,ind) ;
+INTER_USE_T_V.L(prd,regg,ind)   = IU_PRD(prd,regg,ind) ;
+INTER_USE_D_V.L(prd,regg,ind)   = IU_DOM(prd,regg,ind) ;
+INTER_USE_M_V.L(prd,regg,ind)   = IU_IMP(prd,regg,ind) ;
+INTER_USE_V.L(reg,prd,regg,ind) = INTER_USE_bp_model(reg,prd,regg,ind) ;
+INTER_USE_T_V.FX(prd,regg,ind)$(IU_PRD(prd,regg,ind) eq 0)                   = 0 ;
+INTER_USE_D_V.FX(prd,regg,ind)$(IU_DOM(prd,regg,ind) eq 0)                   = 0 ;
+INTER_USE_M_V.FX(prd,regg,ind)$(IU_IMP(prd,regg,ind) eq 0)                   = 0 ;
+INTER_USE_V.FX(reg,prd,regg,ind)$(INTER_USE_bp_model(reg,prd,regg,ind) eq 0) = 0 ;
 
-INTER_USE_M_V.L(prd,regg,ind)      = IU_IMP(prd,regg,ind) ;
-INTER_USE_M_V.FX(prd,regg,ind)$( IU_IMP(prd,regg,ind) eq 0 ) = IU_IMP(prd,regg,ind) ;
-
-VA_V.L(reg,ind) = sum((regg,kl), VALUE_ADDED_model(regg,kl,reg,ind) ) ;
+VA_V.L(regg,ind)        = sum((reg,kl), VALUE_ADDED_model(reg,kl,regg,ind) ) ;
 KL_V.L(reg,kl,regg,ind) = VALUE_ADDED_model(reg,kl,regg,ind) ;
+VA_V.FX(regg,ind)$(sum((reg,kl), VALUE_ADDED_model(reg,kl,regg,ind) ) eq 0) = 0 ;
+KL_V.FX(reg,kl,regg,ind)$(VALUE_ADDED_model(reg,kl,regg,ind) eq 0 )         = 0 ;
 
-KL_V.FX(reg,kl,regg,ind)$(VALUE_ADDED_model(reg,kl,regg,ind) eq 0 ) = 0 ;
-
-FINAL_USE_V.L(reg,prd,regg,fd) = FINAL_USE_bp_model(reg,prd,regg,fd) ;
 FINAL_USE_T_V.L(prd,regg,fd)   = FU_PRD(prd,regg,fd) ;
 FINAL_USE_D_V.L(prd,regg,fd)   = FU_DOM(prd,regg,fd) ;
 FINAL_USE_M_V.L(prd,regg,fd)   = FU_IMP(prd,regg,fd) ;
+FINAL_USE_V.L(reg,prd,regg,fd) = FINAL_USE_bp_model(reg,prd,regg,fd) ;
+FINAL_USE_T_V.FX(prd,regg,fd)$(FU_PRD(prd,regg,fd) eq 0)                   = 0 ;
+FINAL_USE_D_V.FX(prd,regg,fd)$(FU_DOM(prd,regg,fd) eq 0)                   = 0 ;
+FINAL_USE_M_V.FX(prd,regg,fd)$(FU_IMP(prd,regg,fd) eq 0)                   = 0 ;
+FINAL_USE_V.FX(reg,prd,regg,fd)$(FINAL_USE_bp_model(reg,prd,regg,fd) eq 0) = 0 ;
 
-IMPORT_V.L(prd,regg)           = IMPORT(prd,regg) ;
+IMPORT_V.L(prd,regg)    = IMPORT(prd,regg) ;
+TRADE_V.L(reg,prd,regg) = TRADE(reg,prd,regg) ;
+IMPORT_V.FX(prd,regg)$(IMPORT(prd,regg) eq 0)       = 0 ;
+TRADE_V.FX(reg,prd,regg)$(TRADE(reg,prd,regg) eq 0) = 0 ;
 
-TRADE_V.L(reg,prd,regg)        = TRADE(reg,prd,regg) ;
-TRADE_V.FX(reg,prd,regg)$( TRADE(reg,prd,regg) eq 0 ) = 0 ;
+FACREV_V.L(reg,kl)  = sum((regg,fd), VALUE_ADDED_DISTR_model(reg,kl,regg,fd) ) ;
+TSPREV_V.L(reg,tsp) = sum((regg,fd), TAX_SUB_PRD_DISTR_model(reg,tsp,regg,fd) ) ;
+NTPREV_V.L(reg,ntp) = sum((regg,fd), VALUE_ADDED_DISTR_model(reg,ntp,regg,fd) ) ;
+FACREV_V.FX(reg,kl)$(sum((regg,fd), VALUE_ADDED_DISTR_model(reg,kl,regg,fd) ) eq 0)    = 0 ;
+TSPREV_V.FX(reg,tsp)$(sum((regg,fd), TAX_SUB_PRD_DISTR_model(reg,tsp,regg,fd) )  eq 0) = 0 ;
+NTPREV_V.FX(reg,ntp)$(sum((regg,fd), VALUE_ADDED_DISTR_model(reg,ntp,regg,fd) )  eq 0) = 0 ;
 
-CBUD_V.L(reg,fd) = sum((regg,prd), FINAL_USE_bp_model(regg,prd,reg,fd) + FINAL_USE_ts_model(regg,prd,reg,fd) ) ;
-INC_V.L(reg,fd) = INC(reg,fd) ;
+INC_V.L(regg,fd)  = INC(regg,fd) ;
+CBUD_V.L(regg,fd) = sum((reg,prd), FINAL_USE_bp_model(reg,prd,regg,fd) + FINAL_USE_ts_model(reg,prd,regg,fd) ) ;
+INC_V.FX(regg,fd)$(INC(regg,fd) eq 0)                                                                               = 0 ;
+CBUD_V.L(regg,fd)$(sum((reg,prd), FINAL_USE_bp_model(reg,prd,regg,fd) + FINAL_USE_ts_model(reg,prd,regg,fd) ) eq 0) = 0 ;
 
-FACREV_V.L(reg,kl) = sum((regg,fd), VALUE_ADDED_DISTR_model(reg,kl,regg,fd) ) ; ;
-*TSPREV_V.L(reg,tsp) = sum((regg,fd), TAX_SUB_PRD_DISTR_model(reg,tsp,regg,fd) ) ;
-*NTPREV_V.L(reg,ntp) = sum((regg,fd), VALUE_ADDED_DISTR_model(reg,ntp,regg,fd) ) ;
+PY_V.L(regg,ind)       = 1 ;
+P_V.L(reg,prd)         = 1 ;
+PKL_V.L(reg,kl)        = 1 ;
+PVA_V.L(regg,ind)      = 1 ;
+PIU_V.L(prd,regg,ind)  = 1 ;
+PFU_V.L(prd,regg,fd)   = 1 ;
+PIMP_V.L(prd,regg)     = 1 ;
+SCLFD_V.L(regg,fd)     = sum((reg,prd), FINAL_USE_bp_model(reg,prd,regg,fd) ) ;
+PAASCHE_V.L(regg,fd)   = 1 ;
+LASPEYRES_V.L(regg,fd) = 1 ;
+PY_V.FX('US','A1')                                                             = 1 ;
+PY_V.FX(regg,ind)$(Y_V.L(regg,ind) eq 0)                                       = 1 ;
+P_V.FX(reg,prd)$(X_V.L(reg,prd) eq 0)                                          = 1 ;
+PKL_V.FX(reg,kl)$(KLS(reg,kl) eq 0)                                            = 1 ;
+PVA_V.FX(regg,ind)$(VA_V.L(regg,ind) eq 0)                                     = 1 ;
+PIU_V.FX(prd,regg,ind)$(INTER_USE_T_V.L(prd,regg,ind) eq 0)                    = 1 ;
+PFU_V.FX(prd,regg,fd)$(FINAL_USE_T_V.L(prd,regg,fd) eq 0)                      = 1 ;
+PIMP_V.FX(prd,regg)$(IMPORT_V.L(prd,regg)eq 0)                                 = 1 ;
+SCLFD_V.FX(regg,fd)$(SCLFD_V.L(regg,fd) eq 0)                                  = 0 ;
+PAASCHE_V.FX(regg,fd)$(sum((reg,prd), FINAL_USE_V.L(reg,prd,regg,fd) ) eq 0)   = 1 ;
+LASPEYRES_V.FX(regg,fd)$(sum((reg,prd), FINAL_USE_V.L(reg,prd,regg,fd) ) eq 0) = 1 ;
 
-P_V.L(reg,prd) = 1 ;
-PY_V.L(reg,ind) = 1 ;
-PVA_V.L(reg,ind) = 1 ;
-PKL_V.L(reg,kl) = 1 ;
-PIU_V.L(prd,regg,ind) = 1 ;
-PFU_V.L(prd,regg,fd)  = 1 ;
-PIMP_V.L(prd,regg)    = 1 ;
-
-*PFD_V.L(reg,fd) = sum((regg,prd), fdL(regg,prd,reg,fd) * ( 1 + tc_fd(regg,prd,reg,fd) ) ) ; ;
-PFD_V.L(reg,fd) = 1 ;
-
-SCLFD_V.L(reg,fd) = sum((regg,prd), FINAL_USE_bp_model(regg,prd,reg,fd) ) ;
-
-P_V.LO(reg,prd) = 0.01 ;
-PKL_V.LO(reg,kl)  = 0.01 ;
-PVA_V.LO(reg,ind)  = 0.01 ;
-
-* One endogenous variable is chosen to be a numeraire
-PY_V.FX('US','A1') = 1 ;
 
 * Exogenous variables
-coprodA_V.FX(reg,prd,regg,ind)   = coprodA(reg,prd,regg,ind)        ;
-coprodB_V.FX(reg,prd,regg,ind)   = coprodB(reg,prd,regg,ind)        ;
-*ioc_V.FX(reg,prd,regg,ind)       = ioc(reg,prd,regg,ind)            ;
-aVA_V.FX(regg,ind)               = aVA(regg,ind)                    ;
-facC_V.FX(reg,kl,regg,ind)       = facC(reg,kl,regg,ind)            ;
-facA_V.FX(regg,ind)              = facA(regg,ind)                   ;
-
-fdL_V.FX(reg,prd,regg,fd)        = fdL(reg,prd,regg,fd)             ;
-*theta_L1_V.FX(prd,regg,fd)       = theta_L1(prd,regg,fd)            ;
-*theta_V.FX(reg,prd,regg,fd)      = theta(reg,prd,regg,fd)           ;
-
-*tc_ind_V.FX(reg,prd,regg,ind)    = tc_ind(reg,prd,regg,ind)         ;
-*tc_fd_V.FX(reg,prd,regg,fd)      = tc_fd(reg,prd,regg,fd)           ;
-*txd_ind_V.FX(reg,ntp,regg,ind)   = txd_ind(reg,ntp,regg,ind)        ;
-
-fac_distr_V.FX(reg,kl,regg,fd)   = fac_distr(reg,kl,regg,fd)        ;
-tsp_distr_V.FX(reg,tsp,regg,fd)  = tsp_distr(reg,tsp,regg,fd)       ;
-ntp_distr_V.FX(reg,ntp,regg,fd)  = ntp_distr(reg,ntp,regg,fd)       ;
-
-KLS_V.FX(reg,kl)                 = KLS(reg,kl)                      ;
+KLS_V.FX(reg,kl)                  = KLS(reg,kl) ;
 INCTRANSFER_V.FX(reg,fd,regg,fdd) = INCOME_DISTR_model(reg,fd,regg,fdd) ;
 
 * ======================= Scale variables and equations ========================
 
-X_V.SCALE(reg,prd)   = X_V.L(reg,prd)  ;
-EQBAL.SCALE(reg,prd) = X_V.L(reg,prd) ;
+* EQUATION 1 and EQUATION 2A
+EQBAL.SCALE(reg,prd)$(X_V.L(reg,prd) gt 0)
+    = X_V.L(reg,prd) ;
+EQX.SCALE(reg,prd)$(X_V.L(reg,prd) gt 0)
+    = X_V.L(reg,prd) ;
+X_V.SCALE(reg,prd)$(X_V.L(reg,prd) gt 0)
+    = X_V.L(reg,prd) ;
 
-INTER_USE_V.SCALE(reg,prd,regg,ind)$INTER_USE_V.L(reg,prd,regg,ind) = INTER_USE_V.L(reg,prd,regg,ind) ;
-EQINTU.SCALE(reg,prd,regg,ind)$INTER_USE_V.L(reg,prd,regg,ind)      = INTER_USE_V.L(reg,prd,regg,ind) ;
+EQBAL.SCALE(reg,prd)$(X_V.L(reg,prd) lt 0)
+    = -X_V.L(reg,prd) ;
+EQX.SCALE(reg,prd)$(X_V.L(reg,prd) lt 0)
+    = -X_V.L(reg,prd) ;
+X_V.SCALE(reg,prd)$(X_V.L(reg,prd) lt 0)
+    = -X_V.L(reg,prd) ;
 
-VA_V.SCALE(reg,ind) = VA_V.L(reg,ind) ;
-EQVA.SCALE(reg,ind) = VA_V.L(reg,ind) ;
+* EQUATION 2B
+EQY.SCALE(regg,ind)$(Y_V.L(regg,ind) gt 0)
+    = Y_V.L(regg,ind) ;
+Y_V.SCALE(regg,ind)$(Y_V.L(regg,ind) gt 0)
+    = Y_V.L(regg,ind) ;
 
-Y_V.SCALE(reg,ind) = Y_V.L(reg,ind) ;
-EQY.SCALE(reg,ind) = Y_V.L(reg,ind) ;
+EQY.SCALE(regg,ind)$(Y_V.L(regg,ind) lt 0)
+    = -Y_V.L(regg,ind) ;
+Y_V.SCALE(regg,ind)$(Y_V.L(regg,ind) lt 0)
+    = -Y_V.L(regg,ind) ;
 
-INTER_USE_T_V.SCALE(prd,regg,ind)      = INTER_USE_T_V.L(prd,regg,ind) ;
-EQINTU_T.SCALE(prd,regg,ind)           = INTER_USE_T_V.L(prd,regg,ind) ;
+* EQUATION 3
+EQINTU_T.SCALE(prd,regg,ind)$(INTER_USE_T_V.L(prd,regg,ind) gt 0)
+    = INTER_USE_T_V.L(prd,regg,ind) ;
+INTER_USE_T_V.SCALE(prd,regg,ind)$(INTER_USE_T_V.L(prd,regg,ind) gt 0)
+    = INTER_USE_T_V.L(prd,regg,ind) ;
 
-INTER_USE_D_V.SCALE(prd,regg,ind)      = INTER_USE_D_V.L(prd,regg,ind) ;
-EQINTU_D.SCALE(prd,regg,ind)           = INTER_USE_D_V.L(prd,regg,ind) ;
+EQINTU_T.SCALE(prd,regg,ind)$(INTER_USE_T_V.L(prd,regg,ind) lt 0)
+    = -INTER_USE_T_V.L(prd,regg,ind) ;
+INTER_USE_T_V.SCALE(prd,regg,ind)$(INTER_USE_T_V.L(prd,regg,ind) lt 0)
+    = -INTER_USE_T_V.L(prd,regg,ind) ;
 
-INTER_USE_M_V.SCALE(prd,regg,ind)$INTER_USE_M_V.L(prd,regg,ind)      = INTER_USE_M_V.L(prd,regg,ind) ;
-EQINTU_M.SCALE(prd,regg,ind)$INTER_USE_M_V.L(prd,regg,ind)           = INTER_USE_M_V.L(prd,regg,ind) ;
+* EQUATION 4
+EQINTU_D.SCALE(prd,regg,ind)$(INTER_USE_D_V.L(prd,regg,ind) gt 0)
+    = INTER_USE_D_V.L(prd,regg,ind) ;
+INTER_USE_D_V.SCALE(prd,regg,ind)$(INTER_USE_D_V.L(prd,regg,ind) gt 0)
+    = INTER_USE_D_V.L(prd,regg,ind) ;
 
-KL_V.SCALE(reg,kl,regg,ind)$KL_V.L(reg,kl,regg,ind)  = KL_V.L(reg,kl,regg,ind) ;
-EQKL.SCALE(reg,kl,regg,ind)$KL_V.L(reg,kl,regg,ind)  = KL_V.L(reg,kl,regg,ind) ;
+EQINTU_D.SCALE(prd,regg,ind)$(INTER_USE_D_V.L(prd,regg,ind) lt 0)
+    = -INTER_USE_D_V.L(prd,regg,ind) ;
+INTER_USE_D_V.SCALE(prd,regg,ind)$(INTER_USE_D_V.L(prd,regg,ind) lt 0)
+    = -INTER_USE_D_V.L(prd,regg,ind) ;
 
-FINAL_USE_V.SCALE(reg,prd,regg,fd) = FINAL_USE_V.L(reg,prd,regg,fd) ;
-EQFU.SCALE(reg,prd,regg,fd)        = FINAL_USE_V.L(reg,prd,regg,fd) ;
+* EQUATION 5
+EQINTU_M.SCALE(prd,regg,ind)$(INTER_USE_M_V.L(prd,regg,ind) gt 0)
+    = INTER_USE_M_V.L(prd,regg,ind) ;
+INTER_USE_M_V.SCALE(prd,regg,ind)$(INTER_USE_M_V.L(prd,regg,ind) gt 0)
+    = INTER_USE_M_V.L(prd,regg,ind) ;
 
-FINAL_USE_T_V.SCALE(prd,regg,fd)  = FINAL_USE_T_V.L(prd,regg,fd) ;
-EQFU_T.SCALE(prd,regg,fd)         = FINAL_USE_T_V.L(prd,regg,fd) ;
+EQINTU_M.SCALE(prd,regg,ind)$(INTER_USE_M_V.L(prd,regg,ind) lt 0)
+    = -INTER_USE_M_V.L(prd,regg,ind) ;
+INTER_USE_M_V.SCALE(prd,regg,ind)$(INTER_USE_M_V.L(prd,regg,ind) lt 0)
+    = -INTER_USE_M_V.L(prd,regg,ind) ;
 
-FINAL_USE_D_V.SCALE(prd,regg,fd)  = FINAL_USE_D_V.L(prd,regg,fd) ;
-EQFU_D.SCALE(prd,regg,fd)         = FINAL_USE_D_V.L(prd,regg,fd) ;
+* EQUATION 6
+EQINTU.SCALE(reg,prd,regg,ind)$(INTER_USE_V.L(reg,prd,regg,ind) gt 0)
+    = INTER_USE_V.L(reg,prd,regg,ind) ;
+INTER_USE_V.SCALE(reg,prd,regg,ind)$(INTER_USE_V.L(reg,prd,regg,ind) gt 0)
+    = INTER_USE_V.L(reg,prd,regg,ind) ;
 
-FINAL_USE_M_V.SCALE(prd,regg,fd)  = FINAL_USE_M_V.L(prd,regg,fd) ;
-EQFU_M.SCALE(prd,regg,fd)         = FINAL_USE_M_V.L(prd,regg,fd) ;
+EQINTU.SCALE(reg,prd,regg,ind)$(INTER_USE_V.L(reg,prd,regg,ind) lt 0)
+    = -INTER_USE_V.L(reg,prd,regg,ind) ;
+INTER_USE_V.SCALE(reg,prd,regg,ind)$(INTER_USE_V.L(reg,prd,regg,ind) lt 0)
+    = -INTER_USE_V.L(reg,prd,regg,ind) ;
 
-IMPORT_V.SCALE(prd,regg)          = IMPORT_V.L(prd,regg) ;
-EQIMP.SCALE(prd,regg)             = IMPORT_V.L(prd,regg) ;
+* EQUATION 7
+EQVA.SCALE(regg,ind)$(VA_V.L(regg,ind) gt 0)
+    = VA_V.L(regg,ind) ;
+VA_V.SCALE(regg,ind)$(VA_V.L(regg,ind) gt 0)
+    = VA_V.L(regg,ind) ;
 
-TRADE_V.SCALE(reg,prd,regg)$TRADE_V.L(reg,prd,regg) = TRADE_V.L(reg,prd,regg) ;
-EQTRADE.SCALE(reg,prd,regg)$TRADE_V.L(reg,prd,regg) = TRADE_V.L(reg,prd,regg) ;
+EQVA.SCALE(regg,ind)$(VA_V.L(regg,ind) lt 0)
+    = -VA_V.L(regg,ind) ;
+VA_V.SCALE(regg,ind)$(VA_V.L(regg,ind) lt 0)
+    = -VA_V.L(regg,ind) ;
 
-CBUD_V.SCALE(reg,fd) = CBUD_V.L(reg,fd) ;
-EQCBUD.SCALE(reg,fd) = CBUD_V.L(reg,fd) ;
+* EQUAION 8
+EQKL.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) gt 0)
+    = KL_V.L(reg,kl,regg,ind) ;
+KL_V.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) gt 0)
+    = KL_V.L(reg,kl,regg,ind) ;
 
-INC_V.SCALE(reg,fd) = INC_V.L(reg,fd) ;
-EQINC.SCALE(reg,fd) = INC_V.L(reg,fd) ;
+EQKL.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) lt 0)
+    = -KL_V.L(reg,kl,regg,ind) ;
+KL_V.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) lt 0)
+    = -KL_V.L(reg,kl,regg,ind) ;
 
-FACREV_V.SCALE(reg,kl) = FACREV_V.L(reg,kl) ;
-EQFACREV.SCALE(reg,kl) = FACREV_V.L(reg,kl) ;
+* EQUATION 9
+EQFU_T.SCALE(prd,regg,fd)$(FINAL_USE_T_V.L(prd,regg,fd) gt 0)
+    = FINAL_USE_T_V.L(prd,regg,fd) ;
+FINAL_USE_T_V.SCALE(prd,regg,fd)$(FINAL_USE_T_V.L(prd,regg,fd) gt 0)
+    = FINAL_USE_T_V.L(prd,regg,fd) ;
 
-*TSPREV_V.SCALE(reg,tsp)$TSPREV_V.L(reg,tsp) = TSPREV_V.L(reg,tsp) ;
-*EQTSPREV.SCALE(reg,tsp)$TSPREV_V.L(reg,tsp) = TSPREV_V.L(reg,tsp) ;
+EQFU_T.SCALE(prd,regg,fd)$(FINAL_USE_T_V.L(prd,regg,fd) lt 0)
+    = -FINAL_USE_T_V.L(prd,regg,fd) ;
+FINAL_USE_T_V.SCALE(prd,regg,fd)$(FINAL_USE_T_V.L(prd,regg,fd) lt 0)
+    = -FINAL_USE_T_V.L(prd,regg,fd) ;
 
-*NTPREV_V.SCALE(reg,ntp)$NTPREV_V.L(reg,ntp) = NTPREV_V.L(reg,ntp) ;
-*EQNTPREV.SCALE(reg,ntp)$NTPREV_V.L(reg,ntp) = NTPREV_V.L(reg,ntp) ;
+* EQUATION 10
+EQFU_D.SCALE(prd,regg,fd)$(FINAL_USE_D_V.L(prd,regg,fd) gt 0)
+    = FINAL_USE_D_V.L(prd,regg,fd) ;
+FINAL_USE_D_V.SCALE(prd,regg,fd)$(FINAL_USE_D_V.L(prd,regg,fd) gt 0)
+    = FINAL_USE_D_V.L(prd,regg,fd) ;
 
-SCLFD_V.SCALE(reg,fd) = SCLFD_V.L(reg,fd) ;
-EQSCLFD.SCALE(reg,fd) = SCLFD_V.L(reg,fd) ;
+EQFU_D.SCALE(prd,regg,fd)$(FINAL_USE_D_V.L(prd,regg,fd) lt 0)
+    = -FINAL_USE_D_V.L(prd,regg,fd) ;
+FINAL_USE_D_V.SCALE(prd,regg,fd)$(FINAL_USE_D_V.L(prd,regg,fd) lt 0)
+    = -FINAL_USE_D_V.L(prd,regg,fd) ;
 
-EQP.SCALE(reg,prd) = X_V.L(reg,prd)  ;
+* EQUATION 11
+EQFU_M.SCALE(prd,regg,fd)$(FINAL_USE_M_V.L(prd,regg,fd) gt 0)
+    = FINAL_USE_M_V.L(prd,regg,fd) ;
+FINAL_USE_M_V.SCALE(prd,regg,fd)$(FINAL_USE_M_V.L(prd,regg,fd) gt 0)
+    = FINAL_USE_M_V.L(prd,regg,fd) ;
 
-EQPVA.SCALE(reg,ind) = VA_V.L(reg,ind) ;
+EQFU_M.SCALE(prd,regg,fd)$(FINAL_USE_M_V.L(prd,regg,fd) lt 0)
+    = -FINAL_USE_M_V.L(prd,regg,fd) ;
+FINAL_USE_M_V.SCALE(prd,regg,fd)$(FINAL_USE_M_V.L(prd,regg,fd) lt 0)
+    = -FINAL_USE_M_V.L(prd,regg,fd) ;
 
-EQPKL.SCALE(reg,kl)  = KLS_V.L(reg,kl) ;
+* EQUATION 12
+EQFU.SCALE(reg,prd,regg,fd)$(FINAL_USE_V.L(reg,prd,regg,fd) gt 0)
+    = FINAL_USE_V.L(reg,prd,regg,fd) ;
+FINAL_USE_V.SCALE(reg,prd,regg,fd)$(FINAL_USE_V.L(reg,prd,regg,fd) gt 0)
+    = FINAL_USE_V.L(reg,prd,regg,fd) ;
 
-EQPY.SCALE(reg,ind)  = Y_V.L(reg,ind) ;
+EQFU.SCALE(reg,prd,regg,fd)$(FINAL_USE_V.L(reg,prd,regg,fd) lt 0)
+    = -FINAL_USE_V.L(reg,prd,regg,fd) ;
+FINAL_USE_V.SCALE(reg,prd,regg,fd)$(FINAL_USE_V.L(reg,prd,regg,fd) lt 0)
+    = -FINAL_USE_V.L(reg,prd,regg,fd) ;
 
-EQPIU.SCALE(prd,regg,ind) = INTER_USE_T_V.L(prd,regg,ind) ;
+* EQUATION 13
+EQIMP.SCALE(prd,regg)$(IMPORT_V.L(prd,regg) gt 0)
+    = IMPORT_V.L(prd,regg) ;
+IMPORT_V.SCALE(prd,regg)$(IMPORT_V.L(prd,regg) gt 0)
+    = IMPORT_V.L(prd,regg) ;
 
-EQPFU.SCALE(prd,regg,fd)  = FINAL_USE_T_V.L(prd,regg,fd) ;
+EQIMP.SCALE(prd,regg)$(IMPORT_V.L(prd,regg) lt 0)
+    = -IMPORT_V.L(prd,regg) ;
+IMPORT_V.SCALE(prd,regg)$(IMPORT_V.L(prd,regg) lt 0)
+    = -IMPORT_V.L(prd,regg) ;
 
-EQPIMP.SCALE(prd,regg)    = IMPORT_V.L(prd,regg) ;
+* EQUATION 14
+EQTRADE.SCALE(reg,prd,regg)$(TRADE_V.L(reg,prd,regg) gt 0)
+    = TRADE_V.L(reg,prd,regg) ;
+TRADE_V.SCALE(reg,prd,regg)$(TRADE_V.L(reg,prd,regg) gt 0)
+    = TRADE_V.L(reg,prd,regg) ;
 
-KLS_V.SCALE(reg,kl)   = KLS_V.L(reg,kl) ;
+EQTRADE.SCALE(reg,prd,regg)$(TRADE_V.L(reg,prd,regg) lt 0)
+    = -TRADE_V.L(reg,prd,regg) ;
+TRADE_V.SCALE(reg,prd,regg)$(TRADE_V.L(reg,prd,regg) lt 0)
+    = -TRADE_V.L(reg,prd,regg) ;
 
-INCTRANSFER_V.SCALE(reg,fd,regg,fdd)$INCTRANSFER_V.L(reg,fd,regg,fdd) = INCTRANSFER_V.L(reg,fd,regg,fdd) ;
+* EQUATION 15
+EQFACREV.SCALE(reg,kl)$(FACREV_V.L(reg,kl) gt 0)
+    = FACREV_V.L(reg,kl) ;
+FACREV_V.SCALE(reg,kl)$(FACREV_V.L(reg,kl) gt 0)
+    = FACREV_V.L(reg,kl) ;
+
+EQFACREV.SCALE(reg,kl)$(FACREV_V.L(reg,kl) lt 0)
+    = -FACREV_V.L(reg,kl) ;
+FACREV_V.SCALE(reg,kl)$(FACREV_V.L(reg,kl) lt 0)
+    = -FACREV_V.L(reg,kl) ;
+
+* EQUATION 16
+EQTSPREV.SCALE(reg,tsp)$(TSPREV_V.L(reg,tsp) gt 0)
+    = TSPREV_V.L(reg,tsp) ;
+TSPREV_V.SCALE(reg,tsp)$(TSPREV_V.L(reg,tsp) gt 0)
+    = TSPREV_V.L(reg,tsp) ;
+
+EQTSPREV.SCALE(reg,tsp)$(TSPREV_V.L(reg,tsp) lt 0)
+    = -TSPREV_V.L(reg,tsp) ;
+TSPREV_V.SCALE(reg,tsp)$(TSPREV_V.L(reg,tsp) lt 0)
+    = -TSPREV_V.L(reg,tsp) ;
+
+* EQUATION 17
+EQNTPREV.SCALE(reg,ntp)$(NTPREV_V.L(reg,ntp) gt 0)
+    = NTPREV_V.L(reg,ntp) ;
+NTPREV_V.SCALE(reg,ntp)$(NTPREV_V.L(reg,ntp) gt 0)
+    = NTPREV_V.L(reg,ntp) ;
+
+EQNTPREV.SCALE(reg,ntp)$(NTPREV_V.L(reg,ntp) lt 0)
+    = -NTPREV_V.L(reg,ntp) ;
+NTPREV_V.SCALE(reg,ntp)$(NTPREV_V.L(reg,ntp) lt 0)
+    = -NTPREV_V.L(reg,ntp) ;
+
+* EQUATION 18
+EQINC.SCALE(reg,fd)$(INC_V.L(reg,fd) gt 0)
+    = INC_V.L(reg,fd) ;
+INC_V.SCALE(reg,fd)$(INC_V.L(reg,fd) gt 0)
+    = INC_V.L(reg,fd) ;
+
+EQINC.SCALE(reg,fd)$(INC_V.L(reg,fd) lt 0)
+    = -INC_V.L(reg,fd) ;
+INC_V.SCALE(reg,fd)$(INC_V.L(reg,fd) lt 0)
+    = -INC_V.L(reg,fd) ;
+
+* EQUATION 19
+EQCBUD.SCALE(reg,fd)$(CBUD_V.L(reg,fd) gt 0)
+    = CBUD_V.L(reg,fd) ;
+CBUD_V.SCALE(reg,fd)$(CBUD_V.L(reg,fd) gt 0)
+    = CBUD_V.L(reg,fd) ;
+
+EQCBUD.SCALE(reg,fd)$(CBUD_V.L(reg,fd) lt 0)
+    = -CBUD_V.L(reg,fd) ;
+CBUD_V.SCALE(reg,fd)$(CBUD_V.L(reg,fd) lt 0)
+    = -CBUD_V.L(reg,fd) ;
+
+* EQUATION 20
+EQPY.SCALE(regg,ind)$(Y_V.L(regg,ind) gt 0)
+    = Y_V.L(regg,ind) ;
+
+EQPY.SCALE(regg,ind)$(Y_V.L(regg,ind) lt 0)
+    = -Y_V.L(regg,ind) ;
+
+*EQUATION 21
+EQP.SCALE(reg,prd)$(X_V.L(reg,prd) gt 0)
+    = X_V.L(reg,prd) ;
+
+EQP.SCALE(reg,prd)$(X_V.L(reg,prd) lt 0)
+    = -X_V.L(reg,prd)  ;
+
+* EQUATION 22
+EQPKL.SCALE(reg,kl)$(KLS_V.L(reg,kl) gt 0)
+    = KLS_V.L(reg,kl) ;
+
+EQPKL.SCALE(reg,kl)$(KLS_V.L(reg,kl) lt 0)
+    = -KLS_V.L(reg,kl) ;
+
+* EQUATION 23
+EQPVA.SCALE(reg,ind)$(VA_V.L(reg,ind) gt 0)
+    = VA_V.L(reg,ind) ;
+
+EQPVA.SCALE(reg,ind)$(VA_V.L(reg,ind) lt 0)
+    = -VA_V.L(reg,ind) ;
+
+* EQUATION 24
+EQPIU.SCALE(prd,regg,ind)$(INTER_USE_T_V.L(prd,regg,ind) gt 0)
+    = INTER_USE_T_V.L(prd,regg,ind) ;
+
+EQPIU.SCALE(prd,regg,ind)$(INTER_USE_T_V.L(prd,regg,ind) lt 0)
+    = -INTER_USE_T_V.L(prd,regg,ind) ;
+
+* EQUATION 25
+EQPFU.SCALE(prd,regg,fd)$(FINAL_USE_T_V.L(prd,regg,fd) gt 0)
+    = FINAL_USE_T_V.L(prd,regg,fd) ;
+
+EQPFU.SCALE(prd,regg,fd)$(FINAL_USE_T_V.L(prd,regg,fd) lt 0)
+    = -FINAL_USE_T_V.L(prd,regg,fd) ;
+
+* EQUATION 26
+EQPIMP.SCALE(prd,regg)$(IMPORT_V.L(prd,regg) gt 0)
+    = IMPORT_V.L(prd,regg) ;
+
+EQPIMP.SCALE(prd,regg)$(IMPORT_V.L(prd,regg) lt 0)
+    = -IMPORT_V.L(prd,regg) ;
+
+* EQUATION 27
+EQSCLFD.SCALE(reg,fd)$(SCLFD_V.L(reg,fd) gt 0)
+    = SCLFD_V.L(reg,fd) ;
+SCLFD_V.SCALE(reg,fd)$(SCLFD_V.L(reg,fd) gt 0)
+    = SCLFD_V.L(reg,fd) ;
+
+EQSCLFD.SCALE(reg,fd)$(SCLFD_V.L(reg,fd) lt 0)
+    = -SCLFD_V.L(reg,fd) ;
+SCLFD_V.SCALE(reg,fd)$(SCLFD_V.L(reg,fd) lt 0)
+    = -SCLFD_V.L(reg,fd) ;
+
+* EQUATION 28 - SCALING IS NOT REQUIRED
+
+* EQUATION 29 - SCALING IS NOT REQUIRED
+
+* EQUATION 30 - SCALING IS NOT REQUIRED
+
+* EXOGENOUS VARIBLES
+KLS_V.SCALE(reg,kl)$(KLS_V.L(reg,kl) gt 0)
+    = KLS_V.L(reg,kl) ;
+KLS_V.SCALE(reg,kl)$(KLS_V.L(reg,kl) lt 0)
+    = -KLS_V.L(reg,kl) ;
+
+INCTRANSFER_V.SCALE(reg,fd,regg,fdd)$(INCTRANSFER_V.L(reg,fd,regg,fdd) gt 0)
+    = INCTRANSFER_V.L(reg,fd,regg,fdd) ;
+INCTRANSFER_V.SCALE(reg,fd,regg,fdd)$(INCTRANSFER_V.L(reg,fd,regg,fdd) lt 0)
+    = -INCTRANSFER_V.L(reg,fd,regg,fdd) ;
 
 * ========================== Declare model equations ===========================
 
 Model IO_product_technology
 /
 EQBAL
-EQINTU
 EQX
+EQINTU_T
+EQINTU_D
+EQINTU_M
+EQINTU
 EQOBJ
 /
 ;
@@ -599,8 +969,11 @@ EQOBJ
 Model IO_industry_technology
 /
 EQBAL
-EQINTU
 EQY
+EQINTU_T
+EQINTU_D
+EQINTU_M
+EQINTU
 EQOBJ
 /
 ;
@@ -608,33 +981,34 @@ EQOBJ
 Model CGE_TRICK
 /
 EQBAL
-EQINTU
-EQVA
 EQY
 EQINTU_T
 EQINTU_D
 EQINTU_M
+EQINTU
+EQVA
 EQKL
-EQFU
 EQFU_T
 EQFU_D
 EQFU_M
+EQFU
 EQIMP
 EQTRADE
-EQCBUD
-EQINC
 EQFACREV
-*EQTSPREV
-*EQNTPREV
+EQTSPREV
+EQNTPREV
+EQINC
+EQCBUD
+EQPY
 EQP
-EQPFD
+EQPKL
+EQPVA
 EQPIU
 EQPFU
 EQPIMP
 EQSCLFD
-EQPVA
-EQPKL
-EQPY
+EQPAASCHE
+EQLASPEYRES
 EQOBJ
 /
 ;
@@ -642,32 +1016,33 @@ EQOBJ
 Model CGE_MCP
 /
 EQBAL.X_V
-EQINTU.INTER_USE_V
-EQVA.VA_V
 EQY.Y_V
 EQINTU_T.INTER_USE_T_V
 EQINTU_D.INTER_USE_D_V
 EQINTU_M.INTER_USE_M_V
+EQINTU.INTER_USE_V
+EQVA.VA_V
 EQKL.KL_V
-EQFU.FINAL_USE_V
 EQFU_T.FINAL_USE_T_V
 EQFU_D.FINAL_USE_D_V
 EQFU_M.FINAL_USE_M_V
+EQFU.FINAL_USE_V
 EQIMP.IMPORT_V
 EQTRADE.TRADE_V
-EQCBUD.CBUD_V
-EQINC.INC_V
 EQFACREV.FACREV_V
-*EQTSPREV.TSPREV_V
-*EQNTPREV.NTPREV_V
+EQTSPREV.TSPREV_V
+EQNTPREV.NTPREV_V
+EQINC.INC_V
+EQCBUD.CBUD_V
+EQPY.PY_V
 EQP.P_V
-EQPFD.PFD_V
+EQPKL.PKL_V
+EQPVA.PVA_V
 EQPIU.PIU_V
 EQPFU.PFU_V
 EQPIMP.PIMP_V
 EQSCLFD.SCLFD_V
-EQPVA.PVA_V
-EQPKL.PKL_V
-EQPY.PY_V
+EQPAASCHE.PAASCHE_V
+EQLASPEYRES.LASPEYRES_V
 /
 ;
