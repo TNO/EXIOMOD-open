@@ -21,49 +21,46 @@ CGE_MCP.scaleopt = 1 ;
 Solve CGE_MCP using MCP ;
 
 Parameter
-Y_change(reg,ind)
+Y_change(regg,ind)
 X_change(reg,prd)
 ;
 
-Y_change(reg,ind) = Y_V.L(reg,ind) / Y(reg,ind) ;
-X_change(reg,prd) = X_V.L(reg,prd) / X(reg,prd) ;
+Y_change(regg,ind) = Y_V.L(regg,ind) / Y(regg,ind) ;
+X_change(reg,prd)  = X_V.L(reg,prd) / X(reg,prd) ;
 
 Display Y_change, X_change ;
 
 Parameter
-VA_check(reg,ind)
-VA_check_CES(reg,ind)
+VA_check(regg,ind)
+VA_check_CES(regg,ind)
 ;
 
-VA_check(reg,ind) = facA_V.L(reg,ind) * prod((regg,kl), KL_V.L(regg,kl,reg,ind)**facC_V.L(reg,kl,regg,ind) )
-                     / VA_V.L(reg,ind) ;
+VA_check(regg,ind) = facA(regg,ind) * prod((reg,kl), KL_V.L(reg,kl,regg,ind)**facC(reg,kl,regg,ind) )
+                     / VA_V.L(regg,ind) ;
 
-VA_check_CES(reg,ind) = ( sum((regg,kl)$facC_V.L(regg,kl,reg,ind), facC_V.L(regg,kl,reg,ind)**( 1 / elas(reg,ind) ) *
-                                         KL_V.L(regg,kl,reg,ind)**( ( elas(reg,ind) - 1 ) / elas(reg,ind) ) ) )**( elas(reg,ind) / ( elas(reg,ind) - 1 ) )
-                     / VA_V.L(reg,ind) ;
+VA_check_CES(regg,ind) = ( sum((reg,kl)$facC(reg,kl,regg,ind), facC(reg,kl,regg,ind)**( 1 / elasKL(regg,ind) ) *
+                                         KL_V.L(reg,kl,regg,ind)**( ( elasKL(regg,ind) - 1 ) / elasKL(regg,ind) ) ) )**( elasKL(regg,ind) / ( elasKL(regg,ind) - 1 ) )
+                     / VA_V.L(regg,ind) ;
 
-Display VA_check, VA_check_CES, KL_V.L, VA_V.L, facA_V.L, facC_V.L ;
+Display VA_check, VA_check_CES, KL_V.L, VA_V.L, facA, facC ;
 
 Parameter
-CBUD_check(reg,fd)
+CBUD_check(regg,fd)
 ;
 
-CBUD_check(reg,fd) = sum((regg,prd), FINAL_USE_V.L(regg,prd,reg,fd) * P_V.L(regg,prd) *
-*                                    ( 1 + tc_fd_V.L(regg,prd,reg,fd) ) )
-                                    ( 1 ) )
-                     / CBUD_V.L(reg,fd) ;
+CBUD_check(regg,fd) = sum((reg,prd), FINAL_USE_V.L(reg,prd,regg,fd) * P_V.L(reg,prd) *
+                                    ( 1 + tc_fd(prd,regg,fd) ) )
+                     / CBUD_V.L(regg,fd) ;
 
 Display CBUD_check ;
 
-Parameter numer_check(reg,ind)
+Parameter numer_check(regg,ind)
 ;
 
-numer_check(reg,ind) =  Y_V.L(reg,ind) * PY_V.L(reg,ind) *
-*        ( 1 - sum((regg,ntp), txd_ind_V.L(regg,ntp,reg,ind) ) ) / (
-        ( 1 ) / (
-        sum((regg,prd), INTER_USE_V.L(regg,prd,reg,ind) * P_V.L(regg,prd) *
-*        ( 1 + tc_ind_V.L(regg,prd,reg,ind) ) ) +
-        ( 1 ) ) +
-        sum((regg,kl), KL_V.L(regg,kl,reg,ind) * PKL_V.L(regg,kl) )  ) ;
+numer_check(regg,ind) =  Y_V.L(regg,ind) * PY_V.L(regg,ind) *
+        ( 1 - sum((reg,ntp), txd_ind(reg,ntp,regg,ind) ) ) / (
+        sum((reg,prd), INTER_USE_V.L(reg,prd,regg,ind) * P_V.L(reg,prd) *
+        ( 1 + tc_ind(prd,regg,ind) ) ) +
+        sum((reg,kl), KL_V.L(reg,kl,regg,ind) * PKL_V.L(reg,kl) )  ) ;
 
 Display numer_check ;

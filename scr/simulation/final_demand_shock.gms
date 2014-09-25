@@ -30,6 +30,13 @@ Display
 FINAL_USE_V.L
 ;
 
+P_V.FX(regg,prd)         = 1 ;
+PIU_V.FX(prd,regg,ind)   = 1 ;
+PIMP_V.FX(prd,regg)      = 1 ;
+TRADE_V.FX(reg,prd,regg) = TRADE(reg,prd,regg) ;
+IMPORT_V.FX(prd,regg)    = IMPORT(prd,regg) ;
+
+
 * =============================== Solve statement ==============================
 
 Solve %model_type% using nlp maximizing obj ;
