@@ -314,14 +314,14 @@ ioc(prd,regg,ind)$IU_PRD(prd,regg,ind)
 * each region (regg)
 phi_dom(prd,regg,ind)$IU_DOM(prd,regg,ind)
     = IU_DOM(prd,regg,ind) / IU_PRD(prd,regg,ind) *
-    ( 1 / ( 1 + tc_ind(prd,regg,ind) ) )**( -elasIU_DM(prd,regg,ind) ) ;
+    ( ( 1 + tc_ind(prd,regg,ind) ) / 1 )**( -elasIU_DM(prd,regg,ind) ) ;
 
 * Relative share parameter for intermediate use of aggregated imported products,
 * versus domestic products, for each product (prd) in each industry (ind) in
 * each region (regg)
 phi_imp(prd,regg,ind)$IU_IMP(prd,regg,ind)
     = IU_IMP(prd,regg,ind) / IU_PRD(prd,regg,ind) *
-    ( 1 / ( 1 + tc_ind(prd,regg,ind) ) )**( -elasIU_DM(prd,regg,ind) ) ;
+    ( ( 1 + tc_ind(prd,regg,ind) ) / 1 )**( -elasIU_DM(prd,regg,ind) ) ;
 
 * Leontief technical input coefficients for the nest of aggregated factors of
 * production in each industry (ind) in each region (regg)
@@ -392,21 +392,21 @@ aCES ;
 * product (prd) by each final demand category (fd) in each region (reg)
 theta(prd,regg,fd)$FU_PRD(prd,regg,fd)
     = FU_PRD(prd,regg,fd) / sum(prdd, FU_PRD(prdd,regg,fd) ) *
-    ( 1 + tc_fd(prd,regg,fd) )**( -elasFU(regg,fd) ) ;
+    ( 1 / ( 1 + tc_fd(prd,regg,fd) ) )**( -elasFU(regg,fd) ) ;
 
 * Relative share parameter for final consumption of domestic products, versus
 * aggregated imported products, for each product (prd) by each final demand
 * category (fd) in each region (regg)
 theta_dom(prd,regg,fd)$FU_DOM(prd,regg,fd)
     = FU_DOM(prd,regg,fd) / FU_PRD(prd,regg,fd) *
-    ( 1 / ( 1 + tc_fd(prd,regg,fd) ) )**( -elasFU_DM(prd,regg,fd) ) ;
+    ( ( 1 + tc_fd(prd,regg,fd) ) / 1 )**( -elasFU_DM(prd,regg,fd) ) ;
 
 * Relative share parameter for final consumption of aggregated imported
 * products, versus domestic products, for each product (prd) by each final
 * demand category (fd) in each region (regg)
 theta_imp(prd,regg,fd)$FU_IMP(prd,regg,fd)
     = FU_IMP(prd,regg,fd) / FU_PRD(prd,regg,fd) *
-    ( 1 / ( 1 + tc_fd(prd,regg,fd) ) )**( -elasFU_DM(prd,regg,fd) ) ;
+    ( ( 1 + tc_fd(prd,regg,fd) ) / 1 )**( -elasFU_DM(prd,regg,fd) ) ;
 
 Display
 theta
