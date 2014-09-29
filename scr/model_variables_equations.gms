@@ -209,7 +209,9 @@ EQINTU_D(prd,regg,ind)..
     INTER_USE_D_V(prd,regg,ind)
     =E=
     INTER_USE_T_V(prd,regg,ind) * phi_dom(prd,regg,ind) *
-    ( P_V(regg,prd) / PIU_V(prd,regg,ind) )**( -elasIU_DM(prd,regg,ind) ) ;
+    ( P_V(regg,prd) /
+    ( PIU_V(prd,regg,ind) * ( 1 + tc_ind(prd,regg,ind) ) ) )**
+    ( -elasIU_DM(prd,regg,ind) ) ;
 
 * EQUAION 5: Demand for aggregated imported intermediate inputs. The demand
 * function follows CES form, where demand of each industry (regg,ind) for each
@@ -221,7 +223,9 @@ EQINTU_M(prd,regg,ind)..
     INTER_USE_M_V(prd,regg,ind)
     =E=
     INTER_USE_T_V(prd,regg,ind) * phi_imp(prd,regg,ind) *
-    ( PIMP_V(prd,regg) / PIU_V(prd,regg,ind) )**( -elasIU_DM(prd,regg,ind) ) ;
+    ( PIMP_V(prd,regg) /
+    ( PIU_V(prd,regg,ind) * ( 1 + tc_ind(prd,regg,ind) ) ) )**
+    ( -elasIU_DM(prd,regg,ind) ) ;
 
 * EQUATION 6: Demand for intermediate inputs on the most detailed level. In case
 * the region of demand (regg) is the same as region of product (reg), the
@@ -300,7 +304,7 @@ EQFU_T(prd,regg,fd)..
     FINAL_USE_T_V(prd,regg,fd)
     =E=
     SCLFD_V(regg,fd) * theta(prd,regg,fd) *
-    PFU_V(prd,regg,fd)**( -elasFU(regg,fd) ) ;
+    ( PFU_V(prd,regg,fd) * ( 1 + tc_fd(prd,regg,fd) ) )**( -elasFU(regg,fd) ) ;
 
 * EQUATION 10: Final demand for domestically produced products. The demand
 * function follows CES form, where demand by each final user (regg,fd) for each
@@ -312,7 +316,9 @@ EQFU_D(prd,regg,fd)..
     FINAL_USE_D_V(prd,regg,fd)
     =E=
     FINAL_USE_T_V(prd,regg,fd) * theta_dom(prd,regg,fd) *
-    ( P_V(regg,prd) / PFU_V(prd,regg,fd) )**( -elasFU_DM(prd,regg,fd) ) ;
+    ( P_V(regg,prd) /
+    ( PFU_V(prd,regg,fd) * ( 1 + tc_fd(prd,regg,fd) ) ) )**
+    ( -elasFU_DM(prd,regg,fd) ) ;
 
 * EQUATION 11: Final demand for aggregated imported products. The demand
 * function follows CES form, where demand by each final user (regg,fd) for each
@@ -324,7 +330,9 @@ EQFU_M(prd,regg,fd)..
     FINAL_USE_M_V(prd,regg,fd)
     =E=
     FINAL_USE_T_V(prd,regg,fd) * theta_imp(prd,regg,fd) *
-    ( PIMP_V(prd,regg) / PFU_V(prd,regg,fd) )**( -elasFU_DM(prd,regg,fd) ) ;
+    ( PIMP_V(prd,regg) /
+    ( PFU_V(prd,regg,fd) * ( 1 + tc_fd(prd,regg,fd) ) ) )
+    **( -elasFU_DM(prd,regg,fd) ) ;
 
 * EQUATION 12: Final demand for products on the most detailed level. In case
 * the region of demand (regg) is the same as region of product (reg), the
