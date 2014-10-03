@@ -72,8 +72,10 @@ Parameter
 ;
 
 CBUD_check(regg,fd)
-    = sum((reg,prd), FINAL_USE_V.L(reg,prd,regg,fd) * P_V.L(reg,prd) *
-    ( 1 + tc_fd(prd,regg,fd) ) ) / CBUD_V.L(regg,fd) ;
+    = ( sum((reg,prd), FINAL_USE_V.L(reg,prd,regg,fd) * P_V.L(reg,prd) *
+    ( 1 + tc_fd(prd,regg,fd) ) ) +
+    sum((row,prd), FINAL_USE_ROW_V.L(row,prd,regg,fd) * PROW_V.L(row) *
+    ( 1 + tc_fd(prd,regg,fd) ) ) ) / CBUD_V.L(regg,fd) ;
 
 Display
 CBUD_check
@@ -86,6 +88,8 @@ Parameter
 numer_check(regg,ind) =  Y_V.L(regg,ind) * PY_V.L(regg,ind) *
     ( 1 - sum((reg,ntp), txd_ind(reg,ntp,regg,ind) ) ) /
     ( sum((reg,prd), INTER_USE_V.L(reg,prd,regg,ind) * P_V.L(reg,prd) *
+    ( 1 + tc_ind(prd,regg,ind) ) ) +
+    sum((row,prd), INTER_USE_ROW_V.L(row,prd,regg,ind) * PROW_V.L(row) *
     ( 1 + tc_ind(prd,regg,ind) ) ) +
     sum((reg,kl), KL_V.L(reg,kl,regg,ind) * PKL_V.L(reg,kl) ) ) ;
 

@@ -65,6 +65,8 @@ Parameters
     IMPORT(prd,regg)            import of products into a region (volume)
     TRADE(reg,prd,regg)         trade of products between regions (volume)
     KLS(reg,kl)                 supply of production factors (volume)
+    CBUD(regg,fd)               total budget available for final consumption
+                                # (value)
     INC(regg,fd)                total income of final demand categories (value)
 
     tc_ind(prd,regg,ind)        tax and subsidies on products rates for
@@ -90,6 +92,9 @@ Parameters
     alpha(reg,kl,regg,ind)      relative share parameter for factors of
                                 # production within the aggregated next
                                 # (relation in volume)
+    phi_row(row,prd,regg,ind)   input coefficients for intermediate use of
+                                # products imported from the rest of the world
+                                # (relation in volume)
 
     facC(reg,kl,regg,ind)       Cobb-Douglas share coefficients for factors
                                 # of production (relation in value)
@@ -107,9 +112,14 @@ Parameters
                                 # of domestic products (relation in volume)
     theta_imp(prd,regg,fd)      relative share parameter for final consumption
                                 # of imported products (relation in volume)
+    theta_row(row,prd,regg,fd)  coefficients for final consumption of products
+                                # imported from the rest of the world (relation
+                                # in value)
 
     gamma(reg,prd,regg)         relative share parameter for origin region of
                                 # import (relation in volume)
+    gammaE(reg,prd,row,exp)     share coefficients for export (relation in
+                                # volume)
 
     fac_distr(reg,kl,regg,fd)   distribution shares of factor income to budgets
                                 # of final demand (shares in value)
@@ -250,15 +260,22 @@ TRADE
 KLS(reg,kl)
     = sum((regg,ind),VALUE_ADDED_model(reg,kl,regg,ind) ) ;
 
-* Total income in value of each final demand category (fd) in each region (regg)
-INC(regg,fd)
+* Total budget in value available for final consumption of each final demand
+* category (fd) in each region (regg)
+CBUD(regg,fd)
     = sum((reg,prd), FINAL_USE_bp_model(reg,prd,regg,fd) ) +
     sum((reg,prd), FINAL_USE_ts_model(reg,prd,regg,fd) ) +
-    sum((reg,fdd), INCOME_DISTR_model(regg,fd,reg,fdd) ) +
-    sum((row,uip), IMPORT_USE_FD_model(regg,fd,row,uip) ) ;
+    sum((row,prd), FINAL_USE_ROW_bp_model(row,prd,regg,fd) ) +
+    sum((row,prd), FINAL_USE_ROW_ts_model(row,prd,regg,fd) ) ;
+
+* Total income in value of each final demand category (fd) in each region (regg)
+INC(regg,fd)
+    = CBUD(regg,fd) +
+    sum((reg,fdd), INCOME_DISTR_model(regg,fd,reg,fdd) ) ;
 
 Display
 KLS
+CBUD
 INC
 ;
 
@@ -270,15 +287,19 @@ INC
 * purchaser's price of intermediate use, tax rate differs by product (prd) in
 * each industry (ind) in each region (regg)
 tc_ind(prd,regg,ind)$sum(reg, INTER_USE_ts_model(reg,prd,regg,ind) )
-    = sum(reg, INTER_USE_ts_model(reg,prd,regg,ind) ) /
-    sum(reg, INTER_USE_bp_model(reg,prd,regg,ind) ) ;
+    = ( sum(reg, INTER_USE_ts_model(reg,prd,regg,ind) ) +
+    sum(row, INTER_USE_ROW_ts_model(row,prd,regg,ind) ) ) /
+    ( sum(reg, INTER_USE_bp_model(reg,prd,regg,ind) ) +
+    sum(row, INTER_USE_ROW_bp_model(row,prd,regg,ind) ) ) ;
 
 * Net tax (taxes less subsidies) rates on aggregated products included into
 * purchaser's price of final use, tax rate differs by product (prd) by each
 * final demand category (fd) in each region (regg)
 tc_fd(prd,regg,fd)$sum(reg, FINAL_USE_ts_model(reg,prd,regg,fd) )
-    = sum(reg, FINAL_USE_ts_model(reg,prd,regg,fd) ) /
-    sum(reg, FINAL_USE_bp_model(reg,prd,regg,fd) ) ;
+    = ( sum(reg, FINAL_USE_ts_model(reg,prd,regg,fd) ) +
+    sum(row, FINAL_USE_ROW_ts_model(row,prd,regg,fd) ) ) /
+    ( sum(reg, FINAL_USE_bp_model(reg,prd,regg,fd) ) +
+    sum(row, FINAL_USE_ROW_bp_model(row,prd,regg,fd) ) ) ;
 
 * Net tax (taxes less subsidies) rates on production activities
 txd_ind(reg,ntp,regg,ind)$VALUE_ADDED_model(reg,ntp,regg,ind)
@@ -335,6 +356,12 @@ alpha(reg,kl,regg,ind)$VALUE_ADDED_model(reg,kl,regg,ind)
     = VALUE_ADDED_model(reg,kl,regg,ind) /
     sum((reggg,kll), VALUE_ADDED_model(reggg,kll,regg,ind) ) ;
 
+* Input coefficients of products imported from the rest of the world for each
+* type of product (prd) from each rest of the world region (row) for
+* intermediate use in each industry (ind) in each region (regg)
+phi_row(row,prd,regg,ind)$INTER_USE_ROW_bp_model(row,prd,regg,ind)
+    = INTER_USE_ROW_bp_model(row,prd,regg,ind) / Y(regg,ind) ;
+
 Display
 coprodA
 coprodB
@@ -343,6 +370,7 @@ phi_dom
 phi_imp
 aVA
 alpha
+phi_row
 ;
 
 
@@ -408,10 +436,19 @@ theta_imp(prd,regg,fd)$FU_IMP(prd,regg,fd)
     = FU_IMP(prd,regg,fd) / FU_PRD(prd,regg,fd) *
     ( ( 1 + tc_fd(prd,regg,fd) ) / 1 )**( -elasFU_DM(prd,regg,fd) ) ;
 
+* Coefficients for final consumption of products imported from the rest of the
+* world for each type of product (prd) from each rest of the world regions (row)
+* by each final demand category (fd) in each region (regg)
+theta_row(row,prd,regg,fd)$( FINAL_USE_ROW_bp_model(row,prd,regg,fd) +
+    FINAL_USE_ROW_ts_model(row,prd,regg,fd) )
+    = ( FINAL_USE_ROW_bp_model(row,prd,regg,fd) +
+    FINAL_USE_ROW_ts_model(row,prd,regg,fd) ) / CBUD(regg,fd) ;
+
 Display
 theta
 theta_dom
 theta_imp
+theta_row
 ;
 
 
@@ -423,8 +460,14 @@ theta_imp
 gamma(reg,prd,regg)$TRADE(reg,prd,regg)
     = TRADE(reg,prd,regg) / IMPORT(prd,regg) ;
 
+* Share coefficient for export of each product (prd) from each region of origin
+* (prd) to each export destination (row,exp)
+gammaE(reg,prd,row,exp)$EXPORT_model(reg,prd,row,exp)
+    = EXPORT_model(reg,prd,row,exp) / X(reg,prd) ;
+
 Display
 gamma
+gammaE
 ;
 
 
