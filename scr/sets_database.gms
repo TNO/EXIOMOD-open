@@ -63,7 +63,6 @@ $include sets/database/industries_database.txt
 $include sets/database/taxesandsubsidiesonproducts_database.txt
 $include sets/database/valueadded_database.txt
 $include sets/database/finaldemand_database.txt
-$include sets/database/useofimportedproducts_database.txt
 $include sets/database/export_database.txt
 /
 
@@ -90,11 +89,6 @@ $include sets/database/valueadded_database.txt
          fd_data(full_cat_list)  list of final demand categories in the database
 /
 $include sets/database/finaldemand_database.txt
-/
-
-         uip_data(full_cat_list) use of imported products categories in the database
-/
-$include sets/database/useofimportedproducts_database.txt
 /
 
          exp_data(full_cat_list) list of export categories in the database

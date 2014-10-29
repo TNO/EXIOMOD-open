@@ -120,11 +120,6 @@ $include sets/model/valueadded_model.txt
 $include sets/model/finaldemand_model.txt
 /
 
-         uip             use of imported products categories in the model
-/
-$include sets/model/useofimportedproducts_model.txt
-/
-
          exp             list of export categories in the model
 /
 $include sets/model/export_model.txt
@@ -164,16 +159,6 @@ $include sets/model/aggregation/valueadded_database_to_model.txt
 $include sets/model/aggregation/finaldemand_database_to_model.txt
 /
 
-         uip_aggr(uip_data,uip)          aggregation scheme for use of imported products categories
-/
-$include sets/model/aggregation/useofimportedproducts_database_to_model.txt
-/
-
-         prd_uip_aggr(prd_data,uip)      aggregation scheme from products to imported products categories
-/
-$include sets/model/aggregation/products_to_uip_model.txt
-/
-
          exp_aggr(exp_data,exp)          aggregation scheme for export categories
 /
 $include sets/model/aggregation/export_database_to_model.txt
@@ -200,8 +185,5 @@ $BATINCLUDE "scr/snippets/setaggregationcheck" fd_data         fd           fd_a
 $BATINCLUDE "scr/snippets/setaggregationcheck" va_data         va           va_aggr
 $BATINCLUDE "scr/snippets/setaggregationcheck" exp_data        exp          exp_aggr
 $BATINCLUDE "scr/snippets/setaggregationcheck" tsp_data        tsp          tsp_aggr
-$BATINCLUDE "scr/snippets/setaggregationcheck" uip_data        uip          uip_aggr
-$BATINCLUDE "scr/snippets/setaggregationcheck" prd_data        uip          prd_uip_aggr
-
 
 $label endofcode
