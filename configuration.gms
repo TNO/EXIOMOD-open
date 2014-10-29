@@ -36,14 +36,3 @@ $if not set base_year    $setglobal      base_year       '2007'
 
 * base currency
 $if not set base_cur     $setglobal      base_cur        'MEUR'
-
-* model type
-*$if not set model_type   $setglobal      model_type   'IO_product_technology'
-*$if not set model_type   $setglobal      model_type   'IO_industry_technology'
-*$if not set model_type   $setglobal      model_type   'CGE_TRICK'
-$if not set model_type   $setglobal      model_type   'CGE_MCP'
-
-* simulation setup
-*$if not set simulation_setup     $setglobal      simulation_setup        'multipliers'
-*$if not set simulation_setup     $setglobal      simulation_setup        'final_demand_shock'
-$if not set simulation_setup     $setglobal      simulation_setup        'trial_CGE'

@@ -12,4 +12,7 @@ $include configuration.gms
 
 $include library/scr/simulation_prepare.gms
 
-$include %project%/simulation/%simulation_setup%.gms
+* Run simulation.
+*$include %project%/simulation/multipliers.gms
+*$include %project%/simulation/final_demand_shock.gms
+$include %project%/simulation/trial_CGE.gms

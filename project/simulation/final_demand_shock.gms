@@ -6,6 +6,13 @@ $ontext startdoc
 Documentation for this file is missing.
 $offtext
 
+* === Check whether model_type is defined. =====================================
+* Add one of the two statements below to main.gms to define the model_type
+*   $if not set model_type  $setglobal  model_type  'IO_product_technology'
+*   $if not set model_type  $setglobal  model_type  'IO_industry_technology'
+
+$if not set model_type $abort "global model_type not defined in %project%/scr/simulation/final_demand_shock.gms on line %system.line%."
+
 * ======== Declaration and definition of simulation specific parameters ========
 
 * ================ Declaration of simulation specific variables ================
