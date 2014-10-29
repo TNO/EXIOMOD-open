@@ -661,6 +661,10 @@ EQOBJ..
 * ======== Define levels and lower and upper bounds and fixed variables ========
 
 * Endogenous variables
+* Variables in real terms: level is set to the calibrated value of the
+* corresponding parameter. In the the calibrated value is equal to zero, the
+* variable value is also fixed to zero. The equation setup will led to zero
+* solution for this variable and fixing it at this point help the solver.
 Y_V.L(regg,ind) = Y(regg,ind) ;
 X_V.L(reg,prd)  = X(reg,prd) ;
 Y_V.FX(regg,ind)$(Y(regg,ind) eq 0) = 0 ;
@@ -700,6 +704,10 @@ IMPORT_V.FX(prd,regg)$(IMPORT(prd,regg) eq 0)                     = 0 ;
 TRADE_V.FX(reg,prd,regg)$(TRADE(reg,prd,regg) eq 0)               = 0 ;
 EXPORT_V.FX(reg,prd,row,exp)$(EXPORT_model(reg,prd,row,exp) eq 0) = 0 ;
 
+* Variables in monetary terms: level is set to the calibrated value of the
+* corresponding parameter. In the the calibrated value is equal to zero, the
+* variable value is also fixed to zero. The equation setup will led to zero
+* solution for this variable and fixing it at this point help the solver.
 FACREV_V.L(reg,kl)  = sum((regg,fd), VALUE_ADDED_DISTR_model(reg,kl,regg,fd) ) ;
 TSPREV_V.L(reg,tsp) = sum((regg,fd), TAX_SUB_PRD_DISTR_model(reg,tsp,regg,fd) ) ;
 NTPREV_V.L(reg,ntp) = sum((regg,fd), VALUE_ADDED_DISTR_model(reg,ntp,regg,fd) ) ;
@@ -712,6 +720,14 @@ CBUD_V.L(regg,fd) = CBUD(regg,fd) ;
 INC_V.FX(regg,fd)$(INC(regg,fd) eq 0)  = 0 ;
 CBUD_V.L(regg,fd)$(CBUD(regg,fd) eq 0) = 0 ;
 
+SCLFD_V.L(regg,fd) = sum((reg,prd), FINAL_USE_bp_model(reg,prd,regg,fd) ) ;
+SCLFD_V.FX(regg,fd)$(SCLFD_V.L(regg,fd) eq 0) = 0 ;
+
+* Price variables: level of basic prices is set to one, which also corresponds
+* to the price level used in calibration. In the the real variable to which the
+* price level is linked is fixed to zero, the price is fixed to one. For zero
+* level variables any price level will be a solution and fixing it to one helps
+* the solver. Additionally, price of the numéraire is fixed.
 PY_V.L(regg,ind)       = 1 ;
 P_V.L(reg,prd)         = 1 ;
 PKL_V.L(reg,kl)        = 1 ;
@@ -719,7 +735,6 @@ PVA_V.L(regg,ind)      = 1 ;
 PIU_V.L(prd,regg,ind)  = 1 ;
 PFU_V.L(prd,regg,fd)   = 1 ;
 PIMP_V.L(prd,regg)     = 1 ;
-SCLFD_V.L(regg,fd)     = sum((reg,prd), FINAL_USE_bp_model(reg,prd,regg,fd) ) ;
 PROW_V.L(row)          = 1 ;
 PAASCHE_V.L(regg,fd)   = 1 ;
 LASPEYRES_V.L(regg,fd) = 1 ;
@@ -731,19 +746,27 @@ PVA_V.FX(regg,ind)$(VA_V.L(regg,ind) eq 0)                                     =
 PIU_V.FX(prd,regg,ind)$(INTER_USE_T_V.L(prd,regg,ind) eq 0)                    = 1 ;
 PFU_V.FX(prd,regg,fd)$(FINAL_USE_T_V.L(prd,regg,fd) eq 0)                      = 1 ;
 PIMP_V.FX(prd,regg)$(IMPORT_V.L(prd,regg)eq 0)                                 = 1 ;
-SCLFD_V.FX(regg,fd)$(SCLFD_V.L(regg,fd) eq 0)                                  = 0 ;
 PROW_V.FX(row)$( (sum((prd,regg,ind), INTER_USE_ROW_V.L(row,prd,regg,ind) ) +
-            sum((prd,regg,fd), FINAL_USE_ROW_V.L(row,prd,regg,fd) ) ) eq 0)   = 1 ;
+            sum((prd,regg,fd), FINAL_USE_ROW_V.L(row,prd,regg,fd) ) ) eq 0)    = 1 ;
 PAASCHE_V.FX(regg,fd)$(sum((reg,prd), FINAL_USE_V.L(reg,prd,regg,fd) ) eq 0)   = 1 ;
 LASPEYRES_V.FX(regg,fd)$(sum((reg,prd), FINAL_USE_V.L(reg,prd,regg,fd) ) eq 0) = 1 ;
 
 
 * Exogenous variables
+* Exogenous variables are fixed to their calibrated value.
 KLS_V.FX(reg,kl)                   = KLS(reg,kl) ;
 INCTRANSFER_V.FX(reg,fd,regg,fdd)  = INCOME_DISTR_model(reg,fd,regg,fdd) ;
 TRANSFERS_ROW_V.FX(reg,fd,row,exp) = TRANSFERS_ROW_model(reg,fd,row,exp) ;
 
 * ======================= Scale variables and equations ========================
+
+* Scaling of variables and equations is done in order to help the solver to
+* find the solution quicker. The scaling should ensure that the partial
+* derivative of each variable evaluated at their current level values is within
+* the range between 0.1 and 100. The values of partial derivatives can be seen
+* in the equation listing. In general, the rule is that the variable and the
+* equation linked to this variables in MCP formulation should both be scaled by
+* the initial level of the variable.
 
 * EQUATION 1 and EQUATION 2A
 EQBAL.SCALE(reg,prd)$(X_V.L(reg,prd) gt 0)
