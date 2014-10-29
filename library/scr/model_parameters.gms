@@ -96,15 +96,6 @@ Parameters
                                 # products imported from the rest of the world
                                 # (relation in volume)
 
-    facC(reg,kl,regg,ind)       Cobb-Douglas share coefficients for factors
-                                # of production (relation in value)
-    facA(regg,ind)              Cobb-Douglas scale parameter for factors of
-                                # production
-
-    gammaCES(reg,kl,regg,ind)   CES share coefficients for factors of production
-                                # (relation in value)
-    aCES(regg,ind)              CES slace parameter for factos of production
-
     theta(prd,regg,fd)          relative share parameter of final consumption on
                                 # product level in total demand (relation in
                                 # volume)
@@ -372,45 +363,6 @@ aVA
 alpha
 phi_row
 ;
-
-
-
-*## Explicit Cobb-Douglas formulation for production factors nest ##
-
-* Cobb-Douglas share coefficients for factors of production within the
-* aggregated nest
-facC(reg,kl,regg,ind)$VALUE_ADDED_model(reg,kl,regg,ind)
-    = VALUE_ADDED_model(reg,kl,regg,ind) /
-    sum((reggg,kll), VALUE_ADDED_model(reggg,kll,regg,ind) ) ;
-
-* Cobb-Douglas scale parameter for the nest of aggregated factors of production
-facA(regg,ind)$sum((reg,kl), VALUE_ADDED_model(reg,kl,regg,ind) )
-    = sum((reg,kl), VALUE_ADDED_model(reg,kl,regg,ind) ) /
-    prod((reg,kl), VALUE_ADDED_model(reg,kl,regg,ind)**facC(reg,kl,regg,ind) ) ;
-Display
-facC
-facA
-;
-
-*## Explicit CES formulation for production factors nest ##
-
-* CES share parameters
-gammaCES(reg,kl,regg,ind)
-    = VALUE_ADDED_model(reg,kl,regg,ind)**( 1 / elasKL(regg,ind) ) /
-    sum((reggg,kll),
-    VALUE_ADDED_model(reggg,kll,regg,ind)**( 1 / elasKL(regg,ind) ) ) ;
-
-* CES scale parameters
-aCES(regg,ind)
-    = sum((reg,kl), VALUE_ADDED_model(reg,kl,regg,ind) ) /
-    sum((reg,kl), gammaCES(reg,kl,regg,ind) *
-    VALUE_ADDED_model(reg,kl,regg,ind)**
-    ( ( elasKL(regg,ind) - 1 ) / elasKL(regg,ind) ))**
-    ( elasKL(regg,ind) / ( elasKL(regg,ind) - 1 ) );
-
-Display
-gammaCES,
-aCES ;
 
 
 

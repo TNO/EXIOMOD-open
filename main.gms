@@ -16,3 +16,4 @@ $include library/scr/simulation_prepare.gms
 *$include %project%/simulation/multipliers.gms
 *$include %project%/simulation/final_demand_shock.gms
 $include %project%/simulation/trial_CGE.gms
+*$include %project%/simulation/check_KL_nest_formulation.gms

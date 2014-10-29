@@ -291,27 +291,6 @@ EQKL(reg,kl,regg,ind)$VALUE_ADDED_model(reg,kl,regg,ind)..
     VA_V(regg,ind) * alpha(reg,kl,regg,ind) *
     ( PKL_V(reg,kl) / PVA_V(regg,ind) )**( -elasKL(regg,ind) ) ;
 
-
-* EQUATION 9 COBB-DOUGLAS: Demand for specific production factors in explicit
-* Cobb-Douglas form.
-*EQKL(reg,kl,regg,ind)$VALUE_ADDED_model(reg,kl,regg,ind)..
-*    KL_V(reg,kl,regg,ind)
-*    =E=
-*    facC(reg,kl,regg,ind) / prod((reggg,kll)$facC(reggg,kll,regg,ind),
-*    facC(reggg,kll,regg,ind)**facC(reggg,kll,regg,ind) ) *
-*    ( 1 / PKL_V(reg,kl) ) * VA_V(regg,ind) / facA(regg,ind) *
-*    prod((reggg,kll), PKL_V(reggg,kll)**facC(reggg,kll,regg,ind) ) ;
-
-* EQUATION 9 CONSTANT ELASTICITY OF SUBSTITUTION: Demand for specific production
-* factors in explicit CES form.
-*EQKL(reg,kl,regg,ind)$VALUE_ADDED_model(reg,kl,regg,ind)..
-*    KL_V(reg,kl,regg,ind)
-*    =E=
-*    VA_V(regg,ind) *
-*    ( gammaCES(reg,kl,regg,ind) / PKL_V(reg,kl) )**elasKL(regg,ind) *
-*    PVA_V(regg,ind)**elasKL(regg,ind) *
-*    aCES(regg,ind)**( elasKL(regg,ind) - 1 ) ;
-
 * ## End Factor demand block ##
 
 
@@ -545,28 +524,6 @@ EQPVA(regg,ind)..
     PVA_V(regg,ind) * VA_V(regg,ind)
     =E=
     sum((reg,kl), PKL_V(reg,kl) * KL_V(reg,kl,regg,ind)) ;
-
-* EQUATION 26 COBB-DOUGLAS: Price of aggregate production factors defines in
-* explicit Cobb-Douglas form, can be only used in combination with EQUATION 8
-* COBB DOUGLAS.
-*EQPVA(regg,ind)..
-*    PVA_V(regg,ind)
-*    =E=
-*    sum((reg,kl), facC(reg,kl,regg,ind) *
-*    PKL_V(reg,kl)**( 1 - elasKL(regg,ind) ) )**
-*    ( 1 / ( 1 - elasKL(regg,ind) ) ) ;
-
-* EQUATION 26 CONSTANT ELASTICITY OF SUBSTITUTION: Price of aggregate
-* production factors defines in explicit CES form, can be only used in
-* combination with EQUATION 8 CONSTANT ELASTICITY OF SUBSTITUTION.
-*EQPVA(regg,ind)..
-*    PVA_V(regg,ind)
-*    =E=
-*    1 / aCES(regg,ind) *
-*    sum((reg,kl)$gammaCES(reg,kl,regg,ind),
-*    gammaCES(reg,kl,regg,ind)**elasKL(regg,ind) *
-*    PKL_V(reg,kl)**( 1 - elasKL(regg,ind) ) )**
-*    ( 1 / ( 1 - elasKL(regg,ind) ) ) ;
 
 * EQUATION 27: Balance between specific product price and aggregate product
 * price for intermediate use. The aggregate price is different for each
