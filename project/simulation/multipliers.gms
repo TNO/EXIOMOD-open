@@ -3,7 +3,27 @@
 * Date:   14 May 2014
 
 $ontext startdoc
-Documentation for this file is missing.
+This file specifies the simulation setup to use when calculating multipliers.
+
+A set `multiplier_type` with different types of multipliers, on output and
+value added, is defined as
+
+Element in the set         | Explanation
+-------------------------- | -------------------------------------
+output_intrareg            | Intra-regional output multipliers
+output_interreg            | Inter-regional output multipliers
+output_global              | Global output multipliers
+value_added_global         | Global value added multipliers
+value_added_global_type1   | Global value added multipliers Type I
+
+The multipliers that are calculated are stored in `multipliers(reg,prd,multiplier_type)`.
+
+In the simulation setup section, the country/countries, and product(s) for which
+to calculate the multipliers can be defined as shown in the examples in the comments.
+If a multiplier can not be calculated, because the solver runs into an error, then
+the resulting multiplier will have the value NA.
+
+In the final section, the multipliers are saved to a file.
 $offtext
 
 * === Check whether model_type is defined. =====================================
@@ -32,41 +52,63 @@ Display
 v
 ;
 
-* ================ Declaration of simulation specific variables ================
+* ================ Declaration of simulation specific parameters ===============
 
-Positive variables
-    OUTPUTmult_intrareg(reg,prd)        intra-regional output multiplier
-    OUTPUTmult_interreg(reg,prd)        inter-regional output multiplier
-    OUTPUTmult_global(reg,prd)          global output multiplier
+Sets
+    multiplier_type  Type of the multipliers to be calculated
+/
+    output_intrareg             'Intra-regional output multipliers'
+    output_interreg             'Inter-regional output multipliers'
+    output_global               'Global output multipliers'
+    value_added_global          'Global value added multipliers'
+    value_added_global_type1    'Global value added multipliers Type I'
+/;
 
-    VALUEADDEDmult_global(reg,prd)      global value-added multiplier
-    VALUEADDEDmultT1_global(reg,prd)    global value-added multiplier of Type I
+Parameters
+    multipliers(reg,prd,multiplier_type)    all multipliers in one parameter
 ;
 
 * ============================== Simulation setup ==============================
 
-* Select regions and products for which the multipliers are calculated
+* Change the set of countries and products that we want to calculate multipliers
+* for. We can specify to calculate the multipliers for all regions by putting all
+* elements in the reg_sim set equal to yes.
+* Example to calculate for all regions:  reg_sim(reg) = yes
+* Example to calculate for one country:  reg_sim("NL") = yes
+* Example to calculate for all products: prd_sim(prd) = yes
+* Example to calculate for one product:  prd_sim("t4") = yes
 reg_sim(reg) = yes ;
 prd_sim(prd) = yes ;
 
 * Fix other variables which enter IO model equations
-P_V.FX(regg,prd)         = 1 ;
-PIU_V.FX(prd,regg,ind)   = 1 ;
-PIMP_V.FX(prd,regg)      = 1 ;
-TRADE_V.FX(reg,prd,regg) = TRADE(reg,prd,regg) ;
-IMPORT_V.FX(prd,regg)    = IMPORT(prd,regg) ;
+P_V.FX(regg,prd)             = 1 ;
+PIU_V.FX(prd,regg,ind)       = 1 ;
+PIMP_V.FX(prd,regg)          = 1 ;
+TRADE_V.FX(reg,prd,regg)     = TRADE(reg,prd,regg) ;
+IMPORT_V.FX(prd,regg)        = IMPORT(prd,regg) ;
+EXPORT_V.FX(reg,prd,row,exp) = EXPORT_model(reg,prd,row,exp) ;
 
 * start loop over regions and products
+* FCH is the set element related to final demand.
 loop((reg_sim,prd_sim),
 
+* Set all the final demand elements to the values from calibration (from data).
+* This is needed, because one of the shocks may be non-zero from a previous step
+* in the loop.
 FINAL_USE_V.FX(reg,prd,regg,fd)
     = FINAL_USE_bp_model(reg,prd,regg,fd) ;
+
+* Add a shock of 1 for only one country-product combination for final household
+* demand (FCH).
 FINAL_USE_V.FX(reg_sim,prd_sim,reg_sim,"FCH")
     = FINAL_USE_bp_model(reg_sim,prd_sim,reg_sim,"FCH") + 1 ;
 
-Display
-FINAL_USE_V.L
-;
+* The display statement below is only useful for debugging purposes when a small
+* number of countries and products is used. Otherwise, since the display
+* statement is inside the loop, it will return a lot of additional output.
+*Display
+*FINAL_USE_V.L
+*;
 
 * =============================== Solve statement ==============================
 
@@ -74,30 +116,43 @@ Solve %model_type% using nlp maximizing obj ;
 
 * ========================= Post-processing of results =========================
 
-OUTPUTmult_intrareg.L(reg_sim,prd_sim)
-    = sum(ind, Y_V.L(reg_sim,ind) - Y(reg_sim,ind) ) ;
-OUTPUTmult_interreg.L(reg_sim,prd_sim)
-    = sum((regg,ind)$(not sameas(reg_sim,regg)),
-    Y_V.L(regg,ind) - Y(regg,ind) ) ;
-OUTPUTmult_global.L(reg_sim,prd_sim)
-    = sum((regg,ind), Y_V.L(regg,ind) - Y(regg,ind) ) ;
+* Check whether the model solved without errors. If an error occurred
+* (modelstat > 2) then we set the multipliers to NA, otherwise calculate the
+* different types of multipliers.
 
-VALUEADDEDmult_global.L(reg_sim,prd_sim)
-    = sum((reg,va,regg,ind), Y_V.L(regg,ind) * v(reg,va,regg,ind) -
-    VALUE_ADDED_model(reg,va,regg,ind) ) ;
-VALUEADDEDmultT1_global.L(reg_sim,prd_sim)
-    = VALUEADDEDmult_global.L(reg_sim,prd_sim) /
-    sum((va,regg,ind), v(reg_sim,va,regg,ind) *
-    coprodB(reg_sim,prd_sim,regg,ind) ) ;
+* Display %model_type%.modelstat, %model_type%.solvestat ;
 
-Display
-OUTPUTmult_intrareg.L
-OUTPUTmult_interreg.L
-OUTPUTmult_global.L
+If(%model_type%.modelstat > 2,
+* Set all multipliers types to NA if an error occurred.
+    multipliers(reg_sim,prd_sim,multiplier_type) = NA;
 
-VALUEADDEDmult_global.L
-VALUEADDEDmultT1_global.L
-;
+else
+
+* Calculate output multipliers.
+    multipliers(reg_sim,prd_sim,'output_intrareg')
+        = sum(ind, Y_V.L(reg_sim,ind) - Y(reg_sim,ind) ) ;
+    multipliers(reg_sim,prd_sim,'output_interreg')
+        = sum((regg,ind)$(not sameas(reg_sim,regg)),
+        Y_V.L(regg,ind) - Y(regg,ind) ) ;
+    multipliers(reg_sim,prd_sim,'output_global')
+        = sum((regg,ind), Y_V.L(regg,ind) - Y(regg,ind) ) ;
+
+* Calculate value added multipliers.
+    multipliers(reg_sim,prd_sim,'value_added_global')
+        = sum((reg,va,regg,ind), Y_V.L(regg,ind) * v(reg,va,regg,ind) -
+        VALUE_ADDED_model(reg,va,regg,ind) ) ;
+    multipliers(reg_sim,prd_sim,'value_added_global_type1')
+        = multipliers(reg_sim,prd_sim,'value_added_global') / sum((va,regg,ind),
+        v(reg_sim,va,regg,ind) * coprodB(reg_sim,prd_sim,regg,ind) ) ;
+);
+
+* The display statement below inside the loop is only useful for debugging
+* when a small number of countries and products are used. Otherwise it
+* results in a very large output file. Just displaying the results for
+* future reference is better done outside the loop.
+*Display
+*multipliers
+*;
 
 * end loop over regions and products
 ) ;
@@ -105,7 +160,8 @@ VALUEADDEDmultT1_global.L
 * =========================== Write results to Excel ===========================
 execute 'mkdir results'
 
-$LIBInclude xldump       OUTPUTmult_intrareg.L   results/multipliers.xls output_intraregional!a1
-$LIBInclude xldump       OUTPUTmult_interreg.L   results/multipliers.xls output_interregional!a1
-$LIBInclude xldump       VALUEADDEDmult_global.L results/multipliers.xls valueadded!a1
-$LIBInclude xldump       VALUEADDEDmultT1_global.L       results/multipliers.xls valueadded_typeI!a1
+$LIBInclude xldump       multipliers            results/multipliers.xls multipliers!a1
+
+Display
+multipliers
+;
