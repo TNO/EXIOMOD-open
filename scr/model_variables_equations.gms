@@ -666,14 +666,14 @@ X_V.L(reg,prd)  = X(reg,prd) ;
 Y_V.FX(regg,ind)$(Y(regg,ind) eq 0) = 0 ;
 X_V.FX(reg,prd)$(X(reg,prd) eq 0)   = 0 ;
 
-INTER_USE_T_V.L(prd,regg,ind)       = IU_PRD(prd,regg,ind) ;
-INTER_USE_D_V.L(prd,regg,ind)       = IU_DOM(prd,regg,ind) ;
-INTER_USE_M_V.L(prd,regg,ind)       = IU_IMP(prd,regg,ind) ;
+INTER_USE_T_V.L(prd,regg,ind)       = INTER_USE_T(prd,regg,ind) ;
+INTER_USE_D_V.L(prd,regg,ind)       = INTER_USE_D(prd,regg,ind) ;
+INTER_USE_M_V.L(prd,regg,ind)       = INTER_USE_M(prd,regg,ind) ;
 INTER_USE_V.L(reg,prd,regg,ind)     = INTER_USE_bp_model(reg,prd,regg,ind) ;
 INTER_USE_ROW_V.L(row,prd,regg,ind) = INTER_USE_ROW_bp_model(row,prd,regg,ind) ;
-INTER_USE_T_V.FX(prd,regg,ind)$(IU_PRD(prd,regg,ind) eq 0)                           = 0 ;
-INTER_USE_D_V.FX(prd,regg,ind)$(IU_DOM(prd,regg,ind) eq 0)                           = 0 ;
-INTER_USE_M_V.FX(prd,regg,ind)$(IU_IMP(prd,regg,ind) eq 0)                           = 0 ;
+INTER_USE_T_V.FX(prd,regg,ind)$(INTER_USE_T(prd,regg,ind) eq 0)                      = 0 ;
+INTER_USE_D_V.FX(prd,regg,ind)$(INTER_USE_D(prd,regg,ind) eq 0)                      = 0 ;
+INTER_USE_M_V.FX(prd,regg,ind)$(INTER_USE_M(prd,regg,ind) eq 0)                      = 0 ;
 INTER_USE_V.FX(reg,prd,regg,ind)$(INTER_USE_bp_model(reg,prd,regg,ind) eq 0)         = 0 ;
 INTER_USE_ROW_V.FX(row,prd,regg,ind)$(INTER_USE_ROW_bp_model(row,prd,regg,ind) eq 0) = 0 ;
 
@@ -682,14 +682,14 @@ KL_V.L(reg,kl,regg,ind) = VALUE_ADDED_model(reg,kl,regg,ind) ;
 VA_V.FX(regg,ind)$(sum((reg,kl), VALUE_ADDED_model(reg,kl,regg,ind) ) eq 0) = 0 ;
 KL_V.FX(reg,kl,regg,ind)$(VALUE_ADDED_model(reg,kl,regg,ind) eq 0 )         = 0 ;
 
-FINAL_USE_T_V.L(prd,regg,fd)       = FU_PRD(prd,regg,fd) ;
-FINAL_USE_D_V.L(prd,regg,fd)       = FU_DOM(prd,regg,fd) ;
-FINAL_USE_M_V.L(prd,regg,fd)       = FU_IMP(prd,regg,fd) ;
+FINAL_USE_T_V.L(prd,regg,fd)       = FINAL_USE_T(prd,regg,fd) ;
+FINAL_USE_D_V.L(prd,regg,fd)       = FINAL_USE_D(prd,regg,fd) ;
+FINAL_USE_M_V.L(prd,regg,fd)       = FINAL_USE_M(prd,regg,fd) ;
 FINAL_USE_V.L(reg,prd,regg,fd)     = FINAL_USE_bp_model(reg,prd,regg,fd) ;
 FINAL_USE_ROW_V.L(row,prd,regg,fd) = FINAL_USE_ROW_bp_model(row,prd,regg,fd) ;
-FINAL_USE_T_V.FX(prd,regg,fd)$(FU_PRD(prd,regg,fd) eq 0)                           = 0 ;
-FINAL_USE_D_V.FX(prd,regg,fd)$(FU_DOM(prd,regg,fd) eq 0)                           = 0 ;
-FINAL_USE_M_V.FX(prd,regg,fd)$(FU_IMP(prd,regg,fd) eq 0)                           = 0 ;
+FINAL_USE_T_V.FX(prd,regg,fd)$(FINAL_USE_T(prd,regg,fd) eq 0)                      = 0 ;
+FINAL_USE_D_V.FX(prd,regg,fd)$(FINAL_USE_D(prd,regg,fd) eq 0)                      = 0 ;
+FINAL_USE_M_V.FX(prd,regg,fd)$(FINAL_USE_M(prd,regg,fd) eq 0)                      = 0 ;
 FINAL_USE_V.FX(reg,prd,regg,fd)$(FINAL_USE_bp_model(reg,prd,regg,fd) eq 0)         = 0 ;
 FINAL_USE_ROW_V.FX(row,prd,regg,fd)$(FINAL_USE_ROW_bp_model(row,prd,regg,fd) eq 0) = 0 ;
 

@@ -52,15 +52,15 @@ Parameters
 
     Y(regg,ind)                 output vector by activity (volume)
     X(reg,prd)                  output vector by product (volume)
-    IU_PRD(prd,regg,ind)        intermediate use on product level (volume)
-    IU_DOM(prd,regg,ind)        intermediate use of domestic products on
+    INTER_USE_T(prd,regg,ind)   intermediate use on product level (volume)
+    INTER_USE_D(prd,regg,ind)   intermediate use of domestic products on
                                 # product level (volume)
-    IU_IMP(prd,regg,ind)        intermediate use of imported products on
+    INTER_USE_M(prd,regg,ind)   intermediate use of imported products on
                                 # product level (volume)
-    FU_PRD(prd,regg,fd)         final use on product level (volume)
-    FU_DOM(prd,regg,fd)         final use of domestic products on product level
+    FINAL_USE_T(prd,regg,fd)    final use on product level (volume)
+    FINAL_USE_D(prd,regg,fd)    final use of domestic products on product level
                                 # (volume)
-    FU_IMP(prd,regg,fd)         final use of imported products on product level
+    FINAL_USE_M(prd,regg,fd)    final use of imported products on product level
                                 # (volume)
     IMPORT(prd,regg)            import of products into a region (volume)
     TRADE(reg,prd,regg)         trade of products between regions (volume)
@@ -189,57 +189,57 @@ X
 * each industry (ind) in each region (regg), the corresponding basic price in
 * the base year is equal to 1, purchaser's price can be different from 1 in case
 * of non-zero taxes on products
-IU_PRD(prd,regg,ind)
+INTER_USE_T(prd,regg,ind)
     = sum(reg, INTER_USE_bp_model(reg,prd,regg,ind) ) ;
 
 * Intermediate use of domestic products in volume of each product (prd) in each
 * industry (ind) in each region (regg), the corresponding basic price in the
 * base year is equal to 1
-IU_DOM(prd,regg,ind)
+INTER_USE_D(prd,regg,ind)
     = INTER_USE_bp_model(regg,prd,regg,ind) ;
 
 * Intermediate use of aggregated imported products in volume of each product
 * (prd) in each industry (ind) in each region (regg), the corresponding basic
 * price in the base year is equal to 1
-IU_IMP(prd,regg,ind)
+INTER_USE_M(prd,regg,ind)
     = sum(reg$(not sameas(reg,regg)), INTER_USE_bp_model(reg,prd,regg,ind) ) ;
 
 Display
-IU_PRD
-IU_DOM
-IU_IMP
+INTER_USE_T
+INTER_USE_D
+INTER_USE_M
 ;
 
 * Final use of aggregated products in volume of each product (prd) by each
 * final demand category (fd) in each region (regg), the corresponding basic
 * price in the base year is equal to 1, purchaser's price can be different from
 * 1 in case of non-zero taxes on products
-FU_PRD(prd,regg,fd)
+FINAL_USE_T(prd,regg,fd)
     = sum(reg, FINAL_USE_bp_model(reg,prd,regg,fd) ) ;
 
 * Final use of domestic products in volume of each product (prd) by each final
 * demand category (fd) in each region (regg), the corresponding basic price in
 * the base year is equal to 1
-FU_DOM(prd,regg,fd)
+FINAL_USE_D(prd,regg,fd)
     = FINAL_USE_bp_model(regg,prd,regg,fd) ;
 
 * Final use of aggregated imported products in volume of each product (prd) by
 * each final demand category (fd) in each region (regg), the corresponding basic
 * price in the base year is equal to 1
-FU_IMP(prd,regg,fd)
+FINAL_USE_M(prd,regg,fd)
     = sum(reg$(not sameas(reg,regg)), FINAL_USE_bp_model(reg,prd,regg,fd) ) ;
 
 Display
-FU_PRD
-FU_DOM
-FU_IMP
+FINAL_USE_T
+FINAL_USE_D
+FINAL_USE_M
 ;
 
 * Aggregated import of products in volume of each product (prd) into each
 * importing region (regg), the corresponding basic price in the base year is
 * equal to 1
 IMPORT(prd,regg)
-    = sum(ind, IU_IMP(prd,regg,ind) ) + sum(fd, FU_IMP(prd,regg,fd) ) ;
+    = sum(ind, INTER_USE_M(prd,regg,ind) ) + sum(fd, FINAL_USE_M(prd,regg,fd) ) ;
 
 * Trade of products for each product (prd) between each region pair (reg-regg),
 * the corresponding basic price in the base year is equal to 1, purchaser's
@@ -327,21 +327,21 @@ coprodB(reg,prd,regg,ind)$SUP_model(reg,prd,regg,ind)
 
 * Leontief technical input coefficients for intermediate inputs of aggregated
 * products for each product (prd) in each industry (ind) in each region (regg)
-ioc(prd,regg,ind)$IU_PRD(prd,regg,ind)
-    = IU_PRD(prd,regg,ind) / Y(regg,ind) ;
+ioc(prd,regg,ind)$INTER_USE_T(prd,regg,ind)
+    = INTER_USE_T(prd,regg,ind) / Y(regg,ind) ;
 
 * Relative share parameter for intermediate use of domestic products, versus
 * aggregated imported products, for each product (prd) in each industry (ind) in
 * each region (regg)
-phi_dom(prd,regg,ind)$IU_DOM(prd,regg,ind)
-    = IU_DOM(prd,regg,ind) / IU_PRD(prd,regg,ind) *
+phi_dom(prd,regg,ind)$INTER_USE_D(prd,regg,ind)
+    = INTER_USE_D(prd,regg,ind) / INTER_USE_T(prd,regg,ind) *
     ( ( 1 + tc_ind(prd,regg,ind) ) / 1 )**( -elasIU_DM(prd,regg,ind) ) ;
 
 * Relative share parameter for intermediate use of aggregated imported products,
 * versus domestic products, for each product (prd) in each industry (ind) in
 * each region (regg)
-phi_imp(prd,regg,ind)$IU_IMP(prd,regg,ind)
-    = IU_IMP(prd,regg,ind) / IU_PRD(prd,regg,ind) *
+phi_imp(prd,regg,ind)$INTER_USE_M(prd,regg,ind)
+    = INTER_USE_M(prd,regg,ind) / INTER_USE_T(prd,regg,ind) *
     ( ( 1 + tc_ind(prd,regg,ind) ) / 1 )**( -elasIU_DM(prd,regg,ind) ) ;
 
 * Leontief technical input coefficients for the nest of aggregated factors of
@@ -418,22 +418,22 @@ aCES ;
 
 * Relative share parameter for final consumption of aggregated products for each
 * product (prd) by each final demand category (fd) in each region (reg)
-theta(prd,regg,fd)$FU_PRD(prd,regg,fd)
-    = FU_PRD(prd,regg,fd) / sum(prdd, FU_PRD(prdd,regg,fd) ) *
+theta(prd,regg,fd)$FINAL_USE_T(prd,regg,fd)
+    = FINAL_USE_T(prd,regg,fd) / sum(prdd, FINAL_USE_T(prdd,regg,fd) ) *
     ( 1 / ( 1 + tc_fd(prd,regg,fd) ) )**( -elasFU(regg,fd) ) ;
 
 * Relative share parameter for final consumption of domestic products, versus
 * aggregated imported products, for each product (prd) by each final demand
 * category (fd) in each region (regg)
-theta_dom(prd,regg,fd)$FU_DOM(prd,regg,fd)
-    = FU_DOM(prd,regg,fd) / FU_PRD(prd,regg,fd) *
+theta_dom(prd,regg,fd)$FINAL_USE_D(prd,regg,fd)
+    = FINAL_USE_D(prd,regg,fd) / FINAL_USE_T(prd,regg,fd) *
     ( ( 1 + tc_fd(prd,regg,fd) ) / 1 )**( -elasFU_DM(prd,regg,fd) ) ;
 
 * Relative share parameter for final consumption of aggregated imported
 * products, versus domestic products, for each product (prd) by each final
 * demand category (fd) in each region (regg)
-theta_imp(prd,regg,fd)$FU_IMP(prd,regg,fd)
-    = FU_IMP(prd,regg,fd) / FU_PRD(prd,regg,fd) *
+theta_imp(prd,regg,fd)$FINAL_USE_M(prd,regg,fd)
+    = FINAL_USE_M(prd,regg,fd) / FINAL_USE_T(prd,regg,fd) *
     ( ( 1 + tc_fd(prd,regg,fd) ) / 1 )**( -elasFU_DM(prd,regg,fd) ) ;
 
 * Coefficients for final consumption of products imported from the rest of the
