@@ -31,13 +31,13 @@ $offtext
 
 $include configuration.gms
 
-$include scr/sets_database.gms
-$include scr/load_database.gms
+$include library/scr/sets_database.gms
+$include library/scr/load_database.gms
 
-$include scr/sets_model.gms
-$include scr/aggregate_database.gms
+$include library/scr/sets_model.gms
+$include library/scr/aggregate_database.gms
 
-$include scr/model_parameters.gms
-$include scr/model_variables_equations.gms
+$include library/scr/model_parameters.gms
+$include library/scr/model_variables_equations.gms
 
-$include scr/simulation/%simulation_setup%.gms
+$include %project%/simulation/%simulation_setup%.gms

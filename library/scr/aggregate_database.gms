@@ -1,4 +1,4 @@
-* File:   scr/aggregate_database.gms
+* File:   library/scr/aggregate_database.gms
 * Author: Tatyana Bulavskaya
 * Date:   14 May 2014
 * Adjusted: 23 June 2014
@@ -98,8 +98,8 @@ Parameters
 * they SUM over sets (expressed between brackets) to construct the table
 * the "$" sign can be read as "such that", meaning that the summations below have to satisfy the aggregations and inputs regarding %base_year%, %base_cur% and Value
 * the base year, base currency and Value are taken from initial input defined in
-* the sets that include a "_data" extension relate to the files named $include sets/database/<namehere>_database.txt
-* the sets that include a "_aggr" extension relate to the files named $include sets/model/aggregation/<namehere>.txt
+* the sets that include a "_data" extension relate to the files named $include library/sets/<namehere>_database.txt
+* the sets that include a "_aggr" extension relate to the files named $include %proejct%/sets/aggregation/<namehere>.txt
 * See also sets_model.gms OR sets_data.gms for an overview of sets
 
 SUP_model(reg,prd,regg,ind)

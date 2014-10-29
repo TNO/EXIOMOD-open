@@ -1,5 +1,5 @@
 
-* File:   checks_database.gms
+* File:   library/scr/checks_database.gms
 * Author: Tatyana Bulavskaya
 * Date: 3 June 2014
 * Adjusted:   22 June 2014

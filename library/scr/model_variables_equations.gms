@@ -1,4 +1,4 @@
-* File:   scr/model_variables_equations.gms
+* File:   library/scr/model_variables_equations.gms
 * Author: Tatyana Bulavskaya
 * Date:   14 May 2014
 * Adjusted: 9 June 2014 (simple CGE formulation)

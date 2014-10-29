@@ -1,4 +1,4 @@
-* File:   scr/load_database.gms
+* File:   library/scr/load_database.gms
 * Author: Tatyana Bulavskaya
 * Date:   14 May 2014
 * Adjusted:   22 June 2014
@@ -27,8 +27,8 @@ Parameters
          SAM_pp_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,*)      raw SAM expressed in producer prices
 ;
 
-$LIBInclude      xlimport        SAM_bp_data        data/SAMdata_open_economy_long_format.xlsx   basic_price!a1..g1055
-$LIBInclude      xlimport        SAM_ts_data        data/SAMdata_open_economy_long_format.xlsx   tax_layer!a1..g1055
-$LIBInclude      xlimport        SAM_pp_data        data/SAMdata_open_economy_long_format.xlsx   producer_price!a1..g1055
+$LIBInclude      xlimport        SAM_bp_data        library/data/SAMdata_open_economy_long_format.xlsx   basic_price!a1..g1055
+$LIBInclude      xlimport        SAM_ts_data        library/data/SAMdata_open_economy_long_format.xlsx   tax_layer!a1..g1055
+$LIBInclude      xlimport        SAM_pp_data        library/data/SAMdata_open_economy_long_format.xlsx   producer_price!a1..g1055
 
-$if '%db_check%' == 'yes' $include scr/checks_database.gms
+$if '%db_check%' == 'yes' $include library/scr/checks_database.gms

@@ -1,4 +1,4 @@
-* File:   scr/set_model.gms
+* File:   library/scr/set_model.gms
 * Author: Tatyana Bulavskaya
 * Date:   14 May 2014
 * Adjusted:   23 June 2014
@@ -79,50 +79,50 @@ $offtext
 Sets
          all_reg      full list of regions in the model
 /
-$include sets/model/regions_model.txt
-$include sets/model/restoftheworld_model.txt
+$include %project%/sets/regions_model.txt
+$include %project%/sets/restoftheworld_model.txt
 /
 
          reg(all_reg)  list of regions in the model
 /
-$include sets/model/regions_model.txt
+$include %project%/sets/regions_model.txt
 /
 
          row(all_reg)  list of rest of the world regions in the model
 /
-$include sets/model/restoftheworld_model.txt
+$include %project%/sets/restoftheworld_model.txt
 /
 ;
 
 Sets
          prd             list of products in the model
 /
-$include sets/model/products_model.txt
+$include %project%/sets/products_model.txt
 /
 
          ind             list of industries in the model
 /
-$include sets/model/industries_model.txt
+$include %project%/sets/industries_model.txt
 /
 
          tsp             list of taxes and subsidies on products in the model
 /
-$include sets/model/taxesandsubsidiesonproducts_model.txt
+$include %project%/sets/taxesandsubsidiesonproducts_model.txt
 /
 
          va              list of value added categories in the model
 /
-$include sets/model/valueadded_model.txt
+$include %project%/sets/valueadded_model.txt
 /
 
          fd              list of final demand categories in the model
 /
-$include sets/model/finaldemand_model.txt
+$include %project%/sets/finaldemand_model.txt
 /
 
          exp             list of export categories in the model
 /
-$include sets/model/export_model.txt
+$include %project%/sets/export_model.txt
 /
 ;
 
@@ -131,37 +131,37 @@ $include sets/model/export_model.txt
 Sets
          all_reg_aggr(all_reg_data,all_reg)  aggregation scheme for full list of regions
 /
-$include sets/model/aggregation/regions_all_database_to_model.txt
+$include %project%/sets/aggregation/regions_all_database_to_model.txt
 /
 
          prd_aggr(prd_data,prd)          aggregation scheme for products
 /
-$include sets/model/aggregation/products_database_to_model.txt
+$include %project%/sets/aggregation/products_database_to_model.txt
 /
 
          ind_aggr(ind_data,ind)          aggregation scheme for industries
 /
-$include sets/model/aggregation/industries_database_to_model.txt
+$include %project%/sets/aggregation/industries_database_to_model.txt
 /
 
          tsp_aggr(tsp_data,tsp)          aggregation scheme for taxes and subsidies on products
 /
-$include sets/model/aggregation/taxesandsubsidiesonproducts_database_to_model.txt
+$include %project%/sets/aggregation/taxesandsubsidiesonproducts_database_to_model.txt
 /
 
          va_aggr(va_data,va)             aggregation scheme for value added categories
 /
-$include sets/model/aggregation/valueadded_database_to_model.txt
+$include %project%/sets/aggregation/valueadded_database_to_model.txt
 /
 
          fd_aggr(fd_data,fd)             aggregation scheme for final demand categories
 /
-$include sets/model/aggregation/finaldemand_database_to_model.txt
+$include %project%/sets/aggregation/finaldemand_database_to_model.txt
 /
 
          exp_aggr(exp_data,exp)          aggregation scheme for export categories
 /
-$include sets/model/aggregation/export_database_to_model.txt
+$include %project%/sets/aggregation/export_database_to_model.txt
 /
 ;
 
@@ -178,12 +178,12 @@ Alias
 
 $if not '%agg_check%' == 'yes' $goto endofcode
 
-$BATINCLUDE "scr/snippets/setaggregationcheck" all_reg_data    all_reg      all_reg_aggr
-$BATINCLUDE "scr/snippets/setaggregationcheck" prd_data        prd          prd_aggr
-$BATINCLUDE "scr/snippets/setaggregationcheck" ind_data        ind          ind_aggr
-$BATINCLUDE "scr/snippets/setaggregationcheck" fd_data         fd           fd_aggr
-$BATINCLUDE "scr/snippets/setaggregationcheck" va_data         va           va_aggr
-$BATINCLUDE "scr/snippets/setaggregationcheck" exp_data        exp          exp_aggr
-$BATINCLUDE "scr/snippets/setaggregationcheck" tsp_data        tsp          tsp_aggr
+$BATINCLUDE "library/scr/snippets/setaggregationcheck" all_reg_data    all_reg      all_reg_aggr
+$BATINCLUDE "library/scr/snippets/setaggregationcheck" prd_data        prd          prd_aggr
+$BATINCLUDE "library/scr/snippets/setaggregationcheck" ind_data        ind          ind_aggr
+$BATINCLUDE "library/scr/snippets/setaggregationcheck" fd_data         fd           fd_aggr
+$BATINCLUDE "library/scr/snippets/setaggregationcheck" va_data         va           va_aggr
+$BATINCLUDE "library/scr/snippets/setaggregationcheck" exp_data        exp          exp_aggr
+$BATINCLUDE "library/scr/snippets/setaggregationcheck" tsp_data        tsp          tsp_aggr
 
 $label endofcode

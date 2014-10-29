@@ -3,10 +3,10 @@
 $oneolcom
 $eolcom #
 
-KLS_V.FX('EU27','COE')                 = 1.1 * KLS('EU27','COE')                      ;
+*KLS_V.FX('EU27','COE')                 = 1.1 * KLS('EU27','COE')                      ;
 
 
-*Option iterlim = 0 ;
+Option iterlim = 0 ;
 *Option iterlim = 20000000 ;
 *Option nlp = pathnlp ;
 *Option cns = path ;
@@ -15,8 +15,8 @@ Option decimals = 7 ;
 *CGE_TRICK.optfile = 1 ;
 *option nlp=gamschk ;
 option nlp = conopt3 ;
-CGE_TRICK.scaleopt = 1 ;
-*CGE_MCP.scaleopt = 1 ;
+*CGE_TRICK.scaleopt = 1 ;
+CGE_MCP.scaleopt = 1 ;
 
 
 *Solve CGE_TRICK using nlp maximizing obj;
