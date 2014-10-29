@@ -28,7 +28,7 @@ Parameter
     Cshock_data(reg,prd,regg,fd,*)      raw shock data
 ;
 
-$LIBInclude      xlimport        Cshock_data     simulation/shock.xlsx   long!a1..e33
+$LIBInclude      xlimport        Cshock_data     %project%/simulation/final_demand_shock.xlsx   long!a1..e33
 
 * Define new fixed value of final demand
 FINAL_USE_V.FX(reg,prd,regg,fd)
@@ -40,11 +40,12 @@ FINAL_USE_V.L
 ;
 
 * Fix other variables which enter IO model equations
-P_V.FX(regg,prd)         = 1 ;
-PIU_V.FX(prd,regg,ind)   = 1 ;
-PIMP_V.FX(prd,regg)      = 1 ;
-TRADE_V.FX(reg,prd,regg) = TRADE(reg,prd,regg) ;
-IMPORT_V.FX(prd,regg)    = IMPORT(prd,regg) ;
+P_V.FX(regg,prd)             = 1 ;
+PIU_V.FX(prd,regg,ind)       = 1 ;
+PIMP_V.FX(prd,regg)          = 1 ;
+TRADE_V.FX(reg,prd,regg)     = TRADE(reg,prd,regg) ;
+IMPORT_V.FX(prd,regg)        = IMPORT(prd,regg) ;
+EXPORT_V.FX(reg,prd,row,exp) = EXPORT_model(reg,prd,row,exp) ;
 
 * =============================== Solve statement ==============================
 
