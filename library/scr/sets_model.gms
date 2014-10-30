@@ -178,12 +178,12 @@ Alias
 
 $if not '%agg_check%' == 'yes' $goto endofcode
 
-$BATINCLUDE "library/scr/snippets/setaggregationcheck" all_reg_data    all_reg      all_reg_aggr
-$BATINCLUDE "library/scr/snippets/setaggregationcheck" prd_data        prd          prd_aggr
-$BATINCLUDE "library/scr/snippets/setaggregationcheck" ind_data        ind          ind_aggr
-$BATINCLUDE "library/scr/snippets/setaggregationcheck" fd_data         fd           fd_aggr
-$BATINCLUDE "library/scr/snippets/setaggregationcheck" va_data         va           va_aggr
-$BATINCLUDE "library/scr/snippets/setaggregationcheck" exp_data        exp          exp_aggr
-$BATINCLUDE "library/scr/snippets/setaggregationcheck" tsp_data        tsp          tsp_aggr
+$BATINCLUDE "library/includes/setaggregationcheck" all_reg_data    all_reg      all_reg_aggr
+$BATINCLUDE "library/includes/setaggregationcheck" prd_data        prd          prd_aggr
+$BATINCLUDE "library/includes/setaggregationcheck" ind_data        ind          ind_aggr
+$BATINCLUDE "library/includes/setaggregationcheck" fd_data         fd           fd_aggr
+$BATINCLUDE "library/includes/setaggregationcheck" va_data         va           va_aggr
+$BATINCLUDE "library/includes/setaggregationcheck" exp_data        exp          exp_aggr
+$BATINCLUDE "library/includes/setaggregationcheck" tsp_data        tsp          tsp_aggr
 
 $label endofcode
