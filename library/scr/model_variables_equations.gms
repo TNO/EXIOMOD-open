@@ -386,7 +386,8 @@ EQTRADE(reg,prd,regg)..
     TRADE_V(reg,prd,regg)
     =E=
     IMPORT_V(prd,regg) * gamma(reg,prd,regg) *
-    ( P_V(reg,prd) / PIMP_V(prd,regg) )**( -elasIMP(prd,regg) ) ;
+    ( ( P_V(reg,prd) * ( 1 + tx_exp(reg,prd) ) ) / PIMP_V(prd,regg) )**
+    ( -elasIMP(prd,regg) ) ;
 
 * EQUATION 17: Export supply to the rest of the world regions. Export of each
 * product (prd) produced in each region (reg) supplied to each rest of the world
@@ -414,19 +415,35 @@ EQFACREV(reg,kl)..
 
 * EQUATION 19: Revenue from net taxes on products. The revenue from each
 * specific tax type (tsp) is a sum of revenues earned from sales of products
-* to industries (reg,ind) for intermediate use and to final consumers (reg,fd)
-* for final use. Net tax revenues ends up in the consumption region (reg)
+* to industries (reg,ind) for intermediate use, to final consumers (reg,fd)
+* for final use and to export (row,exp). Net tax revenues on consumption of
+* domestic and imported products (tc_ind, tc_fd) ends up in the consumption
+* region (reg). Net tax revenues on export (tx_exp) ends up in the production
+* region (reg). Taxes on consumption of domestic and imported products
+* (tc_ind, tc_fd) are paid on the value including taxes on export (tx_exp).
 EQTSPREV(reg,tsp)..
     TSPREV_V(reg,tsp)
     =E=
-    sum((prd,ind), sum(regg, INTER_USE_V(regg,prd,reg,ind) * P_V(regg,prd) ) *
+    sum((prd,ind), INTER_USE_V(reg,prd,reg,ind) * P_V(reg,prd) *
+    tc_ind(prd,reg,ind) ) +
+    sum((prd,ind), sum(regg$( not sameas(reg,regg) ),
+    INTER_USE_V(regg,prd,reg,ind) * P_V(regg,prd) * ( 1 + tx_exp(regg,prd) ) ) *
     tc_ind(prd,reg,ind) ) +
     sum((prd,ind), sum(row, INTER_USE_ROW_V(row,prd,reg,ind) * PROW_V(row) ) *
     tc_ind(prd,reg,ind) ) +
-    sum((prd,fd), sum(regg, FINAL_USE_V(regg,prd,reg,fd) * P_V(regg,prd) ) *
+    sum((prd,fd), FINAL_USE_V(reg,prd,reg,fd) * P_V(reg,prd) *
+    tc_fd(prd,reg,fd) ) +
+    sum((prd,fd), sum(regg$( not sameas(reg,regg) ),
+    FINAL_USE_V(regg,prd,reg,fd) * P_V(regg,prd) * ( 1 + tx_exp(regg,prd) ) ) *
     tc_fd(prd,reg,fd) ) +
     sum((prd,fd), sum(row, FINAL_USE_ROW_V(row,prd,reg,fd) * PROW_V(row) ) *
-    tc_fd(prd,reg,fd) ) ;
+    tc_fd(prd,reg,fd) ) +
+    sum(prd, sum((regg,ind)$( not sameas(reg,regg) ),
+    INTER_USE_V(reg,prd,regg,ind) ) * P_V(reg,prd) * tx_exp(reg,prd) ) +
+    sum(prd, sum((regg,fd)$( not sameas(reg,regg) ),
+    FINAL_USE_V(reg,prd,regg,fd) ) * P_V(reg,prd) * tx_exp(reg,prd) ) +
+    sum(prd, sum((row,exp), EXPORT_V(reg,prd,row,exp) * P_V(reg,prd) ) *
+    tx_exp(reg,prd) ) ;
 
 * EQUATION 20: Revenue from net taxes on production. The revenue from each
 * specific tax type (reg,ntp) is a sum of revenue earned from production
@@ -487,8 +504,10 @@ EQPY(regg,ind)$((not sameas(regg,'US')) or (not sameas(ind,'A1')))..
     Y_V(regg,ind) * PY_V(regg,ind) *
     ( 1 - sum((reg,ntp), txd_ind(reg,ntp,regg,ind) ) )
     =E=
-    sum((reg,prd), INTER_USE_V(reg,prd,regg,ind) * P_V(reg,prd) *
-    ( 1 + tc_ind(prd,regg,ind) ) ) +
+    sum((reg,prd)$sameas(reg,regg), INTER_USE_V(reg,prd,regg,ind) *
+    P_V(reg,prd) * ( 1 + tc_ind(prd,regg,ind) ) ) +
+    sum((reg,prd)$( not sameas(reg,regg) ), INTER_USE_V(reg,prd,regg,ind) *
+    P_V(reg,prd) * ( 1 + tx_exp(reg,prd) ) * ( 1 + tc_ind(prd,regg,ind) ) ) +
     sum((row,prd), INTER_USE_ROW_V(row,prd,regg,ind) * PROW_V(row) *
     ( 1 + tc_ind(prd,regg,ind) ) ) +
     sum((reg,kl), KL_V(reg,kl,regg,ind) * PKL_V(reg,kl) ) ;
@@ -557,7 +576,7 @@ EQPFU(prd,regg,fd)..
 EQPIMP(prd,regg)..
     PIMP_V(prd,regg) * IMPORT_V(prd,regg)
     =E=
-    sum(reg, P_V(reg,prd) * TRADE_V(reg,prd,regg) ) ;
+    sum(reg, TRADE_V(reg,prd,regg) * P_V(reg,prd) * ( 1 + tx_exp(reg,prd) ) ) ;
 
 * EQUATION 30: Budget constraint of final users. The equation ensures that the
 * total budget available for final use is spent on purchase of products. The
@@ -566,8 +585,10 @@ EQPIMP(prd,regg)..
 EQSCLFD(regg,fd)..
     CBUD_V(regg,fd)
     =E=
-    sum((reg,prd), P_V(reg,prd) * ( 1 + tc_fd(prd,regg,fd) ) *
-    FINAL_USE_V(reg,prd,regg,fd) ) +
+    sum((reg,prd)$sameas(reg,regg), FINAL_USE_V(reg,prd,regg,fd) *
+    P_V(reg,prd) * ( 1 + tc_fd(prd,regg,fd) ) ) +
+    sum((reg,prd)$( not sameas(reg,regg) ), FINAL_USE_V(reg,prd,regg,fd) *
+    P_V(reg,prd) * ( 1 + tx_exp(reg,prd) ) * ( 1 + tc_fd(prd,regg,fd) ) ) +
     sum((row,prd), PROW_V(row) * ( 1 + tc_fd(prd,regg,fd) ) *
     FINAL_USE_ROW_V(row,prd,regg,fd) ) ;
 
@@ -577,7 +598,8 @@ EQSCLFD(regg,fd)..
 * intermediate and final users are paying for the products imported from the
 * corresponding rest of the world region.
 EQPROW(row)..
-    sum((reg,prd,exp), EXPORT_V(reg,prd,row,exp) * P_V(reg,prd) )
+    sum((reg,prd,exp), EXPORT_V(reg,prd,row,exp) * P_V(reg,prd) *
+    ( 1 + tx_exp(reg,prd) ) )
     =E=
     sum((prd,regg,ind), INTER_USE_ROW_V(row,prd,regg,ind) ) * PROW_V(row) +
     sum((prd,regg,fd), FINAL_USE_ROW_V(row,prd,regg,fd) ) * PROW_V(row) -
@@ -588,20 +610,30 @@ EQPROW(row)..
 EQPAASCHE(regg,fd)..
     PAASCHE_V(regg,fd)
     =E=
-    sum((reg,prd), P_V(reg,prd) * ( 1 + tc_fd(prd,regg,fd) ) *
-    FINAL_USE_V(reg,prd,regg,fd) ) /
-    sum((reg,prd), 1 * ( 1 + tc_fd(prd,regg,fd) ) *
-    FINAL_USE_V(reg,prd,regg,fd) ) ;
+    ( sum((reg,prd)$sameas(reg,regg), FINAL_USE_V(reg,prd,regg,fd) *
+    P_V(reg,prd) * ( 1 + tc_fd(prd,regg,fd) ) ) +
+    sum((reg,prd)$( not sameas(reg,regg) ), FINAL_USE_V(reg,prd,regg,fd) *
+    P_V(reg,prd) * ( 1 + tx_exp(reg,prd) ) * ( 1 + tc_fd(prd,regg,fd) ) ) ) /
+    ( sum((reg,prd)$sameas(reg,regg), FINAL_USE_V(reg,prd,regg,fd) *
+    1 * ( 1 + tc_fd(prd,regg,fd) ) ) +
+    sum((reg,prd)$( not sameas(reg,regg) ), FINAL_USE_V(reg,prd,regg,fd) *
+    1 * ( 1 + tx_exp(reg,prd) ) * ( 1 + tc_fd(prd,regg,fd) ) ) ) ;
 
 * EQUATION 33: Laspeyres price index for final users. The price index is
 * calculated separately for each type of final user (regg,fd).
 EQLASPEYRES(regg,fd)..
     LASPEYRES_V(regg,fd)
     =E=
-    sum((reg,prd), P_V(reg,prd) * ( 1 + tc_fd(prd,regg,fd) ) *
-    FINAL_USE_bp_model(reg,prd,regg,fd) ) /
-    sum((reg,prd), 1 * ( 1 + tc_fd(prd,regg,fd) ) *
-    FINAL_USE_bp_model(reg,prd,regg,fd) ) ;
+    ( sum((reg,prd)$sameas(reg,regg), FINAL_USE_bp_model(reg,prd,regg,fd) *
+    P_V(reg,prd) * ( 1 + tc_fd(prd,regg,fd) ) ) +
+    sum((reg,prd)$( not sameas(reg,regg) ),
+    FINAL_USE_bp_model(reg,prd,regg,fd) * P_V(reg,prd) *
+    ( 1 + tx_exp(reg,prd) ) * ( 1 + tc_fd(prd,regg,fd) ) ) ) /
+    ( sum((reg,prd)$sameas(reg,regg), FINAL_USE_bp_model(reg,prd,regg,fd) *
+    1 * ( 1 + tc_fd(prd,regg,fd) ) ) +
+    sum((reg,prd)$( not sameas(reg,regg) ),
+    FINAL_USE_bp_model(reg,prd,regg,fd) * 1 *
+    ( 1 + tx_exp(reg,prd) ) * ( 1 + tc_fd(prd,regg,fd) ) ) ) ;
 
 * ## End Price block ##
 
@@ -656,10 +688,10 @@ FINAL_USE_ROW_V.FX(row,prd,regg,fd)$(FINAL_USE_ROW_bp_model(row,prd,regg,fd) eq 
 
 IMPORT_V.L(prd,regg)        = IMPORT(prd,regg) ;
 TRADE_V.L(reg,prd,regg)     = TRADE(reg,prd,regg) ;
-EXPORT_V.L(reg,prd,row,exp) = EXPORT_model(reg,prd,row,exp) ;
+EXPORT_V.L(reg,prd,row,exp) = EXPORT_bp_model(reg,prd,row,exp) ;
 IMPORT_V.FX(prd,regg)$(IMPORT(prd,regg) eq 0)                     = 0 ;
 TRADE_V.FX(reg,prd,regg)$(TRADE(reg,prd,regg) eq 0)               = 0 ;
-EXPORT_V.FX(reg,prd,row,exp)$(EXPORT_model(reg,prd,row,exp) eq 0) = 0 ;
+EXPORT_V.FX(reg,prd,row,exp)$(EXPORT_bp_model(reg,prd,row,exp) eq 0) = 0 ;
 
 * Variables in monetary terms: level is set to the calibrated value of the
 * corresponding parameter. In the the calibrated value is equal to zero, the
@@ -677,7 +709,7 @@ CBUD_V.L(regg,fd) = CBUD(regg,fd) ;
 INC_V.FX(regg,fd)$(INC(regg,fd) eq 0)  = 0 ;
 CBUD_V.L(regg,fd)$(CBUD(regg,fd) eq 0) = 0 ;
 
-SCLFD_V.L(regg,fd) = sum((reg,prd), FINAL_USE_bp_model(reg,prd,regg,fd) ) ;
+SCLFD_V.L(regg,fd) = sum((reg,prd), FINAL_USE_bp_model(reg,prd,regg,fd) + FINAL_USE_et_model(reg,prd,regg,fd) ) ;
 SCLFD_V.FX(regg,fd)$(SCLFD_V.L(regg,fd) eq 0) = 0 ;
 
 * Price variables: level of basic prices is set to one, which also corresponds

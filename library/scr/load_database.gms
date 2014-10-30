@@ -23,12 +23,14 @@ $offtext
 * ============================= Load the database ==============================
 Parameters
          SAM_bp_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,*)      raw SAM expressed in basic prices
-         SAM_ts_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,*)      raw SAM taxes and subsidies on products layer
+         SAM_ts_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,*)      raw SAM taxes and subsidies on consumption of domestic and imported products (revenue goes to the government of the consumer)
+         SAM_et_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,*)      raw SAM taxes and subsidies on export of products (revenue goes to the governemnt of the producer)
          SAM_pp_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,*)      raw SAM expressed in producer prices
 ;
 
-$LIBInclude      xlimport        SAM_bp_data        library/data/SAMdata_open_economy_long_format.xlsx   basic_price!a1..g1055
-$LIBInclude      xlimport        SAM_ts_data        library/data/SAMdata_open_economy_long_format.xlsx   tax_layer!a1..g1055
-$LIBInclude      xlimport        SAM_pp_data        library/data/SAMdata_open_economy_long_format.xlsx   producer_price!a1..g1055
+$LIBInclude      xlimport        SAM_bp_data        library/data/SAMdata_open_economy_export_tax_long_format.xlsx   basic_price!a1..g1055
+$LIBInclude      xlimport        SAM_ts_data        library/data/SAMdata_open_economy_export_tax_long_format.xlsx   dom_cons_tax!a1..g1055
+$LIBInclude      xlimport        SAM_et_data        library/data/SAMdata_open_economy_export_tax_long_format.xlsx   export_tax!a1..g1055
+$LIBInclude      xlimport        SAM_pp_data        library/data/SAMdata_open_economy_export_tax_long_format.xlsx   producer_price!a1..g1055
 
 $if '%db_check%' == 'yes' $include library/scr/checks_database.gms

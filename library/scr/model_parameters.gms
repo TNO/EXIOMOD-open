@@ -73,6 +73,8 @@ Parameters
                                 # industries (relation in value)
     tc_fd(prd,regg,fd)          tax and subsidies on products rates for final
                                 # demand (relation in value)
+    tx_exp(reg,prd)             tax and subsidies on export rates (relation
+                                # in value)
     txd_ind(reg,ntp,regg,ind)   net taxes on production rates (relation in
                                 # value)
 
@@ -179,9 +181,12 @@ X
 * Intermediate use of aggregated products in volume of each product (prd) in
 * each industry (ind) in each region (regg), the corresponding basic price in
 * the base year is equal to 1, purchaser's price can be different from 1 in case
-* of non-zero taxes on products
+* of non-zero taxes on products. Taxes paid to the exporting countries
+* are included in this volume, because it is assumed that taxes are paid in
+* the lower nest of international trade
 INTER_USE_T(prd,regg,ind)
-    = sum(reg, INTER_USE_bp_model(reg,prd,regg,ind) ) ;
+    = sum(reg, INTER_USE_bp_model(reg,prd,regg,ind) ) +
+    sum(reg$(not sameas(reg,regg)), INTER_USE_et_model(reg,prd,regg,ind) ) ;
 
 * Intermediate use of domestic products in volume of each product (prd) in each
 * industry (ind) in each region (regg), the corresponding basic price in the
@@ -191,9 +196,12 @@ INTER_USE_D(prd,regg,ind)
 
 * Intermediate use of aggregated imported products in volume of each product
 * (prd) in each industry (ind) in each region (regg), the corresponding basic
-* price in the base year is equal to 1
+* price in the base year is equal to 1. Taxes paid to the exporting countries
+* are included in this volume, because it is assumed that taxes are paid in
+* the lower nest of international trade
 INTER_USE_M(prd,regg,ind)
-    = sum(reg$(not sameas(reg,regg)), INTER_USE_bp_model(reg,prd,regg,ind) ) ;
+    = sum(reg$(not sameas(reg,regg)), INTER_USE_bp_model(reg,prd,regg,ind) ) +
+    sum(reg$(not sameas(reg,regg)), INTER_USE_et_model(reg,prd,regg,ind) ) ;
 
 Display
 INTER_USE_T
@@ -204,9 +212,12 @@ INTER_USE_M
 * Final use of aggregated products in volume of each product (prd) by each
 * final demand category (fd) in each region (regg), the corresponding basic
 * price in the base year is equal to 1, purchaser's price can be different from
-* 1 in case of non-zero taxes on products
+* 1 in case of non-zero taxes on products. Taxes paid to the exporting countries
+* are included in this volume, because it is assumed that taxes are paid in
+* the lower nest of international trade
 FINAL_USE_T(prd,regg,fd)
-    = sum(reg, FINAL_USE_bp_model(reg,prd,regg,fd) ) ;
+    = sum(reg, FINAL_USE_bp_model(reg,prd,regg,fd) ) +
+    sum(reg$(not sameas(reg,regg)), FINAL_USE_et_model(reg,prd,regg,fd) ) ;
 
 * Final use of domestic products in volume of each product (prd) by each final
 * demand category (fd) in each region (regg), the corresponding basic price in
@@ -216,9 +227,12 @@ FINAL_USE_D(prd,regg,fd)
 
 * Final use of aggregated imported products in volume of each product (prd) by
 * each final demand category (fd) in each region (regg), the corresponding basic
-* price in the base year is equal to 1
+* price in the base year is equal to 1. Taxes paid to the exporting countries
+* are included in this volume, because it is assumed that taxes are paid in
+* the lower nest of international trade
 FINAL_USE_M(prd,regg,fd)
-    = sum(reg$(not sameas(reg,regg)), FINAL_USE_bp_model(reg,prd,regg,fd) ) ;
+    = sum(reg$(not sameas(reg,regg)), FINAL_USE_bp_model(reg,prd,regg,fd) ) +
+    sum(reg$(not sameas(reg,regg)), FINAL_USE_et_model(reg,prd,regg,fd) ) ;
 
 Display
 FINAL_USE_T
@@ -256,6 +270,7 @@ KLS(reg,kl)
 CBUD(regg,fd)
     = sum((reg,prd), FINAL_USE_bp_model(reg,prd,regg,fd) ) +
     sum((reg,prd), FINAL_USE_ts_model(reg,prd,regg,fd) ) +
+    sum((reg,prd), FINAL_USE_et_model(reg,prd,regg,fd) ) +
     sum((row,prd), FINAL_USE_ROW_bp_model(row,prd,regg,fd) ) +
     sum((row,prd), FINAL_USE_ROW_ts_model(row,prd,regg,fd) ) ;
 
@@ -280,7 +295,7 @@ INC
 tc_ind(prd,regg,ind)$sum(reg, INTER_USE_ts_model(reg,prd,regg,ind) )
     = ( sum(reg, INTER_USE_ts_model(reg,prd,regg,ind) ) +
     sum(row, INTER_USE_ROW_ts_model(row,prd,regg,ind) ) ) /
-    ( sum(reg, INTER_USE_bp_model(reg,prd,regg,ind) ) +
+    ( INTER_USE_T(prd,regg,ind) +
     sum(row, INTER_USE_ROW_bp_model(row,prd,regg,ind) ) ) ;
 
 * Net tax (taxes less subsidies) rates on aggregated products included into
@@ -289,8 +304,23 @@ tc_ind(prd,regg,ind)$sum(reg, INTER_USE_ts_model(reg,prd,regg,ind) )
 tc_fd(prd,regg,fd)$sum(reg, FINAL_USE_ts_model(reg,prd,regg,fd) )
     = ( sum(reg, FINAL_USE_ts_model(reg,prd,regg,fd) ) +
     sum(row, FINAL_USE_ROW_ts_model(row,prd,regg,fd) ) ) /
-    ( sum(reg, FINAL_USE_bp_model(reg,prd,regg,fd) ) +
+    ( FINAL_USE_T(prd,regg,fd) +
     sum(row, FINAL_USE_ROW_bp_model(row,prd,regg,fd) ) ) ;
+
+* Net tax (taxes less subsidies) rates on products included into free on board
+* price of export, tax rate differs by product (prd) and region of production
+* (reg)
+tx_exp(reg,prd)
+    = ( sum((regg,ind)$( not sameas(reg,regg) ),
+    INTER_USE_et_model(reg,prd,regg,ind) ) +
+    sum((regg,fd)$( not sameas(reg,regg) ),
+    FINAL_USE_et_model(reg,prd,regg,fd) ) +
+    sum((row,exp), EXPORT_et_model(reg,prd,row,exp) ) ) /
+    ( sum((regg,ind)$( not sameas(reg,regg) ),
+    INTER_USE_bp_model(reg,prd,regg,ind) ) +
+    sum((regg,fd)$( not sameas(reg,regg) ),
+    FINAL_USE_bp_model(reg,prd,regg,fd) ) +
+    sum((row,exp), EXPORT_bp_model(reg,prd,row,exp) ) ) ;
 
 * Net tax (taxes less subsidies) rates on production activities
 txd_ind(reg,ntp,regg,ind)$VALUE_ADDED_model(reg,ntp,regg,ind)
@@ -299,6 +329,7 @@ txd_ind(reg,ntp,regg,ind)$VALUE_ADDED_model(reg,ntp,regg,ind)
 Display
 tc_ind
 tc_fd
+tx_exp
 txd_ind
 ;
 
@@ -410,12 +441,13 @@ theta_row
 * Relative share parameter for import from different regions for each product
 * (prd) for each region of origin (reg) for each region of destination (regg)
 gamma(reg,prd,regg)$TRADE(reg,prd,regg)
-    = TRADE(reg,prd,regg) / IMPORT(prd,regg) ;
+    = TRADE(reg,prd,regg) / IMPORT(prd,regg) *
+    ( 1 / ( 1 + tx_exp(reg,prd) ) )**( -elasIMP(prd,regg) );
 
 * Share coefficient for export of each product (prd) from each region of origin
 * (prd) to each export destination (row,exp)
-gammaE(reg,prd,row,exp)$EXPORT_model(reg,prd,row,exp)
-    = EXPORT_model(reg,prd,row,exp) / X(reg,prd) ;
+gammaE(reg,prd,row,exp)$EXPORT_bp_model(reg,prd,row,exp)
+    = EXPORT_bp_model(reg,prd,row,exp) / X(reg,prd) ;
 
 Display
 gamma

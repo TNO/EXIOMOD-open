@@ -3,11 +3,11 @@
 $oneolcom
 $eolcom #
 
-*KLS_V.FX('EU27','COE')                 = 1.1 * KLS('EU27','COE')                      ;
+KLS_V.FX('EU27','COE')                 = 1.1 * KLS('EU27','COE')                      ;
 
 
-Option iterlim = 0 ;
-*Option iterlim = 20000000 ;
+*Option iterlim = 0 ;
+Option iterlim = 20000000 ;
 *Option nlp = pathnlp ;
 *Option cns = path ;
 Option decimals = 7 ;
@@ -39,41 +39,14 @@ X_change
 ;
 
 Parameter
-    VA_check(regg,ind)          check that aggergated production factors follows
-                                # Cobb-Douglas formula
-    VA_check_CES(regg,ind)      check that aggergated production factors follows
-                                # CES formula
-;
-
-VA_check(regg,ind)
-    = facA(regg,ind) *
-    prod((reg,kl), KL_V.L(reg,kl,regg,ind)**facC(reg,kl,regg,ind) ) /
-    VA_V.L(regg,ind) ;
-
-VA_check_CES(regg,ind)
-    = aCES(regg,ind) * sum((reg,kl)$gammaCES(reg,kl,regg,ind),
-    gammaCES(reg,kl,regg,ind) *
-    KL_V.L(reg,kl,regg,ind)**( ( elasKL(regg,ind) - 1 ) / elasKL(regg,ind) ) )**
-    ( elasKL(regg,ind) / ( elasKL(regg,ind) - 1 ) ) /
-    VA_V.L(regg,ind) ;
-
-
-Display
-VA_check
-VA_check_CES
-KL_V.L
-VA_V.L
-facA
-facC
-;
-
-Parameter
     CBUD_check(regg,fd)         check that budget constraint holds
 ;
 
 CBUD_check(regg,fd)
-    = ( sum((reg,prd), FINAL_USE_V.L(reg,prd,regg,fd) * P_V.L(reg,prd) *
-    ( 1 + tc_fd(prd,regg,fd) ) ) +
+    = ( sum((reg,prd)$sameas(reg,regg), FINAL_USE_V.L(reg,prd,regg,fd) *
+    P_V.L(reg,prd) * ( 1 + tc_fd(prd,regg,fd) ) ) +
+    sum((reg,prd)$( not sameas(reg,regg) ), FINAL_USE_V.L(reg,prd,regg,fd) *
+    P_V.L(reg,prd) * ( 1 + tx_exp(reg,prd) ) *( 1 + tc_fd(prd,regg,fd) ) ) +
     sum((row,prd), FINAL_USE_ROW_V.L(row,prd,regg,fd) * PROW_V.L(row) *
     ( 1 + tc_fd(prd,regg,fd) ) ) ) / CBUD_V.L(regg,fd) ;
 
@@ -87,8 +60,10 @@ Parameter
 
 numer_check(regg,ind) =  Y_V.L(regg,ind) * PY_V.L(regg,ind) *
     ( 1 - sum((reg,ntp), txd_ind(reg,ntp,regg,ind) ) ) /
-    ( sum((reg,prd), INTER_USE_V.L(reg,prd,regg,ind) * P_V.L(reg,prd) *
-    ( 1 + tc_ind(prd,regg,ind) ) ) +
+    ( sum((reg,prd)$sameas(reg,regg), INTER_USE_V.L(reg,prd,regg,ind) *
+    P_V.L(reg,prd) * ( 1 + tc_ind(prd,regg,ind) ) ) +
+    sum((reg,prd)$( not sameas(reg,regg) ), INTER_USE_V.L(reg,prd,regg,ind) *
+    P_V.L(reg,prd)* ( 1 + tx_exp(reg,prd) ) * ( 1 + tc_ind(prd,regg,ind) ) ) +
     sum((row,prd), INTER_USE_ROW_V.L(row,prd,regg,ind) * PROW_V.L(row) *
     ( 1 + tc_ind(prd,regg,ind) ) ) +
     sum((reg,kl), KL_V.L(reg,kl,regg,ind) * PKL_V.L(reg,kl) ) ) ;
