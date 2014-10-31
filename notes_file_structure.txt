@@ -16,7 +16,8 @@ Guidelines:
 - Conform to styling guide (e.g. two spaces indentation, variable names scheme, ...).
 - Create new main##.gms file for every simulation.
 - Save results from simulation run in different directory.
-- Use config.gms only for project-specific settings, not for simulation-specific settings, those should go into main##.gms
+- Use config.gms only for project-specific settings, not for simulation-specific settings, those should go into main##.gms.
+- main##.gms should be done in such a way that you can reproduce any of the results just by clicking 'run' in GAMS, or maybe by commenting in/out one line of code.
 - Do not make changes in general CGE library code (master).
 
 Think about what to do with data. How to keep the data separate from the model (e.g. what if we want to use GTAP or WIOD instead of EXIOBASE)?
@@ -37,3 +38,10 @@ What does the project template contain?
   - scr/simulation -> this could be as simple as calling a general CGE code simulation.
 
 What would be a good directory structure for the project template?
+
+Difference between 'project' directories:
+ - Project folder includes empty directory structure
+ - Project template (see above)
+ - Project example which includes a running code and some tests
+
+ 
