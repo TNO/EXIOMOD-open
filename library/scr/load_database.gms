@@ -5,6 +5,7 @@
 
 * gams-master-file: main.gms
 
+* change
 $ontext startdoc
 This gms file is one of the gms files called from the `main.gms` file.
 
