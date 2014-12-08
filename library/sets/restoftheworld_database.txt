@@ -1,1 +1,1 @@
-RoW             "Rest of the World"
+RoW     'Rest of the World'

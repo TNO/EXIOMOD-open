@@ -1,1 +1,1 @@
-MEUR            "Million Euro"
+MEUR    'Million Euro'

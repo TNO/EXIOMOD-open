@@ -1,1 +1,1 @@
-TSP             "Taxes less subsidies on products"
+TSP     'Taxes less subsidies on products'

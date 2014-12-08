@@ -1,3 +1,12 @@
-COE             "Compensation of employees"
-NTP             "Other net taxes on production"
-OPS             "Operating surplus, gross"
+t201    'Taxes less subsidies on products purchased: Total'
+t204    'Other net taxes on production'
+t206    'Compensation of employees; wages, salaries, & employers social contributions: Low-skilled'
+t207    'Compensation of employees; wages, salaries, & employers social contributions: Medium-skilled'
+t208    'Compensation of employees; wages, salaries, & employers social contributions: High-skilled'
+t209    'Operating surplus: Consumption of fixed capital'
+t212    'Operating surplus: Remaining net operating surplus'
+int_sea     'international margins on trade flows - sea transport'
+int_iww     'international margins on trade flows - inland waterways transport'
+int_rail    'international margins on trade flows - rail transport'
+int_road    'international margins on trade flows - road transport'
+expcnt_tax  'national taxes on trade paid flows to exporting country'

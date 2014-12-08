@@ -1,3 +1,6 @@
-FCH             "Final consumption expenditure of households"
-FCG             "Final consumption expenditure of government"
-GCF             "Gross capital formation"
+t164    'Final consumption expenditure by households'
+t165    'Final consumption expenditure by non-profit organisations serving households (NPISH)'
+t166    'Final consumption expenditure by government'
+t167    'Gross fixed capital formation'
+t168    'Changes in inventories'
+t169    'Changes in valuables'
