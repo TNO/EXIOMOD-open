@@ -29,9 +29,21 @@ Parameters
          SAM_pp_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,*)      raw SAM expressed in producer prices
 ;
 
-$LIBInclude      xlimport        SAM_bp_data        library/data/SAMdata_open_economy_export_tax_long_format.xlsx   basic_price!a1..g1055
-$LIBInclude      xlimport        SAM_ts_data        library/data/SAMdata_open_economy_export_tax_long_format.xlsx   dom_cons_tax!a1..g1055
-$LIBInclude      xlimport        SAM_et_data        library/data/SAMdata_open_economy_export_tax_long_format.xlsx   export_tax!a1..g1055
-$LIBInclude      xlimport        SAM_pp_data        library/data/SAMdata_open_economy_export_tax_long_format.xlsx   producer_price!a1..g1055
+*$LIBInclude      xlimport        SAM_bp_data        library/data/SAMdata_open_economy_export_tax_long_format.xlsx   basic_price!a1..g1055
+*$LIBInclude      xlimport        SAM_ts_data        library/data/SAMdata_open_economy_export_tax_long_format.xlsx   dom_cons_tax!a1..g1055
+*$LIBInclude      xlimport        SAM_et_data        library/data/SAMdata_open_economy_export_tax_long_format.xlsx   export_tax!a1..g1055
+*$LIBInclude      xlimport        SAM_pp_data        library/data/SAMdata_open_economy_export_tax_long_format.xlsx   producer_price!a1..g1055
+
+$Gdxin 'library/data/MRSAM'
+$loaddc SAM_bp_data = MRSAM_bp_database
+$Gdxin
+
+SAM_ts_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,'value') = 0 ;
+
+SAM_et_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,'value') = 0 ;
+
+SAM_pp_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,'value') =
+    SAM_bp_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,'value') +
+    SAM_ts_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,'value') ;
 
 $if '%db_check%' == 'yes' $include library/scr/checks_database.gms

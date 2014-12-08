@@ -292,3 +292,64 @@ EXPORT_bp_model
 EXPORT_et_model
 TRANSFERS_ROW_model
 ;
+
+
+* Extra parameters while database is not fixed
+Parameters
+    VALUE_ADDED_FU_model(reg,va,regg,fd)  value added (tax) on final use
+    VALUE_ADDED_ROW_model(reg,va,row,exp) value added (tax) on export to RoW
+    TAX_INTER_USE_ROW_model(row,regg,ind) tax paid on products from RoW
+    TAX_FINAL_USE_ROW_model(row,regg,fd)  tax paid on products from RoW
+;
+
+VALUE_ADDED_FU_model(reg,va,regg,fd)
+    = sum((reg_data,va_data,regg_data,fd_data)$
+    ( all_reg_aggr(reg_data,reg) and va_aggr(va_data,va) and
+    all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,fd_data,"Value") ) ;
+
+VALUE_ADDED_ROW_model(reg,va,row,exp)
+    = sum((reg_data,va_data,row_data,exp_data)$
+    ( all_reg_aggr(reg_data,reg) and va_aggr(va_data,va) and
+    all_reg_aggr(row_data,row) and exp_aggr(exp_data,exp) ),
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,row_data,exp_data,"Value") )
+    +
+    sum((reg_data,va_data,regg_data,ind_data)$
+    ( all_reg_aggr(reg_data,reg) and va_aggr(va_data,va) and
+    all_reg_aggr(regg_data,row) ),
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,ind_data,"Value") )
+    +
+    sum((reg_data,va_data,regg_data,fd_data)$
+    ( all_reg_aggr(reg_data,reg) and va_aggr(va_data,va) and
+    all_reg_aggr(regg_data,row) ),
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,fd_data,"Value") ) ;
+
+TAX_INTER_USE_ROW_model(row,regg,ind)
+    = sum((row_data,va_data,regg_data,ind_data)$
+    ( all_reg_aggr(row_data,row) and
+    all_reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
+    SAM_bp_data("%base_year%","%base_cur%",row_data,va_data,regg_data,ind_data,"Value") )
+    +
+    sum((reg_data,va_data,regg_data,ind_data)$
+    ( all_reg_aggr(reg_data,row) and
+    all_reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,ind_data,"Value") ) ;
+
+TAX_FINAL_USE_ROW_model(row,regg,fd)
+    = sum((row_data,va_data,regg_data,fd_data)$
+    ( all_reg_aggr(row_data,row) and
+    all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
+    SAM_bp_data("%base_year%","%base_cur%",row_data,va_data,regg_data,fd_data,"Value") )
+    +
+    sum((reg_data,va_data,regg_data,fd_data)$
+    ( all_reg_aggr(reg_data,row) and
+    all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,fd_data,"Value") ) ;
+
+
+Display
+VALUE_ADDED_FU_model
+VALUE_ADDED_ROW_model
+TAX_INTER_USE_ROW_model
+TAX_FINAL_USE_ROW_model
+;
