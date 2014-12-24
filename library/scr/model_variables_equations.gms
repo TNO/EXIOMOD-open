@@ -249,7 +249,7 @@ EQINTU_M(prd,regg,ind)..
 * the regions of demand and production differ, the demand function depends on
 * the demand for aggregated imported product and share of import from region
 * regg in the aggregated import.
-EQINTU(reg,prd,regg,ind)..
+EQINTU(reg,prd,regg,ind)$INTER_USE_bp_model(reg,prd,regg,ind)..
     INTER_USE_V(reg,prd,regg,ind)
     =E=
     ( INTER_USE_D_V(prd,regg,ind) )$sameas(reg,regg) +
@@ -345,7 +345,7 @@ EQFU_M(prd,regg,fd)..
 * the regions of demand and production differ, the demand function depends on
 * the demand for aggregated imported product and share of import from region
 * regg in the aggregated import.
-EQFU(reg,prd,regg,fd)..
+EQFU(reg,prd,regg,fd)$FINAL_USE_bp_model(reg,prd,regg,fd)..
     FINAL_USE_V(reg,prd,regg,fd)
     =E=
     ( FINAL_USE_D_V(prd,regg,fd) )$sameas(reg,regg) +
@@ -452,7 +452,9 @@ EQNTPREV(reg,ntp)..
     NTPREV_V(reg,ntp)
     =E=
     sum((regg,ind), Y_V(regg,ind) * PY_V(regg,ind) *
-    txd_ind(reg,ntp,regg,ind) ) ;
+    txd_ind(reg,ntp,regg,ind) ) +
+    sum((regg,fd), VALUE_ADDED_FU_model(reg,ntp,regg,fd) ) +
+    sum((row,exp), VALUE_ADDED_ROW_model(reg,ntp,row,exp) ) ;
 
 * ## End Factor and tax revenue block ##
 
@@ -484,7 +486,9 @@ EQCBUD(regg,fd)..
     CBUD_V(regg,fd)
     =E=
     INC_V(regg,fd) -
-    sum((reg,fdd), INCTRANSFER_V(regg,fd,reg,fdd) * LASPEYRES_V(regg,fd) ) ;
+    sum((reg,fdd), INCTRANSFER_V(regg,fd,reg,fdd) * LASPEYRES_V(regg,fd) ) -
+    sum((reg,va), VALUE_ADDED_FU_model(reg,va,regg,fd) ) -
+    sum(row, TAX_FINAL_USE_ROW_model(row,regg,fd) ) ;
 
 * ## End Final consumers budgets block ##
 
@@ -500,7 +504,7 @@ EQCBUD(regg,fd)..
 * industry in one country is chosen as a numéraire (exogenous variable), so in
 * order to keep the system square, the equation is not defined for this specific
 * industry in this specific region.
-EQPY(regg,ind)$((not sameas(regg,'US')) or (not sameas(ind,'A1')))..
+EQPY(regg,ind)$((not sameas(regg,'EU')) or (not sameas(ind,'i020')))..
     Y_V(regg,ind) * PY_V(regg,ind) *
     ( 1 - sum((reg,ntp), txd_ind(reg,ntp,regg,ind) ) )
     =E=
@@ -510,7 +514,8 @@ EQPY(regg,ind)$((not sameas(regg,'US')) or (not sameas(ind,'A1')))..
     P_V(reg,prd) * ( 1 + tx_exp(reg,prd) ) * ( 1 + tc_ind(prd,regg,ind) ) ) +
     sum((row,prd), INTER_USE_ROW_V(row,prd,regg,ind) * PROW_V(row) *
     ( 1 + tc_ind(prd,regg,ind) ) ) +
-    sum((reg,kl), KL_V(reg,kl,regg,ind) * PKL_V(reg,kl) ) ;
+    sum((reg,kl), KL_V(reg,kl,regg,ind) * PKL_V(reg,kl) ) +
+    sum(row, TAX_INTER_USE_ROW_model(row,regg,ind) ) ;
 
 * EQUATION 24: Balance between product price and industry price. Price of each
 * product (prd) in each region of production (reg) is defined as a weighted
@@ -599,10 +604,13 @@ EQSCLFD(regg,fd)..
 * corresponding rest of the world region.
 EQPROW(row)..
     sum((reg,prd,exp), EXPORT_V(reg,prd,row,exp) * P_V(reg,prd) *
-    ( 1 + tx_exp(reg,prd) ) )
+    ( 1 + tx_exp(reg,prd) ) ) +
+    sum((reg,va,exp), VALUE_ADDED_ROW_model(reg,va,row,exp) )
     =E=
     sum((prd,regg,ind), INTER_USE_ROW_V(row,prd,regg,ind) ) * PROW_V(row) +
-    sum((prd,regg,fd), FINAL_USE_ROW_V(row,prd,regg,fd) ) * PROW_V(row) -
+    sum((prd,regg,fd), FINAL_USE_ROW_V(row,prd,regg,fd) ) * PROW_V(row) +
+    sum((regg,ind), TAX_INTER_USE_ROW_model(row,regg,ind) ) +
+    sum((regg,fd), TAX_FINAL_USE_ROW_model(row,regg,fd) ) -
     sum((reg,fd,exp), TRANSFERS_ROW_V(reg,fd,row,exp) * LASPEYRES_V(reg,fd) ) ;
 
 * EQUATION 32: Paasche price index for final users. The price index is
@@ -727,7 +735,7 @@ PIMP_V.L(prd,regg)     = 1 ;
 PROW_V.L(row)          = 1 ;
 PAASCHE_V.L(regg,fd)   = 1 ;
 LASPEYRES_V.L(regg,fd) = 1 ;
-PY_V.FX('US','A1')                                                             = 1 ;
+PY_V.FX('EU','i020')                                                           = 1 ;
 PY_V.FX(regg,ind)$(Y_V.L(regg,ind) eq 0)                                       = 1 ;
 P_V.FX(reg,prd)$(X_V.L(reg,prd) eq 0)                                          = 1 ;
 PKL_V.FX(reg,kl)$(KLS(reg,kl) eq 0)                                            = 1 ;
