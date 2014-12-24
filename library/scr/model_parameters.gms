@@ -28,7 +28,7 @@ $eolcom #
 * ========================== Declaration of subsets ============================
 Sets
     ntp(va)   net taxes on production categories    /"NTP"/
-    kl(va)    capital and labour categories         /"COE","OPS"/
+    kl(va)    capital and labour categories         /"CLS","CMS","CHS","CFC","NOS"/
 *    kl(va)    capital and labour categories         /"COE"/
 ;
 
@@ -259,6 +259,7 @@ IMPORT
 TRADE
 ;
 
+
 * Supply in volume of each production factor (kl) in each region (reg), the
 * corresponding basic price in the base year is equal to 1, market price can be
 * different from 1 in case of non-zero taxes on factors of production
@@ -277,7 +278,9 @@ CBUD(regg,fd)
 * Total income in value of each final demand category (fd) in each region (regg)
 INC(regg,fd)
     = CBUD(regg,fd) +
-    sum((reg,fdd), INCOME_DISTR_model(regg,fd,reg,fdd) ) ;
+    sum((reg,fdd), INCOME_DISTR_model(regg,fd,reg,fdd) ) +
+    sum((reg,va), VALUE_ADDED_FU_model(reg,va,regg,fd) ) +
+    sum(row, TAX_FINAL_USE_ROW_model(row,regg,fd) ) ;
 
 Display
 KLS
@@ -310,7 +313,11 @@ tc_fd(prd,regg,fd)$sum(reg, FINAL_USE_ts_model(reg,prd,regg,fd) )
 * Net tax (taxes less subsidies) rates on products included into free on board
 * price of export, tax rate differs by product (prd) and region of production
 * (reg)
-tx_exp(reg,prd)
+tx_exp(reg,prd)$( sum((regg,ind)$( not sameas(reg,regg) ),
+    INTER_USE_et_model(reg,prd,regg,ind) ) +
+    sum((regg,fd)$( not sameas(reg,regg) ),
+    FINAL_USE_et_model(reg,prd,regg,fd) ) +
+    sum((row,exp), EXPORT_et_model(reg,prd,row,exp) ) )
     = ( sum((regg,ind)$( not sameas(reg,regg) ),
     INTER_USE_et_model(reg,prd,regg,ind) ) +
     sum((regg,fd)$( not sameas(reg,regg) ),
