@@ -1,0 +1,4 @@
+EU
+DE
+FR
+RW      'Rest of the regions'

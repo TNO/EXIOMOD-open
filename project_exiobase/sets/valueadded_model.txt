@@ -1,0 +1,6 @@
+NTP     'All taxes and international margins'
+CLS    'Compensation of employees; wages, salaries, & employers social contributions: Low-skilled'
+CMS    'Compensation of employees; wages, salaries, & employers social contributions: Medium-skilled'
+CHS    'Compensation of employees; wages, salaries, & employers social contributions: High-skilled'
+CFC    'Operating surplus: Consumption of fixed capital'
+NOS    'Operating surplus: Remaining net operating surplus'

@@ -1,0 +1,2 @@
+FC      'Final consumption expenditure by households, NPISH and government'
+GCF     'Gross capital formation'
