@@ -75,8 +75,7 @@ USE_pp_sign
 
 
 * Check for SAMs account balance for the regions
-* Due to possible rounding, allowed level of discrepancy is 1e-8
-
+* Due to possible rounding, allowed level of discrepancy is 1e-7
 BAL_bp_reg(reg_data,full_cat_list) = SUM((all_reg_data,full_catt_list),
     SAM_bp_data("%base_year%","%base_cur%",reg_data,full_cat_list,all_reg_data,
     full_catt_list,"Value") ) - SUM((all_reg_data,full_catt_list),
@@ -84,7 +83,7 @@ BAL_bp_reg(reg_data,full_cat_list) = SUM((all_reg_data,full_catt_list),
     full_cat_list,"Value") ) ;
 
 BAL_bp_reg(reg_data,full_cat_list)$
-    (abs(BAL_bp_reg(reg_data,full_cat_list)) lt 1e-8 ) = 0 ;
+    (abs(BAL_bp_reg(reg_data,full_cat_list)) lt 1e-7 ) = 0 ;
 
 BAL_bp_reg(reg_data,full_cat_list)$BAL_bp_reg(reg_data,full_cat_list) = 1 ;
 
@@ -96,7 +95,7 @@ BAL_pp_reg(reg_data,full_cat_list) = SUM((all_reg_data,full_catt_list),
     full_cat_list,"Value") ) ;
 
 BAL_pp_reg(reg_data,full_cat_list)$
-    (abs(BAL_pp_reg(reg_data,full_cat_list)) lt 1e-8 ) = 0 ;
+    (abs(BAL_pp_reg(reg_data,full_cat_list)) lt 1e-7 ) = 0 ;
 
 BAL_pp_reg(reg_data,full_cat_list)$BAL_pp_reg(reg_data,full_cat_list) = 1 ;
 
@@ -108,7 +107,7 @@ BAL_pp_reg
 
 
 * Check for rest of the world accounts balance
-* Due to possible rounding, allowed level of discrepancy is 1e-8
+* Due to possible rounding, allowed level of discrepancy is 1e-7
 
 BAL_bp_row(row_data) = SUM((full_cat_list,all_reg_data,full_catt_list),
     SAM_bp_data("%base_year%", "%base_cur%",row_data,full_cat_list,all_reg_data,
@@ -116,7 +115,7 @@ BAL_bp_row(row_data) = SUM((full_cat_list,all_reg_data,full_catt_list),
     SAM_bp_data("%base_year%","%base_cur%",all_reg_data,full_cat_list,row_data,
     full_catt_list,"Value") ) ;
 
-BAL_bp_row(row_data)$(abs(BAL_bp_row(row_data)) lt 1e-8 ) = 0 ;
+BAL_bp_row(row_data)$(abs(BAL_bp_row(row_data)) lt 1e-7 ) = 0 ;
 
 BAL_bp_row(row_data)$BAL_bp_row(row_data) = 1 ;
 
@@ -127,7 +126,7 @@ BAL_pp_row(row_data) = SUM((full_cat_list,all_reg_data,full_catt_list),
     SAM_pp_data("%base_year%","%base_cur%",all_reg_data,full_cat_list,row_data,
     full_catt_list,"Value") ) ;
 
-BAL_pp_row(row_data)$(abs(BAL_pp_row(row_data)) lt 1e-8 ) = 0 ;
+BAL_pp_row(row_data)$(abs(BAL_pp_row(row_data)) lt 1e-7 ) = 0 ;
 
 BAL_pp_row(row_data)$BAL_pp_row(row_data) = 1 ;
 
