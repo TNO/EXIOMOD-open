@@ -1,4 +1,2 @@
-EU
-DE
-FR
+EU      'European Union'
 RW      'Rest of the regions'
