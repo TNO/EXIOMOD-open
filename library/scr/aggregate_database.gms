@@ -45,35 +45,56 @@ $eolcom #
 Parameters
     SUP_model(reg,prd,regg,ind)             supply table in model aggregation
 
-    INTER_USE_bp_model(reg,prd,regg,ind)    intermediate use in model
-                                            # aggregation in basic prices
-    INTER_USE_ts_model(reg,prd,regg,ind)    tax paid domestically on
+    INTER_USE_D_model(prd,regg,ind)         intermediate use of domestic
+                                            # products in model aggregation in
+                                            # basic prices
+    INTER_USE_M_model(prd,regg,ind)         intermediate use of products
+                                            # imported from modeled regions
+                                            # in model aggregation in
+                                            # basic (c.i.f.) prices
+    INTER_USE_ROW_model(row,prd,regg,ind)   intermediate use of products
+                                            # imported from rest of the world
+                                            # regions in model aggregation in
+                                            # basic (c.i.f.) prices
+    INTER_USE_dt_model(prd,regg,ind)        tax paid domestically on
                                             # intermediate use in model
-                                            # aggregation
-    INTER_USE_et_model(reg,prd,regg,ind)    tax paid to exporing region on
-                                            # intermediate use in model
-                                            # aggregation
-    INTER_USE_ROW_bp_model(row,prd,regg,ind)    use of imported products by
-                                            # industries in model aggregation in
-                                            # cif prices
-    INTER_USE_ROW_ts_model(row,prd,regg,ind)    tax layer of use of imported
-                                            # products by industries in model
                                             # aggregation
 
-    FINAL_USE_bp_model(reg,prd,regg,fd)     final use in model aggregation in
-                                            # basic prices
-    FINAL_USE_ts_model(reg,prd,regg,fd)     tax paid domestically on final use
+    FINAL_USE_D_model(prd,regg,fd)          final use of domestic products in
+                                            # model aggregation in basic prices
+    FINAL_USE_M_model(prd,regg,fd)          final use of products imported from
+                                            # modeled regions in model
+                                            # aggregation in basic (c.i.f.)
+                                            # prices
+    FINAL_USE_ROW_model(row,prd,regg,fd)    final use of products imported from
+                                            # rest of the world regions in model
+                                            # aggregation in basic (c.i.f.)
+                                            # prices
+    FINAL_USE_dt_model(prd,regg,fd)         tax paid domestically on final use
                                             # in model aggregation
-    FINAL_USE_et_model(reg,prd,regg,fd)     tax paid to exporting region on
-                                            # final use in model aggregation
-    FINAL_USE_ROW_bp_model(row,prd,regg,fd) use of imported products by final
-                                            # demand categories in model
-                                            # aggregation in cif prices
-    FINAL_USE_ROW_ts_model(row,prd,regg,fd) tax layers of use of imported
-                                            # products by final demand
-                                            # categories in model aggregation
+
+    TRADE_model(reg,prd,regg)               trade in products between modeled
+                                            # regions in basic (c.i.f.) prices
 
     VALUE_ADDED_model(reg,va,regg,ind)      value added in model aggregation
+    TAX_INTER_USE_ROW_model(row,va,regg,ind)    tax and international margins
+                                            # paid on intermediate use of
+                                            # products imported from rest of the
+                                            # world regions
+
+    TAX_FINAL_USE_model(reg,va,regg,fd)     tax and international margins paid
+                                            # on final use of products imported
+                                            # from modeled regions
+    TAX_FINAL_USE_ROW_model(row,va,regg,fd) tax and international margins paid
+                                            # on final use of products imported
+                                            # from rest of the world regions
+
+    EXPORT_model(reg,prd,row)               export to rest of the world regions
+                                            # in model aggregation in basic
+                                            # (f.o.b.) prices
+    TAX_EXPORT_model(reg,va,row)            tax and international margin
+                                            # received due to export to rest of
+                                            # the world regions
 
     TAX_SUB_PRD_DISTR_model(reg,tsp,regg,fd)    distribution of taxes and
                                             # subsidies on products revenue to
@@ -87,11 +108,7 @@ Parameters
                                             # final demand categories in model
                                             # aggregation
 
-    EXPORT_bp_model(reg,prd,row,exp)        export to rest of the world regions
-                                            # in model aggregation in fob prices
-    EXPORT_et_model(reg,prd,row,exp)        tax paid on export to rest of the
-                                            # world regions in model aggregation
-    TRANSFERS_ROW_model(reg,fd,row,exp)     transfers between rest of the world
+    TRANSFERS_ROW_model(reg,fd,row)         transfers between rest of the world
                                             # regions and final demand
                                             # categories in model aggregation
 ;
@@ -110,6 +127,8 @@ Parameters
 * the sets that include a "_aggr" extension relate to the files named $include %proejct%/sets/aggregation/<namehere>.txt
 * See also sets_model.gms OR sets_data.gms for an overview of sets
 
+
+
 SUP_model(reg,prd,regg,ind)
     = sum((reg_data,prd_data,regg_data,ind_data)$
     ( all_reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
@@ -117,25 +136,20 @@ SUP_model(reg,prd,regg,ind)
     SAM_bp_data("%base_year%","%base_cur%",reg_data,ind_data,regg_data,prd_data,"Value") ) ;
 
 
-INTER_USE_bp_model(reg,prd,regg,ind)
+INTER_USE_D_model(prd,regg,ind)
     = sum((reg_data,prd_data,regg_data,ind_data)$
-    ( all_reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
+    ( all_reg_aggr(reg_data,regg) and prd_aggr(prd_data,prd) and
     all_reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
     SAM_bp_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,ind_data,"Value") ) ;
 
-INTER_USE_ts_model(reg,prd,regg,ind)
+INTER_USE_M_model(prd,regg,ind)
     = sum((reg_data,prd_data,regg_data,ind_data)$
-    ( all_reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
+    ( not all_reg_aggr(reg_data,regg) and
+    sum(row$all_reg_aggr(reg_data,row), 1 ) eq 0 and prd_aggr(prd_data,prd) and
     all_reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
-    SAM_ts_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,ind_data,"Value") ) ;
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,ind_data,"Value") ) ;
 
-INTER_USE_et_model(reg,prd,regg,ind)
-    = sum((reg_data,prd_data,regg_data,ind_data)$
-    ( all_reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
-    all_reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
-    SAM_et_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,ind_data,"Value") ) ;
-
-INTER_USE_ROW_bp_model(row,prd,regg,ind)
+INTER_USE_ROW_model(row,prd,regg,ind)
     = sum((row_data,prd_data,regg_data,ind_data)$
     ( all_reg_aggr(row_data,row) and prd_aggr(prd_data,prd) and
     all_reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
@@ -146,36 +160,32 @@ INTER_USE_ROW_bp_model(row,prd,regg,ind)
     all_reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
     SAM_bp_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,ind_data,"Value") ) ;
 
-INTER_USE_ROW_ts_model(row,prd,regg,ind)
-    = sum((row_data,prd_data,regg_data,ind_data)$
-    ( all_reg_aggr(row_data,row) and prd_aggr(prd_data,prd) and
+INTER_USE_dt_model(prd,regg,ind)
+    = sum((reg_data,prd_data,regg_data,ind_data)$
+    ( prd_aggr(prd_data,prd) and
     all_reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
-    SAM_ts_data("%base_year%","%base_cur%",row_data,prd_data,regg_data,ind_data,"Value") )
+    SAM_dt_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,ind_data,"Value") )
     +
-    sum((reg_data,prd_data,regg_data,ind_data)$
-    ( all_reg_aggr(reg_data,row) and prd_aggr(prd_data,prd) and
+    sum((row_data,prd_data,regg_data,ind_data)$
+    ( prd_aggr(prd_data,prd) and
     all_reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
-    SAM_ts_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,ind_data,"Value") ) ;
+    SAM_dt_data("%base_year%","%base_cur%",row_data,prd_data,regg_data,ind_data,"Value") ) ;
 
-FINAL_USE_bp_model(reg,prd,regg,fd)
+
+FINAL_USE_D_model(prd,regg,fd)
     = sum((reg_data,prd_data,regg_data,fd_data)$
-    ( all_reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
+    ( all_reg_aggr(reg_data,regg) and prd_aggr(prd_data,prd) and
     all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
     SAM_bp_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,fd_data,"Value") ) ;
 
-FINAL_USE_ts_model(reg,prd,regg,fd)
+FINAL_USE_M_model(prd,regg,fd)
     = sum((reg_data,prd_data,regg_data,fd_data)$
-    ( all_reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
+    ( not all_reg_aggr(reg_data,regg) and
+    sum(row$all_reg_aggr(reg_data,row), 1 ) eq 0 and prd_aggr(prd_data,prd) and
     all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
-    SAM_ts_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,fd_data,"Value") ) ;
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,fd_data,"Value") ) ;
 
-FINAL_USE_et_model(reg,prd,regg,fd)
-    = sum((reg_data,prd_data,regg_data,fd_data)$
-    ( all_reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
-    all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
-    SAM_et_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,fd_data,"Value") ) ;
-
-FINAL_USE_ROW_bp_model(row,prd,regg,fd)
+FINAL_USE_ROW_model(row,prd,regg,fd)
     = sum((row_data,prd_data,regg_data,fd_data)$
     ( all_reg_aggr(row_data,row) and prd_aggr(prd_data,prd) and
     all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
@@ -186,22 +196,101 @@ FINAL_USE_ROW_bp_model(row,prd,regg,fd)
     all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
     SAM_bp_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,fd_data,"Value") ) ;
 
-FINAL_USE_ROW_ts_model(row,prd,regg,fd)
-    = sum((row_data,prd_data,regg_data,fd_data)$
-    ( all_reg_aggr(row_data,row) and prd_aggr(prd_data,prd) and
+FINAL_USE_dt_model(prd,regg,fd)
+    = sum((reg_data,prd_data,regg_data,fd_data)$
+    ( prd_aggr(prd_data,prd) and
     all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
-    SAM_ts_data("%base_year%","%base_cur%",row_data,prd_data,regg_data,fd_data,"Value") )
+    SAM_dt_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,fd_data,"Value") )
+    +
+    sum((row_data,prd_data,regg_data,fd_data)$
+    ( prd_aggr(prd_data,prd) and
+    all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
+    SAM_dt_data("%base_year%","%base_cur%",row_data,prd_data,regg_data,fd_data,"Value") ) ;
+
+
+TRADE_model(reg,prd,regg)
+    = sum((reg_data,prd_data,regg_data,ind_data)$
+    ( all_reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
+    all_reg_aggr(regg_data,regg) ),
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,ind_data,"Value") )
     +
     sum((reg_data,prd_data,regg_data,fd_data)$
-    ( all_reg_aggr(reg_data,row) and prd_aggr(prd_data,prd) and
-    all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
-    SAM_ts_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,fd_data,"Value") ) ;
+    ( all_reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
+    all_reg_aggr(regg_data,regg) ),
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,fd_data,"Value") ) ;
+
+* exclude trade between the same regions
+TRADE_model(reg,prd,reg) = 0 ;
+
 
 VALUE_ADDED_model(reg,va,regg,ind)
     = sum((reg_data,va_data,regg_data,ind_data)$
     ( all_reg_aggr(reg_data,reg) and va_aggr(va_data,va) and
     all_reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
     SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,ind_data,"Value") ) ;
+
+TAX_INTER_USE_ROW_model(row,va,regg,ind)
+    = sum((row_data,va_data,regg_data,ind_data)$
+    ( all_reg_aggr(row_data,row) and va_aggr(va_data,va) and
+    all_reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
+    SAM_bp_data("%base_year%","%base_cur%",row_data,va_data,regg_data,ind_data,"Value") )
+    +
+    sum((reg_data,va_data,regg_data,ind_data)$
+    ( all_reg_aggr(reg_data,row) and va_aggr(va_data,va) and
+    all_reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,ind_data,"Value") ) ;
+
+
+TAX_FINAL_USE_model(reg,va,regg,fd)
+    = sum((reg_data,va_data,regg_data,fd_data)$
+    ( all_reg_aggr(reg_data,reg) and va_aggr(va_data,va) and
+    all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,fd_data,"Value") ) ;
+
+TAX_FINAL_USE_ROW_model(row,va,regg,fd)
+    = sum((row_data,va_data,regg_data,fd_data)$
+    ( all_reg_aggr(row_data,row) and va_aggr(va_data,va) and
+    all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
+    SAM_bp_data("%base_year%","%base_cur%",row_data,va_data,regg_data,fd_data,"Value") )
+    +
+    sum((reg_data,va_data,regg_data,fd_data)$
+    ( all_reg_aggr(reg_data,row) and va_aggr(va_data,va) and
+    all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,fd_data,"Value") ) ;
+
+
+EXPORT_model(reg,prd,row)
+    = sum((reg_data,prd_data,row_data,exp_data)$
+    ( all_reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
+    all_reg_aggr(row_data,row) ),
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,prd_data,row_data,exp_data,"Value") )
+    +
+    sum((reg_data,prd_data,regg_data,ind_data)$
+    ( all_reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
+    all_reg_aggr(regg_data,row) ),
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,ind_data,"Value") )
+    +
+    sum((reg_data,prd_data,regg_data,fd_data)$
+    ( all_reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
+    all_reg_aggr(regg_data,row) ),
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,fd_data,"Value") ) ;
+
+TAX_EXPORT_model(reg,va,row)
+    = sum((reg_data,va_data,row_data,exp_data)$
+    ( all_reg_aggr(reg_data,reg) and va_aggr(va_data,va) and
+    all_reg_aggr(row_data,row) ),
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,row_data,exp_data,"Value") )
+    +
+    sum((reg_data,va_data,regg_data,ind_data)$
+    ( all_reg_aggr(reg_data,reg) and va_aggr(va_data,va) and
+    all_reg_aggr(regg_data,row) ),
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,ind_data,"Value") )
+    +
+    sum((reg_data,va_data,regg_data,fd_data)$
+    ( all_reg_aggr(reg_data,reg) and va_aggr(va_data,va) and
+    all_reg_aggr(regg_data,row) ),
+    SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,fd_data,"Value") ) ;
+
 
 TAX_SUB_PRD_DISTR_model(reg,tsp,regg,fd)
     = sum((regg_data,fd_data,reg_data,tsp_data)$
@@ -224,42 +313,11 @@ INCOME_DISTR_model(reg,fd,regg,fdd)
 * exclude income redistribution from the same agent
 INCOME_DISTR_model(reg,fd,reg,fd) = 0 ;
 
-EXPORT_bp_model(reg,prd,row,exp)
-    = sum((reg_data,prd_data,row_data,exp_data)$
-    ( all_reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
-    all_reg_aggr(row_data,row) and exp_aggr(exp_data,exp) ),
-    SAM_bp_data("%base_year%","%base_cur%",reg_data,prd_data,row_data,exp_data,"Value") )
-    +
-    sum((reg_data,prd_data,regg_data,ind_data)$
-    ( all_reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
-    all_reg_aggr(regg_data,row) ),
-    SAM_bp_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,ind_data,"Value") )
-    +
-    sum((reg_data,prd_data,regg_data,fd_data)$
-    ( all_reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
-    all_reg_aggr(regg_data,row) ),
-    SAM_bp_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,fd_data,"Value") ) ;
 
-EXPORT_et_model(reg,prd,row,exp)
-    = sum((reg_data,prd_data,row_data,exp_data)$
-    ( all_reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
-    all_reg_aggr(row_data,row) and exp_aggr(exp_data,exp) ),
-    SAM_et_data("%base_year%","%base_cur%",reg_data,prd_data,row_data,exp_data,"Value") )
-    +
-    sum((reg_data,prd_data,regg_data,ind_data)$
-    ( all_reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
-    all_reg_aggr(regg_data,row) ),
-    SAM_et_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,ind_data,"Value") )
-    +
-    sum((reg_data,prd_data,regg_data,fd_data)$
-    ( all_reg_aggr(reg_data,reg) and prd_aggr(prd_data,prd) and
-    all_reg_aggr(regg_data,row) ),
-    SAM_et_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,fd_data,"Value") ) ;
-
-TRANSFERS_ROW_model(reg,fd,row,exp)
+TRANSFERS_ROW_model(reg,fd,row)
     = sum((reg_data,fd_data,row_data,exp_data)$
     ( all_reg_aggr(reg_data,reg) and fd_aggr(fd_data,fd) and
-    all_reg_aggr(row_data,row) and exp_aggr(exp_data,exp) ),
+    all_reg_aggr(row_data,row) ),
     SAM_bp_data("%base_year%","%base_cur%",reg_data,fd_data,row_data,exp_data,"Value") )
     +
     sum((reg_data,fd_data,regg_data,fdd_data)$
@@ -274,82 +332,23 @@ TRANSFERS_ROW_model(reg,fd,row,exp)
 
 Display
 SUP_model
-INTER_USE_bp_model
-INTER_USE_ts_model
-INTER_USE_et_model
-INTER_USE_ROW_bp_model
-INTER_USE_ROW_ts_model
-FINAL_USE_bp_model
-FINAL_USE_ts_model
-FINAL_USE_et_model
-FINAL_USE_ROW_bp_model
-FINAL_USE_ROW_ts_model
+INTER_USE_D_model
+INTER_USE_M_model
+INTER_USE_ROW_model
+INTER_USE_dt_model
+FINAL_USE_D_model
+FINAL_USE_M_model
+FINAL_USE_ROW_model
+FINAL_USE_dt_model
+TRADE_model
 VALUE_ADDED_model
+TAX_INTER_USE_ROW_model
+TAX_FINAL_USE_model
+TAX_FINAL_USE_ROW_model
+EXPORT_model
+TAX_EXPORT_model
 TAX_SUB_PRD_DISTR_model
 VALUE_ADDED_DISTR_model
 INCOME_DISTR_model
-EXPORT_bp_model
-EXPORT_et_model
 TRANSFERS_ROW_model
-;
-
-
-* Extra parameters while database is not fixed
-Parameters
-    VALUE_ADDED_FU_model(reg,va,regg,fd)  value added (tax) on final use
-    VALUE_ADDED_ROW_model(reg,va,row,exp) value added (tax) on export to RoW
-    TAX_INTER_USE_ROW_model(row,regg,ind) tax paid on products from RoW
-    TAX_FINAL_USE_ROW_model(row,regg,fd)  tax paid on products from RoW
-;
-
-VALUE_ADDED_FU_model(reg,va,regg,fd)
-    = sum((reg_data,va_data,regg_data,fd_data)$
-    ( all_reg_aggr(reg_data,reg) and va_aggr(va_data,va) and
-    all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
-    SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,fd_data,"Value") ) ;
-
-VALUE_ADDED_ROW_model(reg,va,row,exp)
-    = sum((reg_data,va_data,row_data,exp_data)$
-    ( all_reg_aggr(reg_data,reg) and va_aggr(va_data,va) and
-    all_reg_aggr(row_data,row) and exp_aggr(exp_data,exp) ),
-    SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,row_data,exp_data,"Value") )
-    +
-    sum((reg_data,va_data,regg_data,ind_data)$
-    ( all_reg_aggr(reg_data,reg) and va_aggr(va_data,va) and
-    all_reg_aggr(regg_data,row) ),
-    SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,ind_data,"Value") )
-    +
-    sum((reg_data,va_data,regg_data,fd_data)$
-    ( all_reg_aggr(reg_data,reg) and va_aggr(va_data,va) and
-    all_reg_aggr(regg_data,row) ),
-    SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,fd_data,"Value") ) ;
-
-TAX_INTER_USE_ROW_model(row,regg,ind)
-    = sum((row_data,va_data,regg_data,ind_data)$
-    ( all_reg_aggr(row_data,row) and
-    all_reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
-    SAM_bp_data("%base_year%","%base_cur%",row_data,va_data,regg_data,ind_data,"Value") )
-    +
-    sum((reg_data,va_data,regg_data,ind_data)$
-    ( all_reg_aggr(reg_data,row) and
-    all_reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
-    SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,ind_data,"Value") ) ;
-
-TAX_FINAL_USE_ROW_model(row,regg,fd)
-    = sum((row_data,va_data,regg_data,fd_data)$
-    ( all_reg_aggr(row_data,row) and
-    all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
-    SAM_bp_data("%base_year%","%base_cur%",row_data,va_data,regg_data,fd_data,"Value") )
-    +
-    sum((reg_data,va_data,regg_data,fd_data)$
-    ( all_reg_aggr(reg_data,row) and
-    all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
-    SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,fd_data,"Value") ) ;
-
-
-Display
-VALUE_ADDED_FU_model
-VALUE_ADDED_ROW_model
-TAX_INTER_USE_ROW_model
-TAX_FINAL_USE_ROW_model
 ;
