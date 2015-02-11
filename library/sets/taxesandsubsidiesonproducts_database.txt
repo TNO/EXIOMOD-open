@@ -1,1 +1,1 @@
-TSP     'Taxes less subsidies on products'
+t201    'Taxes less subsidies on products purchased: Total'
