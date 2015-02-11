@@ -4,7 +4,7 @@ $oneolcom
 $eolcom #
 
 *KLS_V.FX('EU27','COE')                 = 1.1 * KLS('EU27','COE')                      ;
-KLS_V.FX('EU','CLS')                 = 1.1 * KLS('EU','CLS')                      ;
+KLS_V.FX('EU','COE')                 = 1.1 * KLS('EU','COE')                      ;
 
 
 *Option iterlim = 0 ;
@@ -44,10 +44,8 @@ Parameter
 ;
 
 CBUD_check(regg,fd)
-    = ( sum((reg,prd)$sameas(reg,regg), FINAL_USE_V.L(reg,prd,regg,fd) *
-    P_V.L(reg,prd) * ( 1 + tc_fd(prd,regg,fd) ) ) +
-    sum((reg,prd)$( not sameas(reg,regg) ), FINAL_USE_V.L(reg,prd,regg,fd) *
-    P_V.L(reg,prd) * ( 1 + tx_exp(reg,prd) ) *( 1 + tc_fd(prd,regg,fd) ) ) +
+    = ( sum((reg,prd), FINAL_USE_V.L(reg,prd,regg,fd) * P_V.L(reg,prd) *
+    ( 1 + tc_fd(prd,regg,fd) ) ) +
     sum((row,prd), FINAL_USE_ROW_V.L(row,prd,regg,fd) * PROW_V.L(row) *
     ( 1 + tc_fd(prd,regg,fd) ) ) ) / CBUD_V.L(regg,fd) ;
 
@@ -60,15 +58,15 @@ Parameter
 ;
 
 numer_check(regg,ind) =  Y_V.L(regg,ind) * PY_V.L(regg,ind) *
-    ( 1 - sum((reg,ntp), txd_ind(reg,ntp,regg,ind) ) ) /
-    ( sum((reg,prd)$sameas(reg,regg), INTER_USE_V.L(reg,prd,regg,ind) *
-    P_V.L(reg,prd) * ( 1 + tc_ind(prd,regg,ind) ) ) +
-    sum((reg,prd)$( not sameas(reg,regg) ), INTER_USE_V.L(reg,prd,regg,ind) *
-    P_V.L(reg,prd)* ( 1 + tx_exp(reg,prd) ) * ( 1 + tc_ind(prd,regg,ind) ) ) +
+    ( 1 - sum((reg,ntp), txd_ind(reg,ntp,regg,ind) ) -
+    sum((reg,tim), txd_tim(reg,tim,regg,ind) ) ) /
+    ( sum((reg,prd), INTER_USE_V.L(reg,prd,regg,ind) * P_V.L(reg,prd) *
+    ( 1 + tc_ind(prd,regg,ind) ) ) +
     sum((row,prd), INTER_USE_ROW_V.L(row,prd,regg,ind) * PROW_V.L(row) *
     ( 1 + tc_ind(prd,regg,ind) ) ) +
     sum((reg,kl), KL_V.L(reg,kl,regg,ind) * PKL_V.L(reg,kl) ) +
-    sum(row, TAX_INTER_USE_ROW_model(row,regg,ind) ) ) ;
+    sum((row,tim), TAX_INTER_USE_ROW_model(row,tim,regg,ind) * PROW_V.L(row) ) ) ;
+
 
 Display
 numer_check
