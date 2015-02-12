@@ -507,7 +507,7 @@ EQCBUD(regg,fd)..
 * industry in one country is chosen as a numéraire (exogenous variable), so in
 * order to keep the system square, the equation is not defined for this specific
 * industry in this specific region.
-EQPY(regg,ind)$((not sameas(regg,'EU')) or (not sameas(ind,'i020')))..
+EQPY(regg,ind)$((not sameas(regg,'WEU')) or (not sameas(ind,'i020')))..
     Y_V(regg,ind) * PY_V(regg,ind) *
     ( 1 - sum((reg,ntp), txd_ind(reg,ntp,regg,ind) ) -
     sum((reg,tim), txd_tim(reg,tim,regg,ind) ) )
@@ -728,7 +728,7 @@ PIMP_V.L(prd,regg)     = 1 ;
 PROW_V.L(row)          = 1 ;
 PAASCHE_V.L(regg,fd)   = 1 ;
 LASPEYRES_V.L(regg,fd) = 1 ;
-PY_V.FX('EU','i020')                                                           = 1 ;
+PY_V.FX('WEU','i020')                                                           = 1 ;
 PY_V.FX(regg,ind)$(Y_V.L(regg,ind) eq 0)                                       = 1 ;
 P_V.FX(reg,prd)$(X_V.L(reg,prd) eq 0)                                          = 1 ;
 PKL_V.FX(reg,kl)$(KLS(reg,kl) eq 0)                                            = 1 ;
