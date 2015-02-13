@@ -32,7 +32,7 @@ $if not set project      $setglobal      project         'project_exiobase'
 $if not set agg_check    $setglobal      agg_check       'yes'
 
 * base year
-$if not set base_year    $setglobal      base_year       '2007'
+$if not set base_year    $setglobal      base_year       'y2007'
 
 * base currency
 $if not set base_cur     $setglobal      base_cur        'MEUR'
