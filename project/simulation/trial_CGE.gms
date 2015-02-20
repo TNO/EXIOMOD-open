@@ -1,3 +1,7 @@
+* include definition of parameters, variables and equations from the base model
+$include ../library/scr/model_parameters.gms
+$include ../library/scr/model_variables_equations.gms
+
 
 * activate end of line comment and specify the activating character
 $oneolcom

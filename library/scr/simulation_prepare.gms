@@ -19,7 +19,8 @@ of the following parts:
    relations for the sets in the database are defined.
  * Include `aggregate_database.gms`, where the database is aggregated to the
    dimensions of the model, identified in `sets_model.gms`.
- * Include `model_parameters.gms`, where key parameters of input-output model
+*  Include `user_data.gms`,  which reads in project specific data (e.g. on elasticities).
+* Include `model_parameters.gms`, where key parameters of input-output model
    are defined.
  * Include `model_variables_equations.gms`, where variables, equations and the
    model itself are defined.
@@ -35,6 +36,8 @@ $include library/scr/load_database.gms
 
 $include library/scr/sets_model.gms
 $include library/scr/aggregate_database.gms
+
+$include library/scr/user_data.gms
 
 $include library/scr/model_parameters.gms
 $include library/scr/model_variables_equations.gms

@@ -1,7 +1,7 @@
 * File:   library/scr/model_variables_equations.gms
 * Author: Tatyana Bulavskaya
 * Date:   14 May 2014
-* Adjusted: 9 June 2014 (simple CGE formulation)
+* Adjusted: 19 February 2015 (simple CGE formulation)
 
 * gams-master-file: main.gms
 
@@ -10,23 +10,17 @@ This `.gms` file is one of the `.gms` files part of the `main.gms` file and incl
 
 This `.gms` file consists of the following parts:
 
-1. *Declaration of variables*
+1. Declaration of variables
 
-    Output by activity and product are here the variables which can be adjusted in the model. The variable `Cshock` is defined later in the `%simulation%` gms file.
+2. Declaration of equations
 
-2. *Declaration of equations*
+3. Definition of equations
 
-    One of the equations is an artificial objective function. This is because GAMS only understands a model run with an objective function. If you would like to run it without one, you can use such an artificial objective function which is basically put to any value such as 1.
+4. Definition of levels and lower and upper bounds and fixed variables
 
-3. *Definition of equations*
+5. Setting of scale variables 
 
-4. *Definition of levels and lower and upper bounds and fixed variables*
-
-    Upper and lower bounds can be adjusted when needed.
-
-5. *Declaration of equations in the model*
-
-    This states which equations are included in which model. The models are based on either product technology or activity technology. The `main.gms` file includes the option to choose one of the two types of technologies.
+6. Declaration of the model
 
 $offtext
 
@@ -34,7 +28,11 @@ $offtext
 $oneolcom
 $eolcom #
 
-* ========================== Declaration of variables ==========================
+* ========================== 1. Declaration of variables ==========================
+
+$ontext
+Output by activity and product are here the variables which can be adjusted in the model. The variable `Cshock` is defined later in the `%simulation%` gms file.
+$offtext
 
 * Endogenous variables
 Variables
@@ -106,7 +104,7 @@ Variables
 
 ;
 
-* ========================== Declaration of equations ==========================
+* ========================== 2. Declaration of equations ==========================
 
 Equations
     EQBAL(reg,prd)              product market balance
@@ -172,7 +170,7 @@ Equations
 ;
 
 
-* ========================== Definition of equations ===========================
+* ========================== 3. Definition of equations ===========================
 
 * ## Beginning Input-output block ##
 
@@ -289,7 +287,7 @@ EQVA(regg,ind)..
 * production (reg,kl) depends linearly on the demand of the same industry for
 * aggregated production factors and with certain elasticity on relative prices
 * of specific factors of production.
-EQKL(reg,kl,regg,ind)$VALUE_ADDED_model(reg,kl,regg,ind)..
+EQKL(reg,kl,regg,ind)$VALUE_ADDED(reg,kl,regg,ind)..
     KL_V(reg,kl,regg,ind)
     =E=
     VA_V(regg,ind) * alpha(reg,kl,regg,ind) *
@@ -452,9 +450,9 @@ EQTIMREV(reg,tim)..
     =E=
     sum((regg,ind), Y_V(regg,ind) * PY_V(regg,ind) *
     txd_tim(reg,tim,regg,ind) ) +
-    sum((regg,fd), TAX_FINAL_USE_model(reg,tim,regg,fd) *
+    sum((regg,fd), TAX_FINAL_USE(reg,tim,regg,fd) *
     LASPEYRES_V(regg,fd) ) +
-    sum(row, TAX_EXPORT_model(reg,tim,row) * PROW_V(row) ) ;
+    sum(row, TAX_EXPORT(reg,tim,row) * PROW_V(row) ) ;
 
 * ## End Factor and tax revenue block ##
 
@@ -488,9 +486,9 @@ EQCBUD(regg,fd)..
     =E=
     INC_V(regg,fd) -
     sum((reg,fdd), INCTRANSFER_V(regg,fd,reg,fdd) * LASPEYRES_V(regg,fd) ) -
-    sum((reg,tim), TAX_FINAL_USE_model(reg,tim,regg,fd) *
+    sum((reg,tim), TAX_FINAL_USE(reg,tim,regg,fd) *
     LASPEYRES_V(regg,fd) ) -
-    sum((row,tim), TAX_FINAL_USE_ROW_model(row,tim,regg,fd) *
+    sum((row,tim), TAX_FINAL_USE_ROW(row,tim,regg,fd) *
     PROW_V(row) ) ;
 
 * ## End Final consumers budgets block ##
@@ -517,7 +515,7 @@ EQPY(regg,ind)$((not sameas(regg,'WEU')) or (not sameas(ind,'i020')))..
     sum((row,prd), INTER_USE_ROW_V(row,prd,regg,ind) * PROW_V(row) *
     ( 1 + tc_ind(prd,regg,ind) ) ) +
     sum((reg,kl), KL_V(reg,kl,regg,ind) * PKL_V(reg,kl) ) +
-    sum((row,tim), TAX_INTER_USE_ROW_model(row,tim,regg,ind) * PROW_V(row) ) ;
+    sum((row,tim), TAX_INTER_USE_ROW(row,tim,regg,ind) * PROW_V(row) ) ;
 
 * EQUATION 24: Balance between product price and industry price. Price of each
 * product (prd) in each region of production (reg) is defined as a weighted
@@ -604,13 +602,13 @@ EQSCLFD(regg,fd)..
 * corresponding rest of the world region.
 EQPROW(row)..
     sum((reg,prd), EXPORT_V(reg,prd,row) * P_V(reg,prd) ) +
-    sum((reg,tim), TAX_EXPORT_model(reg,tim,row) ) * PROW_V(row)
+    sum((reg,tim), TAX_EXPORT(reg,tim,row) ) * PROW_V(row)
     =E=
     sum((prd,regg,ind), INTER_USE_ROW_V(row,prd,regg,ind) ) * PROW_V(row) +
     sum((prd,regg,fd), FINAL_USE_ROW_V(row,prd,regg,fd) ) * PROW_V(row) +
-    sum((tim,regg,ind), TAX_INTER_USE_ROW_model(row,tim,regg,ind) ) *
+    sum((tim,regg,ind), TAX_INTER_USE_ROW(row,tim,regg,ind) ) *
     PROW_V(row) +
-    sum((tim,regg,fd), TAX_FINAL_USE_ROW_model(row,tim,regg,fd) ) *
+    sum((tim,regg,fd), TAX_FINAL_USE_ROW(row,tim,regg,fd) ) *
     PROW_V(row) -
     sum((reg,fd), TRANSFERS_ROW_V(reg,fd,row) * LASPEYRES_V(reg,fd) ) ;
 
@@ -646,7 +644,7 @@ EQOBJ..
     1 ;
 
 
-* ======== Define levels and lower and upper bounds and fixed variables ========
+* ======== 4. Define levels and lower and upper bounds and fixed variables ========
 
 * Endogenous variables
 * Variables in real terms: level is set to the calibrated value of the
@@ -662,48 +660,48 @@ INTER_USE_T_V.L(prd,regg,ind)       = INTER_USE_T(prd,regg,ind) ;
 INTER_USE_D_V.L(prd,regg,ind)       = INTER_USE_D(prd,regg,ind) ;
 INTER_USE_M_V.L(prd,regg,ind)       = INTER_USE_M(prd,regg,ind) ;
 INTER_USE_V.L(reg,prd,regg,ind)     = INTER_USE(reg,prd,regg,ind) ;
-INTER_USE_ROW_V.L(row,prd,regg,ind) = INTER_USE_ROW_model(row,prd,regg,ind) ;
+INTER_USE_ROW_V.L(row,prd,regg,ind) = INTER_USE_ROW(row,prd,regg,ind) ;
 INTER_USE_T_V.FX(prd,regg,ind)$(INTER_USE_T(prd,regg,ind) eq 0)                   = 0 ;
 INTER_USE_D_V.FX(prd,regg,ind)$(INTER_USE_D(prd,regg,ind) eq 0)                   = 0 ;
 INTER_USE_M_V.FX(prd,regg,ind)$(INTER_USE_M(prd,regg,ind) eq 0)                   = 0 ;
 INTER_USE_V.FX(reg,prd,regg,ind)$(INTER_USE(reg,prd,regg,ind) eq 0)               = 0 ;
-INTER_USE_ROW_V.FX(row,prd,regg,ind)$(INTER_USE_ROW_model(row,prd,regg,ind) eq 0) = 0 ;
+INTER_USE_ROW_V.FX(row,prd,regg,ind)$(INTER_USE_ROW(row,prd,regg,ind) eq 0) = 0 ;
 
-VA_V.L(regg,ind)        = sum((reg,kl), VALUE_ADDED_model(reg,kl,regg,ind) ) ;
-KL_V.L(reg,kl,regg,ind) = VALUE_ADDED_model(reg,kl,regg,ind) ;
-VA_V.FX(regg,ind)$(sum((reg,kl), VALUE_ADDED_model(reg,kl,regg,ind) ) eq 0) = 0 ;
-KL_V.FX(reg,kl,regg,ind)$(VALUE_ADDED_model(reg,kl,regg,ind) eq 0 )         = 0 ;
+VA_V.L(regg,ind)        = sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) ;
+KL_V.L(reg,kl,regg,ind) = VALUE_ADDED(reg,kl,regg,ind) ;
+VA_V.FX(regg,ind)$(sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) eq 0) = 0 ;
+KL_V.FX(reg,kl,regg,ind)$(VALUE_ADDED(reg,kl,regg,ind) eq 0 )         = 0 ;
 
 FINAL_USE_T_V.L(prd,regg,fd)       = FINAL_USE_T(prd,regg,fd) ;
 FINAL_USE_D_V.L(prd,regg,fd)       = FINAL_USE_D(prd,regg,fd) ;
 FINAL_USE_M_V.L(prd,regg,fd)       = FINAL_USE_M(prd,regg,fd) ;
 FINAL_USE_V.L(reg,prd,regg,fd)     = FINAL_USE(reg,prd,regg,fd) ;
-FINAL_USE_ROW_V.L(row,prd,regg,fd) = FINAL_USE_ROW_model(row,prd,regg,fd) ;
+FINAL_USE_ROW_V.L(row,prd,regg,fd) = FINAL_USE_ROW(row,prd,regg,fd) ;
 FINAL_USE_T_V.FX(prd,regg,fd)$(FINAL_USE_T(prd,regg,fd) eq 0)                   = 0 ;
 FINAL_USE_D_V.FX(prd,regg,fd)$(FINAL_USE_D(prd,regg,fd) eq 0)                   = 0 ;
 FINAL_USE_M_V.FX(prd,regg,fd)$(FINAL_USE_M(prd,regg,fd) eq 0)                   = 0 ;
 FINAL_USE_V.FX(reg,prd,regg,fd)$(FINAL_USE(reg,prd,regg,fd) eq 0)               = 0 ;
-FINAL_USE_ROW_V.FX(row,prd,regg,fd)$(FINAL_USE_ROW_model(row,prd,regg,fd) eq 0) = 0 ;
+FINAL_USE_ROW_V.FX(row,prd,regg,fd)$(FINAL_USE_ROW(row,prd,regg,fd) eq 0) = 0 ;
 
 IMPORT_V.L(prd,regg)        = IMPORT(prd,regg) ;
 TRADE_V.L(reg,prd,regg)     = TRADE(reg,prd,regg) ;
-EXPORT_V.L(reg,prd,row)     = EXPORT_model(reg,prd,row) ;
+EXPORT_V.L(reg,prd,row)     = EXPORT(reg,prd,row) ;
 IMPORT_V.FX(prd,regg)$(IMPORT(prd,regg) eq 0)             = 0 ;
 TRADE_V.FX(reg,prd,regg)$(TRADE(reg,prd,regg) eq 0)       = 0 ;
-EXPORT_V.FX(reg,prd,row)$(EXPORT_model(reg,prd,row) eq 0) = 0 ;
+EXPORT_V.FX(reg,prd,row)$(EXPORT(reg,prd,row) eq 0) = 0 ;
 
 * Variables in monetary terms: level is set to the calibrated value of the
 * corresponding parameter. In the the calibrated value is equal to zero, the
 * variable value is also fixed to zero. The equation setup will led to zero
 * solution for this variable and fixing it at this point help the solver.
-FACREV_V.L(reg,kl)  = sum((regg,fd), VALUE_ADDED_DISTR_model(reg,kl,regg,fd) ) ;
-TSPREV_V.L(reg,tsp) = sum((regg,fd), TAX_SUB_PRD_DISTR_model(reg,tsp,regg,fd) ) ;
-NTPREV_V.L(reg,ntp) = sum((regg,fd), VALUE_ADDED_DISTR_model(reg,ntp,regg,fd) ) ;
-TIMREV_V.L(reg,tim) = sum((regg,fd), VALUE_ADDED_DISTR_model(reg,tim,regg,fd) ) ;
-FACREV_V.FX(reg,kl)$(sum((regg,fd), VALUE_ADDED_DISTR_model(reg,kl,regg,fd) ) eq 0)    = 0 ;
-TSPREV_V.FX(reg,tsp)$(sum((regg,fd), TAX_SUB_PRD_DISTR_model(reg,tsp,regg,fd) )  eq 0) = 0 ;
-NTPREV_V.FX(reg,ntp)$(sum((regg,fd), VALUE_ADDED_DISTR_model(reg,ntp,regg,fd) )  eq 0) = 0 ;
-TIMREV_V.FX(reg,tim)$(sum((regg,fd), VALUE_ADDED_DISTR_model(reg,tim,regg,fd) )  eq 0) = 0 ;
+FACREV_V.L(reg,kl)  = sum((regg,fd), VALUE_ADDED_DISTR(reg,kl,regg,fd) ) ;
+TSPREV_V.L(reg,tsp) = sum((regg,fd), TAX_SUB_PRD_DISTR(reg,tsp,regg,fd) ) ;
+NTPREV_V.L(reg,ntp) = sum((regg,fd), VALUE_ADDED_DISTR(reg,ntp,regg,fd) ) ;
+TIMREV_V.L(reg,tim) = sum((regg,fd), VALUE_ADDED_DISTR(reg,tim,regg,fd) ) ;
+FACREV_V.FX(reg,kl)$(sum((regg,fd), VALUE_ADDED_DISTR(reg,kl,regg,fd) ) eq 0)    = 0 ;
+TSPREV_V.FX(reg,tsp)$(sum((regg,fd), TAX_SUB_PRD_DISTR(reg,tsp,regg,fd) )  eq 0) = 0 ;
+NTPREV_V.FX(reg,ntp)$(sum((regg,fd), VALUE_ADDED_DISTR(reg,ntp,regg,fd) )  eq 0) = 0 ;
+TIMREV_V.FX(reg,tim)$(sum((regg,fd), VALUE_ADDED_DISTR(reg,tim,regg,fd) )  eq 0) = 0 ;
 
 INC_V.L(regg,fd)  = INC(regg,fd) ;
 CBUD_V.L(regg,fd) = CBUD(regg,fd) ;
@@ -745,10 +743,10 @@ LASPEYRES_V.FX(regg,fd)$(sum((reg,prd), FINAL_USE_V.L(reg,prd,regg,fd) ) eq 0) =
 * Exogenous variables
 * Exogenous variables are fixed to their calibrated value.
 KLS_V.FX(reg,kl)                   = KLS(reg,kl) ;
-INCTRANSFER_V.FX(reg,fd,regg,fdd)  = INCOME_DISTR_model(reg,fd,regg,fdd) ;
-TRANSFERS_ROW_V.FX(reg,fd,row)     = TRANSFERS_ROW_model(reg,fd,row) ;
+INCTRANSFER_V.FX(reg,fd,regg,fdd)  = INCOME_DISTR(reg,fd,regg,fdd) ;
+TRANSFERS_ROW_V.FX(reg,fd,row)     = TRANSFERS_ROW(reg,fd,row) ;
 
-* ======================= Scale variables and equations ========================
+* ======================= 5. Scale variables and equations ========================
 
 * Scaling of variables and equations is done in order to help the solver to
 * find the solution quicker. The scaling should ensure that the partial
@@ -1105,7 +1103,11 @@ TRANSFERS_ROW_V.SCALE(reg,fd,row)$(TRANSFERS_ROW_V.L(reg,fd,row) lt 0)
     = -TRANSFERS_ROW_V.L(reg,fd,row) ;
 
 
-* ========================== Declare model equations ===========================
+* ========================== 6. Declare model equations ===========================
+$ontext
+This states which equations are included in which model. The models are based on either product technology or activity technology. The `main.gms` file includes the option to choose one of the two types of technologies.
+$offtext
+
 
 Model IO_product_technology
 /

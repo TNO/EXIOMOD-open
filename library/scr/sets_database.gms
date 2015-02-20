@@ -12,14 +12,18 @@ database underlying the input-output/CGE model.
 The current version of the code includes sets relevant for inter-regional social
 accounting matrix. The code includes:
 
- - declaration of sets including lists of regions, products, industries, etc.
- - loading contents of the sets from external .txt files.
- - declaration of super-sets where needed for loading the database.
- - declaration of alias.
+ - Declaration of sets including lists of regions, products, industries, etc.
+ - Loading contents of the sets from external .txt files.
+ - Declaration of super-sets where needed for loading the database.
+ - Declaration of aliase.
 
 The code is split into blocks according to the supersets needed for loading the
-database: full list of regions, full list of row/column elements (in the matrix
-version), auxiliary identifiers.
+database:
+
+- Full list of regions
+- Full list of row/column elements (in the matrix
+version)
+- Auxiliary identifiers.
 
 In case the structure of the database is changed and a set should be updated,
 all the corrections should be done in the corresponding external .txt file. If a

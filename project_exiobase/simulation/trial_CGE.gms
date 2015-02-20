@@ -1,4 +1,3 @@
-
 * activate end of line comment and specify the activating character
 $oneolcom
 $eolcom #
@@ -110,7 +109,7 @@ numer_check(regg,ind)$Y(regg,ind) =  Y_V.L(regg,ind) * PY_V.L(regg,ind) *
     sum((row,prd), INTER_USE_ROW_V.L(row,prd,regg,ind) * PROW_V.L(row) *
     ( 1 + tc_ind(prd,regg,ind) ) ) +
     sum((reg,kl), KL_V.L(reg,kl,regg,ind) * PKL_V.L(reg,kl) ) +
-    sum((row,tim), TAX_INTER_USE_ROW_model(row,tim,regg,ind) * PROW_V.L(row) ) ) ;
+    sum((row,tim), TAX_INTER_USE_ROW(row,tim,regg,ind) * PROW_V.L(row) ) ) ;
 
 
 Display
