@@ -8,7 +8,7 @@
 $ontext startdoc
 This GAMS file defines the parameters that are used in the model. Please start from `main.gms`.
 
-Parameters are fixed and are declared (in a first block) and defined (in the second block) in this file. 
+Parameters are fixed and are declared (in a first block) and defined (in the second block) in this file.
 
 No changes should be made in this file, as the parameters declared here are all defined using their standard definitions.
 
@@ -37,20 +37,53 @@ Parameters
                                 # labour
     elasIU_DM(prd,regg,ind)     substitution elasticity between domestic and
                                 # imported intermediate use
-    elasFU(regg,fd)             substitution elasticity between products for
-                                # final use
-    elasFU_DM(prd,regg,fd)      substitution elasticity between domestic and
-                                # imported final use
+    elasFU_H(regg)              substitution elasticity between products for
+                                # household final use
+    elasFU_G(regg)              substitution elasticity between products for
+                                # government final use
+    elasFU_C(regg)              substitution elasticity between products for
+                                # capital formation final use
+    elasFU_DM(prd,regg)         substitution elasticity between domestic and
+                                # imported final use for all categories
     elasIMP(prd,regg)           substitution elasticity between imports from
                                 # different regions
+
     Y(regg,ind)                 output vector by activity (volume)
     X(reg,prd)                  output vector by product (volume)
     INTER_USE_T(prd,regg,ind)   intermediate use on product level (volume)
     INTER_USE(reg,prd,regg,ind) intermediate use of products on the level of
                                 # product and producing region (volume)
-    FINAL_USE_T(prd,regg,fd)    final use on product level (volume)
-    FINAL_USE(reg,prd,regg,fd)  final use of products on the level of product
-                                # and producing region (volume)
+
+    CONS_H_D(prd,regg)          household consumption of domestic products
+                                # (volume)
+    CONS_H_M(prd,regg)          household consumption of products imported from
+                                # modeled regions (volume)
+    CONS_H_T(prd,regg)          household consumption on product level (volume)
+    CONS_H(reg,prd,regg)        household consumption of products on the level
+                                # of product and producing region (volume)
+
+    CONS_G_D(prd,regg)          government consumption of domestic products
+                                # (volume)
+    CONS_G_M(prd,regg)          government consumption of products imported from
+                                # modeled regions (volume)
+    CONS_G_T(prd,regg)          government consumption on product level (volume)
+    CONS_G(reg,prd,regg)        government consumption of products on the level
+                                # of product and producing region (volume)
+
+    GFCF_D(prd,regg)            investment (gross fixed capital formation) in
+                                # domestic products (volume)
+    GFCF_M(prd,regg)            investment (gross fixed capital formation) in
+                                # products imported from modeled regions
+                                # (volume)
+    GFCF_T(prd,regg)            investment (gross fixed capital formation) on
+                                # product level (volume)
+    GFCF(reg,prd,regg)          investment (gross fixed capital formation) in
+                                # products on the level of product and producing
+                                # region (volume)
+
+    SV(reg,prd,regg)            stock changes of products on the level of
+                                # product and producing region (volume)
+
     IMPORT(prd,regg)            import of products into a region (volume)
     TRADE(reg,prd,regg)         trade of products between regions (volume)
     KLS(reg,kl)                 supply of production factors (volume)
@@ -109,7 +142,6 @@ Parameters
     tim_distr(reg,tim,regg,fd)  distribution shares of taxes on export and
                                 # international margins income to budgets of
                                 # final demand (shares n value)
-
 ;
 
 * ========================== Definition of parameters ==========================
@@ -127,16 +159,26 @@ elasKL(regg,ind)
 elasIU_DM(prd,regg,ind)
     = elasTRADE_data(prd,'elasIU_DM') ;
 
-* Substitution elasticity between aggregated products in volume for final use.
-* The elasticity value can be different for each final demand category (fd) in
-* each region (regg)
-elasFU(regg,fd)
-    = elasFU_data(fd,'elasTOT') ;
+* Substitution elasticity between aggregated products in volume for final use of
+* households. The elasticity value can be different in each region (regg)
+elasFU_H(regg)
+    = sum(fd$fd_assign(fd,'Households'), elasFU_data(fd,'elasTOT') ) ;
+
+* Substitution elasticity between aggregated products in volume for final use of
+* government. The elasticity value can be different in each region (regg)
+elasFU_G(regg)
+    = sum(fd$fd_assign(fd,'Government'), elasFU_data(fd,'elasTOT') ) ;
+
+* Substitution elasticity between aggregated products in volume for final use of
+* investment agent for gross fixed capital formation. The elasticity value can
+* be different in each region (regg)
+elasFU_C(regg)
+    = sum(fd$fd_assign(fd,'GrossFixCapForm'), elasFU_data(fd,'elasTOT') ) ;
 
 * Substitution elasticity between domestic and aggregated imported products in
 * volume for final use. The elasticity value can be different for each product
-* (prd) for each final demand category (fd) in each region (regg)
-elasFU_DM(prd,regg,fd)
+* (prd) in each region (regg)
+elasFU_DM(prd,regg)
     = elasTRADE_data(prd,'elasFU_DM') ;
 
 * Substitution elasticity between imports in volume from different regions. The
@@ -145,15 +187,18 @@ elasFU_DM(prd,regg,fd)
 elasIMP(prd,regg)
     = elasTRADE_data(prd,'elasIMP') ;
 
+
+
 *## Aggregates ##
 
-* Output in volume of each industry (ind) in each region (regg) in the base
-* year, the corresponding price in the base year is equal to 1
+* Output in volume of each industry (ind) in each region (regg) in the
+* calibration year, the corresponding price in the calibration year is equal to
+* 1
 Y(regg,ind)
     = sum((reg,prd), SUP(reg,prd,regg,ind) ) ;
 
-* Output in volume of each product (prd) in each region (reg) in the base year,
-* the corresponding price in the base year is equal to 1
+* Output in volume of each product (prd) in each region (reg) in the calibration
+* year, the corresponding price in the calibration year is equal to 1
 X(reg,prd)
     = sum((regg,ind), SUP(reg,prd,regg,ind) ) ;
 
@@ -164,14 +209,14 @@ X
 
 * Intermediate use of aggregated products in volume of each product (prd) in
 * each industry (ind) in each region (regg), the corresponding basic price in
-* the base year is equal to 1, purchaser's price can be different from 1 in case
-* of non-zero taxes on products.
+* the calibration year is equal to 1, purchaser's price can be different from 1
+* in case of non-zero taxes on products.
 INTER_USE_T(prd,regg,ind)
     = INTER_USE_D(prd,regg,ind) + INTER_USE_M(prd,regg,ind) ;
 
 * Intermediate use of products on the level of product (prd) and producing
 * region (reg) in each industry (ind) in each region (regg), the corresponding
-* basic price in the base year is equal to 1.
+* basic price in the calibration year is equal to 1.
 INTER_USE(reg,prd,regg,ind)$( sameas(reg,regg) or TRADE(reg,prd,regg) )
     = ( INTER_USE_D(prd,regg,ind) )$sameas(reg,regg) +
     ( INTER_USE_M(prd,regg,ind) * TRADE(reg,prd,regg) /
@@ -179,32 +224,129 @@ INTER_USE(reg,prd,regg,ind)$( sameas(reg,regg) or TRADE(reg,prd,regg) )
 
 Display
 INTER_USE_T
-INTER_USE_D
-INTER_USE_M
 INTER_USE
 ;
 
-* Final use of aggregated products in volume of each product (prd) by each
-* final demand category (fd) in each region (regg), the corresponding basic
-* price in the base year is equal to 1, purchaser's price can be different from
-* 1 in case of non-zero taxes on products.
-FINAL_USE_T(prd,regg,fd)
-    = FINAL_USE_D(prd,regg,fd) + FINAL_USE_M(prd,regg,fd) ;
 
-* Final use of products on the level of product (prd) and producing region (reg)
-* in each industry (ind) in each region (regg), the corresponding basic price in
-* the base year is equal to 1.
-FINAL_USE(reg,prd,regg,fd)$( sameas(reg,regg) or TRADE(reg,prd,regg) )
-    = ( FINAL_USE_D(prd,regg,fd) )$sameas(reg,regg) +
-    ( FINAL_USE_M(prd,regg,fd) * TRADE(reg,prd,regg) /
+* Household consumption of domestic products in volume of each product (prd) in
+* each region (regg), the corresponding basic price in the calibration year is
+* equal to 1
+CONS_H_D(prd,regg)
+    = sum(fd$fd_assign(fd,'Households'), FINAL_USE_D(prd,regg,fd) ) ;
+
+* Household consumption of products imported from modeled regions in volume of
+* each product (prd) in each region (regg), the corresponding basic price in the
+* calibration year is equal to 1
+CONS_H_M(prd,regg)
+    = sum(fd$fd_assign(fd,'Households'), FINAL_USE_M(prd,regg,fd) ) ;
+
+* Household consumption of aggregated products in volume of each product (prd)
+* in each region (regg), the corresponding basic price in the calibration year
+* is equal to 1, purchaser's price can be different from 1 in case of non-zero
+* taxes on products.
+CONS_H_T(prd,regg)
+    = CONS_H_D(prd,regg) + CONS_H_M(prd,regg) ;
+
+* Household consumption of products on the level of product (prd) and producing
+* region (reg) in each region (regg), the corresponding basic price in the
+* calibration year is equal to 1.
+CONS_H(reg,prd,regg)$( sameas(reg,regg) or TRADE(reg,prd,regg) )
+    = ( CONS_H_D(prd,regg) )$sameas(reg,regg) +
+    ( CONS_H_M(prd,regg) * TRADE(reg,prd,regg) /
     sum(reggg, TRADE(reggg,prd,regg) ) )$(not sameas(reg,regg)) ;
 
 Display
-FINAL_USE_T
-FINAL_USE_D
-FINAL_USE_M
-FINAL_USE
+CONS_H_D
+CONS_H_M
+CONS_H_T
+CONS_H
 ;
+
+
+* Government consumption of domestic products in volume of each product (prd) in
+* each region (regg), the corresponding basic price in the calibration year is
+* equal to 1
+CONS_G_D(prd,regg)
+    = sum(fd$fd_assign(fd,'Government'), FINAL_USE_D(prd,regg,fd) ) ;
+
+* Government consumption of products imported from modeled regions in volume of
+* each product (prd) in each region (regg), the corresponding basic price in the
+* calibration year is equal to 1
+CONS_G_M(prd,regg)
+    = sum(fd$fd_assign(fd,'Government'), FINAL_USE_M(prd,regg,fd) ) ;
+
+* Government consumption of aggregated products in volume of each product (prd)
+* in each region (regg), the corresponding basic price in the calibration year
+* is equal to 1, purchaser's price can be different from 1 in case of non-zero
+* taxes on products.
+CONS_G_T(prd,regg)
+    = CONS_G_D(prd,regg) + CONS_G_M(prd,regg) ;
+
+* Government consumption of products on the level of product (prd) and producing
+* region (reg) in each region (regg), the corresponding basic price in the
+* calibration year is equal to 1.
+CONS_G(reg,prd,regg)$( sameas(reg,regg) or TRADE(reg,prd,regg) )
+    = ( CONS_G_D(prd,regg) )$sameas(reg,regg) +
+    ( CONS_G_M(prd,regg) * TRADE(reg,prd,regg) /
+    sum(reggg, TRADE(reggg,prd,regg) ) )$(not sameas(reg,regg)) ;
+
+Display
+CONS_G_D
+CONS_G_M
+CONS_G_T
+CONS_G
+;
+
+
+* Investment (gross fixed capital formation) in domestic products in volume of
+* each product (prd) in each region (regg), the corresponding basic price in the
+* calibration year is equal to 1
+GFCF_D(prd,regg)
+    = sum(fd$fd_assign(fd,'GrossFixCapForm'), FINAL_USE_D(prd,regg,fd) ) ;
+
+* Investment (gross fixed capital formation) in products imported from modeled
+* regions in volume of each product (prd) in each region (regg), the
+* corresponding basic price in the calibration year is equal to 1
+GFCF_M(prd,regg)
+    = sum(fd$fd_assign(fd,'GrossFixCapForm'), FINAL_USE_M(prd,regg,fd) ) ;
+
+* Investment (gross fixed capital formation) on aggregated product level in
+* volume of each product (prd) in each region (regg), the corresponding basic
+* price in the calibration year is equal to 1, purchaser's price can be
+* different from 1 in case of non-zero taxes on products.
+GFCF_T(prd,regg)
+    = GFCF_D(prd,regg) + GFCF_M(prd,regg) ;
+
+* Investment (gross fixed capital formation) in products on the level of product
+* (prd) and producing region (reg) in each region (regg), the corresponding
+* basic price in the calibration year is equal to 1.
+GFCF(reg,prd,regg)$( sameas(reg,regg) or TRADE(reg,prd,regg) )
+    = ( GFCF_D(prd,regg) )$sameas(reg,regg) +
+    ( GFCF_M(prd,regg) * TRADE(reg,prd,regg) /
+    sum(reggg, TRADE(reggg,prd,regg) ) )$(not sameas(reg,regg)) ;
+
+Display
+GFCF_D
+GFCF_M
+GFCF_T
+GFCF
+;
+
+
+* Stock change of products on the level of product (prd) and producing region
+* (reg) in each region (regg), the corresponding basic price in the calibration
+* year is equal to 1.
+SV(reg,prd,regg)$( sameas(reg,regg) or TRADE(reg,prd,regg) )
+    = ( sum(fd$fd_assign(fd,'StockChange'),
+    FINAL_USE_D(prd,regg,fd) ) )$sameas(reg,regg) +
+    ( sum(fd$fd_assign(fd,'StockChange'), FINAL_USE_M(prd,regg,fd) ) *
+    TRADE(reg,prd,regg) /
+    sum(reggg, TRADE(reggg,prd,regg) ) )$(not sameas(reg,regg)) ;
+
+Display
+SV
+;
+
 
 * Aggregated import of products in volume of each product (prd) into each
 * importing region (regg), the corresponding basic price in the base year is

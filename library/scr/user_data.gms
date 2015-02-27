@@ -21,8 +21,14 @@ Parameters
 elasFU_data(fd,*)
 elasTRADE_data(prd,*)
 elasPROD_data(ind,*)
-    ;
-    
-$libinclude xlimport elasFU_data ././%project%/data/Eldata.xlsx elasFU!a1..b3 ;
-$libinclude xlimport elasTRADE_data ././%project%/data/Eldata.xlsx elasTRADE!a1..d36 ;
-$libinclude xlimport elasPROD_data ././%project%/data/Eldata.xlsx elasPROD!a1..b36 ;
+;
+
+$libinclude xlimport elasFU_data ././%project%/data/Eldata.xlsx elasFU!a1..zz10000 ;
+$libinclude xlimport elasTRADE_data ././%project%/data/Eldata.xlsx elasTRADE!a1..zz10000 ;
+$libinclude xlimport elasPROD_data ././%project%/data/Eldata.xlsx elasPROD!a1..zz10000 ;
+
+Display
+elasFU_data
+elasTRADE_data
+elasPROD_data
+;

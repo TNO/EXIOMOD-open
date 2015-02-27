@@ -34,72 +34,72 @@ $eolcom #
 * ============ Aggregation of the database to the model dimensions =============
 
 Parameters
-    SUP(reg,prd,regg,ind)             supply table in model aggregation
+    SUP(reg,prd,regg,ind)                   supply table in model aggregation
 
-    INTER_USE_D(prd,regg,ind)         intermediate use of domestic
+    INTER_USE_D(prd,regg,ind)               intermediate use of domestic
                                             # products in model aggregation in
                                             # basic prices
-    INTER_USE_M(prd,regg,ind)         intermediate use of products
+    INTER_USE_M(prd,regg,ind)               intermediate use of products
                                             # imported from modeled regions
                                             # in model aggregation in
                                             # basic (c.i.f.) prices
-    INTER_USE_ROW(row,prd,regg,ind)   intermediate use of products
+    INTER_USE_ROW(row,prd,regg,ind)         intermediate use of products
                                             # imported from rest of the world
                                             # regions in model aggregation in
                                             # basic (c.i.f.) prices
-    INTER_USE_dt(prd,regg,ind)        tax paid domestically on
+    INTER_USE_dt(prd,regg,ind)              tax paid domestically on
                                             # intermediate use in model
                                             # aggregation
 
-    FINAL_USE_D(prd,regg,fd)          final use of domestic products in
+    FINAL_USE_D(prd,regg,fd)                final use of domestic products in
                                             # model aggregation in basic prices
-    FINAL_USE_M(prd,regg,fd)          final use of products imported from
+    FINAL_USE_M(prd,regg,fd)                final use of products imported from
                                             # modeled regions in model
                                             # aggregation in basic (c.i.f.)
                                             # prices
-    FINAL_USE_ROW(row,prd,regg,fd)    final use of products imported from
+    FINAL_USE_ROW(row,prd,regg,fd)          final use of products imported from
                                             # rest of the world regions in model
                                             # aggregation in basic (c.i.f.)
                                             # prices
-    FINAL_USE_dt(prd,regg,fd)         tax paid domestically on final use
+    FINAL_USE_dt(prd,regg,fd)               tax paid domestically on final use
                                             # in model aggregation
 
-    TRADE(reg,prd,regg)               trade in products between modeled
+    TRADE(reg,prd,regg)                     trade in products between modeled
                                             # regions in basic (c.i.f.) prices
 
-    VALUE_ADDED(reg,va,regg,ind)      value added in model aggregation
-    TAX_INTER_USE_ROW(row,va,regg,ind)    tax and international margins
+    VALUE_ADDED(reg,va,regg,ind)            value added in model aggregation
+    TAX_INTER_USE_ROW(row,va,regg,ind)      tax and international margins
                                             # paid on intermediate use of
                                             # products imported from rest of the
                                             # world regions
 
-    TAX_FINAL_USE(reg,va,regg,fd)     tax and international margins paid
+    TAX_FINAL_USE(reg,va,regg,fd)           tax and international margins paid
                                             # on final use of products imported
                                             # from modeled regions
-    TAX_FINAL_USE_ROW(row,va,regg,fd) tax and international margins paid
+    TAX_FINAL_USE_ROW(row,va,regg,fd)       tax and international margins paid
                                             # on final use of products imported
                                             # from rest of the world regions
 
-    EXPORT(reg,prd,row)               export to rest of the world regions
+    EXPORT(reg,prd,row)                     export to rest of the world regions
                                             # in model aggregation in basic
                                             # (f.o.b.) prices
-    TAX_EXPORT(reg,va,row)            tax and international margin
+    TAX_EXPORT(reg,va,row)                  tax and international margin
                                             # received due to export to rest of
                                             # the world regions
 
-    TAX_SUB_PRD_DISTR(reg,tsp,regg,fd)    distribution of taxes and
+    TAX_SUB_PRD_DISTR(reg,tsp,regg,fd)      distribution of taxes and
                                             # subsidies on products revenue to
                                             # final demand categories in model
                                             # aggregation
-    VALUE_ADDED_DISTR(reg,va,regg,fd) distribution of value added revenues
+    VALUE_ADDED_DISTR(reg,va,regg,fd)       distribution of value added revenues
                                             # to final demand categories in
                                             # model aggregation
 
-    INCOME_DISTR(reg,fd,regg,fdd)     re-distribution of income between
+    INCOME_DISTR(reg,fd,regg,fdd)           re-distribution of income between
                                             # final demand categories in model
                                             # aggregation
 
-    TRANSFERS_ROW(reg,fd,row)         transfers between rest of the world
+    TRANSFERS_ROW(reg,fd,row)               transfers between rest of the world
                                             # regions and final demand
                                             # categories in model aggregation
 ;
