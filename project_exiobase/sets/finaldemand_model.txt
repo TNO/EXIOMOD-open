@@ -1,2 +1,4 @@
-FC      'Final consumption expenditure by households, NPISH and government'
-GCF     'Gross capital formation'
+FCH     'Final consumption expenditure by households, and NPISH'
+FCG     'Final consumption expenditure by government'
+GFCF    'Gross fixed capital formation'
+INVCH   'Changes in inventories and valuables'
