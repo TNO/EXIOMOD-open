@@ -47,6 +47,8 @@ Parameters
                                 # imported final use for all categories
     elasIMP(prd,regg)           substitution elasticity between imports from
                                 # different regions
+    tfp(regg,ind)               total factor productivity parameter in the
+                                # nest of aggregated factors of production
 
     Y(regg,ind)                 output vector by activity (volume)
     X(reg,prd)                  output vector by product (volume)
@@ -142,7 +144,7 @@ Parameters
     aVA(regg,ind)               technical input coefficients for aggregated
                                 # factors of production (relation in volume)
     alpha(reg,kl,regg,ind)      relative share parameter for factors of
-                                # production within the aggregated next
+                                # production within the aggregated nest
                                 # (relation in volume)
     phi_row(row,prd,regg,ind)   input coefficients for intermediate use of
                                 # products imported from the rest of the world
@@ -244,6 +246,11 @@ elasFU_DM(prd,regg)
 elasIMP(prd,regg)
     = elasTRADE_data(prd,'elasIMP') ;
 
+* Total factor productivity parameter, productivity of aggregated nest of
+* factors of production. The parameter value is calibrated to 1 in each industry
+* (ind) in each region (regg)
+tfp(regg,ind)
+    = TFP_data(ind,'TFP') ;
 
 
 *## Aggregates ##
@@ -642,7 +649,8 @@ aVA(regg,ind)$sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) )
 * (reg,regg)
 alpha(reg,kl,regg,ind)$VALUE_ADDED(reg,kl,regg,ind)
     = VALUE_ADDED(reg,kl,regg,ind) /
-    sum((reggg,kll), VALUE_ADDED(reggg,kll,regg,ind) ) ;
+    ( sum((reggg,kll), VALUE_ADDED(reggg,kll,regg,ind) ) / tfp(regg,ind) )  *
+    tfp(regg,ind)**( -elasKL(regg,ind) ) ;
 
 * Input coefficients of products imported from the rest of the world for each
 * type of product (prd) from each rest of the world region (row) for

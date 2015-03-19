@@ -379,8 +379,9 @@ EQVA(regg,ind)..
 EQKL(reg,kl,regg,ind)$VALUE_ADDED(reg,kl,regg,ind)..
     KL_V(reg,kl,regg,ind)
     =E=
-    VA_V(regg,ind) * alpha(reg,kl,regg,ind) *
-    ( PKL_V(reg,kl) / PVA_V(regg,ind) )**( -elasKL(regg,ind) ) ;
+    ( VA_V(regg,ind) / tfp(regg,ind) ) * alpha(reg,kl,regg,ind) *
+    ( PKL_V(reg,kl) /
+    ( tfp(regg,ind) * PVA_V(regg,ind) ) )**( -elasKL(regg,ind) ) ;
 
 * ## End Block 2: Factor demand ##
 

@@ -15,6 +15,10 @@ Reading in data on elasticities
   2. elasTRADE_data - data on elasticities of import/domestic supply (Armington)
   3. elasPROD_data - data on substitution elasticities in production nests
 
+Reading in data on productivity
+
+  1. TFP_data - data on calibrated level of total factor productivity
+
 $offtext
 
 Parameters
@@ -31,4 +35,14 @@ Display
 elasFU_data
 elasTRADE_data
 elasPROD_data
+;
+
+Parameters
+TFP_data(ind,*)
+;
+
+$libinclude xlimport TFP_data ././%project%/data/Eldata.xlsx TFP!a1..zz10000 ;
+
+Display
+TFP_data
 ;
