@@ -114,6 +114,8 @@ Parameters
     INC_G(regg)                 total income of government (value)
     INC_I(regg)                 total income of investment agent (value)
 
+    GDP(regg)                   gross domestic product (value)
+
     tc_ind(prd,regg,ind)        tax and subsidies on products rates for
                                 # industries (relation in value)
     tc_h(prd,regg)              tax and subsidies on products rates for
@@ -543,6 +545,19 @@ INC_G
 INC_I
 ;
 
+
+* Gross domestic product in each region (regg). GDP calculated as difference
+* between total output and intermediate inputs plus taxes on products paid by
+* final consumers.
+GDP(regg)
+    = sum(ind, Y(regg,ind) ) -
+    sum((prd,ind), INTER_USE_T(prd,regg,ind) ) -
+    sum((row,prd,ind), INTER_USE_ROW(row,prd,regg,ind) ) +
+    sum((prd,fd), FINAL_USE_dt(prd,regg,fd) ) ;
+
+Display
+GDP
+;
 
 
 *## Tax rates ##

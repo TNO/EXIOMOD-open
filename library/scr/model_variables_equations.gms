@@ -130,6 +130,10 @@ Variables
                                     # consumption
     LASPEYRES_V(regg)               Laspeyres price index for household
                                     # consumption
+
+    GDPCUR_V(regg)                  GDP in current prices (value)
+    GDPCONST_V(regg)                GDP in constant prices (volume)
+    GDPDEF_V                        GDP deflator used as numéraire
 ;
 
 *Positive variables
@@ -250,6 +254,10 @@ Equations
     EQPROW(row)                 balance of payments
     EQPAASCHE(regg)             Paasche price index for household consumption
     EQLASPEYRES(regg)           Laspeyres price index for household consumption
+
+    EQGDPCUR(regg)              GDP in current prices (value)
+    EQGDPCONST(regg)            GDP in constant prices (volume)
+    EQGDPDEF                    GDP deflator used as numéraire
 
     EQOBJ                       artificial objective function
 ;
@@ -1014,6 +1022,59 @@ EQLASPEYRES(regg)..
 * ## End Price block ##
 
 
+* ## Beginning Block 11: GDP and numéraire ##
+
+* EQUATION 11.1: Gross domestic product calculated in current prices. GDP is
+* calculated separately for each region (reg).
+EQGDPCUR(regg)..
+    GDPCUR_V(regg)
+    =E=
+    sum(ind, Y_V(regg,ind) * PY_V(regg,ind) ) -
+    sum((prd,ind), INTER_USE_T_V(prd,regg,ind) * PIU_V(prd,regg,ind) ) -
+    sum((row,prd,ind), INTER_USE_ROW_V(row,prd,regg,ind) * PROW_V(row) )
+    +
+    sum(prd, CONS_H_T_V(prd,regg) * PC_H_V(prd,regg) * tc_h(prd,regg) ) +
+    sum((row,prd), CONS_H_ROW_V(row,prd,regg) * PROW_V(row) * tc_h(prd,regg) )
+    +
+    sum(prd, CONS_G_T_V(prd,regg) * PC_G_V(prd,regg) * tc_g(prd,regg) ) +
+    sum((row,prd), CONS_G_ROW_V(row,prd,regg) * PROW_V(row) * tc_g(prd,regg) )
+    +
+    sum(prd, GFCF_T_V(prd,regg) * PC_I_V(prd,regg) * tc_gfcf(prd,regg) ) +
+    sum((row,prd), GFCF_ROW_V(row,prd,regg) * PROW_V(row) * tc_gfcf(prd,regg) )
+    +
+    sum((reg,prd), SV_V(reg,prd,regg) * P_V(reg,prd) * tc_sv(prd,regg) ) +
+    sum((row,prd), SV_ROW_V(row,prd,regg) * PROW_V(row) * tc_sv(prd,regg) ) ;
+
+* EQUATION 11.2: Gross domestic product calculated in constant prices of the
+* base year. GDP is calculated separately for each region (reg).
+EQGDPCONST(regg)..
+    GDPCONST_V(regg)
+    =E=
+    sum(ind, Y_V(regg,ind) ) -
+    sum((prd,ind), INTER_USE_T_V(prd,regg,ind) ) -
+    sum((row,prd,ind), INTER_USE_ROW_V(row,prd,regg,ind) )
+    +
+    sum(prd, CONS_H_T_V(prd,regg) * tc_h(prd,regg) ) +
+    sum((row,prd), CONS_H_ROW_V(row,prd,regg) * tc_h(prd,regg) )
+    +
+    sum(prd, CONS_G_T_V(prd,regg) * tc_g(prd,regg) ) +
+    sum((row,prd), CONS_G_ROW_V(row,prd,regg) * tc_g(prd,regg) )
+    +
+    sum(prd, GFCF_T_V(prd,regg) * tc_gfcf(prd,regg) ) +
+    sum((row,prd), GFCF_ROW_V(row,prd,regg) * tc_gfcf(prd,regg) )
+    +
+    sum((reg,prd), SV_V(reg,prd,regg) * tc_sv(prd,regg) ) +
+    sum((row,prd), SV_ROW_V(row,prd,regg) * tc_sv(prd,regg) ) ;
+
+* EQUATION 11.3: GDP deflator. The deflator is calculated as a single value for
+* all the modelled regions and is used as numéraire in the model.
+EQGDPDEF..
+    GDPDEF_V
+    =E=
+    sum(regg, GDPCUR_V(regg) ) / sum(regg, GDPCONST_V(regg) ) ;
+
+* ## End GDP and numéraire block ##
+
 
 * EQUATION 34: Artificial objective function: only relevant for users of
 * conopt solver in combination with NLP type of mathematical problem.
@@ -1127,6 +1188,11 @@ SCLFD_H_V.FX(regg)$(SCLFD_H_V.L(regg) eq 0) = 0 ;
 SCLFD_G_V.FX(regg)$(SCLFD_G_V.L(regg) eq 0) = 0 ;
 SCLFD_I_V.FX(regg)$(SCLFD_I_V.L(regg) eq 0) = 0 ;
 
+GDPCUR_V.L(regg)   = GDP(regg) ;
+GDPCONST_V.L(regg) = GDP(regg) ;
+GDPCUR_V.FX(regg)$( GDP(regg) eq 0 )   = 0 ;
+GDPCONST_V.FX(regg)$( GDP(regg) eq 0 ) = 0 ;
+
 * Price variables: level of basic prices is set to one, which also corresponds
 * to the price level used in calibration. In the the real variable to which the
 * price level is linked is fixed to zero, the price is fixed to one. For zero
@@ -1144,6 +1210,7 @@ PIMP_V.L(prd,regg)    = 1 ;
 PROW_V.L(row)         = 1 ;
 PAASCHE_V.L(regg)     = 1 ;
 LASPEYRES_V.L(regg)   = 1 ;
+GDPDEF_V.L                                                                  = 1 ;
 PY_V.FX('WEU','i020')                                                       = 1 ;
 PY_V.FX(regg,ind)$(Y_V.L(regg,ind) eq 0)                                    = 1 ;
 P_V.FX(reg,prd)$(X_V.L(reg,prd) eq 0)                                       = 1 ;
@@ -1709,6 +1776,30 @@ EQPROW.SCALE(row)$(sum((reg,prd), EXPORT_V.L(reg,prd,row) ) lt 0   )
 
 * EQUATION 10.15 - SCALING IS NOT REQUIRED
 
+* EQUATION 11.1
+EQGDPCUR.SCALE(regg)$(GDPCUR_V.L(regg) gt 0)
+    = GDPCUR_V.L(regg) ;
+GDPCUR_V.SCALE(regg)$(GDPCUR_V.L(regg) gt 0)
+    = GDPCUR_V.L(regg) ;
+
+EQGDPCUR.SCALE(regg)$(GDPCUR_V.L(regg) lt 0)
+    = -GDPCUR_V.L(regg) ;
+GDPCUR_V.SCALE(regg)$(GDPCUR_V.L(regg) lt 0)
+    = -GDPCUR_V.L(regg) ;
+
+* EQUATION 11.2
+EQGDPCONST.SCALE(regg)$(GDPCONST_V.L(regg) gt 0)
+    = GDPCONST_V.L(regg) ;
+GDPCONST_V.SCALE(regg)$(GDPCONST_V.L(regg) gt 0)
+    = GDPCONST_V.L(regg) ;
+
+EQGDPCONST.SCALE(regg)$(GDPCONST_V.L(regg) lt 0)
+    = -GDPCONST_V.L(regg) ;
+GDPCONST_V.SCALE(regg)$(GDPCONST_V.L(regg) lt 0)
+    = -GDPCONST_V.L(regg) ;
+
+* EQUATION 11.3 - SCALING IS NOT REQUIRED
+
 * EXOGENOUS VARIBLES
 KLS_V.SCALE(reg,kl)$(KLS_V.L(reg,kl) gt 0)
     = KLS_V.L(reg,kl) ;
@@ -1818,6 +1909,9 @@ EQSCLFD_I
 EQPROW
 EQPAASCHE
 EQLASPEYRES
+EQGDPCUR
+EQGDPCONST
+EQGDPDEF
 EQOBJ
 /
 ;
@@ -1877,5 +1971,8 @@ EQSCLFD_I.SCLFD_I_V
 EQPROW.PROW_V
 EQPAASCHE.PAASCHE_V
 EQLASPEYRES.LASPEYRES_V
+EQGDPCUR.GDPCUR_V
+EQGDPCONST.GDPCONST_V
+EQGDPDEF.GDPDEF_V
 /
 ;
