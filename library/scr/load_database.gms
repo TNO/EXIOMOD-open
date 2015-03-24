@@ -24,7 +24,7 @@ Parameters
     SAM_dt_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,*)      raw SAM taxes and subsidies on consumption of domestic and imported products (revenue goes to the government of the consumer)
     SAM_pp_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,*)      raw SAM expressed in purchasers prices
  ;
-   
+
 $Gdxin 'library/data/MRSAM'
 $loaddc SAM_bp_data = MRSAM_bp_database
 *$loaddc SAM_et_data = MRSAM_exp_taxsub_database
@@ -35,3 +35,4 @@ $loaddc SAM_pp_data = MRSAM_bp_database
 $Gdxin
 
 $if '%db_check%' == 'yes' $include library/scr/checks_database.gms
+

@@ -37,7 +37,6 @@ $include library/scr/load_database.gms
 $include library/scr/sets_model.gms
 $include library/scr/aggregate_database.gms
 
-$include library/scr/user_data.gms
-
 $include library/scr/model_parameters.gms
 $include library/scr/model_variables_equations.gms
+
