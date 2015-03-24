@@ -47,12 +47,16 @@ Parameters
                                 # imported final use for all categories
     elasIMP(prd,regg)           substitution elasticity between imports from
                                 # different regions
+    tfp(regg,ind)               total factor productivity parameter in the
+                                # nest of aggregated factors of production
 
     elasFU_data(fd,*)           data on elasticities (final demand)
     elasTRADE_data(prd,*)       data on elasticities of import or domestic
                                 #supply (Armington)
     elasPROD_data(ind,*)        data on substitution elasticities in production
                                 #nests
+
+    TFP_data(ind,*)             data on initial level of tfp
 
     Y(regg,ind)                 output vector by activity (volume)
     X(reg,prd)                  output vector by product (volume)
@@ -118,6 +122,8 @@ Parameters
     INC_G(regg)                 total income of government (value)
     INC_I(regg)                 total income of investment agent (value)
 
+    GDP(regg)                   gross domestic product (value)
+
     tc_ind(prd,regg,ind)        tax and subsidies on products rates for
                                 # industries (relation in value)
     tc_h(prd,regg)              tax and subsidies on products rates for
@@ -148,7 +154,7 @@ Parameters
     aVA(regg,ind)               technical input coefficients for aggregated
                                 # factors of production (relation in volume)
     alpha(reg,kl,regg,ind)      relative share parameter for factors of
-                                # production within the aggregated next
+                                # production within the aggregated nest
                                 # (relation in volume)
     phi_row(row,prd,regg,ind)   input coefficients for intermediate use of
                                 # products imported from the rest of the world
@@ -209,13 +215,19 @@ Parameters
 
 * ========================== Definition of parameters ==========================
 
-*## Elasticities ##
-
 *Here project-specific data are read in. Data should be placed in %project%/data/.
+
+*## Elasticities ##
 
 $libinclude xlimport elasFU_data ././%project%/data/Eldata.xlsx elasFU!a1..zz10000 ;
 $libinclude xlimport elasTRADE_data ././%project%/data/Eldata.xlsx elasTRADE!a1..zz10000 ;
 $libinclude xlimport elasPROD_data ././%project%/data/Eldata.xlsx elasPROD!a1..zz10000 ;
+
+*## Total Factor Productivity ##
+
+$libinclude xlimport TFP_data ././%project%/data/Eldata.xlsx TFP!a1..zz10000 ;
+
+
 
 * Substitution elasticity between capital and labour inputs in volume. The
 * elasticity value can be different in each industry (ind) in each region (regg)
@@ -256,6 +268,11 @@ elasFU_DM(prd,regg)
 elasIMP(prd,regg)
     = elasTRADE_data(prd,'elasIMP') ;
 
+* Total factor productivity parameter, productivity of aggregated nest of
+* factors of production. The parameter value is calibrated to 1 in each industry
+* (ind) in each region (regg)
+tfp(regg,ind)
+    = TFP_data(ind,'TFP') ;
 
 
 *## Aggregates ##
@@ -549,6 +566,19 @@ INC_I
 ;
 
 
+* Gross domestic product in each region (regg). GDP calculated as difference
+* between total output and intermediate inputs plus taxes on products paid by
+* final consumers.
+GDP(regg)
+    = sum(ind, Y(regg,ind) ) -
+    sum((prd,ind), INTER_USE_T(prd,regg,ind) ) -
+    sum((row,prd,ind), INTER_USE_ROW(row,prd,regg,ind) ) +
+    sum((prd,fd), FINAL_USE_dt(prd,regg,fd) ) ;
+
+Display
+GDP
+;
+
 
 *## Tax rates ##
 
@@ -654,7 +684,8 @@ aVA(regg,ind)$sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) )
 * (reg,regg)
 alpha(reg,kl,regg,ind)$VALUE_ADDED(reg,kl,regg,ind)
     = VALUE_ADDED(reg,kl,regg,ind) /
-    sum((reggg,kll), VALUE_ADDED(reggg,kll,regg,ind) ) ;
+    ( sum((reggg,kll), VALUE_ADDED(reggg,kll,regg,ind) ) / tfp(regg,ind) )  *
+    tfp(regg,ind)**( -elasKL(regg,ind) ) ;
 
 * Input coefficients of products imported from the rest of the world for each
 * type of product (prd) from each rest of the world region (row) for
