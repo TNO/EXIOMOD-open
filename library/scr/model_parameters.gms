@@ -48,6 +48,12 @@ Parameters
     elasIMP(prd,regg)           substitution elasticity between imports from
                                 # different regions
 
+    elasFU_data(fd,*)           data on elasticities (final demand)
+    elasTRADE_data(prd,*)       data on elasticities of import or domestic
+                                #supply (Armington)
+    elasPROD_data(ind,*)        data on substitution elasticities in production
+                                #nests
+
     Y(regg,ind)                 output vector by activity (volume)
     X(reg,prd)                  output vector by product (volume)
     INTER_USE_T(prd,regg,ind)   intermediate use on product level (volume)
@@ -204,6 +210,12 @@ Parameters
 * ========================== Definition of parameters ==========================
 
 *## Elasticities ##
+
+*Here project-specific data are read in. Data should be placed in %project%/data/.
+
+$libinclude xlimport elasFU_data ././%project%/data/Eldata.xlsx elasFU!a1..zz10000 ;
+$libinclude xlimport elasTRADE_data ././%project%/data/Eldata.xlsx elasTRADE!a1..zz10000 ;
+$libinclude xlimport elasPROD_data ././%project%/data/Eldata.xlsx elasPROD!a1..zz10000 ;
 
 * Substitution elasticity between capital and labour inputs in volume. The
 * elasticity value can be different in each industry (ind) in each region (regg)
