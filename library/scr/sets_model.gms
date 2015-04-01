@@ -49,11 +49,16 @@ $include %project%/sets/restoftheworld_model.txt
 $include %project%/sets/regions_model.txt
 /
 
-    row(all_reg)  list of rest of the world regions in the model
+    row(all_reg)  list of rest of the world regions in the model (one element)
 /
 $include %project%/sets/restoftheworld_model.txt
 /
 ;
+
+* Check that only one rest of the world region is declared
+ABORT$( card(row) gt 1 )
+    "More than 1 rest of the region is declared"
+
 
 Sets
     prd             list of products in the model
