@@ -38,8 +38,9 @@ Parameters
                                 # modeled regions
     elasTRD(prd,regg)           substitution elasticity between imports from
                                 # different modeled regions
-    tfp(regg,ind)               total factor productivity parameter in the
-                                # nest of aggregated factors of production
+    fprod(va,regg,ind)          parameter on productivity on individual factors
+                                # in the nest of aggregated factors of
+                                # production
 
     elasFU_data(fd,*)           data on elasticities (final demand)
     elasTRADE_data(prd,*)       data on elasticities of import or domestic
@@ -47,7 +48,7 @@ Parameters
     elasPROD_data(ind,*)        data on substitution elasticities in production
                                 #nests
 
-    TFP_data(ind,*)             data on initial level of tfp
+    FPROD_data(ind,va)          data on initial level of factor productivity
 
     Y(regg,ind)                 output vector by activity (volume)
     X(reg,prd)                  output vector by product (volume)
@@ -209,8 +210,13 @@ $libinclude xlimport elasPROD_data ././%project%/data/Eldata.xlsx elasPROD!a1..z
 
 *## Total Factor Productivity ##
 
-$libinclude xlimport TFP_data ././%project%/data/Eldata.xlsx TFP!a1..zz10000 ;
+$libinclude xlimport FPROD_data ././%project%/data/Eldata.xlsx FPROD!a1..zz10000 ;
 
+loop((ind,kl),
+    ABORT$( FPROD_data(ind,kl) eq 0 )
+        "Initial level of factor productivity cannot be 0. See file Eldata.xlsx sheet FPROD" ;
+
+) ;
 
 
 * Substitution elasticity between capital and labour inputs in volume. The
@@ -258,11 +264,11 @@ elasIMP_ROW(prd,regg)
 elasTRD(prd,regg)
     = elasTRADE_data(prd,'elasTRD') ;
 
-* Total factor productivity parameter, productivity of aggregated nest of
-* factors of production. The parameter value is calibrated to 1 in each industry
-* (ind) in each region (regg)
-tfp(regg,ind)
-    = TFP_data(ind,'TFP') ;
+* Parameter on initial level of productivity of individual factors of
+* production. The parameter value is usually calibrated to 1 for each factor
+* type (kl) in each industry (ind) in each region (regg)
+fprod(kl,regg,ind)
+    = FPROD_data(ind,kl) ;
 
 
 *## Aggregates ##
@@ -664,8 +670,9 @@ aVA(regg,ind)$sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) )
 * (reg,regg)
 alpha(reg,kl,regg,ind)$VALUE_ADDED(reg,kl,regg,ind)
     = VALUE_ADDED(reg,kl,regg,ind) /
-    ( sum((reggg,kll), VALUE_ADDED(reggg,kll,regg,ind) ) / tfp(regg,ind) )  *
-    tfp(regg,ind)**( -elasKL(regg,ind) ) ;
+    ( sum((reggg,kll), VALUE_ADDED(reggg,kll,regg,ind) ) /
+    fprod(kl,regg,ind) )  *
+    fprod(kl,regg,ind)**( -elasKL(regg,ind) ) ;
 
 Display
 coprodA
