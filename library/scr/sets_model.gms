@@ -142,7 +142,12 @@ $include %project%/sets/aggregation/export_database_to_model.txt
 
 * ============= 3. Declaration of types of value added elements ================
 $ontext
-Description
+The value added elements in the model aggregation should be assigned to one
+of the three types of value added types. The different types (net tax on
+production, factors of production, international margins and taxes) will have
+different functions in the model, they will be included in different equations.
+Each value added element should be assigned to 1 type; but not all the types
+need to represented in the model.
 $offtext
 
 Set
@@ -185,7 +190,7 @@ The final demand categories in the model aggregation should be assigned to one
 of the four types of final demands. The different types (household, government,
 gross fixed capital formation, stock change) and their interactions will have
 different functions in the model. Each final demand category should be assigned
-to 1 type; but not all the types need to represented in the types.
+to 1 type; but not all the types need to represented in the model.
 $offtext
 
 Set
