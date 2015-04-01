@@ -18,18 +18,6 @@ $offtext
 $oneolcom
 $eolcom #
 
-* ========================== Declaration of subsets ============================
-Sets
-    ntp(va)   net taxes on production categories    /"NTP"/
-    kl(va)    capital and labour categories         /"COE","GOS"/
-    tim(va)   tax on export and international margins categories /"INM","TSE"/
-*    kl(va)    capital and labour categories         /"COE"/
-;
-
-Alias
-    (kl,kll)
-;
-
 * ========================= Declaration of parameters ==========================
 
 Parameters
@@ -113,7 +101,7 @@ Parameters
                                 # intermediate use, household and government
                                 #consumption and investments (volume)
 
-    KLS(reg,kl)                 supply of production factors (volume)
+    KLS(reg,va)                 supply of production factors (volume)
     CBUD_H(regg)                total budget available for household consumption
                                 # (value)
     CBUD_G(regg)                total budget available for government
@@ -155,7 +143,7 @@ Parameters
                                 # of imported products (relation in volume)
     aVA(regg,ind)               technical input coefficients for aggregated
                                 # factors of production (relation in volume)
-    alpha(reg,kl,regg,ind)      relative share parameter for factors of
+    alpha(reg,va,regg,ind)      relative share parameter for factors of
                                 # production within the aggregated nest
                                 # (relation in volume)
 
@@ -200,11 +188,11 @@ Parameters
                                 # import (relation in volume)
     gamma_exp(reg,prd)          share coefficients for export to rest of the
                                 # world regions (relation in volume)
-    fac_distr_h(reg,kl,regg)    distribution shares of factor income to
+    fac_distr_h(reg,va,regg)    distribution shares of factor income to
                                 # household budget (shares in value)
-    fac_distr_g(reg,kl,regg)    distribution shares of factor income to
+    fac_distr_g(reg,va,regg)    distribution shares of factor income to
                                 # government budget (shares in value)
-    fac_distr_gfcf(reg,kl,regg) distribution shares of factor income to
+    fac_distr_gfcf(reg,va,regg) distribution shares of factor income to
                                 # gross fixed capital formation budget (shares
                                 # in value)
 ;

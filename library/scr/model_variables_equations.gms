@@ -49,7 +49,7 @@ Variables
                                     # detailed level
 
     VA_V(regg,ind)                  use of aggregated production factors
-    KL_V(reg,kl,regg,ind)           use of specific production factors
+    KL_V(reg,va,regg,ind)           use of specific production factors
 
     CONS_H_T_V(prd,regg)            household consumption on aggregated product
                                     # level
@@ -87,7 +87,7 @@ Variables
     TRADE_V(reg,prd,regg)           bi-lateral trade flows
     EXPORT_ROW_V(reg,prd)           export to the rest of the world regions
 
-    FACREV_V(reg,kl)                revenue from factors of production
+    FACREV_V(reg,va)                revenue from factors of production
     TSPREV_V(reg)                   revenue from net tax on products
     NTPREV_V(reg)                   revenue from net tax on production
     TIMREV_V(reg)                   revenue from tax on export and international
@@ -103,7 +103,7 @@ Variables
 
     PY_V(regg,ind)                  industry output price
     P_V(reg,prd)                    basic product price
-    PKL_V(reg,kl)                   production factor price
+    PKL_V(reg,va)                   production factor price
     PVA_V(regg,ind)                 aggregate production factors price
     PIU_V(prd,regg,ind)             aggregate product price for intermediate use
     PC_H_V(prd,regg)                aggregate product price for household
@@ -136,7 +136,7 @@ Variables
 
 * Exogenous variables
 Variables
-    KLS_V(reg,kl)                   supply of production factors
+    KLS_V(reg,va)                   supply of production factors
     SV_ROW_V(prd,regg)              stock changes of rest of the world products
     INCTRANSFER_V(reg,fd,regg,fdd)  income transfers
     TRANSFERS_ROW_V(reg,fd)         income trasnfers from rest of the world
@@ -166,7 +166,7 @@ Equations
                                 # detailed level
 
     EQVA(regg,ind)              demand for aggregated production factors
-    EQKL(reg,kl,regg,ind)       demand for specific production factors
+    EQKL(reg,va,regg,ind)       demand for specific production factors
 
     EQCONS_H_T(prd,regg)        demand of households for products on aggregated
                                 # product level
@@ -205,7 +205,7 @@ Equations
     EQTRADE(reg,prd,regg)       demand for bi-lateral trade transactions
     EQEXP(reg,prd)              export supply to the rest of the world region
 
-    EQFACREV(reg,kl)            revenue from factors of production
+    EQFACREV(reg,va)            revenue from factors of production
     EQTSPREV(reg)               revenue from net tax on products
     EQNTPREV(reg)               revenue from net tax on production
     EQTIMREV(reg)               revenue from tax on export and international
@@ -222,7 +222,7 @@ Equations
     EQPY(regg,ind)              zero-profit condition (including possible
                                 # margins)
     EQP(reg,prd)                balance between product price and industry price
-    EQPKL(reg,kl)               balance on production factors market
+    EQPKL(reg,va)               balance on production factors market
     EQPVA(regg,ind)             balance between specific production factors
                                 # price and aggregate production factors price
     EQPIU(prd,regg,ind)         balance between specific product price and
