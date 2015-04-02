@@ -18,18 +18,6 @@ $offtext
 $oneolcom
 $eolcom #
 
-* ========================== Declaration of subsets ============================
-Sets
-    ntp(va)   net taxes on production categories    /"NTP"/
-    kl(va)    capital and labour categories         /"COE","GOS"/
-    tim(va)   tax on export and international margins categories /"INM","TSE"/
-*    kl(va)    capital and labour categories         /"COE"/
-;
-
-Alias
-    (kl,kll)
-;
-
 * ========================= Declaration of parameters ==========================
 
 Parameters
@@ -45,10 +33,14 @@ Parameters
                                 # capital formation final use
     elasFU_DM(prd,regg)         substitution elasticity between domestic and
                                 # imported final use for all categories
-    elasIMP(prd,regg)           substitution elasticity between imports from
-                                # different regions
-    tfp(regg,ind)               total factor productivity parameter in the
-                                # nest of aggregated factors of production
+    elasIMP_ROW(prd,regg)       substitution elasticity between imports from
+                                # rest of the world and aggregated import from
+                                # modeled regions
+    elasTRD(prd,regg)           substitution elasticity between imports from
+                                # different modeled regions
+    fprod(va,regg,ind)          parameter on productivity on individual factors
+                                # in the nest of aggregated factors of
+                                # production
 
     elasFU_data(fd,*)           data on elasticities (final demand)
     elasTRADE_data(prd,*)       data on elasticities of import or domestic
@@ -56,7 +48,7 @@ Parameters
     elasPROD_data(ind,*)        data on substitution elasticities in production
                                 #nests
 
-    TFP_data(ind,*)             data on initial level of tfp
+    FPROD_data(ind,va)          data on initial level of factor productivity
 
     Y(regg,ind)                 output vector by activity (volume)
     X(reg,prd)                  output vector by product (volume)
@@ -66,44 +58,43 @@ Parameters
 
     CONS_H_D(prd,regg)          household consumption of domestic products
                                 # (volume)
-    CONS_H_M(prd,regg)          household consumption of products imported from
-                                # modeled regions (volume)
+    CONS_H_M(prd,regg)          household consumption of imported products (from
+                                # modeled and rest of the world regions)
+                                # (volume)
     CONS_H_T(prd,regg)          household consumption on product level (volume)
     CONS_H(reg,prd,regg)        household consumption of products on the level
                                 # of product and producing region (volume)
-    CONS_H_ROW(row,prd,regg)    household consumption of products imported from
-                                # rest of the world regions (volume)
 
     CONS_G_D(prd,regg)          government consumption of domestic products
                                 # (volume)
-    CONS_G_M(prd,regg)          government consumption of products imported from
-                                # modeled regions (volume)
+    CONS_G_M(prd,regg)          government consumption of imported products
+                                # (from modeled and rest of the world regions)
+                                # (volume)
     CONS_G_T(prd,regg)          government consumption on product level (volume)
     CONS_G(reg,prd,regg)        government consumption of products on the level
                                 # of product and producing region (volume)
-    CONS_G_ROW(row,prd,regg)    government consumption of products imported from
-                                # rest of the world regions (volume)
 
     GFCF_D(prd,regg)            investment (gross fixed capital formation) in
                                 # domestic products (volume)
     GFCF_M(prd,regg)            investment (gross fixed capital formation) in
-                                # products imported from modeled regions
-                                # (volume)
+                                # imported products (from modeled and rest of
+                                # the world regions) (volume)
     GFCF_T(prd,regg)            investment (gross fixed capital formation) on
                                 # product level (volume)
     GFCF(reg,prd,regg)          investment (gross fixed capital formation) in
                                 # products on the level of product and producing
                                 # region (volume)
-    GFCF_ROW(row,prd,regg)      investment (gross fixed capital formation) in
-                                # products imported from rest of the world
-                                # regions (volume)
 
     SV(reg,prd,regg)            stock changes of products on the level of
                                 # product and producing region (volume)
-    SV_ROW(row,prd,regg)        stock changes of products imported from rest of
+    SV_ROW(prd,regg)            stock changes of products imported from rest of
                                 # the world regions (volume)
 
-    IMPORT(prd,regg)            import of products into a region from modeled
+    IMPORT_T(prd,regg)          total import of products into a region (from
+                                # modeled and rest of the world regions) for
+                                # intermediate use, household and government
+                                # consumption and investments (volume)
+    IMPORT_MOD(prd,regg)        import of products into a region from modeled
                                 # regions for intermediate use, household and
                                 # government consumption and investments
                                 # (volume)
@@ -111,7 +102,7 @@ Parameters
                                 # intermediate use, household and government
                                 #consumption and investments (volume)
 
-    KLS(reg,kl)                 supply of production factors (volume)
+    KLS(reg,va)                 supply of production factors (volume)
     CBUD_H(regg)                total budget available for household consumption
                                 # (value)
     CBUD_G(regg)                total budget available for government
@@ -153,11 +144,8 @@ Parameters
                                 # of imported products (relation in volume)
     aVA(regg,ind)               technical input coefficients for aggregated
                                 # factors of production (relation in volume)
-    alpha(reg,kl,regg,ind)      relative share parameter for factors of
+    alpha(reg,va,regg,ind)      relative share parameter for factors of
                                 # production within the aggregated nest
-                                # (relation in volume)
-    phi_row(row,prd,regg,ind)   input coefficients for intermediate use of
-                                # products imported from the rest of the world
                                 # (relation in volume)
 
     theta_h(prd,regg)           relative share parameter of household
@@ -169,9 +157,6 @@ Parameters
     theta_h_imp(prd,regg)       relative share parameter for household
                                 # consumption of products imported from modeled
                                 # regions (relation in volume)
-    theta_h_row(row,prd,regg)   coefficients for household consumption of
-                                # products imported from the rest of the world
-                                # regions (relation in value)
     theta_g(prd,regg)           relative share parameter of government
                                 # consumption on product level in total
                                 # government demand (relation in volume)
@@ -181,9 +166,6 @@ Parameters
     theta_g_imp(prd,regg)       relative share parameter for government
                                 # consumption of products imported from modeled
                                 # regions (relation in volume)
-    theta_g_row(row,prd,regg)   coefficients for government consumption of
-                                # products imported from the rest of the world
-                                # regions (relation in value)
     theta_gfcf(prd,regg)        relative share parameter of gross fixed capital
                                 # formation on product level in total investment
                                 # demand (relation in volume)
@@ -193,22 +175,25 @@ Parameters
     theta_gfcf_imp(prd,regg)    relative share parameter for gross fixed capital
                                 # formation of products imported from modeled
                                 # regions (relation in volume)
-    theta_gfcf_row(row,prd,regg)    coefficients for gross fixed capital
-                                # formation of products imported from the rest
-                                # of the world regions (relation in value)
     theta_sv(reg,prd,regg)      share coefficients for stock changes in products
                                 # produced in the modeled regions (relation in
                                 # volume)
 
-    gamma(reg,prd,regg)         relative share parameter for origin region of
-                                # import (relation in volume)
-    gammaE(reg,prd,row)         share coefficients for export (relation in
+    gamma_mod(prd,regg)         relative share parameter for imports originating
+                                # from one of the modeled regions (relation in
                                 # volume)
-    fac_distr_h(reg,kl,regg)    distribution shares of factor income to
+    gamma_row(prd,regg)         relative share parameter for imports originating
+                                # from rest of the world region (relation in
+                                # volume)
+    gamma_trd(reg,prd,regg)     relative share parameter for origin region of
+                                # import (relation in volume)
+    gamma_exp(reg,prd)          share coefficients for export to rest of the
+                                # world regions (relation in volume)
+    fac_distr_h(reg,va,regg)    distribution shares of factor income to
                                 # household budget (shares in value)
-    fac_distr_g(reg,kl,regg)    distribution shares of factor income to
+    fac_distr_g(reg,va,regg)    distribution shares of factor income to
                                 # government budget (shares in value)
-    fac_distr_gfcf(reg,kl,regg) distribution shares of factor income to
+    fac_distr_gfcf(reg,va,regg) distribution shares of factor income to
                                 # gross fixed capital formation budget (shares
                                 # in value)
 ;
@@ -225,8 +210,13 @@ $libinclude xlimport elasPROD_data ././%project%/data/Eldata.xlsx elasPROD!a1..z
 
 *## Total Factor Productivity ##
 
-$libinclude xlimport TFP_data ././%project%/data/Eldata.xlsx TFP!a1..zz10000 ;
+$libinclude xlimport FPROD_data ././%project%/data/Eldata.xlsx FPROD!a1..zz10000 ;
 
+loop((ind,kl),
+    ABORT$( FPROD_data(ind,kl) eq 0 )
+        "Initial level of factor productivity cannot be 0. See file Eldata.xlsx sheet FPROD" ;
+
+) ;
 
 
 * Substitution elasticity between capital and labour inputs in volume. The
@@ -262,17 +252,23 @@ elasFU_I(regg)
 elasFU_DM(prd,regg)
     = elasTRADE_data(prd,'elasFU_DM') ;
 
-* Substitution elasticity between imports in volume from different regions. The
-* elasticity value can be different for each product (prd) and each importing
-* region (regg)
-elasIMP(prd,regg)
-    = elasTRADE_data(prd,'elasIMP') ;
+* Substitution elasticity between imports in volume from rest of the world
+* region and aggregated import from modeled regions. The elasticity value can be
+* different for each product (prd) and each importing region (regg)
+elasIMP_ROW(prd,regg)
+    = elasTRADE_data(prd,'elasIMP_ROW') ;
 
-* Total factor productivity parameter, productivity of aggregated nest of
-* factors of production. The parameter value is calibrated to 1 in each industry
-* (ind) in each region (regg)
-tfp(regg,ind)
-    = TFP_data(ind,'TFP') ;
+* Substitution elasticity between imports in volume from different modeled
+* regions. The elasticity value can be different for each product (prd) and each
+* importing region (regg)
+elasTRD(prd,regg)
+    = elasTRADE_data(prd,'elasTRD') ;
+
+* Parameter on initial level of productivity of individual factors of
+* production. The parameter value is usually calibrated to 1 for each factor
+* type (kl) in each industry (ind) in each region (regg)
+fprod(kl,regg,ind)
+    = FPROD_data(ind,kl) ;
 
 
 *## Aggregates ##
@@ -306,7 +302,8 @@ INTER_USE_T(prd,regg,ind)
 INTER_USE(reg,prd,regg,ind)$( sameas(reg,regg) or TRADE(reg,prd,regg) )
     = ( INTER_USE_D(prd,regg,ind) )$sameas(reg,regg) +
     ( INTER_USE_M(prd,regg,ind) * TRADE(reg,prd,regg) /
-    sum(reggg, TRADE(reggg,prd,regg) ) )$(not sameas(reg,regg)) ;
+    ( sum(reggg, TRADE(reggg,prd,regg) ) +
+    IMPORT_ROW(prd,regg) ) )$(not sameas(reg,regg)) ;
 
 Display
 INTER_USE_T
@@ -320,9 +317,9 @@ INTER_USE
 CONS_H_D(prd,regg)
     = sum(fd$fd_assign(fd,'Households'), FINAL_USE_D(prd,regg,fd) ) ;
 
-* Household consumption of products imported from modeled regions in volume of
-* each product (prd) in each region (regg), the corresponding basic price in the
-* calibration year is equal to 1
+* Household consumption of imported products in volume of each product (prd) in
+* each region (regg), the corresponding basic price in the calibration year is
+* equal to 1
 CONS_H_M(prd,regg)
     = sum(fd$fd_assign(fd,'Households'), FINAL_USE_M(prd,regg,fd) ) ;
 
@@ -339,21 +336,14 @@ CONS_H_T(prd,regg)
 CONS_H(reg,prd,regg)$( sameas(reg,regg) or TRADE(reg,prd,regg) )
     = ( CONS_H_D(prd,regg) )$sameas(reg,regg) +
     ( CONS_H_M(prd,regg) * TRADE(reg,prd,regg) /
-    sum(reggg, TRADE(reggg,prd,regg) ) )$(not sameas(reg,regg)) ;
-
-* Household consumption of products imported from rest of the world regions in
-* volume of each product (prd) produced in each rest of the world region (row)
-* consumed in each region (regg), the corresponding basic price in the
-* calibration year is equal to 1
-CONS_H_ROW(row,prd,regg)
-    = sum(fd$fd_assign(fd,'Households'), FINAL_USE_ROW(row,prd,regg,fd) ) ;
+    ( sum(reggg, TRADE(reggg,prd,regg) ) +
+    IMPORT_ROW(prd,regg) ) )$(not sameas(reg,regg)) ;
 
 Display
 CONS_H_D
 CONS_H_M
 CONS_H_T
 CONS_H
-CONS_H_ROW
 ;
 
 
@@ -363,9 +353,9 @@ CONS_H_ROW
 CONS_G_D(prd,regg)
     = sum(fd$fd_assign(fd,'Government'), FINAL_USE_D(prd,regg,fd) ) ;
 
-* Government consumption of products imported from modeled regions in volume of
-* each product (prd) in each region (regg), the corresponding basic price in the
-* calibration year is equal to 1
+* Government consumption of imported products in volume of each product (prd) in
+* each region (regg), the corresponding basic price in the calibration year is
+* equal to 1
 CONS_G_M(prd,regg)
     = sum(fd$fd_assign(fd,'Government'), FINAL_USE_M(prd,regg,fd) ) ;
 
@@ -382,21 +372,14 @@ CONS_G_T(prd,regg)
 CONS_G(reg,prd,regg)$( sameas(reg,regg) or TRADE(reg,prd,regg) )
     = ( CONS_G_D(prd,regg) )$sameas(reg,regg) +
     ( CONS_G_M(prd,regg) * TRADE(reg,prd,regg) /
-    sum(reggg, TRADE(reggg,prd,regg) ) )$(not sameas(reg,regg)) ;
-
-* Government consumption of products imported from rest of the world regions in
-* volume of each product (prd) produced in each rest of the world region (row)
-* consumed in each region (regg), the corresponding basic price in the
-* calibration year is equal to 1
-CONS_G_ROW(row,prd,regg)
-    = sum(fd$fd_assign(fd,'Government'), FINAL_USE_ROW(row,prd,regg,fd) ) ;
+    ( sum(reggg, TRADE(reggg,prd,regg) ) +
+    IMPORT_ROW(prd,regg) ) )$(not sameas(reg,regg)) ;
 
 Display
 CONS_G_D
 CONS_G_M
 CONS_G_T
 CONS_G
-CONS_G_ROW
 ;
 
 
@@ -406,9 +389,9 @@ CONS_G_ROW
 GFCF_D(prd,regg)
     = sum(fd$fd_assign(fd,'GrossFixCapForm'), FINAL_USE_D(prd,regg,fd) ) ;
 
-* Investment (gross fixed capital formation) in products imported from modeled
-* regions in volume of each product (prd) in each region (regg), the
-* corresponding basic price in the calibration year is equal to 1
+* Investment (gross fixed capital formation) in imported products in volume of
+* each product (prd) in each region (regg), the corresponding basic price in the
+* calibration year is equal to 1
 GFCF_M(prd,regg)
     = sum(fd$fd_assign(fd,'GrossFixCapForm'), FINAL_USE_M(prd,regg,fd) ) ;
 
@@ -425,21 +408,14 @@ GFCF_T(prd,regg)
 GFCF(reg,prd,regg)$( sameas(reg,regg) or TRADE(reg,prd,regg) )
     = ( GFCF_D(prd,regg) )$sameas(reg,regg) +
     ( GFCF_M(prd,regg) * TRADE(reg,prd,regg) /
-    sum(reggg, TRADE(reggg,prd,regg) ) )$(not sameas(reg,regg)) ;
-
-* Investment (gross fixed capital formation) in products imported from rest of
-* the world regions in volume of each product (prd) produced in each rest of the
-* world region (row) consumed in each region (regg), the corresponding basic
-* price in the calibration year is equal to 1
-GFCF_ROW(row,prd,regg)
-    = sum(fd$fd_assign(fd,'GrossFixCapForm'), FINAL_USE_ROW(row,prd,regg,fd) ) ;
+    ( sum(reggg, TRADE(reggg,prd,regg) ) +
+    IMPORT_ROW(prd,regg) ) )$(not sameas(reg,regg)) ;
 
 Display
 GFCF_D
 GFCF_M
 GFCF_T
 GFCF
-GFCF_ROW
 ;
 
 
@@ -451,14 +427,16 @@ SV(reg,prd,regg)$( sameas(reg,regg) or TRADE(reg,prd,regg) )
     FINAL_USE_D(prd,regg,fd) ) )$sameas(reg,regg) +
     ( sum(fd$fd_assign(fd,'StockChange'), FINAL_USE_M(prd,regg,fd) ) *
     TRADE(reg,prd,regg) /
-    sum(reggg, TRADE(reggg,prd,regg) ) )$(not sameas(reg,regg)) ;
+    ( sum(reggg, TRADE(reggg,prd,regg) ) +
+    IMPORT_ROW(prd,regg) ) )$(not sameas(reg,regg)) ;
 
 * Stock change in products imported from rest of the world regions in volume of
-* each product (prd) produced in each rest of the world region (row) consumed in
-* each region (regg), the corresponding basic price in the calibration year is
-* equal to 1
-SV_ROW(row,prd,regg)
-    = sum(fd$fd_assign(fd,'StockChange'), FINAL_USE_ROW(row,prd,regg,fd) ) ;
+* each product (prd) consumed in each region (regg), the corresponding basic
+* price in the calibration year is equal to 1
+SV_ROW(prd,regg)$IMPORT_ROW(prd,regg)
+    = sum(fd$fd_assign(fd,'StockChange'), FINAL_USE_M(prd,regg,fd) ) *
+    IMPORT_ROW(prd,regg) /
+    ( sum(reggg, TRADE(reggg,prd,regg) ) + IMPORT_ROW(prd,regg) ) ;
 
 
 Display
@@ -467,14 +445,27 @@ SV_ROW
 ;
 
 
-* Aggregated import of products in volume of each product (prd) into each
+* Aggregated total import of products in volume of each product (prd) into each
 * importing region (regg), the corresponding basic price in the base year is
-* equal to 1. This import value includes only trade with modeled regions and
-* only intended for intermediate use, household and government consumption and
-* investments in gross fixed capital formation
-IMPORT(prd,regg)
+* equal to 1. This import value includes only trade intended for intermediate
+* use, household and government consumption and investments in gross fixed
+* capital formation, so excluding stock changes
+IMPORT_T(prd,regg)
     = sum(ind, INTER_USE_M(prd,regg,ind) ) +
     CONS_H_M(prd,regg) + CONS_G_M(prd,regg) + GFCF_M(prd,regg) ;
+
+* Recalculate import volume from rest of the world so that it excludes values
+* intended for stock changes
+IMPORT_ROW(prd,regg)
+    = IMPORT_ROW(prd,regg) - SV_ROW(prd,regg) ;
+
+* Aggregated import of products from modeled regions in volume of each product
+* (prd) into each importing region (regg), the corresponding basic price in the
+* base year is equal to 1. This import value includes only trade intended for
+* intermediate use, household and government consumption and investments in
+* gross fixed capital formation, so excluding stock changes
+IMPORT_MOD(prd,regg)
+    = IMPORT_T(prd,regg) - IMPORT_ROW(prd,regg) ;
 
 * Trade of products for each product (prd) between each region pair (reg-regg),
 * the corresponding basic price in the base year is equal to 1, purchaser's
@@ -482,14 +473,16 @@ IMPORT(prd,regg)
 * exporting region. By definition, trade of a region with itself it equal to 0.
 * This includes only trade with modeled regions and only intended for
 * intermediate use, household and government consumption and investments in
-* gross fixed capital formation.
+* gross fixed capital formation, so excluding stock changes
 TRADE(reg,prd,regg)
     = sum(ind, INTER_USE(reg,prd,regg,ind) ) + CONS_H(reg,prd,regg) +
     CONS_G(reg,prd,regg) + GFCF(reg,prd,regg) ;
 TRADE(reg,prd,reg) = 0 ;
 
 Display
-IMPORT
+IMPORT_T
+IMPORT_ROW
+IMPORT_MOD
 TRADE
 ;
 
@@ -504,21 +497,18 @@ KLS(reg,kl)
 * (regg)
 CBUD_H(regg)
     = sum(prd, CONS_H_D(prd,regg) ) + sum(prd, CONS_H_M(prd,regg) ) +
-    sum((row,prd), CONS_H_ROW(row,prd,regg) ) +
     sum(fd$fd_assign(fd,'Households'), sum(prd, FINAL_USE_dt(prd,regg,fd) ) ) ;
 
 * Total budget in value available for government consumption in each region
 * (regg)
 CBUD_G(regg)
     = sum(prd, CONS_G_D(prd,regg) ) + sum(prd, CONS_G_M(prd,regg) ) +
-    sum((row,prd), CONS_G_ROW(row,prd,regg) ) +
     sum(fd$fd_assign(fd,'Government'), sum(prd, FINAL_USE_dt(prd,regg,fd) ) ) ;
 
 * Total budget in value available for investment agent for gross fixed capital
 * formation in each region (regg)
 CBUD_I(regg)
     = sum(prd, GFCF_D(prd,regg) ) + sum(prd, GFCF_M(prd,regg) ) +
-    sum((row,prd), GFCF_ROW(row,prd,regg) ) +
     sum(fd$fd_assign(fd,'GrossFixCapForm'),
     sum(prd, FINAL_USE_dt(prd,regg,fd) ) ) ;
 
@@ -531,7 +521,7 @@ INC_H(regg)
     sum(fd$fd_assign(fd,'Households'),
     sum((reg,fdd), INCOME_DISTR(regg,fd,reg,fdd) ) +
     sum((reg,tim), TAX_FINAL_USE(reg,tim,regg,fd) ) +
-    sum((row,tim), TAX_FINAL_USE_ROW(row,tim,regg,fd) ) ) ;
+    sum(tim, TAX_FINAL_USE_ROW(tim,regg,fd) ) ) ;
 
 * Total income in value of government in each region (regg), the total income
 * consists of the consumption budget plus all the transfers from government to
@@ -542,7 +532,7 @@ INC_G(regg)
     sum(fd$fd_assign(fd,'Government'),
     sum((reg,fdd), INCOME_DISTR(regg,fd,reg,fdd) ) +
     sum((reg,va), TAX_FINAL_USE(reg,va,regg,fd) ) +
-    sum((row,va), TAX_FINAL_USE_ROW(row,va,regg,fd) ) ) ;
+    sum(va, TAX_FINAL_USE_ROW(va,regg,fd) ) ) ;
 
 * Total income in value of investment agent in each region (regg), the total
 * income consists of the investment budget plus all the transfers from the
@@ -553,7 +543,7 @@ INC_I(regg)
     sum(fd$fd_assign(fd,'GrossFixCapForm'),
     sum((reg,fdd), INCOME_DISTR(regg,fd,reg,fdd) ) +
     sum((reg,va), TAX_FINAL_USE(reg,va,regg,fd) ) +
-    sum((row,va), TAX_FINAL_USE_ROW(row,va,regg,fd) ) ) ;
+    sum(va, TAX_FINAL_USE_ROW(va,regg,fd) ) ) ;
 
 Display
 KLS
@@ -571,8 +561,7 @@ INC_I
 * final consumers.
 GDP(regg)
     = sum(ind, Y(regg,ind) ) -
-    sum((prd,ind), INTER_USE_T(prd,regg,ind) ) -
-    sum((row,prd,ind), INTER_USE_ROW(row,prd,regg,ind) ) +
+    sum((prd,ind), INTER_USE_T(prd,regg,ind) ) +
     sum((prd,fd), FINAL_USE_dt(prd,regg,fd) ) ;
 
 Display
@@ -586,24 +575,21 @@ GDP
 * purchaser's price of intermediate use, tax rate differs by product (prd) in
 * each industry (ind) in each region (regg)
 tc_ind(prd,regg,ind)$INTER_USE_dt(prd,regg,ind)
-    = INTER_USE_dt(prd,regg,ind) /
-    ( INTER_USE_T(prd,regg,ind) +
-    sum(row, INTER_USE_ROW(row,prd,regg,ind) ) ) ;
-
+    = INTER_USE_dt(prd,regg,ind) / INTER_USE_T(prd,regg,ind) ;
 
 * Net tax (taxes less subsidies) rates on aggregated products included into
 * purchaser's price of household consumption, tax rate differs by product (prd)
 * in each region (regg)
 tc_h(prd,regg)$sum(fd$fd_assign(fd,'Households'), FINAL_USE_dt(prd,regg,fd) )
     = sum(fd$fd_assign(fd,'Households'), FINAL_USE_dt(prd,regg,fd) ) /
-    ( CONS_H_T(prd,regg) + sum(row, CONS_H_ROW(row,prd,regg) ) ) ;
+    CONS_H_T(prd,regg) ;
 
 * Net tax (taxes less subsidies) rates on aggregated products included into
 * purchaser's price of government consumption, tax rate differs by product (prd)
 * in each region (regg)
 tc_g(prd,regg)$sum(fd$fd_assign(fd,'Government'), FINAL_USE_dt(prd,regg,fd) )
     = sum(fd$fd_assign(fd,'Government'), FINAL_USE_dt(prd,regg,fd) ) /
-    ( CONS_G_T(prd,regg) + sum(row, CONS_G_ROW(row,prd,regg) ) ) ;
+    CONS_G_T(prd,regg) ;
 
 * Net tax (taxes less subsidies) rates on aggregated products included into
 * purchaser's price of gross fixed capital formation, tax rate differs by
@@ -611,14 +597,14 @@ tc_g(prd,regg)$sum(fd$fd_assign(fd,'Government'), FINAL_USE_dt(prd,regg,fd) )
 tc_gfcf(prd,regg)$sum(fd$fd_assign(fd,'GrossFixCapForm'),
     FINAL_USE_dt(prd,regg,fd) )
     = sum(fd$fd_assign(fd,'GrossFixCapForm'), FINAL_USE_dt(prd,regg,fd) ) /
-    ( GFCF_T(prd,regg) + sum(row, GFCF_ROW(row,prd,regg) ) ) ;
+    GFCF_T(prd,regg) ;
 
 * Net tax (taxes less subsidies) rates on aggregated products included into
 * purchaser's price of stock changes, tax rate differs by product (prd) in each
 * region (regg)
 tc_sv(prd,regg)$sum(fd$fd_assign(fd,'StockChange'), FINAL_USE_dt(prd,regg,fd) )
     = sum(fd$fd_assign(fd,'StockChange'), FINAL_USE_dt(prd,regg,fd) ) /
-    ( sum(reg, SV(reg,prd,regg) ) + sum(row, SV_ROW(row,prd,regg) ) ) ;
+    ( sum(reg, SV(reg,prd,regg) ) + SV_ROW(prd,regg) ) ;
 
 * Net tax (taxes less subsidies) rates on production activities
 txd_ind(reg,regg,ind)$sum(ntp, VALUE_ADDED(reg,ntp,regg,ind) )
@@ -684,14 +670,9 @@ aVA(regg,ind)$sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) )
 * (reg,regg)
 alpha(reg,kl,regg,ind)$VALUE_ADDED(reg,kl,regg,ind)
     = VALUE_ADDED(reg,kl,regg,ind) /
-    ( sum((reggg,kll), VALUE_ADDED(reggg,kll,regg,ind) ) / tfp(regg,ind) )  *
-    tfp(regg,ind)**( -elasKL(regg,ind) ) ;
-
-* Input coefficients of products imported from the rest of the world for each
-* type of product (prd) from each rest of the world region (row) for
-* intermediate use in each industry (ind) in each region (regg)
-phi_row(row,prd,regg,ind)$INTER_USE_ROW(row,prd,regg,ind)
-    = INTER_USE_ROW(row,prd,regg,ind) / Y(regg,ind) ;
+    ( sum((reggg,kll), VALUE_ADDED(reggg,kll,regg,ind) ) /
+    fprod(kl,regg,ind) )  *
+    fprod(kl,regg,ind)**( -elasKL(regg,ind) ) ;
 
 Display
 coprodA
@@ -701,7 +682,6 @@ phi_dom
 phi_imp
 aVA
 alpha
-phi_row
 ;
 
 
@@ -728,12 +708,6 @@ theta_h_imp(prd,regg)$CONS_H_M(prd,regg)
     = CONS_H_M(prd,regg) / CONS_H_T(prd,regg) *
     ( ( 1 + tc_h(prd,regg) ) / 1 )**( -elasFU_DM(prd,regg) ) ;
 
-* Coefficients for household consumption of products imported from the rest of
-* the world for each type of product (prd) from each rest of the world regions
-* (row) in each region (regg)
-theta_h_row(row,prd,regg)$CONS_H_ROW(row,prd,regg)
-    = CONS_H_ROW(row,prd,regg) / CBUD_H(regg) ;
-
 
 * Relative share parameter for government consumption of aggregated products
 * for each product (prd) in each region (regg)
@@ -754,18 +728,6 @@ theta_g_dom(prd,regg)$CONS_G_D(prd,regg)
 theta_g_imp(prd,regg)$CONS_G_M(prd,regg)
     = CONS_G_M(prd,regg) / CONS_G_T(prd,regg) *
     ( ( 1 + tc_g(prd,regg) ) / 1 )**( -elasFU_DM(prd,regg) ) ;
-
-* Coefficients for government consumption of products imported from the rest of
-* the world for each type of product (prd) from each rest of the world regions
-* (row) in each region (regg)
-theta_g_row(row,prd,regg)$CONS_G_ROW(row,prd,regg)
-    = CONS_G_ROW(row,prd,regg) / CBUD_G(regg) ;
-
-* Coefficients for household consumption of products imported from the rest of
-* the world for each type of product (prd) from each rest of the world regions
-* (row) in each region (regg)
-theta_h_row(row,prd,regg)$CONS_H_ROW(row,prd,regg)
-    = CONS_H_ROW(row,prd,regg) / CBUD_H(regg) ;
 
 
 * Relative share parameter for gross fixed capital formation of aggregated
@@ -788,11 +750,6 @@ theta_gfcf_imp(prd,regg)$GFCF_M(prd,regg)
     = GFCF_M(prd,regg) / GFCF_T(prd,regg) *
     ( ( 1 + tc_gfcf(prd,regg) ) / 1 )**( -elasFU_DM(prd,regg) ) ;
 
-* Coefficients for gross fixed capital formation of products imported from the
-* rest of the world for each type of product (prd) from each rest of the world
-* regions (row) in each region (regg)
-theta_gfcf_row(row,prd,regg)$GFCF_ROW(row,prd,regg)
-    = GFCF_ROW(row,prd,regg) / CBUD_I(regg) ;
 
 * Share coefficient for stock changes in each product (prd) from each region
 * of origin (reg) to each region of destination (regg)
@@ -803,15 +760,12 @@ Display
 theta_h
 theta_h_dom
 theta_h_imp
-theta_h_row
 theta_g
 theta_g_dom
 theta_g_imp
-theta_g_row
 theta_gfcf
 theta_gfcf_dom
 theta_gfcf_imp
-theta_gfcf_row
 theta_sv
 ;
 
@@ -819,20 +773,34 @@ theta_sv
 
 *## Parameters of international trade ##
 
+* Relative share parameter for import originating from one of the modeled
+* regions for each product (prd) for each region of destination (regg)
+gamma_mod(prd,regg)$IMPORT_MOD(prd,regg)
+    = IMPORT_MOD(prd,regg) / IMPORT_T(prd,regg) *
+    ( 1 / 1 )**( -elasIMP_ROW(prd,regg) ) ;
+
+* Relative share parameter for import originating from rest of the world region
+* for each product (prd) for each region of destination (regg)
+gamma_row(prd,regg)$IMPORT_ROW(prd,regg)
+    = IMPORT_ROW(prd,regg) / IMPORT_T(prd,regg) *
+    ( 1 / 1 )**( -elasIMP_ROW(prd,regg) ) ;
+
 * Relative share parameter for import from different regions for each product
 * (prd) for each region of origin (reg) for each region of destination (regg)
-gamma(reg,prd,regg)$TRADE(reg,prd,regg)
-    = TRADE(reg,prd,regg) / IMPORT(prd,regg) *
-    ( 1 / 1 )**( -elasIMP(prd,regg) );
+gamma_trd(reg,prd,regg)$TRADE(reg,prd,regg)
+    = TRADE(reg,prd,regg) / IMPORT_MOD(prd,regg) *
+    ( 1 / 1 )**( -elasTRD(prd,regg) ) ;
 
 * Share coefficient for export of each product (prd) from each region of origin
-* (prd) to each export destination (row)
-gammaE(reg,prd,row)$EXPORT(reg,prd,row)
-    = EXPORT(reg,prd,row) / X(reg,prd) ;
+* (prd)
+gamma_exp(reg,prd)$EXPORT_ROW(reg,prd)
+    = EXPORT_ROW(reg,prd) / X(reg,prd) ;
 
 Display
-gamma
-gammaE
+gamma_mod
+gamma_row
+gamma_trd
+gamma_exp
 ;
 
 

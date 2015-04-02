@@ -39,4 +39,3 @@ $include library/scr/aggregate_database.gms
 
 $include library/scr/model_parameters.gms
 $include library/scr/model_variables_equations.gms
-

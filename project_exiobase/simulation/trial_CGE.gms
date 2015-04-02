@@ -54,21 +54,15 @@ Parameter
 ;
 
 CBUD_H_check(regg)
-    = ( sum((reg,prd), CONS_H_V.L(reg,prd,regg) * P_V.L(reg,prd) *
-    ( 1 + tc_h(prd,regg) ) ) +
-    sum((row,prd), CONS_H_ROW_V.L(row,prd,regg) * PROW_V.L(row) *
+    = ( sum(prd, CONS_H_T_V.L(prd,regg) * PC_H_V.L(prd,regg) *
     ( 1 + tc_h(prd,regg) ) ) ) / CBUD_H_V.L(regg) ;
 
 CBUD_G_check(regg)
-    = ( sum((reg,prd), CONS_G_V.L(reg,prd,regg) * P_V.L(reg,prd) *
-    ( 1 + tc_g(prd,regg) ) ) +
-    sum((row,prd), CONS_G_ROW_V.L(row,prd,regg) * PROW_V.L(row) *
+    = ( sum(prd, CONS_G_T_V.L(prd,regg) * PC_G_V.L(prd,regg) *
     ( 1 + tc_g(prd,regg) ) ) ) / CBUD_G_V.L(regg) ;
 
 CBUD_I_check(regg)
-    = ( sum((reg,prd), GFCF_V.L(reg,prd,regg) * P_V.L(reg,prd) *
-    ( 1 + tc_gfcf(prd,regg) ) ) +
-    sum((row,prd), GFCF_ROW_V.L(row,prd,regg) * PROW_V.L(row) *
+    = ( sum(prd, GFCF_T_V.L(prd,regg) * PC_I_V.L(prd,regg) *
     ( 1 + tc_gfcf(prd,regg) ) ) ) / CBUD_I_V.L(regg) ;
 
 Display
@@ -84,12 +78,10 @@ Parameter
 numer_check(regg,ind)$Y(regg,ind) =  Y_V.L(regg,ind) * PY_V.L(regg,ind) *
     ( 1 - sum(reg, txd_ind(reg,regg,ind) ) -
     sum(reg, txd_tim(reg,regg,ind) ) ) /
-    ( sum((reg,prd), INTER_USE_V.L(reg,prd,regg,ind) * P_V.L(reg,prd) *
-    ( 1 + tc_ind(prd,regg,ind) ) ) +
-    sum((row,prd), INTER_USE_ROW_V.L(row,prd,regg,ind) * PROW_V.L(row) *
+    ( sum(prd, INTER_USE_T_V.L(prd,regg,ind) * PIU_V.L(prd,regg,ind) *
     ( 1 + tc_ind(prd,regg,ind) ) ) +
     sum((reg,kl), KL_V.L(reg,kl,regg,ind) * PKL_V.L(reg,kl) ) +
-    sum((row,tim), TAX_INTER_USE_ROW(row,tim,regg,ind) * PROW_V.L(row) ) ) ;
+    sum(tim, TAX_INTER_USE_ROW(tim,regg,ind) * PROW_V.L ) ) ;
 
 
 Display

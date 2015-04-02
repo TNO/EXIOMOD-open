@@ -15,11 +15,13 @@ This `.gms` file consists of the following parts:
 
 2. Declaration of aggregation scheme
 
-3. Declaration of final demand types
+3. Declaration of types of value added elements
 
-4. Declaration of aliases
+4. Declaration of final demand types
 
-5. Consistency checks of aggregation scheme
+5. Declaration of aliases
+
+6. Consistency checks of aggregation scheme
 
 More detailed information about the sets and mappings can be found in the
 corresponding `.txt` file. All sets and maps can be changed to any level of
@@ -49,11 +51,16 @@ $include %project%/sets/restoftheworld_model.txt
 $include %project%/sets/regions_model.txt
 /
 
-    row(all_reg)  list of rest of the world regions in the model
+    row(all_reg)  list of rest of the world regions in the model (one element)
 /
 $include %project%/sets/restoftheworld_model.txt
 /
 ;
+
+* Check that only one rest of the world region is declared
+ABORT$( card(row) gt 1 )
+    "More than 1 rest of the region is declared"
+
 
 Sets
     prd             list of products in the model
@@ -133,13 +140,57 @@ $include %project%/sets/aggregation/export_database_to_model.txt
 /
 ;
 
-* ================ 3. Declaration of types of final demands ====================
+* ============= 3. Declaration of types of value added elements ================
+$ontext
+The value added elements in the model aggregation should be assigned to one
+of the three types of value added types. The different types (net tax on
+production, factors of production, international margins and taxes) will have
+different functions in the model, they will be included in different equations.
+Each value added element should be assigned to 1 type; but not all the types
+need to represented in the model.
+$offtext
+
+Set
+    va_types
+/
+'NetTaxProduction'
+'Factors'
+'IntMarginsTax'
+/
+
+Table
+    va_assign(va,va_types)      indicator for types of value added elements in the model aggregation
+$include %project%/sets/valueadded_categories_model.txt
+;
+
+* Check the assignment structure of value added elements types
+* Check that all va elements are assigned to va_types elements
+loop(va,
+    ABORT$( sum(va_types, va_assign(va,va_types) ) ne 1 )
+        "Some of the value added elements in the model aggregation are not assigned to types or assigned to multiple types" ;
+) ;
+
+Sets
+    ntp(va)   net taxes on production categories
+    kl(va)    capital and labour categories
+    tim(va)   tax on export and international margins categories
+;
+
+Alias
+    (kl,kll)
+;
+
+ntp(va)$va_assign(va,'NetTaxProduction') = yes ;
+kl(va)$va_assign(va,'Factors')           = yes ;
+tim(va)$va_assign(va,'IntMarginsTax')    = yes ;
+
+* ================ 4. Declaration of types of final demands ====================
 $ontext
 The final demand categories in the model aggregation should be assigned to one
 of the four types of final demands. The different types (household, government,
 gross fixed capital formation, stock change) and their interactions will have
 different functions in the model. Each final demand category should be assigned
-to 1 type; but not all the types need to represented in the types.
+to 1 type; but not all the types need to represented in the model.
 $offtext
 
 Set
@@ -160,7 +211,7 @@ $include %project%/sets/finaldemand_categories_model.txt
 * Check that all fd elements are assigned to fd_types elements
 loop(fd,
     ABORT$( sum(fd_types, fd_assign(fd,fd_types) ) ne 1 )
-        "Some of the final demand categories in the model aggregation are not assigned to types" ;
+        "Some of the final demand categories in the model aggregation are not assigned to types or assigned to multiple types" ;
 ) ;
 
 * Check that fd_types element are not assigned more than 1 of fd
@@ -169,7 +220,7 @@ loop(fd_types,
         "Some of the final demand types are assigned more than 1 final demand categories" ;
 ) ;
 
-* ===================== 4. Declaration of aliases ==============================
+* ===================== 5. Declaration of aliases ==============================
 $ontext
 Sometimes it is necessary to have more than one name for the same set. Aliases
 are created by repeating the last character of the original set a number of
@@ -185,7 +236,7 @@ Alias
 ;
 
 
-* ================== 5. Check of aggregation schemes ===========================
+* ================== 6. Check of aggregation schemes ===========================
 $ontext
 In case the configuration file requires check on consistency of aggregation
 schemes, the check is performed in this code. For more details on types of
