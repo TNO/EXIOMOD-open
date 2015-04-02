@@ -724,13 +724,20 @@ EQINC_G(regg)..
 * (regg), and well as income transfers from other final users. At the moment
 * income transfers is one of the exogenous variables of the model, therefore it
 * is multiplied by a price index in order to preserve model homogeneity in
-* prices of degree zero.
+* prices of degree zero. The only endogenous income transfer is
+* savings from households in the same region.
 EQINC_I(regg)..
     INC_I_V(regg)
     =E=
     sum((reg,kl), FACREV_V(reg,kl) * fac_distr_gfcf(reg,kl,regg) ) +
+    mps(regg) * ( GRINC_H_V(regg) * ( 1 - ty(regg) ) ) +
     sum(fd$fd_assign(fd,'GrossFixCapForm'),
-    sum((reg,fdd), INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) +
+    sum(fdd$( not fd_assign(fdd,'Households') ),
+    INCTRANSFER_V(regg,fdd,regg,fd) * LASPEYRES_V(regg) ) ) +
+    sum(fd$fd_assign(fd,'GrossFixCapForm'),
+    sum((reg,fdd)$( not sameas(reg,regg) ),
+    INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) ) +
+    sum(fd$fd_assign(fd,'GrossFixCapForm'),
     TRANSFERS_ROW_V(regg,fd) * PROW_V ) ;
 
 * EQUATION 9.4: Budget available for household consumption. Budget is composed
@@ -738,8 +745,9 @@ EQINC_I(regg)..
 * from other final users and less international margin paid by household. At
 * the moment income transfers is one of the exogenous variables of the model,
 * therefore it is multiplied by a price index in order to preserve model
-* homogeneity in prices of degree zero. The only endogenous income transfer is
-* income tax to the government in the same region.
+* homogeneity in prices of degree zero. The endogenous income transfers are
+* income tax to the government in the same region and savings to the investment
+* agent in the same region.
 EQCBUD_H(regg)..
     CBUD_H_V(regg)
     =E=
@@ -748,9 +756,7 @@ EQCBUD_H(regg)..
     sum((reg,fdd), INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) +
     TRANSFERS_ROW_V(regg,fd) * PROW_V ) -
     ty(regg) * GRINC_H_V(regg) -
-    sum(fd$fd_assign(fd,'Households'),
-    sum(fdd$( not fd_assign(fdd,'Government') ),
-    INCTRANSFER_V(regg,fd,regg,fdd) * LASPEYRES_V(regg) ) ) -
+    mps(regg) * ( GRINC_H_V(regg) * ( 1 - ty(regg) ) ) -
     sum(fd$fd_assign(fd,'Households'), sum((reg,fdd)$( not sameas(reg,regg) ),
     INCTRANSFER_V(regg,fd,reg,fdd) * LASPEYRES_V(regg) ) ) ) -
     sum(fd$fd_assign(fd,'Households'),

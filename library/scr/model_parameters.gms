@@ -197,7 +197,8 @@ Parameters
     fac_distr_gfcf(reg,va,regg) distribution shares of factor income to
                                 # gross fixed capital formation budget (shares
                                 # in value)
-    ty(regg)                    income tax rate
+    ty(regg)                    household income tax rate
+    mps(regg)                   household marginal propensity to save
 ;
 
 * ========================== Definition of parameters ==========================
@@ -844,6 +845,17 @@ ty(regg)
     sum(fdd$fd_assign(fdd,'Government'), INCOME_DISTR(regg,fd,regg,fdd) ) ) /
     GRINC_H(regg) ;
 
+* Household marginal propensity to save, households saving is a transfer from
+* households to the investment agent in the same region. Marginal propensity to
+* save is calculated as percentage of household net income (gross minus income
+* tax)
+mps(regg)
+    = sum(fd$fd_assign(fd,'Households'),
+    sum(fdd$fd_assign(fdd,'GrossFixCapForm'),
+    INCOME_DISTR(regg,fd,regg,fdd) ) ) /
+    ( GRINC_H(regg) * ( 1 - ty(regg) ) ) ;
+
 Display
 ty
+mps
 ;
