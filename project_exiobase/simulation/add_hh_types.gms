@@ -5,24 +5,24 @@
 $ontext startdoc
 This simulation checks whether adding household types to labour supply and labour demand is easily implemented
 
-List of sets that need to be changed
+1. List of sets that need to be changed
 -va
 -kl
 
-List of parameter that need to be changed
--KLS
--new elasticity for different education types
--alpha (share parameter)
-
-List of variables that need to be changed
--KL
--PKL
-
-List of equations that need to be changed
+2. List of equations that need to be changed
 -EQKL
 -EQPY
 -EQPKL
 -EQPVA
+
+3. List of variables that need to be changed
+-KL
+-PKL
+
+4. List of parameter that need to be changed
+-KLS
+-new elasticity for different education types
+-alpha (share parameter)
 
 The script consists of the following parts:
 
@@ -36,7 +36,9 @@ $eolcom #
 
 * Calibration of production function
 Parameters
-    VALUE_ADDED_pr(reg,klpr,regg,ind) 
+    WZ_share(reg,klpr)
+    VALUE_ADDED_pr(reg,klpr,regg,ind)
+    VALUE_ADDED_DISTR_pr(reg,klpr,regg,fd) 
     alpha_pr(reg,klpr,regg,ind) project specific share parameter
     KLS_pr(reg,klpr)
     fac_distr_h_pr(reg,klpr,regg)
@@ -44,27 +46,38 @@ Parameters
     fac_distr_gfcf_pr(reg,klpr,regg)
     test(reg,klpr) ;
 
+* Distribution share
+WZ_share(reg,klpr) = sum(ind, LZ_share(reg,ind,klpr)) / sum(ind, 1) ;
+WZ_share(reg,klpr) = WZ_share(reg,klpr) / sum(klprr, WZ_share(reg,klprr)) ;
+
 * Value added
-    VALUE_ADDED_pr(reg,klpr,regg,ind)  = sum(kl$(ord(kl) = 1), VALUE_ADDED(reg,kl,regg,ind)) ;
 
-    VALUE_ADDED_pr(reg,klpr,regg,ind)$LZ_share(reg,ind,klpr) = sum(kl$(ord(kl) = 2), VALUE_ADDED(reg,kl,regg,ind))*LZ_share(reg,ind,klpr) ;
+    VALUE_ADDED_pr(reg,klpr,regg,ind)$(ord(klpr) = 1)  = sum(kl$(ord(kl) = 2), VALUE_ADDED(reg,kl,regg,ind)) ;
 
-*households
+    VALUE_ADDED_pr(reg,klpr,regg,ind)$(ord(klpr) > 1)= sum(kl$(ord(kl) = 1), VALUE_ADDED(reg,kl,regg,ind))*WZ_share(reg,klpr) ;
 
-    fac_distr_h_pr(reg,klpr,regg) = sum(kl$(ord(kl) = 1), fac_distr_h(reg,kl,regg)) ;
-    fac_distr_h_pr(reg,klpr,regg)$(sum(ind, LZ_share(reg,ind,klpr))) = sum(kl$(ord(kl) = 2), fac_distr_h(reg,kl,regg))* sum(ind, LZ_share(reg,ind,klpr))/sum(ind,1) ;
 
-* gov
-fac_distr_g_pr(reg,klpr,regg) = sum(kl$(ord(kl) = 1), fac_distr_g(reg,kl,regg)) ;
-    fac_distr_g_pr(reg,klpr,regg)$(sum(ind, LZ_share(reg,ind,klpr))) = sum(kl$(ord(kl) = 2), fac_distr_g(reg,kl,regg))* sum(ind, LZ_share(reg,ind,klpr))/sum(ind,1) ;
+    VALUE_ADDED_DISTR_pr(reg,klpr,regg,fd)$(ord(klpr) = 1) = sum(kl$(ord(kl) = 2), VALUE_ADDED_DISTR(reg,kl,regg,fd)) ;
 
-* investor (?)
-fac_distr_gfcf_pr(reg,klpr,regg) = sum(kl$(ord(kl) = 1), fac_distr_gfcf(reg,kl,regg)) ;
-    fac_distr_gfcf_pr(reg,klpr,regg)$(sum(ind, LZ_share(reg,ind,klpr))) = sum(kl$(ord(kl) = 2), fac_distr_gfcf(reg,kl,regg))* sum(ind, LZ_share(reg,ind,klpr))/sum(ind,1) ;
+    VALUE_ADDED_DISTR_pr(reg,klpr,regg,fd)$(ord(klpr) > 1) = sum(kl$(ord(kl) = 1), VALUE_ADDED_DISTR(reg,kl,regg,fd))* WZ_share(reg,klpr);
 
-* Supply
+
+* Share of factor income, households
+
+    fac_distr_h_pr(reg,klpr,regg)$(ord(klpr) = 1) = sum(kl$(ord(kl) = 2), fac_distr_h(reg,kl,regg)) ;
+    fac_distr_h_pr(reg,klpr,regg)$(ord(klpr) > 1) = sum(kl$(ord(kl) = 1), fac_distr_h(reg,kl,regg))* 1 ;
+
+* Share of factor income, gov
+fac_distr_g_pr(reg,klpr,regg)$(ord(klpr) = 1) = sum(kl$(ord(kl) = 2), fac_distr_g(reg,kl,regg)) ;
+    fac_distr_g_pr(reg,klpr,regg)$(ord(klpr) > 1)= sum(kl$(ord(kl) = 1), fac_distr_g(reg,kl,regg))* 1 ;
+
+* Share of factor income, investor 
+fac_distr_gfcf_pr(reg,klpr,regg)$(ord(klpr) = 1) = sum(kl$(ord(kl) = 2), fac_distr_gfcf(reg,kl,regg)) ;
+    fac_distr_gfcf_pr(reg,klpr,regg)$(ord(klpr) > 1) = sum(kl$(ord(kl) = 1), fac_distr_gfcf(reg,kl,regg))* 1 ;
+
+* Supply of factors of production
 KLS_pr(reg,klpr)
-    = sum((regg,ind),VALUE_ADDED(reg,klpr,regg,ind) ) ;
+    = sum((regg,ind),VALUE_ADDED_pr(reg,klpr,regg,ind) ) ;
 
 * Share parameter
     
@@ -73,37 +86,35 @@ KLS_pr(reg,klpr)
     sum((reggg,klprr), VALUE_ADDED_pr(reggg,klprr,regg,ind) ) ;
 
 
-Display VALUE_ADDED_pr, KLS_pr, alpha, alpha_pr, fac_distr_h, fac_distr_h_pr, fac_distr_g, fac_distr_g_pr, fac_distr_gfcf, fac_distr_gfcf_pr ;
+Display LZ_share, WZ_share, KL, KLPR, value_added, VALUE_ADDED_pr, KLS_pr, alpha, alpha_pr, fac_distr_h, fac_distr_h_pr, fac_distr_g, fac_distr_g_pr, fac_distr_gfcf, fac_distr_gfcf_pr  ;
 
 
 Equations
 EQKL_pr(reg,klpr,regg,ind)
-EQPY_pr(regg,ind)
-EQPKL_pr(reg,klpr)    
-EQPVA_pr(regg,ind)
-
-EQFACREV_pr(reg,kl)
+EQFACREV_pr(reg,klpr)
 EQINC_H_pr(regg)
 EQINC_G_pr(regg)
 EQINC_I_pr(regg)
-EQPY_pr(regg,ind)
 
+EQPY_pr(regg,ind)
+EQPKL_pr(reg,klpr)    
+EQPVA_pr(regg,ind)
 ;
 
 Variables
 KL_V_pr(reg,klpr,regg,ind)
 FACREV_V_pr(reg,klpr)
-PKL_V(reg,kl)
-
+PKL_V_pr(reg,klpr)
 KLS_V_pr(reg,klpr)
 ;
 
-    
-* EQUAION 2.2:
+* ============= Define new variables/equations ============================
+
+* EQUATION 2.2:
 EQKL_pr(reg,klpr,regg,ind)$VALUE_ADDED_pr(reg,klpr,regg,ind)..
     KL_V_pr(reg,klpr,regg,ind)
     =E=
-    VA_V_pr(regg,ind) * alpha_pr(reg,klpr,regg,ind) *
+    VA_V(regg,ind) * alpha_pr(reg,klpr,regg,ind) *
     ( PKL_V_pr(reg,klpr) / PVA_V(regg,ind) )**( -elasKL(regg,ind) ) ;
 
 * EQUATION 8.1:
@@ -122,7 +133,7 @@ EQINC_H_pr(regg)..
     sum(row, TRANSFERS_ROW_V(regg,fd,row) * PROW_V(row) ) ) ;
 
 * EQUATION 9.2:
-EQINC_G(regg)..
+EQINC_G_pr(regg)..
     INC_G_V(regg)
     =E=
     sum((reg,klpr), FACREV_V_pr(reg,klpr) * fac_distr_g_pr(reg,klpr,regg) ) +
@@ -159,86 +170,141 @@ EQPKL_pr(reg,klpr)..
     =E=
     sum((regg,ind), KL_V_pr(reg,klpr,regg,ind) ) ;
 
+* EQUATION 10.4:
+EQPVA_pr(regg,ind)..
+    PVA_V(regg,ind) * VA_V(regg,ind)
+    =E=
+    sum((reg,klpr), PKL_V_pr(reg,klpr) * KL_V_pr(reg,klpr,regg,ind)) ;
+
+* ======== Define levels and lower and upper bounds and fixed variables ========
+
+KL_V_pr.L(reg,klpr,regg,ind) = VALUE_ADDED_pr(reg,klpr,regg,ind) ;
+KL_V_pr.FX(reg,klpr,regg,ind)$(KL_V_pr.L(reg,klpr,regg,ind) = 0 ) = 0 ;
+
+FACREV_V_pr.L(reg,klpr) = sum((regg,fd), VALUE_ADDED_DISTR_pr(reg,klpr,regg,fd) ) ;
+FACREV_V_pr.FX(reg,klpr)$(FACREV_V_pr.L(reg,klpr) = 0) = 0 ;
+
+PKL_V_pr.L(reg,klpr)       = 1 ;
+PKL_V_pr.FX(reg,klpr)$(KLS_pr(reg,klpr) = 0)       = 0 ;
+
+* Exogenous variables are fixed to their calibrated value.
+KLS_V_pr.FX(reg,klpr)                   = KLS_pr(reg,klpr) ;
 
 * ============= Scale and define levels of new variables/equations =============
 
-* EQUATION 9 COBB-DOUGLAS
-EQKL_COBBDOUGLAS.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) gt 0)
-    = KL_V.L(reg,kl,regg,ind) ;
+* EQUAION 2.2:
+EQKL_pr.SCALE(reg,klpr,regg,ind)$(KL_V_pr.L(reg,klpr,regg,ind) gt 0)
+    = KL_V_pr.L(reg,klpr,regg,ind) ;
 
-EQKL_COBBDOUGLAS.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) lt 0)
-    = -KL_V.L(reg,kl,regg,ind) ;
+EQKL_pr.SCALE(reg,klpr,regg,ind)$(KL_V_pr.L(reg,klpr,regg,ind) lt 0)
+    = -KL_V_pr.L(reg,klpr,regg,ind) ;
 
-* EQUAION 9 CONSTANT ELASTICITY OF SUBSTITUTION
-EQKL_CES.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) gt 0)
-    = KL_V.L(reg,kl,regg,ind) ;
+* EQUATION 8.1:
+EQFACREV_pr.SCALE(reg,klpr)$(FACREV_V_pr.L(reg,klpr) gt 0)
+    = FACREV_V_pr.L(reg,klpr) ;
 
-EQKL_CES.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) lt 0)
-    = -KL_V.L(reg,kl,regg,ind) ;
+EQFACREV_pr.SCALE(reg,klpr)$(FACREV_V_pr.L(reg,klpr) lt 0)
+    = -FACREV_V_pr.L(reg,klpr) ;
 
-* EQUATION 26CONSTANT ELASTICITY OF SUBSTITUTION
-EQPVA_CES.SCALE(reg,ind)$(VA_V.L(reg,ind) gt 0)
+* EQUATION 9.1:
+EQINC_H_pr.SCALE(regg)$(INC_H_V.L(regg) gt 0)
+    = INC_H_V.L(regg) ;
+
+EQINC_H_pr.SCALE(regg)$(INC_H_V.L(regg) lt 0)
+    = -INC_H_V.L(regg) ;
+
+* EQUATION 9.2:
+EQINC_G_pr.SCALE(regg)$(INC_G_V.L(regg) gt 0)
+    = INC_G_V.L(regg) ;
+
+EQINC_G_pr.SCALE(regg)$(INC_G_V.L(regg) lt 0)
+    = -INC_G_V.L(regg) ;
+
+* EQUATION 9.3:
+EQINC_I_pr.SCALE(regg)$(INC_I_V.L(regg) gt 0)
+    = INC_I_V.L(regg) ;
+
+EQINC_I_pr.SCALE(regg)$(INC_I_V.L(regg) lt 0)
+    = -INC_I_V.L(regg) ;
+
+* EQUATION 10.1:
+EQPY_pr.SCALE(regg,ind)$(Y_V.L(regg,ind) gt 0)
+    = Y_V.L(regg,ind) ;
+
+EQPY_pr.SCALE(regg,ind)$(Y_V.L(regg,ind) lt 0)
+    = -Y_V.L(regg,ind) ;
+
+* EQUATION 10.3:
+EQPKL_pr.SCALE(reg,klpr)$(KLS_V_pr.L(reg,klpr) gt 0)
+    = KLS_V_pr.L(reg,klpr) ;
+
+EQPKL_pr.SCALE(reg,klpr)$(KLS_V_pr.L(reg,klpr) lt 0)
+    = -KLS_V_pr.L(reg,klpr) ;
+
+* EQUATION 10.4
+EQPVA_pr.SCALE(reg,ind)$(VA_V.L(reg,ind) gt 0)
     = VA_V.L(reg,ind) ;
 
-EQPVA_CES.SCALE(reg,ind)$(VA_V.L(reg,ind) lt 0)
+EQPVA_pr.SCALE(reg,ind)$(VA_V.L(reg,ind) lt 0)
     = -VA_V.L(reg,ind) ;
+
 
 
 * ================= Define models with new variables/equations =================
 
-* Define Cobb-Douglas specification.
-Model CGE_MCP_COBBDOUGLAS
-/
-CGE_MCP
--EQKL
-EQKL_COBBDOUGLAS.KL_V
-/
-;
+* Define model with new household types
 
-* Define CES specification.
-Model CGE_MCP_CES
+Model CGE_MCP_hh_types
 /
 CGE_MCP
 -EQKL
+-EQFACREV
+-EQINC_H
+-EQINC_G
+-EQINC_I
+-EQPY
+-EQPKL
 -EQPVA
-EQKL_CES.KL_V
-EQPVA_CES.PVA_V
-/
-;
 
+EQKL_pr.KL_V_pr
+EQFACREV_pr.FACREV_V_pr
+EQINC_H_pr.INC_H_V
+EQINC_G_pr.INC_G_V
+EQINC_I_pr.INC_I_V
+EQPY_pr.PY_V
+EQPKL_pr.PKL_V_pr
+EQPVA_pr.PVA_V
+
+/      
+;
 
 * ============================== Simulation setup ==============================
 
 * Set value for experiment.
 *KLS_V.FX('EU27','COE')  = 1.1 * KLS('EU27','COE') ;
-KLS_V.FX('EU','CLS')                 = 1.1 * KLS('EU','CLS')                      ;
+*KLS_V.FX('EU','CLS')                 = 1.1 * KLS('EU','CLS')                      ;
 
 * Define options.
-Option iterlim   = 20000000 ;
+*Option iterlim   = 20000000 ;
+Option iterlim   = 0 ;
 Option decimals  = 7 ;
 CGE_MCP.scaleopt = 1 ;
-CGE_MCP_COBBDOUGLAS.scaleopt = 1 ;
-CGE_MCP_CES.scaleopt = 1 ;
-
+CGE_MCP_hh_types.scaleopt = 1 ;
 
 * =============================== Solve statement ==============================
 
 * Solve original model.
-Solve CGE_MCP using MCP ;
-KL_V_ORIG(reg,kl,regg,ind) = KL_V.L(reg,kl,regg,ind) ;
+*Solve CGE_MCP using MCP ;
+*KL_V_ORIG(reg,kl,regg,ind) = KL_V.L(reg,kl,regg,ind) ;
 
-* Solve Cobb-Douglas specification.
-Solve CGE_MCP_COBBDOUGLAS using MCP ;
-KL_V_COBBDOUGLAS(reg,kl,regg,ind) = KL_V.L(reg,kl,regg,ind) ;
-
-* Solve CES specification.
-Solve CGE_MCP_CES using MCP ;
-KL_V_CES(reg,kl,regg,ind) = KL_V.L(reg,kl,regg,ind) ;
+* Solve multiple household specification.
+Solve CGE_MCP_hh_types using MCP ;
+*KL_V_COBBDOUGLAS(reg,kl,regg,ind) = KL_V.L(reg,kl,regg,ind) ;
 
 
 * ========================= Post-processing of results =========================
 
 * Show differences between KL_V variables.
-$setlocal display_tolerance 0.0001
-$batinclude library/includes/compare_data comparison_COBBDOUGLAS KL_V_ORIG KL_V_COBBDOUGLAS reg,kl,regg,ind %display_tolerance%
-$batinclude library/includes/compare_data comparison_CES         KL_V_ORIG KL_V_CES         reg,kl,regg,ind %display_tolerance%
+*$setlocal display_tolerance 0.0001
+*$batinclude library/includes/compare_data comparison_COBBDOUGLAS KL_V_ORIG KL_V_COBBDOUGLAS reg,kl,regg,ind %display_tolerance%
+*$batinclude library/includes/compare_data comparison_CES         KL_V_ORIG KL_V_CES         reg,kl,regg,ind %display_tolerance%

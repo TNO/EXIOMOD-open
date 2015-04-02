@@ -18,9 +18,9 @@ Execute "if not exist sp.g00 gams library/scr/simulation_prepare.gms s=sp gdx=sp
  
 * Execute file with data supplied by the user
 
-Execute "if not exist ud.g00 %project%/simulation/user_data.gms gams %project%/simulation/user_data.gms r=sp s=ud lo=4 ide=1 gdx=ud.gdx o=ud.lst lf=ud.log --project=%project%"  ;
+Execute "if not exist ud.g00 gams %project%/simulation/user_data.gms r=sp s=ud lo=4 ide=1 pw=80 ps=0 gdx=ud.gdx o=ud.lst lf=ud.log --project=%project%"  ;
 
-*Execute "gams %project%/simulation/user_data.gms r=sp s=ud lo=4 gdx=ud.gdx o=ud.lst lf=ud.log ide=1 --project=%project%"  ;
+*Execute "gams %project%/simulation/user_data.gms r=sp s=ud lo=4 gdx=ud.gdx o=ud.lst lf=ud.log ide=1 pw=80 ps=0 --project=%project%"  ;
 
 * Run simulation.
 Execute "gams %project%/simulation/add_hh_types.gms r=ud lo=4 ide=1 pw=80 ps=0 o=hh_types.lst gdx=./%project%/results/add_hh_types%base_year%.gdx --project=%project% " ;

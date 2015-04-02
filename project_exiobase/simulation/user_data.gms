@@ -18,7 +18,7 @@ sec60(totset60) /t001*t060/
 $onmulti 
 Sets
     va /"LOW","MID","HIGH"/
-    klpr(va) / "COE", "LOW","MID","HIGH"/
+    klpr(va) / "GOS", "LOW","MID","HIGH"/
 ; 
 $offmulti 
 
@@ -51,7 +51,5 @@ LZ_share(reg,ind,klpr) ;
 LZ_share(reg,ind,klpr) = sum(reg_data$all_reg_aggr(reg_data,reg), wag(reg_data,ind,klpr ) ) ;
 LZ_share(reg,ind,klpr)$LZ_share(reg,ind,klpr) = LZ_share(reg,ind,klpr) / sum(klprr$LZ_share(reg,ind,klprr), LZ_share(reg,ind,klprr)) ;
 
-*Correct for missing values
 
-
-Display Wdata, mapdmod, wag, LZ_share, klpr ;
+Display Wdata, mapdmod, wag, LZ_share, klpr, value_added ;
