@@ -109,7 +109,8 @@ Parameters
                                 # consumption (value)
     CBUD_I(regg)                total budget available for gross fixed capital
                                 # formation (value)
-    INC_H(regg)                 total income of households (value)
+    GRINC_H(regg)               gross income of households from production
+                                # factors (value)
     INC_G(regg)                 total income of government (value)
     INC_I(regg)                 total income of investment agent (value)
 
@@ -196,6 +197,7 @@ Parameters
     fac_distr_gfcf(reg,va,regg) distribution shares of factor income to
                                 # gross fixed capital formation budget (shares
                                 # in value)
+    ty(regg)                    income tax rate
 ;
 
 * ========================== Definition of parameters ==========================
@@ -512,16 +514,13 @@ CBUD_I(regg)
     sum(fd$fd_assign(fd,'GrossFixCapForm'),
     sum(prd, FINAL_USE_dt(prd,regg,fd) ) ) ;
 
-* Total income in value of households in each region (regg), the total income
-* consists of the consumption budget plus all the transfers from households to
-* other agents and payments to other regions for international margin and taxes
-* export
-INC_H(regg)
-    = CBUD_H(regg) +
-    sum(fd$fd_assign(fd,'Households'),
-    sum((reg,fdd), INCOME_DISTR(regg,fd,reg,fdd) ) +
-    sum((reg,tim), TAX_FINAL_USE(reg,tim,regg,fd) ) +
-    sum(tim, TAX_FINAL_USE_ROW(tim,regg,fd) ) ) ;
+* Gross income of households from production factors in each region (regg). The
+* gross income value includes only income received from production factors, but
+* excludes transfer from other final user in the same region and transfers from
+* abroad. The gross income value is used to calculated income tax rate
+GRINC_H(regg)
+    = sum((reg,kl), sum(fd$fd_assign(fd,'Households'),
+    VALUE_ADDED_DISTR(reg,kl,regg,fd) ) ) ;
 
 * Total income in value of government in each region (regg), the total income
 * consists of the consumption budget plus all the transfers from government to
@@ -550,7 +549,7 @@ KLS
 CBUD_H
 CBUD_G
 CBUD_I
-INC_H
+GRINC_H
 INC_G
 INC_I
 ;
@@ -831,4 +830,20 @@ Display
 fac_distr_h
 fac_distr_g
 fac_distr_gfcf
+;
+
+
+
+*## Income transfers between final consumers ##
+
+* Income tax rate, income tax is a transfer from households to the government
+* in the same region. Income tax rate is calculate as percentage of household
+* gross income from factors of production
+ty(regg)
+    = sum(fd$fd_assign(fd,'Households'),
+    sum(fdd$fd_assign(fdd,'Government'), INCOME_DISTR(regg,fd,regg,fdd) ) ) /
+    GRINC_H(regg) ;
+
+Display
+ty
 ;
