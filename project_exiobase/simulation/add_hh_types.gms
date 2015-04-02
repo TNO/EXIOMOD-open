@@ -36,15 +36,21 @@ $eolcom #
 
 * Calibration of production function
 Parameters
-    WZ_share(reg,klpr)
-    VALUE_ADDED_pr(reg,klpr,regg,ind)
-    VALUE_ADDED_DISTR_pr(reg,klpr,regg,fd) 
-    alpha_pr(reg,klpr,regg,ind) project specific share parameter
-    KLS_pr(reg,klpr)
-    fac_distr_h_pr(reg,klpr,regg)
-    fac_distr_g_pr(reg,klpr,regg)
-    fac_distr_gfcf_pr(reg,klpr,regg)
-    test(reg,klpr) ;
+    fprod_pr(va,regg,ind)
+    WZ_share(reg,va)
+    VALUE_ADDED_pr(reg,va,regg,ind)
+    VALUE_ADDED_DISTR_pr(reg,va,regg,fd) 
+    alpha_pr(reg,va,regg,ind) project specific share parameter
+    KLS_pr(reg,va)
+    fac_distr_h_pr(reg,va,regg)
+    fac_distr_g_pr(reg,va,regg)
+    fac_distr_gfcf_pr(reg,va,regg)
+    test(reg,va) ;
+
+$offorder
+* Factor productivity
+fprod_pr(klpr,regg,ind)$(ord(klpr) = 1)  = sum(kl$(ord(kl) = 2), fprod(kl,regg,ind) ) ;
+fprod_pr(klpr,regg,ind)$(ord(klpr) > 1)  = sum(kl$(ord(kl) = 1), fprod(kl,regg,ind) ) ;
 
 * Distribution share
 WZ_share(reg,klpr) = sum(ind, LZ_share(reg,ind,klpr)) / sum(ind, 1) ;
@@ -53,59 +59,58 @@ WZ_share(reg,klpr) = WZ_share(reg,klpr) / sum(klprr, WZ_share(reg,klprr)) ;
 * Value added
 
     VALUE_ADDED_pr(reg,klpr,regg,ind)$(ord(klpr) = 1)  = sum(kl$(ord(kl) = 2), VALUE_ADDED(reg,kl,regg,ind)) ;
-
     VALUE_ADDED_pr(reg,klpr,regg,ind)$(ord(klpr) > 1)= sum(kl$(ord(kl) = 1), VALUE_ADDED(reg,kl,regg,ind))*WZ_share(reg,klpr) ;
 
 
     VALUE_ADDED_DISTR_pr(reg,klpr,regg,fd)$(ord(klpr) = 1) = sum(kl$(ord(kl) = 2), VALUE_ADDED_DISTR(reg,kl,regg,fd)) ;
-
     VALUE_ADDED_DISTR_pr(reg,klpr,regg,fd)$(ord(klpr) > 1) = sum(kl$(ord(kl) = 1), VALUE_ADDED_DISTR(reg,kl,regg,fd))* WZ_share(reg,klpr);
 
 
 * Share of factor income, households
-
     fac_distr_h_pr(reg,klpr,regg)$(ord(klpr) = 1) = sum(kl$(ord(kl) = 2), fac_distr_h(reg,kl,regg)) ;
-    fac_distr_h_pr(reg,klpr,regg)$(ord(klpr) > 1) = sum(kl$(ord(kl) = 1), fac_distr_h(reg,kl,regg))* 1 ;
+    fac_distr_h_pr(reg,klpr,regg)$(ord(klpr) > 1) = sum(kl$(ord(kl) = 1), fac_distr_h(reg,kl,regg)) ;
 
 * Share of factor income, gov
 fac_distr_g_pr(reg,klpr,regg)$(ord(klpr) = 1) = sum(kl$(ord(kl) = 2), fac_distr_g(reg,kl,regg)) ;
-    fac_distr_g_pr(reg,klpr,regg)$(ord(klpr) > 1)= sum(kl$(ord(kl) = 1), fac_distr_g(reg,kl,regg))* 1 ;
+    fac_distr_g_pr(reg,klpr,regg)$(ord(klpr) > 1)= sum(kl$(ord(kl) = 1), fac_distr_g(reg,kl,regg)) ;
 
 * Share of factor income, investor 
 fac_distr_gfcf_pr(reg,klpr,regg)$(ord(klpr) = 1) = sum(kl$(ord(kl) = 2), fac_distr_gfcf(reg,kl,regg)) ;
-    fac_distr_gfcf_pr(reg,klpr,regg)$(ord(klpr) > 1) = sum(kl$(ord(kl) = 1), fac_distr_gfcf(reg,kl,regg))* 1 ;
+    fac_distr_gfcf_pr(reg,klpr,regg)$(ord(klpr) > 1) = sum(kl$(ord(kl) = 1), fac_distr_gfcf(reg,kl,regg)) ;
+$onorder
 
 * Supply of factors of production
 KLS_pr(reg,klpr)
     = sum((regg,ind),VALUE_ADDED_pr(reg,klpr,regg,ind) ) ;
 
 * Share parameter
-    
-    alpha_pr(reg,klpr,regg,ind)$VALUE_ADDED_pr(reg,klpr,regg,ind)
+        alpha_pr(reg,klpr,regg,ind)$VALUE_ADDED_pr(reg,klpr,regg,ind)
     = VALUE_ADDED_pr(reg,klpr,regg,ind) /
     sum((reggg,klprr), VALUE_ADDED_pr(reggg,klprr,regg,ind) ) ;
 
 
 Display LZ_share, WZ_share, KL, KLPR, value_added, VALUE_ADDED_pr, KLS_pr, alpha, alpha_pr, fac_distr_h, fac_distr_h_pr, fac_distr_g, fac_distr_g_pr, fac_distr_gfcf, fac_distr_gfcf_pr  ;
 
+$exit
+
 
 Equations
-EQKL_pr(reg,klpr,regg,ind)
-EQFACREV_pr(reg,klpr)
-EQINC_H_pr(regg)
+EQKL_pr(reg,va,regg,ind)
+EQFACREV_pr(reg,va)
+EQGRINC_H_pr(regg)
 EQINC_G_pr(regg)
 EQINC_I_pr(regg)
 
 EQPY_pr(regg,ind)
-EQPKL_pr(reg,klpr)    
+EQPKL_pr(reg,va)    
 EQPVA_pr(regg,ind)
 ;
 
 Variables
-KL_V_pr(reg,klpr,regg,ind)
-FACREV_V_pr(reg,klpr)
-PKL_V_pr(reg,klpr)
-KLS_V_pr(reg,klpr)
+KL_V_pr(reg,va,regg,ind)
+FACREV_V_pr(reg,va)
+PKL_V_pr(reg,va)
+KLS_V_pr(reg,va)
 ;
 
 * ============= Define new variables/equations ============================
@@ -114,8 +119,9 @@ KLS_V_pr(reg,klpr)
 EQKL_pr(reg,klpr,regg,ind)$VALUE_ADDED_pr(reg,klpr,regg,ind)..
     KL_V_pr(reg,klpr,regg,ind)
     =E=
-    VA_V(regg,ind) * alpha_pr(reg,klpr,regg,ind) *
-    ( PKL_V_pr(reg,klpr) / PVA_V(regg,ind) )**( -elasKL(regg,ind) ) ;
+    ( VA_V(regg,ind) / fprod_pr(klpr,regg,ind) ) * alpha_pr(reg,klpr,regg,ind) *
+    ( PKL_V_pr(reg,klpr) /
+    ( fprod_pr(klpr,regg,ind) * PVA_V(regg,ind) ) )**( -elasKL(regg,ind) ) ;
 
 * EQUATION 8.1:
 EQFACREV_pr(reg,klpr)..
@@ -124,6 +130,12 @@ EQFACREV_pr(reg,klpr)..
     sum((regg,ind), KL_V_pr(reg,klpr,regg,ind) * PKL_V_pr(reg,klpr) ) ;
 
 * EQUATION 9.1:
+EQGRINC_H_pr(regg)..
+    GRINC_H_V(regg)
+    =E=
+    sum((reg,klpr), FACREV_V_pr(reg,klpr) * fac_distr_h_pr(reg,klpr,regg) ) ;
+
+$ontext
 EQINC_H_pr(regg)..
     INC_H_V(regg)
     =E=
@@ -131,8 +143,24 @@ EQINC_H_pr(regg)..
     sum(fd$fd_assign(fd,'Households'),
     sum((reg,fdd), INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) +
     sum(row, TRANSFERS_ROW_V(regg,fd,row) * PROW_V(row) ) ) ;
+$offtext
+
 
 * EQUATION 9.2:
+EQINC_G_pr(regg)..
+    INC_G_V(regg)
+    =E=
+    sum((reg,klpr), FACREV_V_pr(reg,klpr) * fac_distr_g_pr(reg,klpr,regg) ) +
+    TSPREV_V(regg) + NTPREV_V(regg) + TIMREV_V(regg) +
+    ty(regg) * GRINC_H_V(regg) +
+    sum(fd$fd_assign(fd,'Government'),
+    sum(fdd$( not fd_assign(fdd,'Households') ),
+    INCTRANSFER_V(regg,fdd,regg,fd) * LASPEYRES_V(regg) ) ) +
+    sum(fd$fd_assign(fd,'Government'), sum((reg,fdd)$( not sameas(reg,regg) ),
+    INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) ) +
+    sum(fd$fd_assign(fd,'Government'), TRANSFERS_ROW_V(regg,fd) * PROW_V ) ;
+
+$ontext
 EQINC_G_pr(regg)..
     INC_G_V(regg)
     =E=
@@ -141,8 +169,24 @@ EQINC_G_pr(regg)..
     sum(fd$fd_assign(fd,'Government'),
     sum((reg,fdd), INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) +
     sum(row, TRANSFERS_ROW_V(regg,fd,row) * PROW_V(row) ) ) ;
+$offtext
 
 * EQUATION 9.3:
+EQINC_I_pr(regg)..
+    INC_I_V(regg)
+    =E=
+    sum((reg,klpr), FACREV_V_pr(reg,klpr) * fac_distr_gfcf_pr(reg,klpr,regg) ) +
+    mps(regg) * ( GRINC_H_V(regg) * ( 1 - ty(regg) ) ) +
+    sum(fd$fd_assign(fd,'GrossFixCapForm'),
+    sum(fdd$( not fd_assign(fdd,'Households') ),
+    INCTRANSFER_V(regg,fdd,regg,fd) * LASPEYRES_V(regg) ) ) +
+    sum(fd$fd_assign(fd,'GrossFixCapForm'),
+    sum((reg,fdd)$( not sameas(reg,regg) ),
+    INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) ) +
+    sum(fd$fd_assign(fd,'GrossFixCapForm'),
+    TRANSFERS_ROW_V(regg,fd) * PROW_V ) ;
+
+$ontext
 EQINC_I_pr(regg)..
     INC_I_V(regg)
     =E=
@@ -150,6 +194,7 @@ EQINC_I_pr(regg)..
     sum(fd$fd_assign(fd,'GrossFixCapForm'),
     sum((reg,fdd), INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) +
     sum(row, TRANSFERS_ROW_V(regg,fd,row) * PROW_V(row) ) ) ;
+$offtext
 
 * EQUATION 10.1:
 EQPY_pr(regg,ind)$((not sameas(regg,'WEU')) or (not sameas(ind,'i020')))..
@@ -207,10 +252,10 @@ EQFACREV_pr.SCALE(reg,klpr)$(FACREV_V_pr.L(reg,klpr) lt 0)
     = -FACREV_V_pr.L(reg,klpr) ;
 
 * EQUATION 9.1:
-EQINC_H_pr.SCALE(regg)$(INC_H_V.L(regg) gt 0)
+EQGRINC_H_pr.SCALE(regg)$(INC_H_V.L(regg) gt 0)
     = INC_H_V.L(regg) ;
 
-EQINC_H_pr.SCALE(regg)$(INC_H_V.L(regg) lt 0)
+EQGRINC_H_pr.SCALE(regg)$(INC_H_V.L(regg) lt 0)
     = -INC_H_V.L(regg) ;
 
 * EQUATION 9.2:
@@ -259,7 +304,7 @@ Model CGE_MCP_hh_types
 CGE_MCP
 -EQKL
 -EQFACREV
--EQINC_H
+-EQGRINC_H
 -EQINC_G
 -EQINC_I
 -EQPY
@@ -268,7 +313,7 @@ CGE_MCP
 
 EQKL_pr.KL_V_pr
 EQFACREV_pr.FACREV_V_pr
-EQINC_H_pr.INC_H_V
+EQGRINC_H_pr.GRINC_H_V
 EQINC_G_pr.INC_G_V
 EQINC_I_pr.INC_I_V
 EQPY_pr.PY_V

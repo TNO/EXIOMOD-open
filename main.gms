@@ -11,17 +11,11 @@ $offtext
 $include configuration.gms
 
 * Execute data-creation file
-
 Execute "if not exist sp.g00 gams library/scr/simulation_prepare.gms s=sp gdx=sp.gdx o=simulation_prepare.lst lo=4 ide=1 pw=80 ps=0 --db_check=%db_check% --project=%project% --agg_check=%agg_check% --base_year=%base_year% --base_cur=%base_cur%"  ;
 
-*Execute "gams library/scr/simulation_prepare.gms s=sp gdx=sp.gdx o=simulation_prepare.lst lo=4 ide=1 pw=80 ps=0 --db_check=%db_check% --project=%project% --agg_check=%agg_check% --base_year=%base_year% --base_cur=%base_cur%"  ;
- 
-* Execute file with data supplied by the user
-
+* Execute file with user data
 Execute "if not exist ud.g00 gams %project%/simulation/user_data.gms r=sp s=ud lo=4 ide=1 pw=80 ps=0 gdx=ud.gdx o=ud.lst lf=ud.log --project=%project%"  ;
 
-*Execute "gams %project%/simulation/user_data.gms r=sp s=ud lo=4 gdx=ud.gdx o=ud.lst lf=ud.log ide=1 pw=80 ps=0 --project=%project%"  ;
-
-* Run simulation.
+* Run simulation
 Execute "gams %project%/simulation/add_hh_types.gms r=ud lo=4 ide=1 pw=80 ps=0 o=hh_types.lst gdx=./%project%/results/add_hh_types%base_year%.gdx --project=%project% " ;
 
