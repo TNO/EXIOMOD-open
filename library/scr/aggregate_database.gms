@@ -285,6 +285,14 @@ INCOME_DISTR(reg,fd,regg,fdd)
 * exclude income redistribution from the same agent
 INCOME_DISTR(reg,fd,reg,fd) = 0 ;
 
+* make net redistribution from government to investment agent in the same region
+INCOME_DISTR(reg,fd,reg,fdd)$( fd_assign(fd,'Government') and
+    fd_assign(fdd,'GrossFixCapForm') ) = INCOME_DISTR(reg,fd,reg,fdd) -
+    INCOME_DISTR(reg,fdd,reg,fd) ;
+
+INCOME_DISTR(reg,fd,reg,fdd)$( fd_assign(fd,'GrossFixCapForm') and
+    fd_assign(fdd,'Government') ) = 0 ;
+
 
 TRANSFERS_ROW(reg,fd)
     = sum((reg_data,fd_data,row_data,exp_data)$

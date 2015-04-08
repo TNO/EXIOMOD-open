@@ -94,8 +94,8 @@ Variables
                                     # margins
 
     GRINC_H_V(regg)                 gross income of households
-    INC_G_V(regg)                   gross income of government
-    INC_I_V(regg)                   gross income of investment agent
+    GRINC_G_V(regg)                 gross income of government
+    GRINC_I_V(regg)                 gross income of investment agent
     CBUD_H_V(regg)                  budget available for household consumption
     CBUD_G_V(regg)                  budget available for government consumption
     CBUD_I_V(regg)                  budget available for gross fixed capital
@@ -212,8 +212,8 @@ Equations
                                 # margins
 
     EQGRINC_H(regg)             gross income of households
-    EQINC_G(regg)               gross income of government
-    EQINC_I(regg)               gross income of investment agent
+    EQGRINC_G(regg)             gross income of government
+    EQGRINC_I(regg)             gross income of investment agent
     EQCBUD_H(regg)              budget available for household consumption
     EQCBUD_G(regg)              budget available for government consumption
     EQCBUD_I(regg)              budget available for gross fixed capital
@@ -701,106 +701,115 @@ EQGRINC_H(regg)..
 
 * EQUATION 9.2: Gross income of government. Gross income is composed of
 * shares of factor revenues attributable to government in each region (regg),
-* tax revenues, as well as income transfers from other final users. At the
-* moment income transfers is one of the exogenous variables of the model,
-* therefore it is  multiplied by a price index in order to preserve model
-* homogeneity in prices of degree zero. The only endogenous income transfer is
-* income tax from households in the same region.
-EQINC_G(regg)..
-    INC_G_V(regg)
+* tax revenues from production, international trade and from sale of products.
+* Tax revenues from household income are not included.
+EQGRINC_G(regg)..
+    GRINC_G_V(regg)
     =E=
     sum((reg,kl), FACREV_V(reg,kl) * fac_distr_g(reg,kl,regg) ) +
-    TSPREV_V(regg) + NTPREV_V(regg) + TIMREV_V(regg) +
-    ty(regg) * GRINC_H_V(regg) +
-    sum(fd$fd_assign(fd,'Government'),
-    sum(fdd$( not fd_assign(fdd,'Households') ),
-    INCTRANSFER_V(regg,fdd,regg,fd) * LASPEYRES_V(regg) ) ) +
-    sum(fd$fd_assign(fd,'Government'), sum((reg,fdd)$( not sameas(reg,regg) ),
-    INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) ) +
-    sum(fd$fd_assign(fd,'Government'), TRANSFERS_ROW_V(regg,fd) * PROW_V ) ;
+    TSPREV_V(regg) + NTPREV_V(regg) + TIMREV_V(regg) ;
 
 * EQUATION 9.3: Gross income of investment agent. Gross income is composed of
 * shares of factor revenues attributable to investment agent in each region
-* (regg), and well as income transfers from other final users. At the moment
-* income transfers is one of the exogenous variables of the model, therefore it
-* is multiplied by a price index in order to preserve model homogeneity in
-* prices of degree zero. The only endogenous income transfer is
-* savings from households in the same region.
-EQINC_I(regg)..
-    INC_I_V(regg)
+* (regg).
+EQGRINC_I(regg)..
+    GRINC_I_V(regg)
     =E=
-    sum((reg,kl), FACREV_V(reg,kl) * fac_distr_gfcf(reg,kl,regg) ) +
-    mps(regg) * ( GRINC_H_V(regg) * ( 1 - ty(regg) ) ) +
-    sum(fd$fd_assign(fd,'GrossFixCapForm'),
-    sum(fdd$( not fd_assign(fdd,'Households') ),
-    INCTRANSFER_V(regg,fdd,regg,fd) * LASPEYRES_V(regg) ) ) +
-    sum(fd$fd_assign(fd,'GrossFixCapForm'),
-    sum((reg,fdd)$( not sameas(reg,regg) ),
-    INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) ) +
-    sum(fd$fd_assign(fd,'GrossFixCapForm'),
-    TRANSFERS_ROW_V(regg,fd) * PROW_V ) ;
+    sum((reg,kl), FACREV_V(reg,kl) * fac_distr_gfcf(reg,kl,regg) ) ;
 
 * EQUATION 9.4: Budget available for household consumption. Budget is composed
-* of gross income of households in each region (regg) plus net income transfers
-* from other final users and less international margin paid by household. At
-* the moment income transfers is one of the exogenous variables of the model,
-* therefore it is multiplied by a price index in order to preserve model
-* homogeneity in prices of degree zero. The endogenous income transfers are
-* income tax to the government in the same region and savings to the investment
-* agent in the same region.
+* of (1) gross income of households in each region (regg) plus (2) net income
+* transfers from other final users and less (3) international margin paid by
+* household. At the moment income transfers is one of the exogenous variables of
+* the model, therefore it is multiplied by a price index in order to preserve
+* model homogeneity in prices of degree zero. The endogenous income transfers
+* are income tax to the government in the same region and savings to the
+* investment agent in the same region.
 EQCBUD_H(regg)..
     CBUD_H_V(regg)
     =E=
+*   (1)
     GRINC_H_V(regg) +
-    ( sum(fd$fd_assign(fd,'Households'),
-    sum((reg,fdd), INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) +
-    TRANSFERS_ROW_V(regg,fd) * PROW_V ) -
+*   (2)
+    ( GTRF(regg) * LASPEYRES_V(regg) +
+    sum(fd$fd_assign(fd,'Households'), sum((reg,fdd)$( not sameas(reg,regg) ),
+    INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) ) +
+    sum(fd$fd_assign(fd,'Households'), TRANSFERS_ROW_V(regg,fd) * PROW_V ) -
     ty(regg) * GRINC_H_V(regg) -
     mps(regg) * ( GRINC_H_V(regg) * ( 1 - ty(regg) ) ) -
     sum(fd$fd_assign(fd,'Households'), sum((reg,fdd)$( not sameas(reg,regg) ),
     INCTRANSFER_V(regg,fd,reg,fdd) * LASPEYRES_V(regg) ) ) ) -
+*   (3)
     sum(fd$fd_assign(fd,'Households'),
     sum((reg,tim), TAX_FINAL_USE(reg,tim,regg,fd) *
     LASPEYRES_V(regg) ) +
     sum(tim, TAX_FINAL_USE_ROW(tim,regg,fd) * PROW_V ) ) ;
 
 * EQUATION 9.5: Budget available for government consumption. Budget is composed
-* of gross income of government in each region (regg) less income transfers to
-* other final users and less international margin paid by government. At the
-* moment income transfers is one of the exogenous variables of the model,
-* therefore it is multiplied by a price index in order to preserve model
-* homogeneity in prices of degree zero.
+* of (1) gross income of government in each region (regg) plus (2) household
+* income tax revenue plus (3) net income transfers from other final users and
+* less (4) international margin paid by government. At the moment income
+* transfers is one of the exogenous variables of the model, therefore it is
+* multiplied by a price index in order to preserve model homogeneity in prices
+* of degree zero.
 EQCBUD_G(regg)..
     CBUD_G_V(regg)
     =E=
-    INC_G_V(regg) -
+*   (1)
+    GRINC_G_V(regg) +
+*   (2)
+    ty(regg) * GRINC_H_V(regg) +
+*   (3)
+    ( sum(fd$fd_assign(fd,'Government'), sum((reg,fdd)$( not sameas(reg,regg) ),
+    INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) ) +
+    sum(fd$fd_assign(fd,'Government'), TRANSFERS_ROW_V(regg,fd) * PROW_V ) -
+    GTRF(regg) * LASPEYRES_V(regg) -
+    GSAV(regg) * LASPEYRES_V(regg) -
+    sum(fd$fd_assign(fd,'Government'), sum((reg,fdd)$( not sameas(reg,regg) ),
+    INCTRANSFER_V(regg,fd,reg,fdd) * LASPEYRES_V(regg) ) ) ) -
+*   (4)
     sum(fd$fd_assign(fd,'Government'),
-    sum((reg,fdd), INCTRANSFER_V(regg,fd,reg,fdd) * LASPEYRES_V(regg) ) +
     sum((reg,tim), TAX_FINAL_USE(reg,tim,regg,fd) *
     LASPEYRES_V(regg) ) +
     sum(tim, TAX_FINAL_USE_ROW(tim,regg,fd) * PROW_V ) ) ;
 
 * EQUATION 9.6: Budget available for gross fixed capital formation. Budget is
-* composed of gross income of investment agent in each region (regg) less
-* expenditures on stock changes, less income transfers to other final users and
-* less international margin by on gross fixed capital formation and on stock
-* change. At the moment income transfers is one of the exogenous variables of
-* the model, therefore it is multiplied by a price index in order to preserve
-* model homogeneity in prices of degree zero.
+* composed of (1) gross income of investment agent in each region (regg) plus
+* (2) net income transfers from other final users less (3) expenditures on stock
+* changes, and less (4) international margin on gross fixed capital formation
+* and on (5) stock change. At the moment income transfers is one of the
+* exogenous variables of the model, therefore it is multiplied by a price index
+* in order to preserve model homogeneity in prices of degree zero. The
+* endogenous income transfer is household savings in the same region.
 EQCBUD_I(regg)..
     CBUD_I_V(regg)
     =E=
-    INC_I_V(regg) -
+*   (1)
+    GRINC_I_V(regg) +
+*   (2)
+    ( mps(regg) * ( GRINC_H_V(regg) * ( 1 - ty(regg) ) ) +
+    GSAV(regg) * LASPEYRES_V(regg) +
+    sum(fd$fd_assign(fd,'GrossFixCapForm'),
+    sum((reg,fdd)$( not sameas(reg,regg) ),
+    INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) ) +
+    sum(fd$fd_assign(fd,'GrossFixCapForm'),
+    TRANSFERS_ROW_V(regg,fd) * PROW_V ) -
+    sum(fd$fd_assign(fd,'GrossFixCapForm'),
+    sum((reg,fdd)$( not sameas(reg,regg) ),
+    INCTRANSFER_V(regg,fd,reg,fdd) * LASPEYRES_V(regg) ) ) ) -
+*   (3)
     sum((reg,prd), SV_V(reg,prd,regg) * P_V(reg,prd) *
     ( 1 + tc_sv(prd,regg) ) ) -
     sum(prd, SV_ROW_V(prd,regg) * PROW_V * ( 1 + tc_sv(prd,regg) ) ) -
+*   (4)
     sum(fd$fd_assign(fd,'GrossFixCapForm'),
-    sum((reg,fdd)$( not fd_assign(fdd,'StockChange') ),
-    INCTRANSFER_V(regg,fd,reg,fdd) * LASPEYRES_V(regg) ) +
-    sum((reg,tim), TAX_FINAL_USE(reg,tim,regg,fd) * LASPEYRES_V(regg) ) +
+    sum((reg,tim), TAX_FINAL_USE(reg,tim,regg,fd) *
+    LASPEYRES_V(regg) ) +
     sum(tim, TAX_FINAL_USE_ROW(tim,regg,fd) * PROW_V ) ) -
+*   (5)
     sum(fd$fd_assign(fd,'StockChange'),
-    sum((reg,tim), TAX_FINAL_USE(reg,tim,regg,fd) * LASPEYRES_V(regg) ) +
+    sum((reg,tim), TAX_FINAL_USE(reg,tim,regg,fd) *
+    LASPEYRES_V(regg) ) +
     sum(tim, TAX_FINAL_USE_ROW(tim,regg,fd) * PROW_V ) ) ;
 
 * ## End Block 9: Final consumers budgets ##
@@ -1123,14 +1132,14 @@ NTPREV_V.FX(reg)$(sum((ntp,regg,fd), VALUE_ADDED_DISTR(reg,ntp,regg,fd) )  eq 0)
 TIMREV_V.FX(reg)$(sum((tim,regg,fd), VALUE_ADDED_DISTR(reg,tim,regg,fd) )  eq 0) = 0 ;
 
 GRINC_H_V.L(regg) = GRINC_H(regg) ;
-INC_G_V.L(regg)   = INC_G(regg) ;
-INC_I_V.L(regg)   = INC_I(regg) ;
+GRINC_G_V.L(regg) = GRINC_G(regg) ;
+GRINC_I_V.L(regg) = GRINC_I(regg) ;
 CBUD_H_V.L(regg)  = CBUD_H(regg) ;
 CBUD_G_V.L(regg)  = CBUD_G(regg) ;
 CBUD_I_V.L(regg)  = CBUD_I(regg) ;
 GRINC_H_V.FX(regg)$(GRINC_H(regg) eq 0) = 0 ;
-INC_G_V.FX(regg)$(INC_G(regg) eq 0)     = 0 ;
-INC_I_V.FX(regg)$(INC_I(regg) eq 0)     = 0 ;
+GRINC_G_V.FX(regg)$(GRINC_G(regg) eq 0) = 0 ;
+GRINC_I_V.FX(regg)$(GRINC_I(regg) eq 0) = 0 ;
 CBUD_H_V.L(regg)$(CBUD_H(regg) eq 0)    = 0 ;
 CBUD_G_V.L(regg)$(CBUD_G(regg) eq 0)    = 0 ;
 CBUD_I_V.L(regg)$(CBUD_I(regg) eq 0)    = 0 ;
@@ -1546,26 +1555,26 @@ GRINC_H_V.SCALE(reg)$(GRINC_H_V.L(reg) lt 0)
     = -GRINC_H_V.L(reg) ;
 
 * EQUATION 9.2
-EQINC_G.SCALE(reg)$(INC_G_V.L(reg) gt 0)
-    = INC_G_V.L(reg) ;
-INC_G_V.SCALE(reg)$(INC_G_V.L(reg) gt 0)
-    = INC_G_V.L(reg) ;
+EQGRINC_G.SCALE(reg)$(GRINC_G_V.L(reg) gt 0)
+    = GRINC_G_V.L(reg) ;
+GRINC_G_V.SCALE(reg)$(GRINC_G_V.L(reg) gt 0)
+    = GRINC_G_V.L(reg) ;
 
-EQINC_G.SCALE(reg)$(INC_G_V.L(reg) lt 0)
-    = -INC_G_V.L(reg) ;
-INC_G_V.SCALE(reg)$(INC_G_V.L(reg) lt 0)
-    = -INC_G_V.L(reg) ;
+EQGRINC_G.SCALE(reg)$(GRINC_G_V.L(reg) lt 0)
+    = -GRINC_G_V.L(reg) ;
+GRINC_G_V.SCALE(reg)$(GRINC_G_V.L(reg) lt 0)
+    = -GRINC_G_V.L(reg) ;
 
 * EQUATION 9.3
-EQINC_I.SCALE(reg)$(INC_I_V.L(reg) gt 0)
-    = INC_I_V.L(reg) ;
-INC_I_V.SCALE(reg)$(INC_I_V.L(reg) gt 0)
-    = INC_I_V.L(reg) ;
+EQGRINC_I.SCALE(reg)$(GRINC_I_V.L(reg) gt 0)
+    = GRINC_I_V.L(reg) ;
+GRINC_I_V.SCALE(reg)$(GRINC_I_V.L(reg) gt 0)
+    = GRINC_I_V.L(reg) ;
 
-EQINC_I.SCALE(reg)$(INC_I_V.L(reg) lt 0)
-    = -INC_I_V.L(reg) ;
-INC_I_V.SCALE(reg)$(INC_I_V.L(reg) lt 0)
-    = -INC_I_V.L(reg) ;
+EQGRINC_I.SCALE(reg)$(GRINC_I_V.L(reg) lt 0)
+    = -GRINC_I_V.L(reg) ;
+GRINC_I_V.SCALE(reg)$(GRINC_I_V.L(reg) lt 0)
+    = -GRINC_I_V.L(reg) ;
 
 * EQUATION 9.4
 EQCBUD_H.SCALE(reg)$(CBUD_H_V.L(reg) gt 0)
@@ -1823,8 +1832,8 @@ EQTSPREV
 EQNTPREV
 EQTIMREV
 EQGRINC_H
-EQINC_G
-EQINC_I
+EQGRINC_G
+EQGRINC_I
 EQCBUD_H
 EQCBUD_G
 EQCBUD_I
@@ -1884,8 +1893,8 @@ EQTSPREV.TSPREV_V
 EQNTPREV.NTPREV_V
 EQTIMREV.TIMREV_V
 EQGRINC_H.GRINC_H_V
-EQINC_G.INC_G_V
-EQINC_I.INC_I_V
+EQGRINC_G.GRINC_G_V
+EQGRINC_I.GRINC_I_V
 EQCBUD_H.CBUD_H_V
 EQCBUD_G.CBUD_G_V
 EQCBUD_I.CBUD_I_V

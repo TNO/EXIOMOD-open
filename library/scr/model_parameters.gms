@@ -111,8 +111,11 @@ Parameters
                                 # formation (value)
     GRINC_H(regg)               gross income of households from production
                                 # factors (value)
-    INC_G(regg)                 total income of government (value)
-    INC_I(regg)                 total income of investment agent (value)
+    GRINC_G(regg)               gross income of government from production
+                                # factors and taxes on products and production
+                                # (value)
+    GRINC_I(regg)               gross income of investment agent from production
+                                # factors (value)
 
     GDP(regg)                   gross domestic product (value)
 
@@ -199,6 +202,8 @@ Parameters
                                 # in value)
     ty(regg)                    household income tax rate
     mps(regg)                   household marginal propensity to save
+    GTRF(regg)                  government social transfers
+    GSAV(regg)                  government savings
 ;
 
 * ========================== Definition of parameters ==========================
@@ -517,33 +522,32 @@ CBUD_I(regg)
 
 * Gross income of households from production factors in each region (regg). The
 * gross income value includes only income received from production factors, but
-* excludes transfer from other final user in the same region and transfers from
+* excludes transfers from other final user in the same region and transfers from
 * abroad. The gross income value is used to calculated income tax rate
 GRINC_H(regg)
     = sum((reg,kl), sum(fd$fd_assign(fd,'Households'),
     VALUE_ADDED_DISTR(reg,kl,regg,fd) ) ) ;
 
-* Total income in value of government in each region (regg), the total income
-* consists of the consumption budget plus all the transfers from government to
-* other agents and payments to other regions for international margin and taxes
-* export
-INC_G(regg)
-    = CBUD_G(regg) +
-    sum(fd$fd_assign(fd,'Government'),
-    sum((reg,fdd), INCOME_DISTR(regg,fd,reg,fdd) ) +
-    sum((reg,va), TAX_FINAL_USE(reg,va,regg,fd) ) +
-    sum(va, TAX_FINAL_USE_ROW(va,regg,fd) ) ) ;
+* Gross income of government in each region (regg) from production factors,
+* collected taxes on production, international margins and taxes on exports, as
+* well as domestically collected taxes on products. The gross income value
+* excludes household income taxes
+GRINC_G(regg)
+    = sum((reg,kl), sum(fd$fd_assign(fd,'Government'),
+    VALUE_ADDED_DISTR(reg,kl,regg,fd) ) ) +
+    sum((reg,ntp), sum(fd$fd_assign(fd,'Government'),
+    VALUE_ADDED_DISTR(reg,ntp,regg,fd) ) ) +
+    sum((reg,tim), sum(fd$fd_assign(fd,'Government'),
+    VALUE_ADDED_DISTR(reg,tim,regg,fd) ) ) +
+    sum((reg,tsp), sum(fd$fd_assign(fd,'Government'),
+    TAX_SUB_PRD_DISTR(reg,tsp,regg,fd) ) ) ;
 
-* Total income in value of investment agent in each region (regg), the total
-* income consists of the investment budget plus all the transfers from the
-* investment agent to other agents (including for stock changes) and payments to
-* other regions for international margins and taxes on export
-INC_I(regg)
-    = CBUD_I(regg) +
-    sum(fd$fd_assign(fd,'GrossFixCapForm'),
-    sum((reg,fdd), INCOME_DISTR(regg,fd,reg,fdd) ) +
-    sum((reg,va), TAX_FINAL_USE(reg,va,regg,fd) ) +
-    sum(va, TAX_FINAL_USE_ROW(va,regg,fd) ) ) ;
+* Gross income of investment agent in each region (regg). The gross income value
+* includes only income received from production factors, but excludes transfers
+* from other final user in the same region and transfers from abroad.
+GRINC_I(regg)
+    = sum((reg,kl), sum(fd$fd_assign(fd,'GrossFixCapForm'),
+    VALUE_ADDED_DISTR(reg,kl,regg,fd) ) ) ;
 
 Display
 KLS
@@ -551,8 +555,8 @@ CBUD_H
 CBUD_G
 CBUD_I
 GRINC_H
-INC_G
-INC_I
+GRINC_G
+GRINC_I
 ;
 
 
@@ -838,24 +842,41 @@ fac_distr_gfcf
 *## Income transfers between final consumers ##
 
 * Income tax rate, income tax is a transfer from households to the government
-* in the same region. Income tax rate is calculate as percentage of household
-* gross income from factors of production
+* in the same region (regg). Income tax rate is calculate as percentage of
+* household gross income from factors of production
 ty(regg)
     = sum(fd$fd_assign(fd,'Households'),
     sum(fdd$fd_assign(fdd,'Government'), INCOME_DISTR(regg,fd,regg,fdd) ) ) /
     GRINC_H(regg) ;
 
 * Household marginal propensity to save, households saving is a transfer from
-* households to the investment agent in the same region. Marginal propensity to
-* save is calculated as percentage of household net income (gross minus income
-* tax)
+* households to the investment agent in the same region (regg). Marginal
+* propensity to save is calculated as percentage of household net income (gross
+* minus income tax)
 mps(regg)
     = sum(fd$fd_assign(fd,'Households'),
     sum(fdd$fd_assign(fdd,'GrossFixCapForm'),
     INCOME_DISTR(regg,fd,regg,fdd) ) ) /
     ( GRINC_H(regg) * ( 1 - ty(regg) ) ) ;
 
+* Social transfers from government to households in the same region (regg). This
+* value will be take as exogenous in the model.
+GTRF(regg)
+    = sum(fd$fd_assign(fd,'Government'),
+    sum(fdd$fd_assign(fdd,'Households'),
+    INCOME_DISTR(regg,fd,regg,fdd) ) ) ;
+
+* Government savings, which is a transfer from from government to the investment
+* agent in the same region (regg). This value will be take as exogenous in the
+* model.
+GSAV(regg)
+    = sum(fd$fd_assign(fd,'Government'),
+    sum(fdd$fd_assign(fdd,'GrossFixCapForm'),
+    INCOME_DISTR(regg,fd,regg,fdd) ) ) ;
+
 Display
 ty
 mps
+GTRF
+GSAV
 ;
