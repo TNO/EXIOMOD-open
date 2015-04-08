@@ -3,7 +3,7 @@
 * Date:   20.03.2015
 
 $ontext startdoc
-This simulation checks whether adding household types to labour supply and labour demand is easily implemented
+This simulation tests how one can split labour supply into different skill groups. Data for wage-share of different skill groups are read in user-data.gms
 
 1. List of sets that need to be changed
 -va
@@ -57,10 +57,8 @@ WZ_share(reg,klpr) = sum(ind, LZ_share(reg,ind,klpr)) / sum(ind, 1) ;
 WZ_share(reg,klpr) = WZ_share(reg,klpr) / sum(klprr, WZ_share(reg,klprr)) ;
 
 * Value added
-
     VALUE_ADDED_pr(reg,klpr,regg,ind)$(ord(klpr) = 1)  = sum(kl$(ord(kl) = 2), VALUE_ADDED(reg,kl,regg,ind)) ;
     VALUE_ADDED_pr(reg,klpr,regg,ind)$(ord(klpr) > 1)= sum(kl$(ord(kl) = 1), VALUE_ADDED(reg,kl,regg,ind))*WZ_share(reg,klpr) ;
-
 
     VALUE_ADDED_DISTR_pr(reg,klpr,regg,fd)$(ord(klpr) = 1) = sum(kl$(ord(kl) = 2), VALUE_ADDED_DISTR(reg,kl,regg,fd)) ;
     VALUE_ADDED_DISTR_pr(reg,klpr,regg,fd)$(ord(klpr) > 1) = sum(kl$(ord(kl) = 1), VALUE_ADDED_DISTR(reg,kl,regg,fd))* WZ_share(reg,klpr);
@@ -90,8 +88,6 @@ KLS_pr(reg,klpr)
 
 
 Display LZ_share, WZ_share, KL, KLPR, value_added, VALUE_ADDED_pr, KLS_pr, alpha, alpha_pr, fac_distr_h, fac_distr_h_pr, fac_distr_g, fac_distr_g_pr, fac_distr_gfcf, fac_distr_gfcf_pr  ;
-
-$exit
 
 
 Equations
@@ -135,17 +131,6 @@ EQGRINC_H_pr(regg)..
     =E=
     sum((reg,klpr), FACREV_V_pr(reg,klpr) * fac_distr_h_pr(reg,klpr,regg) ) ;
 
-$ontext
-EQINC_H_pr(regg)..
-    INC_H_V(regg)
-    =E=
-    sum((reg,klpr), FACREV_V_pr(reg,klpr) * fac_distr_h_pr(reg,klpr,regg) ) +
-    sum(fd$fd_assign(fd,'Households'),
-    sum((reg,fdd), INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) +
-    sum(row, TRANSFERS_ROW_V(regg,fd,row) * PROW_V(row) ) ) ;
-$offtext
-
-
 * EQUATION 9.2:
 EQINC_G_pr(regg)..
     INC_G_V(regg)
@@ -159,17 +144,6 @@ EQINC_G_pr(regg)..
     sum(fd$fd_assign(fd,'Government'), sum((reg,fdd)$( not sameas(reg,regg) ),
     INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) ) +
     sum(fd$fd_assign(fd,'Government'), TRANSFERS_ROW_V(regg,fd) * PROW_V ) ;
-
-$ontext
-EQINC_G_pr(regg)..
-    INC_G_V(regg)
-    =E=
-    sum((reg,klpr), FACREV_V_pr(reg,klpr) * fac_distr_g_pr(reg,klpr,regg) ) +
-    TSPREV_V(regg) + NTPREV_V(regg) + TIMREV_V(regg) +
-    sum(fd$fd_assign(fd,'Government'),
-    sum((reg,fdd), INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) +
-    sum(row, TRANSFERS_ROW_V(regg,fd,row) * PROW_V(row) ) ) ;
-$offtext
 
 * EQUATION 9.3:
 EQINC_I_pr(regg)..
@@ -186,28 +160,16 @@ EQINC_I_pr(regg)..
     sum(fd$fd_assign(fd,'GrossFixCapForm'),
     TRANSFERS_ROW_V(regg,fd) * PROW_V ) ;
 
-$ontext
-EQINC_I_pr(regg)..
-    INC_I_V(regg)
-    =E=
-    sum((reg,klpr), FACREV_V_pr(reg,klpr) * fac_distr_gfcf_pr(reg,klpr,regg) ) +
-    sum(fd$fd_assign(fd,'GrossFixCapForm'),
-    sum((reg,fdd), INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) +
-    sum(row, TRANSFERS_ROW_V(regg,fd,row) * PROW_V(row) ) ) ;
-$offtext
-
 * EQUATION 10.1:
 EQPY_pr(regg,ind)$((not sameas(regg,'WEU')) or (not sameas(ind,'i020')))..
     Y_V(regg,ind) * PY_V(regg,ind) *
     ( 1 - sum(reg, txd_ind(reg,regg,ind) ) -
     sum(reg, txd_tim(reg,regg,ind) ) )
     =E=
-    sum((reg,prd), INTER_USE_V(reg,prd,regg,ind) * P_V(reg,prd) *
-    ( 1 + tc_ind(prd,regg,ind) ) ) +
-    sum((row,prd), INTER_USE_ROW_V(row,prd,regg,ind) * PROW_V(row) *
+    sum(prd, INTER_USE_T_V(prd,regg,ind) * PIU_V(prd,regg,ind) *
     ( 1 + tc_ind(prd,regg,ind) ) ) +
     sum((reg,klpr), KL_V_pr(reg,klpr,regg,ind) * PKL_V_pr(reg,klpr) ) +
-    sum((row,tim), TAX_INTER_USE_ROW(row,tim,regg,ind) * PROW_V(row) ) ;
+    sum(tim, TAX_INTER_USE_ROW(tim,regg,ind) * PROW_V ) ;
 
 * EQUATION 10.3:
 EQPKL_pr(reg,klpr)..
@@ -252,11 +214,11 @@ EQFACREV_pr.SCALE(reg,klpr)$(FACREV_V_pr.L(reg,klpr) lt 0)
     = -FACREV_V_pr.L(reg,klpr) ;
 
 * EQUATION 9.1:
-EQGRINC_H_pr.SCALE(regg)$(INC_H_V.L(regg) gt 0)
-    = INC_H_V.L(regg) ;
+EQGRINC_H_pr.SCALE(regg)$(GRINC_H_V.L(regg) gt 0)
+    = GRINC_H_V.L(regg) ;
 
-EQGRINC_H_pr.SCALE(regg)$(INC_H_V.L(regg) lt 0)
-    = -INC_H_V.L(regg) ;
+EQGRINC_H_pr.SCALE(regg)$(GRINC_H_V.L(regg) lt 0)
+    = -GRINC_H_V.L(regg) ;
 
 * EQUATION 9.2:
 EQINC_G_pr.SCALE(regg)$(INC_G_V.L(regg) gt 0)

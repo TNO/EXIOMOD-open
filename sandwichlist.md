@@ -3,31 +3,31 @@
 Get the template model from GitHub. This model consists of the
 following components:
 
-1. A library-folder containing the base-model. Files in the library
+ 1. A library-folder containing the base-model. Files in the library
 folder should not be modified.
 
-2. The file *config.gms* which contains project-specific settings such as
+ 2. The file *config.gms* which contains project-specific settings such as
 project name, base-year and base-currency. For each project a new project
 name should be given, corresponding to the name of the project folder
 (see below).
 
-3. The file *main.gms* which contains simulation-specific
+ 3. The file *main.gms* which contains simulation-specific
 settings such as which simulation file to run. For each project a new
 simulation file should be specified, corresponding to the
 simulation-specific .gms file (see below).
 
-4. A *project* folder which should be given a project-specific
+ 4. A *project* folder which should be given a project-specific
    name. It contains the following sub-folders:
 
-4.1 *sets*: contains separate .txt-files for the sets used in the model(region, sector, final demand
+  4.1 *sets*: contains separate .txt-files for the sets used in the model(region, sector, final demand
 category etc.). The subfolder *aggregation* contains .txt files which
 determine the aggregation from the database to the model.
 
-4.2 *data*: contains excel sheets or .gdx files for model-specific
+   4.2 *data*: contains excel sheets or .gdx files for model-specific
 data. The folder contains two excel sheets with default values for
 elasticities and technology parameters in the production function.
 
-4.3 *simulation*:  contains the files *user_data.gms* and a template
+   4.3 *simulation*:  contains the files *user_data.gms* and a template
 .gms -file which should be given a simulation-specific name.
 
 # How to make your own modifications
