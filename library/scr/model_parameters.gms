@@ -204,6 +204,18 @@ Parameters
     mps(regg)                   household marginal propensity to save
     GTRF(regg)                  government social transfers
     GSAV(regg)                  government savings
+
+    tc_ind_0(prd,regg,ind)      calibrated tax and subsidies on products rates
+                                # for industries (relation in value)
+    tc_h_0(prd,regg)            calibrated tax and subsidies on products rates
+                                # for household consumption (relation in value)
+    tc_g_0(prd,regg)            calibrated tax and subsidies on products rates
+                                # for government consumption (relation in value)
+    tc_gfcf_0(prd,regg)         calibrated tax and subsidies on products rates
+                                # for gross fixed capital formation (relation in
+                                # value)
+    tc_sv_0(prd,regg)           calibrated tax and subsidies on products rates
+                                # for stock changes (relation in value)
 ;
 
 * ========================== Definition of parameters ==========================
@@ -880,3 +892,15 @@ mps
 GTRF
 GSAV
 ;
+
+
+
+*## Store calibrated values in separated parameters ##
+* Save calibrated values of tax rates separately. Change in a tax rate can be a
+* part of simulation set-up and the initial calibrated tax rates are then needed
+* for correct calculation of price indexes.
+tc_ind_0(prd,regg,ind) = tc_ind(prd,regg,ind) ;
+tc_h_0(prd,regg)       = tc_h(prd,regg) ;
+tc_g_0(prd,regg)       = tc_g(prd,regg) ;
+tc_gfcf_0(prd,regg)    = tc_gfcf(prd,regg) ;
+tc_sv_0(prd,regg)      = tc_sv(prd,regg) ;

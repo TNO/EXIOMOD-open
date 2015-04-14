@@ -924,7 +924,7 @@ EQPAASCHE(regg)..
     sum(prd, CONS_H_T_V(prd,regg) * PC_H_V(prd,regg) *
     ( 1 + tc_h(prd,regg) ) ) /
     sum(prd, CONS_H_T_V(prd,regg) * 1 *
-    ( 1 + tc_h(prd,regg) ) ) ;
+    ( 1 + tc_h_0(prd,regg) ) ) ;
 
 * EQUATION 10.16: Laspeyres price index for households. The price index is
 * calculated separately for each region (regg).
@@ -934,7 +934,7 @@ EQLASPEYRES(regg)..
     sum((reg,prd), CONS_H(reg,prd,regg) * P_V(reg,prd) *
     ( 1 + tc_h(prd,regg) ) ) /
     sum((reg,prd), CONS_H(reg,prd,regg) * 1 *
-    ( 1 + tc_h(prd,regg) ) ) ;
+    ( 1 + tc_h_0(prd,regg) ) ) ;
 
 * ## End Price block ##
 
@@ -961,11 +961,11 @@ EQGDPCONST(regg)..
     =E=
     sum(ind, Y_V(regg,ind) ) -
     sum((prd,ind), INTER_USE_T_V(prd,regg,ind) ) +
-    sum(prd, CONS_H_T_V(prd,regg) * tc_h(prd,regg) ) +
-    sum(prd, CONS_G_T_V(prd,regg) * tc_g(prd,regg) ) +
-    sum(prd, GFCF_T_V(prd,regg) * tc_gfcf(prd,regg) ) +
-    sum((reg,prd), SV_V(reg,prd,regg) * tc_sv(prd,regg) ) +
-    sum(prd, SV_ROW_V(prd,regg) * tc_sv(prd,regg) ) ;
+    sum(prd, CONS_H_T_V(prd,regg) * tc_h_0(prd,regg) ) +
+    sum(prd, CONS_G_T_V(prd,regg) * tc_g_0(prd,regg) ) +
+    sum(prd, GFCF_T_V(prd,regg) * tc_gfcf_0(prd,regg) ) +
+    sum((reg,prd), SV_V(reg,prd,regg) * tc_sv_0(prd,regg) ) +
+    sum(prd, SV_ROW_V(prd,regg) * tc_sv_0(prd,regg) ) ;
 
 * EQUATION 11.3: GDP deflator. The deflator is calculated as a single value for
 * all the modelled regions and is used as numéraire in the model.
