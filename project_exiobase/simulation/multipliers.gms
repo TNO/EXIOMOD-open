@@ -46,7 +46,7 @@ Parameters
 ;
 
 v(reg,va,regg,ind)$Y(regg,ind)
-    = VALUE_ADDED_model(reg,va,regg,ind) / Y(regg,ind) ;
+    = VALUE_ADDED(reg,va,regg,ind) / Y(regg,ind) ;
 
 Display
 v
@@ -77,16 +77,22 @@ Parameters
 * Example to calculate for one country:  reg_sim("NL") = yes
 * Example to calculate for all products: prd_sim(prd) = yes
 * Example to calculate for one product:  prd_sim("t4") = yes
-reg_sim(reg) = yes ;
+reg_sim("WEU") = yes ;
 prd_sim(prd) = yes ;
 
 * Fix other variables which enter IO model equations
 P_V.FX(regg,prd)             = 1 ;
 PIU_V.FX(prd,regg,ind)       = 1 ;
-PIMP_V.FX(prd,regg)          = 1 ;
-TRADE_V.FX(reg,prd,regg)     = TRADE(reg,prd,regg) ;
-IMPORT_V.FX(prd,regg)        = IMPORT(prd,regg) ;
-EXPORT_V.FX(reg,prd,row,exp) = EXPORT_bp_model(reg,prd,row,exp) ;
+PIMP_T_V.FX(prd,regg)        = 1 ;
+PIMP_MOD_V.FX(prd,regg)      = 1 ;
+CONS_G_D_V.FX(prd,regg)      = CONS_G_D(prd,regg) ;
+GFCF_D_V.FX(prd,regg)        = GFCF_D(prd,regg) ;
+SV_V.FX(reg,prd,regg)        = SV(reg,prd,regg) ;
+EXPORT_ROW_V.FX(reg,prd)     = EXPORT_ROW(reg,prd) ;
+CONS_H_M_V.FX(prd,regg)      = CONS_H_M(prd,regg) ;
+CONS_G_M_V.FX(prd,regg)      = CONS_G_M(prd,regg) ;
+GFCF_M_V.FX(prd,regg)        = GFCF_M(prd,regg) ;
+
 
 * start loop over regions and products
 * FCH is the set element related to final demand.
@@ -95,13 +101,13 @@ loop((reg_sim,prd_sim),
 * Set all the final demand elements to the values from calibration (from data).
 * This is needed, because one of the shocks may be non-zero from a previous step
 * in the loop.
-FINAL_USE_V.FX(reg,prd,regg,fd)
-    = FINAL_USE_bp_model(reg,prd,regg,fd) ;
+CONS_H_D_V.FX(prd,regg)
+    = CONS_H_D(prd,regg) ;
 
 * Add a shock of 1 for only one country-product combination for final household
 * demand (FC).
-FINAL_USE_V.FX(reg_sim,prd_sim,reg_sim,"FC")
-    = FINAL_USE_bp_model(reg_sim,prd_sim,reg_sim,"FC") + 1 ;
+CONS_H_D_V.FX(prd_sim,reg_sim)
+    = CONS_H_D(prd_sim,reg_sim) + 1 ;
 
 * The display statement below is only useful for debugging purposes when a small
 * number of countries and products is used. Otherwise, since the display
@@ -140,7 +146,7 @@ else
 * Calculate value added multipliers.
     multipliers(reg_sim,prd_sim,'value_added_global')
         = sum((reg,va,regg,ind), Y_V.L(regg,ind) * v(reg,va,regg,ind) -
-        VALUE_ADDED_model(reg,va,regg,ind) ) ;
+        VALUE_ADDED(reg,va,regg,ind) ) ;
     multipliers(reg_sim,prd_sim,'value_added_global_type1')
         = multipliers(reg_sim,prd_sim,'value_added_global') / sum((va,regg,ind),
         v(reg_sim,va,regg,ind) * coprodB(reg_sim,prd_sim,regg,ind) ) ;
