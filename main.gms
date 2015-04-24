@@ -17,5 +17,5 @@ Execute "if not exist sp.g00 gams library/scr/simulation_prepare.gms s=sp gdx=sp
 Execute "if not exist ud.g00 gams %project%/simulation/user_data.gms r=sp s=ud lo=4 ide=1 pw=80 ps=0 gdx=ud.gdx o=ud.lst lf=ud.log --project=%project%"  ;
 
 * Run simulation
-Execute "gams %project%/simulation/add_hh_types.gms r=ud lo=4 ide=1 pw=80 ps=0 o=hh_types.lst gdx=./%project%/results/add_hh_types%base_year%.gdx --project=%project% " ;
+Execute "gams %project%/simulation/add_hh_types.gms r=ud lo=4 ide=1 pw=80 ps=0 o=add_hh_types.lst lf=add_hh_types.log gdx=add_hh_types.gdx --project=%project% " ;
 
