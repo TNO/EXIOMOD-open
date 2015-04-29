@@ -42,14 +42,87 @@ Examples of specific sets, aggregations, data and script files can be taken from
 
 This folder(s) follows the same structure as *00-principal*. In the sub-folder *data* the user should include the external data files with information on scenario-specific inputs. In the sub-folder *sets* the dimensions of these external data files should be described and the linkages to the dimensions of the model established. In the sub-folder *scr* the script for conversion of the external data files into model inputs are collected; these scripts will then be called from *00-principal/scr*.
 
-
-
-
-
-
-
 # Coding style conventions
-BLA-BLA
+
+These conventions are applied in the base-model and need to be applied to any new code that is being added to the library of the base-model.
+
+* **Code width** is 80 characters, this allows to code to be readable on most screens and also in print.
+
+* **Tab indent** corresponds to 4 spaces.
+
+* **Indentation and alignment** of the code are used to improve readability.
+
+* Use of spaces in the **formulas** is also important for readability, such as in the following examples:
+```
+sum((reg,prd), SUP(reg,prd,regg,ind) )
+
+= CONS_G_D(prd,regg) + CONS_G_M(prd,regg) ;
+
+= INTER_USE_D(prd,regg,ind) / INTER_USE_T(prd,regg,ind) *
+( ( 1 + tc_ind(prd,regg,ind) ) / 1 )**( -elasIU_DM(prd,regg,ind) ) ;
+```
+
+* **Declaration** of sets, parameters, variables and equations:
+```
+Parameters
+    elasKL(regg,ind)            substitution elasticity between capital and
+                                # labour
+...
+    GSAV(regg)                  government savings
+;
+```
+    * Indent each new element with one tab.
+    * Provide sufficient explanatory text for each element. If the explanatory text doesn't fit within the 80-characters limit, use the end of line comments (#), which are activated in the beginning of a .gms file:
+    ```
+    $oneolcom
+    $eolcom #
+    ```
+    * Align all the explanatory text on the left.
+    * Declaration ends with a closing semicolon on a new line.
+
+* **Assignment** of values to parameters:
+```
+CONS_H(reg,prd,regg)$( sameas(reg,regg) or TRADE(reg,prd,regg) )
+    = ( CONS_H_D(prd,regg) )$sameas(reg,regg) +
+    ( CONS_H_M(prd,regg) * TRADE(reg,prd,regg) /
+    ( sum(reggg, TRADE(reggg,prd,regg) ) +
+    IMPORT_ROW(prd,regg) ) )$(not sameas(reg,regg)) ;
+```
+    * First line: parameter name and possible $-sign conditionals.
+    * Second line: indent with one tab and starts with equality sign (=).
+    * Next lines: indent with one tab. 
+
+* **Definition** of equations:
+```
+EQCONS_H_T(prd,regg)..
+    CONS_H_T_V(prd,regg)
+    =E=
+    SCLFD_H_V(regg) * theta_h(prd,regg) *
+    ( PC_H_V(prd,regg) * ( 1 + tc_h(prd,regg) ) )**( -elasFU_H(regg) ) ;
+```
+    * First line: equation name and posible $-sign conditionals.
+    * Next lines: indent with one tab.
+    * =E=, =L=, =G= are placed on a separate line for visibility.
+
+* **Model statement** is spread over multiple lines, where one line is given to each separate element:
+```
+Model IO_industry_technology
+/
+EQBAL
+EQY
+...
+EQOBJ
+/
+;
+```
+
+* **Display statement** is spread over multiple lines, where one line is given to each separate element:
+```
+Display
+INTER_USE_T
+INTER_USE
+;
+```
 
 
 # How to make your own modifications
