@@ -1,3 +1,33 @@
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script>
+    $(document).ready(function(){
+    $('.markdown-block .sqs-block-content h2').css('cursor','pointer');
+    $(".markdown-block .sqs-block-content h2").nextUntil("h2").slideToggle();
+    $(".markdown-block .sqs-block-content h2").click(function() {$(this).nextUntil("h2").slideToggle();});
+    });
+    </script>
+
++ This is a first question
+-----------------
+This is the first line of an answer to the question above. This is a second line of the answer.
+
+* Bullet points
+* Can be used too
+
++ This is a second question
+-----------------
+This is a one line answer to the question above.
+
+This is a regular paragraph.
+
+<table>
+    <tr>
+        <td>Foo</td>
+    </tr>
+</table>
+
+This is another regular paragraph.
+
 $$
 \left.
 \begin{array}
@@ -16,12 +46,3 @@ g&h&i
 \end{array}
 \right\} test2 
 $$
-
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-<script>
-    $(document).ready(function(){
-    $('.markdown-block .sqs-block-content h2').css('cursor','pointer');
-    $(".markdown-block .sqs-block-content h2").nextUntil("h2").slideToggle();
-    $(".markdown-block .sqs-block-content h2").click(function() {$(this).nextUntil("h2").slideToggle();});
-    });
-    </script>

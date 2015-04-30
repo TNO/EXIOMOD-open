@@ -6,50 +6,66 @@
 * gams-master-file: main.gms
 
 $ontext
-This is a file where additional project-specific data can be read in. Data should be placed in %project%/data/.
+This is a file where additional project-specific data can be read in. Data
+should be placed in %project%/data/.
+
 $offtext
 
 Sets
 *Sets included to map wagedata from EXIOMOD60
-totset60 /t001*t060,t204,t206*t209,t212/
-sec60(totset60) /t001*t060/
+totset60
+/
+$include %project%/sets/totalsets_60sec.txt
+/
+sec60(totset60)
+/
+$include %project%/sets/industries_60sec.txt
+/
 ;
 
 $onmulti 
 Sets
-    va /"LOW","MID","HIGH"/
-    klpr(va) / "GOS", "LOW","MID","HIGH"/
+*Extending value added set to include three different skill groups
+    va /'LOW','MID','HIGH'/
+    klpr(va) / 'GOS', 'LOW','MID','HIGH'/
 ; 
 $offmulti 
 
-
 Alias
-    (klpr,klprr) ;
-
+    (klpr,klprr)
+;
 
 Parameters
-Wdata(reg_data,totset60,sec60)
-mapdmod(sec60,ind)
-wag(reg_data,ind,klpr)
+    wdata(reg_data,totset60,sec60) data from EXIOBASE 60
+    mapdmod(sec60,ind)          mapping EXIOBASE 60 sectors
+                                #to project specific industries
+    wag(reg_data,ind,klpr)      wages per skill group per sector
+    lz_share(reg,ind,klpr)      skill-groups'share of income
 ;
    
 * Read in data from EXIOBASE60 to create split for wages
-$libinclude xlimport Wdata %project%/data/EXIOBASE60_aggr_tl.xlsx USE!a1:bj3001 ;
+$libinclude xlimport wdata %project%/data/EXIOBASE60_aggr_tl.xlsx USE!a1:bj3001 ;
 $libinclude xlimport mapdmod %project%/data/mapdmod.xlsx Sheet1!a1:aj61 ;
 
-wag(reg_data,ind,"LOW")= sum(sec60$mapdmod(sec60,ind), Wdata(reg_data,'t206',sec60) ) ;
-wag(reg_data,ind,"MID")= sum(sec60$mapdmod(sec60,ind), Wdata(reg_data,'t207',sec60) ) ;
-wag(reg_data,ind,"HIGH")= sum(sec60$mapdmod(sec60,ind), Wdata(reg_data,'t208',sec60) ) ;
+wag(reg_data,ind,'LOW')
+    = sum(sec60$mapdmod(sec60,ind), Wdata(reg_data,'t206',sec60) ) ;
+wag(reg_data,ind,'MID')
+    = sum(sec60$mapdmod(sec60,ind), Wdata(reg_data,'t207',sec60) ) ;
+wag(reg_data,ind,'HIGH')
+    = sum(sec60$mapdmod(sec60,ind), Wdata(reg_data,'t208',sec60) ) ;
 
+lz_share(reg,ind,klpr)
+    = sum(reg_data$all_reg_aggr(reg_data,reg), wag(reg_data,ind,klpr ) ) ;
 
-Parameter
-LZ_share(reg,ind,klpr) ;
-   
+lz_share(reg,ind,klpr)$lz_share(reg,ind,klpr)
+    = lz_share(reg,ind,klpr)
+    / sum(klprr$lz_share(reg,ind,klprr), lz_share(reg,ind,klprr)) ;
 
-*Skill-groups'share of income
-*LZ_share(reg,ind,klpr) = sum(reg_data$(all_reg_aggr(reg_data,reg) and wag(reg_data,ind,klpr) ), wag(reg_data,ind,klpr)/SUM(klprr$wag(reg_data,ind,klprr), wag(reg_data,ind,klprr) ) ) ;
-LZ_share(reg,ind,klpr) = sum(reg_data$all_reg_aggr(reg_data,reg), wag(reg_data,ind,klpr ) ) ;
-LZ_share(reg,ind,klpr)$LZ_share(reg,ind,klpr) = LZ_share(reg,ind,klpr) / sum(klprr$LZ_share(reg,ind,klprr), LZ_share(reg,ind,klprr)) ;
-
-
-Display Wdata, mapdmod, wag, LZ_share, klpr, value_added ;
+Display
+       Wdata
+       mapdmod
+       wag
+       lz_share
+       klpr
+       value_added
+       ;

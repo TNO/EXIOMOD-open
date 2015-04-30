@@ -3,7 +3,10 @@
 * Date:   20.03.2015
 
 $ontext startdoc
-This simulation tests how one can split labour supply into different skill groups. Data for wage-share of different skill groups are read in user-data.gms
+This simulation tests how one can split labour supply into different skill
+groups. Data for wage-share of different skill groups are read in
+user-data.gms
+
 
 1. List of sets that need to be changed
 -va
@@ -36,77 +39,108 @@ $eolcom #
 
 * Calibration of production function
 Parameters
-    fprod_pr(va,regg,ind)
-    WZ_share(reg,va)
-    VALUE_ADDED_pr(reg,va,regg,ind)
-    VALUE_ADDED_DISTR_pr(reg,va,regg,fd) 
-    alpha_pr(reg,va,regg,ind) project specific share parameter
-    KLS_pr(reg,va)
-    fac_distr_h_pr(reg,va,regg)
-    fac_distr_g_pr(reg,va,regg)
-    fac_distr_gfcf_pr(reg,va,regg)
-    test(reg,va) ;
+    fprod_pr(va,regg,ind)       parameter on productivity on individual factors
+                                # in the nest of aggregated factors of
+                                # production
+
+    wz_share(reg,va)           wages share of different skill levels
+    VALUE_ADDED_pr(reg,va,regg,ind) value added in model aggregation
+    VALUE_ADDED_DISTR_pr(reg,va,regg,fd) value added in model aggregation
+    alpha_pr(reg,va,regg,ind) relative share parameter for factors of
+                                # production within the aggregated nest
+                                # (relation in volume)
+
+    KLS_pr(reg,va)              supply of production factors (volume)
+    fac_distr_h_pr(reg,va,regg) distribution shares of factor income to
+                                # household budget (shares in value)
+    fac_distr_g_pr(reg,va,regg) distribution shares of factor income to
+                                # government budget (shares in value)
+    fac_distr_gfcf_pr(reg,va,regg) distribution shares of factor income to
+                                # gross fixed capital formation budget (shares
+                                # in value)
+;
 
 $offorder
-* Factor productivity
-fprod_pr(klpr,regg,ind)$(ord(klpr) = 1)  = sum(kl$(ord(kl) = 2), fprod(kl,regg,ind) ) ;
-fprod_pr(klpr,regg,ind)$(ord(klpr) > 1)  = sum(kl$(ord(kl) = 1), fprod(kl,regg,ind) ) ;
+fprod_pr(klpr,regg,ind)$(ord(klpr) = 1)
+    = sum(kl$(ord(kl) = 2),fprod(kl,regg,ind) ) ;
+fprod_pr(klpr,regg,ind)$(ord(klpr) > 1)
+    = sum(kl$(ord(kl) = 1),fprod(kl,regg,ind) ) ;
 
-* Distribution share
-WZ_share(reg,klpr) = sum(ind, LZ_share(reg,ind,klpr)) / sum(ind, 1) ;
-WZ_share(reg,klpr) = WZ_share(reg,klpr) / sum(klprr, WZ_share(reg,klprr)) ;
+wz_share(reg,klpr) = sum(ind, lz_share(reg,ind,klpr)) / sum(ind, 1) ;
+wz_share(reg,klpr) = wz_share(reg,klpr) / sum(klprr, wz_share(reg,klprr)) ;
 
-* Value added
-    VALUE_ADDED_pr(reg,klpr,regg,ind)$(ord(klpr) = 1)  = sum(kl$(ord(kl) = 2), VALUE_ADDED(reg,kl,regg,ind)) ;
-    VALUE_ADDED_pr(reg,klpr,regg,ind)$(ord(klpr) > 1)= sum(kl$(ord(kl) = 1), VALUE_ADDED(reg,kl,regg,ind))*WZ_share(reg,klpr) ;
+VALUE_ADDED_pr(reg,klpr,regg,ind)$(ord(klpr) = 1)
+    = sum(kl$(ord(kl) = 2), VALUE_ADDED(reg,kl,regg,ind)) ;
+VALUE_ADDED_pr(reg,klpr,regg,ind)$(ord(klpr) > 1)
+    = sum(kl$(ord(kl) = 1), VALUE_ADDED(reg,kl,regg,ind))*WZ_share(reg,klpr) ;
 
-    VALUE_ADDED_DISTR_pr(reg,klpr,regg,fd)$(ord(klpr) = 1) = sum(kl$(ord(kl) = 2), VALUE_ADDED_DISTR(reg,kl,regg,fd)) ;
-    VALUE_ADDED_DISTR_pr(reg,klpr,regg,fd)$(ord(klpr) > 1) = sum(kl$(ord(kl) = 1), VALUE_ADDED_DISTR(reg,kl,regg,fd))* WZ_share(reg,klpr);
+VALUE_ADDED_DISTR_pr(reg,klpr,regg,fd)$(ord(klpr) = 1)
+    = sum(kl$(ord(kl) = 2), VALUE_ADDED_DISTR(reg,kl,regg,fd)) ;
+VALUE_ADDED_DISTR_pr(reg,klpr,regg,fd)$(ord(klpr) > 1)
+    = sum(kl$(ord(kl) = 1), VALUE_ADDED_DISTR(reg,kl,regg,fd))
+    * WZ_share(reg,klpr);
 
 
-* Share of factor income, households
-    fac_distr_h_pr(reg,klpr,regg)$(ord(klpr) = 1) = sum(kl$(ord(kl) = 2), fac_distr_h(reg,kl,regg)) ;
-    fac_distr_h_pr(reg,klpr,regg)$(ord(klpr) > 1) = sum(kl$(ord(kl) = 1), fac_distr_h(reg,kl,regg)) ;
+fac_distr_h_pr(reg,klpr,regg)$(ord(klpr) = 1)
+    = sum(kl$(ord(kl) = 2), fac_distr_h(reg,kl,regg)) ;
+fac_distr_h_pr(reg,klpr,regg)$(ord(klpr) > 1)
+    = sum(kl$(ord(kl) = 1), fac_distr_h(reg,kl,regg)) ;
 
-* Share of factor income, gov
-fac_distr_g_pr(reg,klpr,regg)$(ord(klpr) = 1) = sum(kl$(ord(kl) = 2), fac_distr_g(reg,kl,regg)) ;
-    fac_distr_g_pr(reg,klpr,regg)$(ord(klpr) > 1)= sum(kl$(ord(kl) = 1), fac_distr_g(reg,kl,regg)) ;
+fac_distr_g_pr(reg,klpr,regg)$(ord(klpr) = 1)
+    = sum(kl$(ord(kl) = 2), fac_distr_g(reg,kl,regg)) ;
+fac_distr_g_pr(reg,klpr,regg)$(ord(klpr) > 1)
+    = sum(kl$(ord(kl) = 1), fac_distr_g(reg,kl,regg)) ;
 
-* Share of factor income, investor 
-fac_distr_gfcf_pr(reg,klpr,regg)$(ord(klpr) = 1) = sum(kl$(ord(kl) = 2), fac_distr_gfcf(reg,kl,regg)) ;
-    fac_distr_gfcf_pr(reg,klpr,regg)$(ord(klpr) > 1) = sum(kl$(ord(kl) = 1), fac_distr_gfcf(reg,kl,regg)) ;
+fac_distr_gfcf_pr(reg,klpr,regg)$(ord(klpr) = 1)
+    = sum(kl$(ord(kl) = 2), fac_distr_gfcf(reg,kl,regg)) ;
+fac_distr_gfcf_pr(reg,klpr,regg)$(ord(klpr) > 1)
+    = sum(kl$(ord(kl) = 1), fac_distr_gfcf(reg,kl,regg)) ;
 $onorder
 
-* Supply of factors of production
 KLS_pr(reg,klpr)
     = sum((regg,ind),VALUE_ADDED_pr(reg,klpr,regg,ind) ) ;
 
-* Share parameter
         alpha_pr(reg,klpr,regg,ind)$VALUE_ADDED_pr(reg,klpr,regg,ind)
     = VALUE_ADDED_pr(reg,klpr,regg,ind) /
     sum((reggg,klprr), VALUE_ADDED_pr(reggg,klprr,regg,ind) ) ;
 
-
-Display LZ_share, WZ_share, KL, KLPR, value_added, VALUE_ADDED_pr, KLS_pr, alpha, alpha_pr, fac_distr_h, fac_distr_h_pr, fac_distr_g, fac_distr_g_pr, fac_distr_gfcf, fac_distr_gfcf_pr  ;
-
+Display
+lz_share
+wz_share
+KL
+KLPR
+value_added
+VALUE_ADDED_pr
+KLS_pr
+alpha
+alpha_pr
+fac_distr_h
+fac_distr_h_pr
+fac_distr_g
+fac_distr_g_pr
+fac_distr_gfcf
+fac_distr_gfcf_pr
+;
 
 Equations
-EQKL_pr(reg,va,regg,ind)
-EQFACREV_pr(reg,va)
-EQGRINC_H_pr(regg)
-EQINC_G_pr(regg)
-EQINC_I_pr(regg)
+    EQKL_pr(reg,va,regg,ind)    demand for specific production factors
+    EQFACREV_pr(reg,va)         revenue from factors of production
+    EQGRINC_H_pr(regg)          gross income of households
+    EQGRINC_G_pr(regg)          gross income of government
+    EQGRINC_I_pr(regg)          gross income of investment agent
 
-EQPY_pr(regg,ind)
-EQPKL_pr(reg,va)    
-EQPVA_pr(regg,ind)
+    EQPY_pr(regg,ind)           zero-profit condition (including possible
+                                # margins)
+    EQPKL_pr(reg,va)            balance on production factors market  
+    EQPVA_pr(regg,ind)          balance between specific production factors
+                                # price and aggregate production factors price
 ;
 
 Variables
-KL_V_pr(reg,va,regg,ind)
-FACREV_V_pr(reg,va)
-PKL_V_pr(reg,va)
-KLS_V_pr(reg,va)
+    KL_V_pr(reg,va,regg,ind)    use of specific production factors
+    FACREV_V_pr(reg,va)         revenue from factors of production
+    PKL_V_pr(reg,va)            production factor price
+    KLS_V_pr(reg,va)            supply of production factors
 ;
 
 * ============= Define new variables/equations ============================
@@ -132,33 +166,17 @@ EQGRINC_H_pr(regg)..
     sum((reg,klpr), FACREV_V_pr(reg,klpr) * fac_distr_h_pr(reg,klpr,regg) ) ;
 
 * EQUATION 9.2:
-EQINC_G_pr(regg)..
-    INC_G_V(regg)
+EQGRINC_G_pr(regg)..
+    GRINC_G_V(regg)
     =E=
     sum((reg,klpr), FACREV_V_pr(reg,klpr) * fac_distr_g_pr(reg,klpr,regg) ) +
-    TSPREV_V(regg) + NTPREV_V(regg) + TIMREV_V(regg) +
-    ty(regg) * GRINC_H_V(regg) +
-    sum(fd$fd_assign(fd,'Government'),
-    sum(fdd$( not fd_assign(fdd,'Households') ),
-    INCTRANSFER_V(regg,fdd,regg,fd) * LASPEYRES_V(regg) ) ) +
-    sum(fd$fd_assign(fd,'Government'), sum((reg,fdd)$( not sameas(reg,regg) ),
-    INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) ) +
-    sum(fd$fd_assign(fd,'Government'), TRANSFERS_ROW_V(regg,fd) * PROW_V ) ;
+    TSPREV_V(regg) + NTPREV_V(regg) + TIMREV_V(regg) ;
 
 * EQUATION 9.3:
-EQINC_I_pr(regg)..
-    INC_I_V(regg)
+EQGRINC_I_pr(regg)..
+    GRINC_I_V(regg)
     =E=
-    sum((reg,klpr), FACREV_V_pr(reg,klpr) * fac_distr_gfcf_pr(reg,klpr,regg) ) +
-    mps(regg) * ( GRINC_H_V(regg) * ( 1 - ty(regg) ) ) +
-    sum(fd$fd_assign(fd,'GrossFixCapForm'),
-    sum(fdd$( not fd_assign(fdd,'Households') ),
-    INCTRANSFER_V(regg,fdd,regg,fd) * LASPEYRES_V(regg) ) ) +
-    sum(fd$fd_assign(fd,'GrossFixCapForm'),
-    sum((reg,fdd)$( not sameas(reg,regg) ),
-    INCTRANSFER_V(reg,fdd,regg,fd) * LASPEYRES_V(reg) ) ) +
-    sum(fd$fd_assign(fd,'GrossFixCapForm'),
-    TRANSFERS_ROW_V(regg,fd) * PROW_V ) ;
+    sum((reg,klpr), FACREV_V_pr(reg,klpr) * fac_distr_gfcf_pr(reg,klpr,regg) ) ;
 
 * EQUATION 10.1:
 EQPY_pr(regg,ind)$((not sameas(regg,'WEU')) or (not sameas(ind,'i020')))..
@@ -221,18 +239,18 @@ EQGRINC_H_pr.SCALE(regg)$(GRINC_H_V.L(regg) lt 0)
     = -GRINC_H_V.L(regg) ;
 
 * EQUATION 9.2:
-EQINC_G_pr.SCALE(regg)$(INC_G_V.L(regg) gt 0)
-    = INC_G_V.L(regg) ;
+EQGRINC_G_pr.SCALE(regg)$(GRINC_G_V.L(regg) gt 0)
+    = GRINC_G_V.L(regg) ;
 
-EQINC_G_pr.SCALE(regg)$(INC_G_V.L(regg) lt 0)
-    = -INC_G_V.L(regg) ;
+EQGRINC_G_pr.SCALE(regg)$(GRINC_G_V.L(regg) lt 0)
+    = -GRINC_G_V.L(regg) ;
 
 * EQUATION 9.3:
-EQINC_I_pr.SCALE(regg)$(INC_I_V.L(regg) gt 0)
-    = INC_I_V.L(regg) ;
+EQGRINC_I_pr.SCALE(regg)$(GRINC_I_V.L(regg) gt 0)
+    = GRINC_I_V.L(regg) ;
 
-EQINC_I_pr.SCALE(regg)$(INC_I_V.L(regg) lt 0)
-    = -INC_I_V.L(regg) ;
+EQGRINC_I_pr.SCALE(regg)$(GRINC_I_V.L(regg) lt 0)
+    = -GRINC_I_V.L(regg) ;
 
 * EQUATION 10.1:
 EQPY_pr.SCALE(regg,ind)$(Y_V.L(regg,ind) gt 0)
@@ -256,7 +274,6 @@ EQPVA_pr.SCALE(reg,ind)$(VA_V.L(reg,ind) lt 0)
     = -VA_V.L(reg,ind) ;
 
 
-
 * ================= Define models with new variables/equations =================
 
 * Define model with new household types
@@ -267,8 +284,8 @@ CGE_MCP
 -EQKL
 -EQFACREV
 -EQGRINC_H
--EQINC_G
--EQINC_I
+-EQGRINC_G
+-EQGRINC_I
 -EQPY
 -EQPKL
 -EQPVA
@@ -276,8 +293,8 @@ CGE_MCP
 EQKL_pr.KL_V_pr
 EQFACREV_pr.FACREV_V_pr
 EQGRINC_H_pr.GRINC_H_V
-EQINC_G_pr.INC_G_V
-EQINC_I_pr.INC_I_V
+EQGRINC_G_pr.GRINC_G_V
+EQGRINC_I_pr.GRINC_I_V
 EQPY_pr.PY_V
 EQPKL_pr.PKL_V_pr
 EQPVA_pr.PVA_V
@@ -288,12 +305,12 @@ EQPVA_pr.PVA_V
 * ============================== Simulation setup ==============================
 
 * Set value for experiment.
-*KLS_V.FX('EU27','COE')  = 1.1 * KLS('EU27','COE') ;
-*KLS_V.FX('EU','CLS')                 = 1.1 * KLS('EU','CLS')                      ;
+*KLS_V_pr.FX('EEU','GOS')  = 1.1 * KLS_pr('EEU','GOS') ;
+KLS_V_pr.FX('EEU','HIGH')   = 1.1 * KLS_pr('EEU','HIGH')       ;
 
 * Define options.
-*Option iterlim   = 20000000 ;
-Option iterlim   = 0 ;
+Option iterlim   = 20000000 ;
+*Option iterlim   = 0 ;
 Option decimals  = 7 ;
 CGE_MCP.scaleopt = 1 ;
 CGE_MCP_hh_types.scaleopt = 1 ;
@@ -302,16 +319,9 @@ CGE_MCP_hh_types.scaleopt = 1 ;
 
 * Solve original model.
 *Solve CGE_MCP using MCP ;
-*KL_V_ORIG(reg,kl,regg,ind) = KL_V.L(reg,kl,regg,ind) ;
 
 * Solve multiple household specification.
 Solve CGE_MCP_hh_types using MCP ;
-*KL_V_COBBDOUGLAS(reg,kl,regg,ind) = KL_V.L(reg,kl,regg,ind) ;
 
 
-* ========================= Post-processing of results =========================
 
-* Show differences between KL_V variables.
-*$setlocal display_tolerance 0.0001
-*$batinclude library/includes/compare_data comparison_COBBDOUGLAS KL_V_ORIG KL_V_COBBDOUGLAS reg,kl,regg,ind %display_tolerance%
-*$batinclude library/includes/compare_data comparison_CES         KL_V_ORIG KL_V_CES         reg,kl,regg,ind %display_tolerance%

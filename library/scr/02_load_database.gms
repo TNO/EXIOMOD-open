@@ -15,6 +15,10 @@ from a gdx file.
 It defines the following parameters:
 
 $offtext
+* activate end of line comment and specify the activating character
+$oneolcom
+$eolcom #
+
 * ============================= Load the database ==============================
 Parameters
     SAM_bp_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,*)      raw SAM expressed in basic prices
