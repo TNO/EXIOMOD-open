@@ -30,11 +30,11 @@ inputs are necessary for the scripts to run and which changes are possible.
 
 $offtext
 
-$include library/scr/sets_database.gms
-$include library/scr/load_database.gms
+$include library/scr/01_sets_database.gms
+$include library/scr/02_load_database.gms
 
-$include library/scr/sets_model.gms
-$include library/scr/aggregate_database.gms
+$include library/scr/03_sets_model.gms
+$include library/scr/04_aggregate_database.gms
 
 $batinclude library/includes/phase.gms additional_sets
 $batinclude library/includes/phase.gms parameters_declaration
@@ -43,4 +43,4 @@ $batinclude library/includes/phase.gms equations_declaration
 $batinclude library/includes/phase.gms equations_definition
 $batinclude library/includes/phase.gms equations_bounds
 
-$include library/scr/declare_model.gms
+$include library/scr/09_declare_model.gms

@@ -35,5 +35,5 @@ $loaddc SAM_dt_data = MRSAM_dom_taxsub_database
 $loaddc SAM_pp_data = MRSAM_bp_database
 $Gdxin
 
-$if '%db_check%' == 'yes' $include library/scr/checks_database.gms
+$if '%db_check%' == 'yes' $include library/scr/02A_checks_database.gms
 
