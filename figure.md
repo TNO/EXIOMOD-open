@@ -20,13 +20,17 @@ This is a one line answer to the question above.
 
 This is a regular paragraph.
 
+This is another regular paragraph.
+
 <table>
     <tr>
-        <td>Foo</td>
-    </tr>
+        <td>This is a table</td><td>This is another cell</td>
+	</tr>
+	<tr>
+        <td>This is a third cell</td><td>This is a fourth cell</td>
+	</tr>
 </table>
 
-This is another regular paragraph.
 
 $$
 \left.
