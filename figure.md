@@ -1,4 +1,3 @@
-<html>
 <head>
 <style type="text/css">
  .row { vertical-align: top; height:auto !important; } 
@@ -105,7 +104,7 @@
  </div>
 
 </body>
-</html> 
+
 
 
 
