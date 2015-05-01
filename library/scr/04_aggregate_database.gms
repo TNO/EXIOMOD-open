@@ -1,30 +1,33 @@
-* File:   library/scr/aggregate_database.gms
+* File:   library/scr/04_aggregate_database.gms
 * Author: Tatyana Bulavskaya
 * Date:   14 May 2014
 * Adjusted: 23 June 2014
 
-* gams-master-file: main.gms
+* gams-master-file: 00_simulation_prepare.gms
 
 $ontext startdoc
-This is the `main.gms` code for the input-output/CGE model. This is the part
-where the database is aggregated to the dimensions of the model, identified in
-`sets_model.gms`.
+With this code the database is aggregated to the dimensions of the model, as
+identified in 03_sets_model.gms. The database in the form of MRSUT is aggregated
+and at the same time split into the following blocks:
 
- The parameters as defined below are determined on given data.
+- Supply table.
+- Intermediate use: domestic, imported and taxes on products.
+- Final use: domestic, imported and taxes on products.
+- Trade with modeled regions and with the rest of the world region.
+- Value added.
+- Taxes on export and international margins paid by final users.
+- Taxes on export and international margins paid to and by the rest of the world
+  region.
+- Distribution of taxes and factor incomes to final user.
+- Distribution of income between final users.
+- Transfers to and from the rest of the world region.
 
-Overview of sets: reg = regions, prd = products, regg = regions (alias), ind = industry, fd = final demand, row = rest of world, exp = export, va = value added uip = use of imported products.
- "use_col" refers to calling specific columns from use table.
- See also sets_model.gms for an overview of abovementioned sets that define a parameter.
+In the end of the code the database version of the data is removed. This data is
+not being used in any further codes, and in case of using save and restart files
+this allows to use less memory.
 
- For all model tables (SUP, INTER_USE etc.) below, these comments below are relevant
-
- they SUM over sets (expressed between brackets) to construct the table
- the "$" sign can be read as "such that", meaning that the summations below have to satisfy the aggregations and inputs regarding %base_year%, %base_cur% and Value
- the base year, base currency and Value are taken from initial input defined in
- the sets that include a "_data" extension relate to the files named $include library/sets/<namehere>_database.txt
- the sets that include a "_aggr" extension relate to the files named $include %proejct%/sets/aggregation/<namehere>.txt
- See also sets_model.gms OR sets_data.gms for an overview of sets
-
+Whenever a new type of database is being used, this code may need to be be
+revised to include possible aggregations.
 $offtext
 
 * activate end of line comment and specify the activating character
@@ -59,33 +62,33 @@ Parameters
 
     TRADE(reg,prd,regg)                     trade in products between modeled
                                             # regions in basic (c.i.f.) prices
-    IMPORT_ROW(prd,regg)                    import from rest of the world
-                                            # regions in model aggregation in
+    IMPORT_ROW(prd,regg)                    import from the rest of the world
+                                            # region in model aggregation in
                                             # basic (c.i.f.) prices
 
     VALUE_ADDED(reg,va,regg,ind)            value added in model aggregation
     TAX_INTER_USE_ROW(va,regg,ind)          tax and international margins
                                             # paid on intermediate use of
-                                            # products imported from rest of the
-                                            # world regions
+                                            # products imported from the rest of
+                                            # the world region
 
     TAX_FINAL_USE(reg,va,regg,fd)           tax and international margins paid
                                             # on final use of products imported
                                             # from modeled regions
     TAX_FINAL_USE_ROW(va,regg,fd)           tax and international margins paid
                                             # on final use of products imported
-                                            # from rest of the world regions
+                                            # from the rest of the world region
 
-    EXPORT_ROW(reg,prd)                     export to rest of the world regions
-                                            # in model aggregation in basic
-                                            # (f.o.b.) prices
+    EXPORT_ROW(reg,prd)                     export to the rest of the world
+                                            # region in model aggregation in
+                                            # basic (f.o.b.) prices
     TAX_EXPORT_ROW(reg,va)                  tax and international margin
-                                            # received due to export to rest of
-                                            # the world regions
+                                            # received due to export to the rest
+                                            # of the world regions
 
-    TAX_SUB_PRD_DISTR(reg,tsp,regg,fd)      distribution of taxes and
-                                            # subsidies on products revenue to
-                                            # final demand categories in model
+    TAX_SUB_PRD_DISTR(reg,tsp,regg,fd)      distribution of revenues from taxes
+                                            # and subsidies on products to final
+                                            # demand categories in model
                                             # aggregation
     VALUE_ADDED_DISTR(reg,va,regg,fd)       distribution of value added revenues
                                             # to final demand categories in
@@ -95,8 +98,8 @@ Parameters
                                             # final demand categories in model
                                             # aggregation
 
-    TRANSFERS_ROW(reg,fd)                   transfers between rest of the world
-                                            # regions and final demand
+    TRANSFERS_ROW(reg,fd)                   transfers between the rest of the
+                                            # world region and final demand
                                             # categories in model aggregation
 ;
 
@@ -328,9 +331,10 @@ TAX_EXPORT_ROW
 TAX_SUB_PRD_DISTR
 VALUE_ADDED_DISTR
 INCOME_DISTR
-TRANSFERS_ROW ;
+TRANSFERS_ROW
+;
 
-* Deleting data to avoid memory issues
+* Deleting data that will not be used further to avoid memory issues
 SAM_bp_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,'Value') = 0 ;
 SAM_dt_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,'Value') = 0 ;
 SAM_pp_data(year_data,cur_data,all_reg_data,full_cat_list,all_regg_data,full_catt_list,'Value') = 0 ;
