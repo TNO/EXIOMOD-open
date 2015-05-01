@@ -144,11 +144,11 @@ $label end_parameters_declaration
 * ========================== Phase 3: Definition of parameters ==========================
 $if not '%phase%' == 'parameters_calibration' $goto end_parameters_calibration
 
-*Here project-specific data are read in. Data should be placed in %project%/data/.
+*Here project-specific data are read in. Data should be placed in %project%/00-principal/data/.
 
 *## Elasticities ##
 
-$libinclude xlimport elasTRADE_data %project%/data/Eldata.xlsx elasTRADE!a1..zz10000 ;
+$libinclude xlimport elasTRADE_data %project%/00-principal/data/Eldata.xlsx elasTRADE!a1..zz10000 ;
 
 * Substitution elasticity between domestic and aggregated imported products in
 * volume for intermediate use. The elasticity value can be different for each

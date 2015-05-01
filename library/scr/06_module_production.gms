@@ -81,15 +81,15 @@ $label end_parameters_declaration
 * ========================== Phase 3: Definition of parameters ==========================
 $if not '%phase%' == 'parameters_calibration' $goto end_parameters_calibration
 
-*Here project-specific data are read in. Data should be placed in %project%/data/.
+*Here project-specific data are read in. Data should be placed in %project%/00-principal/data/.
 
 *## Elasticities ##
 
-$libinclude xlimport elasPROD_data %project%/data/Eldata.xlsx elasPROD!a1..zz10000 ;
+$libinclude xlimport elasPROD_data %project%/00-principal/data/Eldata.xlsx elasPROD!a1..zz10000 ;
 
 *## Total Factor Productivity ##
 
-$libinclude xlimport FPROD_data %project%/data/Eldata.xlsx FPROD!a1..zz10000 ;
+$libinclude xlimport FPROD_data %project%/00-principal/data/Eldata.xlsx FPROD!a1..zz10000 ;
 
 loop((ind,kl),
     ABORT$( FPROD_data(ind,kl) eq 0 )

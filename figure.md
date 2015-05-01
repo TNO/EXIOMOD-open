@@ -1,3 +1,4 @@
+<html>
 <head>
 <style type="text/css">
  .row { vertical-align: top; height:auto !important; } 
@@ -104,35 +105,6 @@
  </div>
 
 </body>
+</html>
 
 
-
-
-<table>
-    <tr>
-        <td>This is a table</td><td>This is another cell</td>
-	</tr>
-	<tr>
-        <td>This is a third cell</td><td>This is a fourth cell</td>
-	</tr>
-</table>
-
-
-
-\left.
-\begin{array}
-a&b&c\\
-d&e&f
-\end{array}
-\right\} test1 
-
-
-$$
-\left.
-\begin{array}
-a&b&c\\
-d&e&f\\
-g&h&i
-\end{array}
-\right\} test2 
-$$
