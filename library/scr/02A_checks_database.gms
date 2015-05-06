@@ -22,10 +22,6 @@ Whenever a new type of database is being used, this code should be revised to
 include possible additional data checks.
 $offtext
 
-* activate end of line comment and specify the activating character
-$oneolcom
-$eolcom #
-
 * =========================== Perform checks on MRSAM ==========================
 
 Parameters

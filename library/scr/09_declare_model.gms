@@ -1,8 +1,19 @@
-* ========================== 6. Declare model equations ===========================
-$ontext
-This states which equations are included in which model. The models are based on either product technology or activity technology. The `main.gms` file includes the option to choose one of the two types of technologies.
+* File:   library/scr/09_declare_model.gms
+* Author: Trond Husby
+* Date:   22 April 2015
+* Adjusted:
+
+* gams-master-file: 00_simulation_prepare.gms
+
+$ontext startdoc
+Documentation is missing
 $offtext
 
+* activate end of line comment and specify the activating character
+$oneolcom
+$eolcom #
+
+* ========================== Declare model equations ===========================
 
 Model IO_product_technology
 /

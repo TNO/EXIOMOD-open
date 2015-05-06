@@ -37,8 +37,8 @@ $include library/scr/04_aggregate_database.gms
 $batinclude library/includes/phase.gms additional_sets
 $batinclude library/includes/phase.gms parameters_declaration
 $batinclude library/includes/phase.gms parameters_calibration
-$batinclude library/includes/phase.gms equations_declaration
+$batinclude library/includes/phase.gms variables_equations_declaration
 $batinclude library/includes/phase.gms equations_definition
-$batinclude library/includes/phase.gms equations_bounds
+$batinclude library/includes/phase.gms bounds_and_scales
 
 $include library/scr/09_declare_model.gms
