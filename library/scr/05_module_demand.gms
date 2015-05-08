@@ -924,3 +924,30 @@ TRANSFERS_ROW_V.SCALE(reg,fd)$(TRANSFERS_ROW_V.L(reg,fd) lt 0)
     = -TRANSFERS_ROW_V.L(reg,fd) ;
 
 $label end_bounds_and_scales
+
+* ======================== Phase 7: Declare sub-models  ========================
+$if not '%phase%' == 'submodel_declaration' $goto submodel_declaration
+
+* Include demand equations that will enter CGE model
+Model demand_CGE_MCP
+/
+EQCONS_H_T.CONS_H_T_V
+EQCONS_G_T.CONS_G_T_V
+EQGFCF_T.GFCF_T_V
+EQFACREV.FACREV_V
+EQTSPREV.TSPREV_V
+EQNTPREV.NTPREV_V
+EQTIMREV.TIMREV_V
+EQGRINC_H.GRINC_H_V
+EQGRINC_G.GRINC_G_V
+EQGRINC_I.GRINC_I_V
+EQCBUD_H.CBUD_H_V
+EQCBUD_G.CBUD_G_V
+EQCBUD_I.CBUD_I_V
+EQSCLFD_H.SCLFD_H_V
+EQSCLFD_G.SCLFD_G_V
+EQSCLFD_I.SCLFD_I_V
+/
+;
+
+$label submodel_declaration

@@ -58,11 +58,6 @@ Variables
     GDPDEF_V                        GDP deflator used as numéraire
 ;
 
-* Artificial objective
-Variables
-    OBJ                             artificial objective value
-;
-
 * ========================== Declaration of equations ==========================
 
 Equations
@@ -94,7 +89,6 @@ Equations
     EQPAASCHE(regg)             Paasche price index for household consumption
     EQLASPEYRES(regg)           Laspeyres price index for household consumption
     EQGDPDEF                    GDP deflator used as numéraire
-    EQOBJ                       artificial objective function
 ;
 
 $label end_variables_equations_declaration
@@ -265,14 +259,6 @@ EQGDPDEF..
     =E=
     sum(regg, GDPCUR_V(regg) ) / sum(regg, GDPCONST_V(regg) ) ;
 
-
-* EQUATION 4.15: Artificial objective function: only relevant for users of
-* conopt solver in combination with NLP type of mathematical problem.
-EQOBJ..
-    OBJ
-    =E=
-    1 ;
-
 $label end_equations_definition
 
 * ===== Phase 6: Define levels, bounds and fixed variables, scale equations ====
@@ -409,3 +395,27 @@ EQPROW.SCALE$(sum((reg,prd), EXPORT_ROW_V.L(reg,prd) ) lt 0   )
 * EQUATION 4.14 - SCALING IS NOT REQUIRED
 
 $label end_bounds_and_scales
+
+* ======================== Phase 7: Declare sub-models  ========================
+$if not '%phase%' == 'submodel_declaration' $goto submodel_declaration
+
+* Include price equations that will enter CGE model
+Model price_CGE_MCP
+/
+EQPY.PY_V
+EQP.P_V
+EQPKL.PKL_V
+EQPVA.PVA_V
+EQPIU.PIU_V
+EQPC_H.PC_H_V
+EQPC_G.PC_G_V
+EQPC_I.PC_I_V
+EQPIMP_T.PIMP_T_V
+EQPIMP_MOD.PIMP_MOD_V
+EQPROW.PROW_V
+EQPAASCHE.PAASCHE_V
+EQLASPEYRES.LASPEYRES_V
+EQGDPDEF.GDPDEF_V
+/;
+
+$label submodel_declaration

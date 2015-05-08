@@ -40,5 +40,6 @@ $batinclude library/includes/phase.gms parameters_calibration
 $batinclude library/includes/phase.gms variables_equations_declaration
 $batinclude library/includes/phase.gms equations_definition
 $batinclude library/includes/phase.gms bounds_and_scales
+$batinclude library/includes/phase.gms submodel_declaration
 
 $include library/scr/09_declare_model.gms
