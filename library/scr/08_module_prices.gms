@@ -100,11 +100,15 @@ $if not '%phase%' == 'equations_definition' $goto end_equations_definition
 * (ind) in each region (regg) is defined in such a way that revenues earned from
 * product sales less possible production net taxes are equal to the cost of
 * intermediate inputs and factors of production, including possible product and
-* factor taxes, plus, if modeled, excessive profit margins. Output price for one
-* industry in one country is chosen as a numéraire (exogenous variable), so in
-* order to keep the system square, the equation is not defined for this specific
-* industry in this specific region.
-EQPY(regg,ind)$((not sameas(regg,'WEU')) or (not sameas(ind,'i020')))..
+* factor taxes, plus, if modeled, excessive profit margins. In this type of CGE
+* model the equation form a linear dependent system, therefore one of the
+* equations is usually dropped, and on of the variables is declared as
+* numéraire. We choose to drop one of the equations in this group. Due to
+* programming convenience, the equation corresponding to the largest output
+* value in the base year is dropped. GDP deflator is used as numéraire (see
+* EQUATION 4.14).
+EQPY(regg,ind)$( Y(regg,ind) ne smax((reggg,indd), Y(reggg,indd) ) and
+    Y(regg,ind) )..
     Y_V(regg,ind) * PY_V(regg,ind) *
     ( 1 - sum(reg, txd_ind(reg,regg,ind) ) -
     sum(reg, txd_tim(reg,regg,ind) ) )
@@ -284,8 +288,7 @@ PIMP_MOD_V.L(prd,regg) = 1 ;
 PROW_V.L               = 1 ;
 PAASCHE_V.L(regg)      = 1 ;
 LASPEYRES_V.L(regg)    = 1 ;
-GDPDEF_V.L                                                    = 1 ;
-PY_V.FX('WEU','i020')                                         = 1 ;
+GDPDEF_V.FX                                                   = 1 ;
 PY_V.FX(regg,ind)$(Y_V.L(regg,ind) eq 0)                      = 1 ;
 P_V.FX(reg,prd)$(X_V.L(reg,prd) eq 0)                         = 1 ;
 PKL_V.FX(reg,kl)$(KLS(reg,kl) eq 0)                           = 1 ;
@@ -400,9 +403,14 @@ $label end_bounds_and_scales
 $if not '%phase%' == 'submodel_declaration' $goto submodel_declaration
 
 * Include price equations that will enter CGE model
+* Two of the equations (EQPY and EQGDPDEF) are not explicitly paired with any
+* variables. This happens because GDPDEF has been chosen to be a numéraire and
+* therefore is a fixed variable. EQGDPDEF has to be paired with PY_V
+* corresponding to the dropped EQPY (see explanation for EQUATION 4.1 for more
+* details). GAMS with automatically pair not matched variables and equations.
 Model price_CGE_MCP
 /
-EQPY.PY_V
+EQPY
 EQP.P_V
 EQPKL.PKL_V
 EQPVA.PVA_V
@@ -415,7 +423,7 @@ EQPIMP_MOD.PIMP_MOD_V
 EQPROW.PROW_V
 EQPAASCHE.PAASCHE_V
 EQLASPEYRES.LASPEYRES_V
-EQGDPDEF.GDPDEF_V
+EQGDPDEF
 /;
 
 $label submodel_declaration
