@@ -1,0 +1,131 @@
+<html>
+<head>
+<style type="text/css">
+ .row { vertical-align: top; height:auto !important; }
+ .list {display:none; }
+ .show {display: none; }
+ .hide:focus + .show {display: inline; }
+ .hide:focus {display: none; }
+ .hide:focus ~ .list {display: inline; }
+ body { background: url(http://blog.riaproject.com/wp-content/uploads/2012/09/modules.jpg); background-position: 200px 50%; background-repeat: no-repeat; }
+ @media print { .hide, .show { display: none; } }
+
+ </style>
+ </head>
+
+<body>
+
+<font size="5" color="blue">Demand module</font>
+
+<div class="row">
+ <a href="#hide1" class="hide" id="hide1">Equations</a>
+ <a href="#show1" class="show" id="show1">Equations</a><br>
+ <div class="list">
+ <ul>
+ <font size="4" color="black">
+ <li>EQCONS_H_T(prd,regg): demand of households for products on aggregated product level</li>
+ <li>EQCONS_G_T(prd,regg): demand of government for products on aggregated product level</li>
+ <li>EQGFCF_T(prd,regg): demand of investment agent for products on aggregated
+ product level</li>
+ <li>EQFACREV(reg,va): revenue from factors of production</li>
+ <li>EQTSPREV(reg): revenue from net tax on products</li>
+ <li>EQNTPREV(reg): revenue from net tax on production</li>
+ <li>EQTIMREV(reg): revenue from tax on export and international margins</li>
+ <li>EQGRINC_H(regg): gross income of households</li>
+ <li>EQGRINC_G(regg): gross income of government</li>
+ <li>EQGRINC_I(regg): gross income of investment agent</li>
+ <li>EQCBUD_H(regg): budget available for household consumption</li>
+ <li>EQCBUD_G(regg): budget available for government consumption</li>
+ <li>EQCBUD_I(regg): budget available for gross fixed capital formation</li>
+ <li>EQSCLFD_H(regg): budget constraint of households</li>
+ <li>EQSCLFD_G(regg): budget constraint of government</li>
+ <li>EQSCLFD_I(regg): budget constraint of investment agent</li>
+ </font>
+ </ul>
+ </div>
+ <a href="./demand.html" target="_blank">Variables</a>
+ </div>
+
+<br>
+
+<font size="5" color="blue">Trade module</font>
+
+<div class="row">
+ <a href="#hide2" class="hide" id="hide2">Equations</a>
+ <a href="#show2" class="show" id="show2">Equations</a><br>
+ <div class="list">
+ <ul>
+ <li>EQINTU_D(prd,regg,ind): demand for domestically produced intermediate inputs</li>
+ <li>EQINTU_M(prd,regg,ind): demand for aggregated imported intermediate inputs</li>
+ <li>EQCONS_H_D(prd,regg): demand of households for domestically produced products</li>
+ <li>EQCONS_H_M(prd,regg): demand of households for aggregated products imported from modeled regions</li>
+ <li>EQCONS_G_D(prd,regg): demand of government for domesrically produced products</li>
+ <li>EQCONS_G_M(prd,regg): demand of government for aggregated products imported from modeled regions</li>
+ <li>EQGFCF_D(prd,regg): demand of investment agent for domestically produced products</li>
+ <li>EQGFCF_M(prd,regg): demand of investment agent for aggregated products imported from modeled regions</li>
+ <li>EQSV(reg,prd,regg): demand for stock changes of products on the most detailed</li>
+ level
+ <li>EQIMP_T(prd,regg): total demand for aggregared imported products</li>
+ <li>EQIMP_MOD(prd,regg): demand for aggregated import from modeled regions</li>
+ <li>EQIMP_ROW(prd,regg): demand for import from rest of the world region</li>
+ <li>EQTRADE(reg,prd,regg): demand for bi-lateral trade transactions</li>
+ <li>EQEXP(reg,prd): export supply to the rest of the world region</li>
+ </ul>
+ </div>
+ <a href="./trade.html" target="_blank">Variables</a>
+ </div>
+
+<br>
+
+<font size="5" color="blue">Production module</font>
+
+<div class="row">
+ <a href="#hide4" class="hide" id="hide4">Equations</a>
+ <a href="#show4" class="show" id="show4">Equations</a><br>
+  <div class="list">
+ <ul>
+ <li>EQBAL(reg,prd): product market balance</li>
+ <li>EQX(reg,prd): supply of products with mix per industry</li>
+ <li>EQY(regg,ind): supply of activities with mix per product</li>
+ <li>EQINTU_T(prd,regg,ind): demand for intermediate inputs on aggregated product level</li>
+ <li>EQVA(regg,ind): demand for aggregated production factors</li>
+ <li>EQKL(reg,va,regg,ind): demand for specific production factors</li>
+ <li>EQGDPCUR(regg): GDP in current prices (value)</li>
+ <li>EQGDPCONST(regg): GDP in constant prices (volume)</li>
+ </ul>
+ </div>
+ <a href="./production.html" target="_blank">Variables</a>
+ </div>
+
+<br>
+
+<font size="5" color="blue">Price module</font>
+
+<div class="row">
+ <a href="#hide3" class="hide" id="hide3">Equations</a>
+ <a href="#show3" class="show" id="show3">Equations</a><br>
+ <div class="list">
+ <ul>
+ <li>EQPY(regg,ind): zero-profit condition (including possible margins)</li>
+ <li>EQP(reg,prd): balance between product price and industry price</li>
+ <li>EQPKL(reg,va): balance on production factors market</li>
+ <li>EQPVA(regg,ind): balance between specific production factors price and aggregate production factors price</li>
+ <li>EQPIU(prd,regg,ind): balance between specific product price and aggregate product price for intermediate use</li>
+ <li>EQPC_H(prd,regg): balance between specific product price and aggregate product price for household consumption</li>
+ <li>EQPC_G(prd,regg): balance between specific product price and aggregate product price for government consumption</li>
+ <li>EQPC_I(prd,regg): balance between specific product price and aggregate product
+ price for gross fixed capital formation</li>
+ <li>EQPIMP_T(prd,regg): balance between specific imported product price from rest of the world and modeled regions and total aggregated imported product price</li>
+ <li>EQPIMP_MOD(prd,regg): balance between specific imported product price from modeled regions and corresponding aggregated imported product price</li>
+ <li>EQPROW: balance of payments with rest of the world</li>
+ <li>EQPAASCHE(regg): Paasche price index for household consumption</li>
+ <li>EQLASPEYRES(regg): Laspeyres price index for household consumption</li>
+ <li>EQGDPDEF: GDP deflator used as numeraire</li>
+ <li>EQOBJ: artificial objective function</li>
+ </ul>
+ </div>
+  <a href="./price.html" target="_blank">Variables</a>
+ </div>
+
+</body>
+</html>
