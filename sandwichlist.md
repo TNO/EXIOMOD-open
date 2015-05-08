@@ -90,7 +90,7 @@ CONS_H(reg,prd,regg)$( sameas(reg,regg) or TRADE(reg,prd,regg) )
 ```
     * First line: parameter name and possible $-sign conditionals.
     * Second line: indent with one tab and starts with equality sign (=).
-    * Next lines: indent with one tab. 
+    * Next lines: indent with one tab.
 
 * **Definition** of equations:
 ```
@@ -127,25 +127,24 @@ INTER_USE
 
 # How to make your own modifications
 
-1. Open the simulation-specific .gms-file. Changes are incoporated
-   here, leaving files in the library unchanged.
+(not completed)
+
+1. Become acquainted with the structure of the thematic modules (which equations
+   and variables belong to which module?). An overview of the modules can be
+   found [here](http://htmlpreview.github.io/?https://raw.githubusercontent.com/em-plus/TNO-Eco-Mod/mastah_trond/modules.html?token=AHa1f0Ls09mStpGbCLxLWEdS3SvWSG_7ks5VVh0XwA%3D%3D)
 
 2. If aggregating or extending sets, or adding data, become acquainted with the set
    structure: find out whether the modified set is a subset. Sets are
-   listed in the .txt-files in the *sets* folder.
+   listed in the .txt-files in the */library/sets* folder.
 
 3. If new data needs to be added, data files must be placed in the
    *data* folder and read in data using the *user_data.gms*. If
    elasticities or technology-parameters need to be changed, the
    excel-sheets already in the folder can be used.
 
-4. Open the file */library/scr/model_variables_equations.gms*. Search
+4. Open the relevant modules in */library/scr/*. Search
    for: (i) equations that need to be changed; (ii) variables that
    need to be changed; (iii) parameters that need to be changed.
-
-5. Making changes to parameters: if parameters need to be recalibrated, consult
-   the file */library/scr/model_parameters.gms* to see how they were
-   calibrated in the base-model.
 
 6. Making changes to equations: equations which need to be changed need to be
    renamed, e.g. from EQKL to EQKL_pr, and restated. Make sure to
