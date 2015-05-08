@@ -246,6 +246,11 @@ Variables
     KLS_V(reg,va)                   supply of production factors
 ;
 
+* Artificial objective
+Variables
+    OBJ                             artificial objective value
+;
+
 * ========================== Declaration of equations ==========================
 
 Equations
@@ -260,6 +265,7 @@ Equations
 
     EQGDPCUR(regg)              GDP in current prices (value)
     EQGDPCONST(regg)            GDP in constant prices (volume)
+    EQOBJ                       artificial objective function
 ;
 
 $label end_variables_equations_declaration
@@ -363,6 +369,13 @@ EQGDPCONST(regg)..
     sum(prd, GFCF_T_V(prd,regg) * tc_gfcf_0(prd,regg) ) +
     sum((reg,prd), SV_V(reg,prd,regg) * tc_sv_0(prd,regg) ) +
     sum(prd, SV_ROW_V(prd,regg) * tc_sv_0(prd,regg) ) ;
+
+* EQUATION 2.8: Artificial objective function: only relevant for users of conopt
+* solver in combination with NLP type of mathematical problem.
+EQOBJ..
+    OBJ
+    =E=
+    1 ;
 
 $label end_equations_definition
 
@@ -496,3 +509,41 @@ KLS_V.SCALE(reg,kl)$(KLS_V.L(reg,kl) lt 0)
     = -KLS_V.L(reg,kl) ;
 
 $label end_bounds_and_scales
+
+* ======================== Phase 7: Declare sub-models  ========================
+$if not '%phase%' == 'submodel_declaration' $goto submodel_declaration
+
+* Include production equations that will enter IO product technology model
+Model production_IO_product_technology
+/
+EQBAL
+EQX
+EQINTU_T
+EQOBJ
+/
+;
+
+* Include production equations that will enter IO product technology model
+Model production_IO_industry_technology
+/
+EQBAL
+EQY
+EQINTU_T
+EQOBJ
+/
+;
+
+* Include production equations that will enter CGE model
+Model production_CGE_MCP
+/
+EQBAL.X_V
+EQY.Y_V
+EQINTU_T.INTER_USE_T_V
+EQVA.VA_V
+EQKL.KL_V
+EQGDPCUR.GDPCUR_V
+EQGDPCONST.GDPCONST_V
+/
+;
+
+$label submodel_declaration

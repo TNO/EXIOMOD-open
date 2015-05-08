@@ -936,3 +936,49 @@ SV_ROW_V.SCALE(prd,regg)$(SV_ROW_V.L(prd,regg) lt 0)
     = -SV_ROW_V.L(prd,regg) ;
 
 $label end_bounds_and_scales
+
+* ======================== Phase 7: Declare sub-models  ========================
+$if not '%phase%' == 'submodel_declaration' $goto submodel_declaration
+
+* Include trade equations that will enter IO product technology model
+Model trade_IO_product_technology
+/
+EQINTU_D
+EQINTU_M
+EQIMP_T
+EQIMP_MOD
+EQTRADE
+/
+;
+
+* Include trade equations that will enter IO product technology model
+Model trade_IO_industry_technology
+/
+EQINTU_D
+EQINTU_M
+EQIMP_T
+EQIMP_MOD
+EQTRADE
+/
+;
+
+* Include trade equations that will enter CGE model
+Model trade_CGE_MCP
+/
+EQINTU_D.INTER_USE_D_V
+EQINTU_M.INTER_USE_M_V
+EQCONS_H_D.CONS_H_D_V
+EQCONS_H_M.CONS_H_M_V
+EQCONS_G_D.CONS_G_D_V
+EQCONS_G_M.CONS_G_M_V
+EQGFCF_D.GFCF_D_V
+EQGFCF_M.GFCF_M_V
+EQSV.SV_V
+EQIMP_T.IMPORT_T_V
+EQIMP_MOD.IMPORT_MOD_V
+EQIMP_ROW.IMPORT_ROW_V
+EQTRADE.TRADE_V
+EQEXP.EXPORT_ROW_V
+/;
+
+$label submodel_declaration
