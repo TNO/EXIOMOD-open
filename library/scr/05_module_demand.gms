@@ -6,7 +6,25 @@
 * gams-master-file: phase.gms
 
 $ontext startdoc
-Documentation is missing
+This is a module describing demand side equations of the base CGE model. The
+code includes all the required elements (calibration, equations definition,
+model statement) for the demand side. The following elements of the model are
+described within the demand module:
+
+- Demand functions of households, government and investment agent; in other
+  words, how much products they want to buy, given the market prices and their
+  consumption budgets. In this version, the first order conditions from
+  'flexible' CES preferences are used.
+- How the income of households, government and investment agent is formed.
+- How the budget available for consumption of households, government and
+  investment agent is formed.
+- Budget constraint: consumption expenditures are equal to consumption budget.
+
+As with all the other modules, different phases of the code are being called
+from 00_simulation_prepare.gms via phase.gms.
+
+Please see the description of the modular approach in philosophy.html and of
+phase.gms for more details.
 $offtext
 
 * activate end of line comment and specify the activating character

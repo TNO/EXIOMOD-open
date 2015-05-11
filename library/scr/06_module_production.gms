@@ -6,7 +6,25 @@
 * gams-master-file: phase.gms
 
 $ontext startdoc
-Documentation is missing
+This is a module describing production side equations of the base CGE and
+Input-Output model. The code includes all the required elements (calibration,
+equations definition, model statement) for the production side. The following
+elements of the model are described within the production module:
+
+- Product market balance: supply equals demand (CGE and IO).
+- Link between output by product and output by activity (CGE and IO).
+- Demand functions for intermediate inputs; in other words, how much products
+  the producers want to buy, given the market prices. In this version, the first
+  order conditions from Leontief production function are used (CGE and IO).
+- Demand functions for factors of production. In this version, the first order
+  conditions from 'flexible' CES production function are used (only CGE).
+- Calculation of GDP in constant and current prices (only CGE).
+
+As with all the other modules, different phases of the code are being called
+from 00_simulation_prepare.gms via phase.gms.
+
+Please see the description of the modular approach in philosophy.html and of
+phase.gms for more details.
 $offtext
 
 * activate end of line comment and specify the activating character

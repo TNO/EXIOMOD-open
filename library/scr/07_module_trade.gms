@@ -6,7 +6,37 @@
 * gams-master-file: phase.gms
 
 $ontext startdoc
-Documentation is missing
+This is a module describing interregional trade side equations of the base CGE
+and Input-Output model. The code includes all the required elements
+(calibration, equations definition, model statement) for the trade side. The
+trade formulation is in general following Armington approach. The following
+elements of the model are described within the trade module:
+
+- Demand functions for domestic vs. imported products by producers, households,
+  government and investment agent. In this version, the first order conditions
+  from 'flexible' CES preferences are used (CGE and IO - for producers).
+- Demand for products required to cover changes in inventories. In this version,
+  the changes in inventories are modeled as a fixed share of product output
+  (only CGE).
+- Demand for import from the rest of the world region and from the modeled
+  regions. In this version, the first order conditions from 'flexible' CES
+  preferences are used (CGE and IO - for modeled regions).
+- Demand for products to be exported to the rest of the world region. In this
+  version, export is modeled as a fixed share of product output (only CGE).
+
+Although the elements describing changes in inventories and export to the rest
+of the world could also belong to the demand module, we have decided to include
+them into the trade module. Firstly, they are not real demand functions, meaning
+that they don't depend of the product prices. Secondly, these demands are
+expressed directly on the most detailed level (product and region of
+production), therefore there is a better connection with other equations of the
+trade module.
+
+As with all the other modules, different phases of the code are being called
+from 00_simulation_prepare.gms via phase.gms.
+
+Please see the description of the modular approach in philosophy.html and of
+phase.gms for more details.
 $offtext
 
 * activate end of line comment and specify the activating character

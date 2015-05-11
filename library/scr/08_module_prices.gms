@@ -6,7 +6,25 @@
 * gams-master-file: phase.gms
 
 $ontext startdoc
-Documentation is missing
+This is a module describing prices side equations of the base CGE model. The
+code includes all the required elements (calibration, equations definition,
+model statement) for the prices side. The following elements of the model are
+described within the prices module:
+
+- Zero profit condition for the producers: revenue equals expenses.
+- Balance between price per product and price per activity.
+- Balance on the market of factors of production: supply equals demand.
+- Balance between market prices of traded products and factors of production and
+  the prices for aggregated nests on different levels of production, demand and
+  trade functions.
+- Balance of payments with the rest of the world region.
+- Definition of price indexes and GDP deflator, which is used as numéraire.
+
+As with all the other modules, different phases of the code are being called
+from 00_simulation_prepare.gms via phase.gms.
+
+Please see the description of the modular approach in philosophy.html and of
+phase.gms for more details.
 $offtext
 
 * activate end of line comment and specify the activating character

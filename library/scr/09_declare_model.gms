@@ -6,7 +6,14 @@
 * gams-master-file: 00_simulation_prepare.gms
 
 $ontext startdoc
-Documentation is missing
+In this code the full base CGE and Input-Output models are defined. The models
+are defined as collection of sub-models as described in different modules.
+
+The two Input-Output models (product technology and industry technology) are
+compiled from parts of production and trade modules.
+
+The base CGE model in MCP formulation is compiled from the equations of demand,
+production, trade and prices modules.
 $offtext
 
 * activate end of line comment and specify the activating character
