@@ -127,22 +127,24 @@ INTER_USE
 
 # How to make your own modifications
 
-(not completed)
-
 1. Become acquainted with the structure of the thematic modules (which equations
    and variables belong to which module?). An overview of the modules can be
-   found [here](http://htmlpreview.github.io/?https://raw.githubusercontent.com/em-plus/TNO-Eco-Mod/mastah_trond/modules.html?token=AHa1f0Ls09mStpGbCLxLWEdS3SvWSG_7ks5VVh0XwA%3D%3D)
+   found [here](./documentation/modules/modules.html)
 
-2. If aggregating or extending sets, or adding data, become acquainted with the set
-   structure: find out whether the modified set is a subset. Sets are
-   listed in the .txt-files in the */library/sets* folder.
+2. Become acquainted with the sets and the structure of subsets used. Sets are
+   listed in the .txt-files in the */00-principal/sets/* folder.
 
-3. If new data needs to be added, data files must be placed in the
-   *data* folder and read in data using the *user_data.gms*. If
+3. Become acquainted with the contents of the */00-principal/data/* folder. If
    elasticities or technology-parameters need to be changed, the
-   excel-sheets already in the folder can be used.
+   excel-sheets already in the folder can be used. Data is read in using the
+   file *user_data.gms* in */00-principal/scr/*.
 
-4. Open the relevant modules in */library/scr/*. Search
+4. Additional data can either be added to the general */00-principal/data/*
+   (simple projects) or to scenario-specific folders *##-scenario/data/* (more
+   extensive projects). Please also consult some project examples to see how
+   this can be done.
+
+5. Open the relevant modules in */library/scr/*. Search
    for: (i) equations that need to be changed; (ii) variables that
    need to be changed; (iii) parameters that need to be changed.
 
