@@ -1,15 +1,20 @@
 rm(list=ls())
 .libPaths("~/Dropbox/rdir2/library_win")
-setwd("~/projects/Complex")
+setwd("~/GitHub/TNO-Eco-Mod/documentation/modules")
 
 library(rCharts)
 library(rjson)
 library(igraph)
 
+#creating vector of variables
+variables = c("Production","Demand","Trade","Closure")
+
+for (i in seq_along(variables))
+{
 #reading in the data mapping variables and modules
 df = read.csv("Variablesandmodules.csv", sep = ";", header = TRUE, dec = ",")
 colnames(df) = c("module","source","target","value")
-df = df[df$module == "Price" ,]
+df = df[df$module == variables[i] ,]
 #add same module
 df2 = aggregate(value~module+source,df,sum)
 df2[,3] = df2[,3] + 1
@@ -39,5 +44,5 @@ sankeyPlot$set(
   width = 1200,
   height = 800
 )
-sankeyPlot
-
+print(sankeyPlot)
+}

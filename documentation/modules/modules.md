@@ -70,6 +70,8 @@
  <li>EQIMP_ROW(prd,regg): demand for import from rest of the world region</li>
  <li>EQTRADE(reg,prd,regg): demand for bi-lateral trade transactions</li>
  <li>EQEXP(reg,prd): export supply to the rest of the world region</li>
+ <li>EQPIMP_T(prd,regg): balance between specific imported product price from rest of the world and modeled regions and total aggregated imported product price</li>
+ <li>EQPIMP_MOD(prd,regg): balance between specific imported product price from modeled regions and corresponding aggregated imported product price</li>
  </ul>
  </div>
  <a href="./trade.html" target="_blank">Variables</a>
@@ -90,8 +92,7 @@
  <li>EQINTU_T(prd,regg,ind): demand for intermediate inputs on aggregated product level</li>
  <li>EQVA(regg,ind): demand for aggregated production factors</li>
  <li>EQKL(reg,va,regg,ind): demand for specific production factors</li>
- <li>EQGDPCUR(regg): GDP in current prices (value)</li>
- <li>EQGDPCONST(regg): GDP in constant prices (volume)</li>
+ <li>EQPVA(regg,ind): balance between specific production factors price and aggregate production factors price</li>
  </ul>
  </div>
  <a href="./production.html" target="_blank">Variables</a>
@@ -99,7 +100,7 @@
 
 <br>
 
-<font size="5" color="blue">Price module</font>
+<font size="5" color="blue">Closure module</font>
 
 <div class="row">
  <a href="#hide3" class="hide" id="hide3">Equations</a>
@@ -109,22 +110,21 @@
  <li>EQPY(regg,ind): zero-profit condition (including possible margins)</li>
  <li>EQP(reg,prd): balance between product price and industry price</li>
  <li>EQPKL(reg,va): balance on production factors market</li>
- <li>EQPVA(regg,ind): balance between specific production factors price and aggregate production factors price</li>
  <li>EQPIU(prd,regg,ind): balance between specific product price and aggregate product price for intermediate use</li>
  <li>EQPC_H(prd,regg): balance between specific product price and aggregate product price for household consumption</li>
  <li>EQPC_G(prd,regg): balance between specific product price and aggregate product price for government consumption</li>
  <li>EQPC_I(prd,regg): balance between specific product price and aggregate product
  price for gross fixed capital formation</li>
- <li>EQPIMP_T(prd,regg): balance between specific imported product price from rest of the world and modeled regions and total aggregated imported product price</li>
- <li>EQPIMP_MOD(prd,regg): balance between specific imported product price from modeled regions and corresponding aggregated imported product price</li>
  <li>EQPROW: balance of payments with rest of the world</li>
  <li>EQPAASCHE(regg): Paasche price index for household consumption</li>
  <li>EQLASPEYRES(regg): Laspeyres price index for household consumption</li>
+ <li>EQGDPCUR(regg): GDP in current prices (value)</li>
+ <li>EQGDPCONST(regg): GDP in constant prices (volume)</li>
  <li>EQGDPDEF: GDP deflator used as numeraire</li>
  <li>EQOBJ: artificial objective function</li>
  </ul>
  </div>
-  <a href="./price.html" target="_blank">Variables</a>
+  <a href="./closure.html" target="_blank">Variables</a>
  </div>
 
 </body>
