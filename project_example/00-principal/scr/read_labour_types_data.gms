@@ -19,11 +19,11 @@ Sets
 *Sets included to map wagedata from EXIOMOD60
 totset60
 /
-$include %project%/add_hh_types/sets/totalsets_60sec.txt
+$include %project%/datalibrary_labour_types/sets/totalsets_60sec.txt
 /
 sec60(totset60)
 /
-$include %project%/add_hh_types/sets/industries_60sec.txt
+$include %project%/datalibrary_labour_types/sets/industries_60sec.txt
 /
 ;
 
@@ -48,8 +48,8 @@ Parameters
 ;
    
 * Read in data from EXIOBASE60 to create split for wages
-$libinclude xlimport wdata %project%/add_hh_types/data/EXIOBASE60_aggr_tl.xlsx USE!a1:bj3001 ;
-$libinclude xlimport mapdmod %project%/add_hh_types/data/mapdmod.xlsx Sheet1!a1:aj61 ;
+$libinclude xlimport wdata %project%/datalibrary_labour_types/data/EXIOBASE60_aggr_tl.xlsx USE!a1:bj3001 ;
+$libinclude xlimport mapdmod %project%/datalibrary_labour_types/data/mapdmod.xlsx Sheet1!a1:aj61 ;
 
 wag(reg_data,ind,'LOW')
     = sum(sec60$mapdmod(sec60,ind), Wdata(reg_data,'t206',sec60) ) ;

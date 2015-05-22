@@ -39,10 +39,26 @@ $label end_additional_sets
 * ===================== Phase 2: Declaration of parameters =====================
 $if not '%phase%' == 'parameters_declaration' $goto end_parameters_declaration
 
+Parameters
+        GDP(regg)                   gross domestic product (value)
+;
+
 $label end_parameters_declaration
 
 * ====================== Phase 3: Definition of parameters =====================
 $if not '%phase%' == 'parameters_calibration' $goto end_parameters_calibration
+
+* Gross domestic product in each region (regg). GDP calculated as difference
+* between total output and intermediate inputs plus taxes on products paid by
+* final consumers.
+GDP(regg)
+    = sum(ind, Y(regg,ind) ) -
+    sum((prd,ind), INTER_USE_T(prd,regg,ind) ) +
+    sum((prd,fd), FINAL_USE_dt(prd,regg,fd) ) ;
+
+Display
+GDP
+;
 
 $label end_parameters_calibration
 
@@ -56,7 +72,7 @@ Variables
     PY_V(regg,ind)                  industry output price
     P_V(reg,prd)                    basic product price
     PKL_V(reg,va)                   production factor price
-    PVA_V(regg,ind)                 aggregate production factors price
+
     PIU_V(prd,regg,ind)             aggregate product price for intermediate use
     PC_H_V(prd,regg)                aggregate product price for household
                                     # consumption
@@ -64,15 +80,14 @@ Variables
                                     # consumption
     PC_I_V(prd,regg)                aggregate product price for gross fixed
                                     # capital formation
-    PIMP_T_V(prd,regg)              aggregate total imported product price
-    PIMP_MOD_V(prd,regg)            aggregate imported product price for the
-                                    # aggregate imported from modeled regions
     PROW_V                          price of imports from the rest of the world
                                     # region (similar to exchange rate)
     PAASCHE_V(regg)                 Paasche price index for household
                                     # consumption
     LASPEYRES_V(regg)               Laspeyres price index for household
                                     # consumption
+    GDPCUR_V(regg)                  GDP in current prices (value)
+    GDPCONST_V(regg)                GDP in constant prices (volume)
     GDPDEF_V                        GDP deflator used as numéraire
 ;
 
@@ -83,8 +98,6 @@ Equations
                                 # margins)
     EQP(reg,prd)                balance between product price and industry price
     EQPKL(reg,va)               balance on production factors market
-    EQPVA(regg,ind)             balance between specific production factors
-                                # price and aggregate production factors price
     EQPIU(prd,regg,ind)         balance between specific product price and
                                 # aggregate product price for intermediate use
     EQPC_H(prd,regg)            balance between specific product price and
@@ -96,16 +109,12 @@ Equations
     EQPC_I(prd,regg)            balance between specific product price and
                                 # aggregate product price for gross fixed
                                 # capital formation
-    EQPIMP_T(prd,regg)          balance between specific imported product price
-                                # from the rest of the world and modeled regions
-                                # and total aggregated imported product price
-    EQPIMP_MOD(prd,regg)        balance between specific imported product price
-                                # from modeled regions and corresponding
-                                # aggregated imported product price
     EQPROW                      balance of payments with the rest of the world
                                 # region
     EQPAASCHE(regg)             Paasche price index for household consumption
     EQLASPEYRES(regg)           Laspeyres price index for household consumption
+    EQGDPCUR(regg)              GDP in current prices (value)
+    EQGDPCONST(regg)            GDP in constant prices (volume)
     EQGDPDEF                    GDP deflator used as numéraire
 ;
 
@@ -158,17 +167,7 @@ EQPKL(reg,kl)..
     =E=
     sum((regg,ind), KL_V(reg,kl,regg,ind) ) ;
 
-* EQUATION 4.4: Balance between specific production factors price and aggregate
-* production factors price. The aggregate price is different in each industry
-* (ind) in each region (regg) and is a weighted average of the price of specific
-* production factors, where weights are defined as demand by the industry for
-* corresponding production factors.
-EQPVA(regg,ind)..
-    PVA_V(regg,ind) * VA_V(regg,ind)
-    =E=
-    sum((reg,kl), PKL_V(reg,kl) * KL_V(reg,kl,regg,ind)) ;
-
-* EQUATION 4.5: Balance between specific product price and aggregate product
+* EQUATION 4.4: Balance between specific product price and aggregate product
 * price for intermediate use. The aggregate price is different for each
 * aggregated product (prd) in each industry (ind) in each region (regg) and is
 * a weighted average of the price of domestically produced product and the
@@ -180,7 +179,7 @@ EQPIU(prd,regg,ind)..
     P_V(regg,prd) * INTER_USE_D_V(prd,regg,ind) +
     PIMP_T_V(prd,regg) * INTER_USE_M_V(prd,regg,ind) ;
 
-* EQUATION 4.6: Balance between specific product price and aggregate product
+* EQUATION 4.5: Balance between specific product price and aggregate product
 * price for household consumption. The aggregate price is different for each
 * aggregated product (prd) demanded by households in each region (regg) and is a
 * weighted average of the price of domestically produced product and the
@@ -192,7 +191,7 @@ EQPC_H(prd,regg)..
     P_V(regg,prd) * CONS_H_D_V(prd,regg) +
     PIMP_T_V(prd,regg) * CONS_H_M_V(prd,regg) ;
 
-* EQUATION 4.7: Balance between specific product price and aggregate product
+* EQUATION 4.6: Balance between specific product price and aggregate product
 * price for government consumption. The aggregate price is different for each
 * aggregated product (prd) demanded by government in each region (regg) and is a
 * weighted average of the price of domestically produced product and the
@@ -204,7 +203,7 @@ EQPC_G(prd,regg)..
     P_V(regg,prd) * CONS_G_D_V(prd,regg) +
     PIMP_T_V(prd,regg) * CONS_G_M_V(prd,regg) ;
 
-* EQUATION 4.8: Balance between specific product price and aggregate product
+* EQUATION 4.7: Balance between specific product price and aggregate product
 * price for gross fixed capital formation. The aggregate price is different for
 * each aggregated product (prd) demanded by investment agent in each region
 * (regg) and is a weighted average of the price of domestically produced product
@@ -216,30 +215,7 @@ EQPC_I(prd,regg)..
     P_V(regg,prd) * GFCF_D_V(prd,regg) +
     PIMP_T_V(prd,regg) * GFCF_M_V(prd,regg) ;
 
-* EQUATION 4.9: Balance between total aggregated imported price and the price
-* of the rest of the world and modeled regions. The aggregate price is different
-* for each product (prd) in each importing region (regg) and is a weighed
-* average of the price of the rest of the world and of the aggregated price of
-* import from modeled regions, where weights are defined as corresponding
-* demands for import from rest of the world and modeled regions.
-EQPIMP_T(prd,regg)..
-    PIMP_T_V(prd,regg) * IMPORT_T_V(prd,regg)
-    =E=
-    PIMP_MOD_V(prd,regg) * IMPORT_MOD_V(prd,regg) +
-    PROW_V * IMPORT_ROW_V(prd,regg) ;
-
-* EQUATION 4.10: Balance between specific imported product price and aggregated
-* imported product price. The aggregate price is different for each product
-* (prd) in each importing region (regg) and is a weighed average of specific
-* product prices of exporting regions, where weights are defined as bi-lateral
-* trade flows between the importing regions and the corresponding exporting
-* region.
-EQPIMP_MOD(prd,regg)..
-    PIMP_MOD_V(prd,regg) * IMPORT_MOD_V(prd,regg)
-    =E=
-    sum(reg, TRADE_V(reg,prd,regg) * P_V(reg,prd) ) ;
-
-* EQUATION 4.11: Balance of payments. Expenditures of the rest of the world
+* EQUATION 4.8: Balance of payments. Expenditures of the rest of the world
 * region on exports and income transfers are equal to the region's receipts from
 * its imports. The balance is regulated by the price that intermediate and final
 * users are paying for the products imported from the rest of the world region.
@@ -253,7 +229,7 @@ EQPROW..
     sum((tim,regg,fd), TAX_FINAL_USE_ROW(tim,regg,fd) ) * PROW_V -
     sum((reg,fd), TRANSFERS_ROW_V(reg,fd) * PROW_V ) ;
 
-* EQUATION 4.12: Paasche price index for households. The price index is
+* EQUATION 4.9: Paasche price index for households. The price index is
 * calculated separately for each region (regg).
 EQPAASCHE(regg)..
     PAASCHE_V(regg)
@@ -263,7 +239,7 @@ EQPAASCHE(regg)..
     sum(prd, CONS_H_T_V(prd,regg) * 1 *
     ( 1 + tc_h_0(prd,regg) ) ) ;
 
-* EQUATION 4.13: Laspeyres price index for households. The price index is
+* EQUATION 4.10: Laspeyres price index for households. The price index is
 * calculated separately for each region (regg).
 EQLASPEYRES(regg)..
     LASPEYRES_V(regg)
@@ -273,8 +249,34 @@ EQLASPEYRES(regg)..
     sum((reg,prd), CONS_H(reg,prd,regg) * 1 *
     ( 1 + tc_h_0(prd,regg) ) ) ;
 
+* EQUATION 4.11: Gross domestic product calculated in current prices. GDP is
+* calculated separately for each modeled region (regg).
+EQGDPCUR(regg)..
+    GDPCUR_V(regg)
+    =E=
+    sum(ind, Y_V(regg,ind) * PY_V(regg,ind) ) -
+    sum((prd,ind), INTER_USE_T_V(prd,regg,ind) * PIU_V(prd,regg,ind) ) +
+    sum(prd, CONS_H_T_V(prd,regg) * PC_H_V(prd,regg) * tc_h(prd,regg) ) +
+    sum(prd, CONS_G_T_V(prd,regg) * PC_G_V(prd,regg) * tc_g(prd,regg) ) +
+    sum(prd, GFCF_T_V(prd,regg) * PC_I_V(prd,regg) * tc_gfcf(prd,regg) ) +
+    sum((reg,prd), SV_V(reg,prd,regg) * P_V(reg,prd) * tc_sv(prd,regg) ) +
+    sum(prd, SV_ROW_V(prd,regg) * PROW_V * tc_sv(prd,regg) ) ;
 
-* EQUATION 4.14: GDP deflator. The deflator is calculated as a single value for
+* EQUATION 4.12: Gross domestic product calculated in constant prices of the
+* base year. GDP is calculated separately for each modeled region (regg).
+EQGDPCONST(regg)..
+    GDPCONST_V(regg)
+    =E=
+    sum(ind, Y_V(regg,ind) ) -
+    sum((prd,ind), INTER_USE_T_V(prd,regg,ind) ) +
+    sum(prd, CONS_H_T_V(prd,regg) * tc_h_0(prd,regg) ) +
+    sum(prd, CONS_G_T_V(prd,regg) * tc_g_0(prd,regg) ) +
+    sum(prd, GFCF_T_V(prd,regg) * tc_gfcf_0(prd,regg) ) +
+    sum((reg,prd), SV_V(reg,prd,regg) * tc_sv_0(prd,regg) ) +
+    sum(prd, SV_ROW_V(prd,regg) * tc_sv_0(prd,regg) ) ;
+
+
+* EQUATION 4.13: GDP deflator. The deflator is calculated as a single value for
 * all modeled regions and is used as a numéraire in the model.
 EQGDPDEF..
     GDPDEF_V
@@ -296,13 +298,10 @@ $if not '%phase%' == 'bounds_and_scales' $goto end_bounds_and_scales
 PY_V.L(regg,ind)       = 1 ;
 P_V.L(reg,prd)         = 1 ;
 PKL_V.L(reg,kl)        = 1 ;
-PVA_V.L(regg,ind)      = 1 ;
 PIU_V.L(prd,regg,ind)  = 1 ;
 PC_H_V.L(prd,regg)     = 1 ;
 PC_G_V.L(prd,regg)     = 1 ;
 PC_I_V.L(prd,regg)     = 1 ;
-PIMP_T_V.L(prd,regg)   = 1 ;
-PIMP_MOD_V.L(prd,regg) = 1 ;
 PROW_V.L               = 1 ;
 PAASCHE_V.L(regg)      = 1 ;
 LASPEYRES_V.L(regg)    = 1 ;
@@ -321,6 +320,16 @@ PROW_V.FX$( ( sum((prd,regg), IMPORT_ROW(prd,regg) ) +
             sum((prd,regg), SV_ROW(prd,regg) ) ) eq 0 )       = 1 ;
 PAASCHE_V.FX(regg)$(sum(prd, CONS_H_T_V.L(prd,regg) ) eq 0)   = 1 ;
 LASPEYRES_V.FX(regg)$(sum(prd, CONS_H_T_V.L(prd,regg) ) eq 0) = 1 ;
+
+* Endogenous variables
+* Variables in real terms: level is set to the calibrated value of the
+* corresponding parameter. If the the calibrated value is equal to zero, the
+* variable value is also fixed to zero. The equation setup will lead to zero
+* solution for this variable and fixing it at this point helps the solver.
+GDPCUR_V.L(regg)   = GDP(regg) ;
+GDPCONST_V.L(regg) = GDP(regg) ;
+GDPCUR_V.FX(regg)$( GDP(regg) eq 0 )   = 0 ;
+GDPCONST_V.FX(regg)$( GDP(regg) eq 0 ) = 0 ;
 
 * ======================= Scale variables and equations ========================
 
@@ -354,66 +363,67 @@ EQPKL.SCALE(reg,kl)$(KLS_V.L(reg,kl) lt 0)
     = -KLS_V.L(reg,kl) ;
 
 * EQUATION 4.4
-EQPVA.SCALE(reg,ind)$(VA_V.L(reg,ind) gt 0)
-    = VA_V.L(reg,ind) ;
-
-EQPVA.SCALE(reg,ind)$(VA_V.L(reg,ind) lt 0)
-    = -VA_V.L(reg,ind) ;
-
-* EQUATION 4.5
 EQPIU.SCALE(prd,regg,ind)$(INTER_USE_T_V.L(prd,regg,ind) gt 0)
     = INTER_USE_T_V.L(prd,regg,ind) ;
 
 EQPIU.SCALE(prd,regg,ind)$(INTER_USE_T_V.L(prd,regg,ind) lt 0)
     = -INTER_USE_T_V.L(prd,regg,ind) ;
 
-* EQUATION 4.6
+* EQUATION 4.5
 EQPC_H.SCALE(prd,regg)$(CONS_H_T_V.L(prd,regg) gt 0)
     = CONS_H_T_V.L(prd,regg) ;
 
 EQPC_H.SCALE(prd,regg)$(CONS_H_T_V.L(prd,regg) lt 0)
     = -CONS_H_T_V.L(prd,regg) ;
 
-* EQUATION 4.7
+* EQUATION 4.6
 EQPC_G.SCALE(prd,regg)$(CONS_G_T_V.L(prd,regg) gt 0)
     = CONS_G_T_V.L(prd,regg) ;
 
 EQPC_G.SCALE(prd,regg)$(CONS_G_T_V.L(prd,regg) lt 0)
     = -CONS_G_T_V.L(prd,regg) ;
 
-* EQUATION 4.8
+* EQUATION 4.7
 EQPC_I.SCALE(prd,regg)$(GFCF_T_V.L(prd,regg) gt 0)
     = GFCF_T_V.L(prd,regg) ;
 
 EQPC_I.SCALE(prd,regg)$(GFCF_T_V.L(prd,regg) lt 0)
     = -GFCF_T_V.L(prd,regg) ;
 
-* EQUATION 4.9
-EQPIMP_T.SCALE(prd,regg)$(IMPORT_T_V.L(prd,regg) gt 0)
-    = IMPORT_T_V.L(prd,regg) ;
-
-EQPIMP_T.SCALE(prd,regg)$(IMPORT_T_V.L(prd,regg) lt 0)
-    = -IMPORT_T_V.L(prd,regg) ;
-
-* EQUATION 4.10
-EQPIMP_MOD.SCALE(prd,regg)$(IMPORT_MOD_V.L(prd,regg) gt 0)
-    = IMPORT_MOD_V.L(prd,regg) ;
-
-EQPIMP_MOD.SCALE(prd,regg)$(IMPORT_MOD_V.L(prd,regg) lt 0)
-    = -IMPORT_MOD_V.L(prd,regg) ;
-
-* EQUATION 4.11
+* EQUATION 4.8
 EQPROW.SCALE$(sum((reg,prd), EXPORT_ROW_V.L(reg,prd) ) gt 0   )
     = sum((reg,prd), EXPORT_ROW_V.L(reg,prd) ) ;
 
 EQPROW.SCALE$(sum((reg,prd), EXPORT_ROW_V.L(reg,prd) ) lt 0   )
     = -sum((reg,prd), EXPORT_ROW_V.L(reg,prd) ) ;
 
-* EQUATION 4.12 - SCALING IS NOT REQUIRED
+* EQUATION 4.9 - SCALING IS NOT REQUIRED
 
-* EQUATION 4.13 - SCALING IS NOT REQUIRED
+* EQUATION 4.10 - SCALING IS NOT REQUIRED
 
-* EQUATION 4.14 - SCALING IS NOT REQUIRED
+* EQUATION 4.11
+EQGDPCUR.SCALE(regg)$(GDPCUR_V.L(regg) gt 0)
+    = GDPCUR_V.L(regg) ;
+GDPCUR_V.SCALE(regg)$(GDPCUR_V.L(regg) gt 0)
+    = GDPCUR_V.L(regg) ;
+
+EQGDPCUR.SCALE(regg)$(GDPCUR_V.L(regg) lt 0)
+    = -GDPCUR_V.L(regg) ;
+GDPCUR_V.SCALE(regg)$(GDPCUR_V.L(regg) lt 0)
+    = -GDPCUR_V.L(regg) ;
+
+* EQUATION 4.12
+EQGDPCONST.SCALE(regg)$(GDPCONST_V.L(regg) gt 0)
+    = GDPCONST_V.L(regg) ;
+GDPCONST_V.SCALE(regg)$(GDPCONST_V.L(regg) gt 0)
+    = GDPCONST_V.L(regg) ;
+
+EQGDPCONST.SCALE(regg)$(GDPCONST_V.L(regg) lt 0)
+    = -GDPCONST_V.L(regg) ;
+GDPCONST_V.SCALE(regg)$(GDPCONST_V.L(regg) lt 0)
+    = -GDPCONST_V.L(regg) ;
+
+* EQUATION 4.11 - SCALING IS NOT REQUIRED
 
 $label end_bounds_and_scales
 
@@ -425,22 +435,21 @@ $if not '%phase%' == 'submodel_declaration' $goto submodel_declaration
 * variables. This happens because GDPDEF has been chosen to be a numéraire and
 * therefore is a fixed variable. EQGDPDEF has to be paired with PY_V
 * corresponding to the dropped EQPY (see explanation for EQUATION 4.1 for more
-* details). GAMS with automatically pair not matched variables and equations.
+* details). GAMS automatically pairs unmatched variables and equations.
 Model price_CGE_MCP
 /
 EQPY
 EQP.P_V
 EQPKL.PKL_V
-EQPVA.PVA_V
 EQPIU.PIU_V
 EQPC_H.PC_H_V
 EQPC_G.PC_G_V
 EQPC_I.PC_I_V
-EQPIMP_T.PIMP_T_V
-EQPIMP_MOD.PIMP_MOD_V
 EQPROW.PROW_V
 EQPAASCHE.PAASCHE_V
 EQLASPEYRES.LASPEYRES_V
+EQGDPCUR.GDPCUR_V
+EQGDPCONST.GDPCONST_V
 EQGDPDEF
 /;
 

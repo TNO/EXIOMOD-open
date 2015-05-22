@@ -370,7 +370,6 @@ Display
 tc_sv
 ;
 
-
 * *## Parameters of interregional trade ##
 
 * Relative share parameter for intermediate use of domestic products, versus
@@ -523,6 +522,11 @@ Variables
     IMPORT_ROW_V(prd,regg)          import from the rest of the world region
     TRADE_V(reg,prd,regg)           bi-lateral trade flows
     EXPORT_ROW_V(reg,prd)           export to the rest of the world region
+
+    PIMP_T_V(prd,regg)              aggregate total imported product price
+    PIMP_MOD_V(prd,regg)            aggregate imported product price for the
+                                    # aggregate imported from modeled regions
+    
 ;
 
 * Exogenous variables
@@ -561,6 +565,13 @@ Equations
                                 # region
     EQTRADE(reg,prd,regg)       demand for bi-lateral trade transactions
     EQEXP(reg,prd)              export supply to the rest of the world region
+    EQPIMP_T(prd,regg)          balance between specific imported product price
+                                # from the rest of the world and modeled regions
+                                # and total aggregated imported product price
+    EQPIMP_MOD(prd,regg)        balance between specific imported product price
+                                # from modeled regions and corresponding
+                                # aggregated imported product price
+    
 ;
 
 $label end_variables_equations_declaration
@@ -750,6 +761,29 @@ EQEXP(reg,prd)..
     =E=
     gamma_exp(reg,prd) * X_V(reg,prd) ;
 
+* EQUATION 3.15: Balance between total aggregated imported price and the price
+* of the rest of the world and modeled regions. The aggregate price is different
+* for each product (prd) in each importing region (regg) and is a weighed
+* average of the price of the rest of the world and of the aggregated price of
+* import from modeled regions, where weights are defined as corresponding
+* demands for import from rest of the world and modeled regions.
+EQPIMP_T(prd,regg)..
+    PIMP_T_V(prd,regg) * IMPORT_T_V(prd,regg)
+    =E=
+    PIMP_MOD_V(prd,regg) * IMPORT_MOD_V(prd,regg) +
+    PROW_V * IMPORT_ROW_V(prd,regg) ;
+
+* EQUATION 3.16: Balance between specific imported product price and aggregated
+* imported product price. The aggregate price is different for each product
+* (prd) in each importing region (regg) and is a weighed average of specific
+* product prices of exporting regions, where weights are defined as bi-lateral
+* trade flows between the importing regions and the corresponding exporting
+* region.
+EQPIMP_MOD(prd,regg)..
+    PIMP_MOD_V(prd,regg) * IMPORT_MOD_V(prd,regg)
+    =E=
+    sum(reg, TRADE_V(reg,prd,regg) * P_V(reg,prd) ) ;
+
 $label end_equations_definition
 
 * ===== Phase 6: Define levels, bounds and fixed variables, scale equations ====
@@ -794,6 +828,14 @@ EXPORT_ROW_V.FX(reg,prd)$(EXPORT_ROW(reg,prd) eq 0)   = 0 ;
 * Exogenous variables
 * Exogenous variables are fixed to their calibrated value.
 SV_ROW_V.FX(prd,regg)             = SV_ROW(prd,regg) ;
+
+* Price variables: level of basic prices is set to one, which also corresponds
+* to the price level used in calibration. If the the real variable to which the
+* price level is linked is fixed to zero, the price is fixed to one. For zero
+* level variables any price level will be a solution and fixing it to one helps
+* the solver. Additionally, price of the numéraire is fixed.
+PIMP_T_V.L(prd,regg)   = 1 ;
+PIMP_MOD_V.L(prd,regg) = 1 ;
 
 * ======================= Scale variables and equations ========================
 
@@ -965,6 +1007,20 @@ SV_ROW_V.SCALE(prd,regg)$(SV_ROW_V.L(prd,regg) gt 0)
 SV_ROW_V.SCALE(prd,regg)$(SV_ROW_V.L(prd,regg) lt 0)
     = -SV_ROW_V.L(prd,regg) ;
 
+* EQUATION 3.15
+EQPIMP_T.SCALE(prd,regg)$(IMPORT_T_V.L(prd,regg) gt 0)
+    = IMPORT_T_V.L(prd,regg) ;
+
+EQPIMP_T.SCALE(prd,regg)$(IMPORT_T_V.L(prd,regg) lt 0)
+    = -IMPORT_T_V.L(prd,regg) ;
+
+* EQUATION 3.16
+EQPIMP_MOD.SCALE(prd,regg)$(IMPORT_MOD_V.L(prd,regg) gt 0)
+    = IMPORT_MOD_V.L(prd,regg) ;
+
+EQPIMP_MOD.SCALE(prd,regg)$(IMPORT_MOD_V.L(prd,regg) lt 0)
+    = -IMPORT_MOD_V.L(prd,regg) ;
+
 $label end_bounds_and_scales
 
 * ======================== Phase 7: Declare sub-models  ========================
@@ -1009,6 +1065,8 @@ EQIMP_MOD.IMPORT_MOD_V
 EQIMP_ROW.IMPORT_ROW_V
 EQTRADE.TRADE_V
 EQEXP.EXPORT_ROW_V
+EQPIMP_T.PIMP_T_V
+EQPIMP_MOD.PIMP_MOD_V
 /;
 
 $label submodel_declaration

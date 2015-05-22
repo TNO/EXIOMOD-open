@@ -52,7 +52,6 @@ Parameters
     X(reg,prd)                  output vector by product (volume)
     INTER_USE_T(prd,regg,ind)   intermediate use on product level (volume)
     KLS(reg,va)                 supply of production factors (volume)
-    GDP(regg)                   gross domestic product (value)
 
     tc_ind(prd,regg,ind)        tax and subsidies on products rates for
                                 # industries (relation in value)
@@ -77,6 +76,7 @@ Parameters
 
     tc_ind_0(prd,regg,ind)      calibrated tax and subsidies on products rates
                                 # for industries (relation in value)
+    ;
 $label end_parameters_declaration
 
 * ====================== Phase 3: Definition of parameters =====================
@@ -149,19 +149,6 @@ KLS(reg,kl)
 Display
 KLS
 ;
-
-* Gross domestic product in each region (regg). GDP calculated as difference
-* between total output and intermediate inputs plus taxes on products paid by
-* final consumers.
-GDP(regg)
-    = sum(ind, Y(regg,ind) ) -
-    sum((prd,ind), INTER_USE_T(prd,regg,ind) ) +
-    sum((prd,fd), FINAL_USE_dt(prd,regg,fd) ) ;
-
-Display
-GDP
-;
-
 
 *## Tax rates ##
 
@@ -255,8 +242,8 @@ Variables
                                     # product level
     VA_V(regg,ind)                  use of aggregated production factors
     KL_V(reg,va,regg,ind)           use of specific production factors
-    GDPCUR_V(regg)                  GDP in current prices (value)
-    GDPCONST_V(regg)                GDP in constant prices (volume)
+    
+    PVA_V(regg,ind)                 aggregate production factors price
 ;
 
 * Exogenous variables
@@ -281,9 +268,11 @@ Equations
     EQVA(regg,ind)              demand for aggregated production factors
     EQKL(reg,va,regg,ind)       demand for specific production factors
 
-    EQGDPCUR(regg)              GDP in current prices (value)
-    EQGDPCONST(regg)            GDP in constant prices (volume)
     EQOBJ                       artificial objective function
+
+    EQPVA(regg,ind)             balance between specific production factors
+                                # price and aggregate production factors price
+
 ;
 
 $label end_variables_equations_declaration
@@ -361,39 +350,22 @@ EQKL(reg,kl,regg,ind)$VALUE_ADDED(reg,kl,regg,ind)..
     ( PKL_V(reg,kl) /
     ( fprod(kl,regg,ind) * PVA_V(regg,ind) ) )**( -elasKL(regg,ind) ) ;
 
-
-* EQUATION 2.6: Gross domestic product calculated in current prices. GDP is
-* calculated separately for each modeled region (regg).
-EQGDPCUR(regg)..
-    GDPCUR_V(regg)
-    =E=
-    sum(ind, Y_V(regg,ind) * PY_V(regg,ind) ) -
-    sum((prd,ind), INTER_USE_T_V(prd,regg,ind) * PIU_V(prd,regg,ind) ) +
-    sum(prd, CONS_H_T_V(prd,regg) * PC_H_V(prd,regg) * tc_h(prd,regg) ) +
-    sum(prd, CONS_G_T_V(prd,regg) * PC_G_V(prd,regg) * tc_g(prd,regg) ) +
-    sum(prd, GFCF_T_V(prd,regg) * PC_I_V(prd,regg) * tc_gfcf(prd,regg) ) +
-    sum((reg,prd), SV_V(reg,prd,regg) * P_V(reg,prd) * tc_sv(prd,regg) ) +
-    sum(prd, SV_ROW_V(prd,regg) * PROW_V * tc_sv(prd,regg) ) ;
-
-* EQUATION 2.7: Gross domestic product calculated in constant prices of the
-* base year. GDP is calculated separately for each modeled region (regg).
-EQGDPCONST(regg)..
-    GDPCONST_V(regg)
-    =E=
-    sum(ind, Y_V(regg,ind) ) -
-    sum((prd,ind), INTER_USE_T_V(prd,regg,ind) ) +
-    sum(prd, CONS_H_T_V(prd,regg) * tc_h_0(prd,regg) ) +
-    sum(prd, CONS_G_T_V(prd,regg) * tc_g_0(prd,regg) ) +
-    sum(prd, GFCF_T_V(prd,regg) * tc_gfcf_0(prd,regg) ) +
-    sum((reg,prd), SV_V(reg,prd,regg) * tc_sv_0(prd,regg) ) +
-    sum(prd, SV_ROW_V(prd,regg) * tc_sv_0(prd,regg) ) ;
-
-* EQUATION 2.8: Artificial objective function: only relevant for users of conopt
+* EQUATION 2.6: Artificial objective function: only relevant for users of conopt
 * solver in combination with NLP type of mathematical problem.
 EQOBJ..
     OBJ
     =E=
     1 ;
+
+* EQUATION 2.7: Balance between specific production factors price and aggregate
+* production factors price. The aggregate price is different in each industry
+* (ind) in each region (regg) and is a weighted average of the price of specific
+* production factors, where weights are defined as demand by the industry for
+* corresponding production factors.
+EQPVA(regg,ind)..
+    PVA_V(regg,ind) * VA_V(regg,ind)
+    =E=
+    sum((reg,kl), PKL_V(reg,kl) * KL_V(reg,kl,regg,ind)) ;
 
 $label end_equations_definition
 
@@ -420,14 +392,16 @@ KL_V.L(reg,kl,regg,ind) = VALUE_ADDED(reg,kl,regg,ind) ;
 VA_V.FX(regg,ind)$(sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) eq 0) = 0 ;
 KL_V.FX(reg,kl,regg,ind)$(VALUE_ADDED(reg,kl,regg,ind) eq 0 )         = 0 ;
 
-GDPCUR_V.L(regg)   = GDP(regg) ;
-GDPCONST_V.L(regg) = GDP(regg) ;
-GDPCUR_V.FX(regg)$( GDP(regg) eq 0 )   = 0 ;
-GDPCONST_V.FX(regg)$( GDP(regg) eq 0 ) = 0 ;
-
 * Exogenous variables
 * Exogenous variables are fixed to their calibrated value.
 KLS_V.FX(reg,kl)                  = KLS(reg,kl) ;
+
+* Price variables: level of basic prices is set to one, which also corresponds
+* to the price level used in calibration. If the the real variable to which the
+* price level is linked is fixed to zero, the price is fixed to one. For zero
+* level variables any price level will be a solution and fixing it to one helps
+* the solver. Additionally, price of the numéraire is fixed.
+PVA_V.L(regg,ind)      = 1 ;
 
 * ======================= Scale variables and equations ========================
 
@@ -499,26 +473,11 @@ KL_V.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) lt 0)
     = -KL_V.L(reg,kl,regg,ind) ;
 
 * EQUATION 2.6
-EQGDPCUR.SCALE(regg)$(GDPCUR_V.L(regg) gt 0)
-    = GDPCUR_V.L(regg) ;
-GDPCUR_V.SCALE(regg)$(GDPCUR_V.L(regg) gt 0)
-    = GDPCUR_V.L(regg) ;
+EQPVA.SCALE(reg,ind)$(VA_V.L(reg,ind) gt 0)
+    = VA_V.L(reg,ind) ;
 
-EQGDPCUR.SCALE(regg)$(GDPCUR_V.L(regg) lt 0)
-    = -GDPCUR_V.L(regg) ;
-GDPCUR_V.SCALE(regg)$(GDPCUR_V.L(regg) lt 0)
-    = -GDPCUR_V.L(regg) ;
-
-* EQUATION 2.7
-EQGDPCONST.SCALE(regg)$(GDPCONST_V.L(regg) gt 0)
-    = GDPCONST_V.L(regg) ;
-GDPCONST_V.SCALE(regg)$(GDPCONST_V.L(regg) gt 0)
-    = GDPCONST_V.L(regg) ;
-
-EQGDPCONST.SCALE(regg)$(GDPCONST_V.L(regg) lt 0)
-    = -GDPCONST_V.L(regg) ;
-GDPCONST_V.SCALE(regg)$(GDPCONST_V.L(regg) lt 0)
-    = -GDPCONST_V.L(regg) ;
+EQPVA.SCALE(reg,ind)$(VA_V.L(reg,ind) lt 0)
+    = -VA_V.L(reg,ind) ;
 
 * EXOGENOUS VARIBLES
 KLS_V.SCALE(reg,kl)$(KLS_V.L(reg,kl) gt 0)
@@ -559,8 +518,7 @@ EQY.Y_V
 EQINTU_T.INTER_USE_T_V
 EQVA.VA_V
 EQKL.KL_V
-EQGDPCUR.GDPCUR_V
-EQGDPCONST.GDPCONST_V
+EQPVA.PVA_V
 /
 ;
 
