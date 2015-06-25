@@ -377,14 +377,14 @@ tc_sv
 * each importing region (regg).
 phi_dom(prd,regg,ind)$INTER_USE_D(prd,regg,ind)
     = INTER_USE_D(prd,regg,ind) / INTER_USE_T(prd,regg,ind) *
-    ( ( 1 + tc_ind(prd,regg,ind) ) / 1 )**( -elasIU_DM(prd,regg,ind) ) ;
+    ( 1 / 1 )**( -elasIU_DM(prd,regg,ind) ) ;
 
 * Relative share parameter for intermediate use of aggregated imported products,
 * versus domestic products, for each product (prd) in each industry (ind) in
 * each importing region (regg).
 phi_imp(prd,regg,ind)$INTER_USE_M(prd,regg,ind)
     = INTER_USE_M(prd,regg,ind) / INTER_USE_T(prd,regg,ind) *
-    ( ( 1 + tc_ind(prd,regg,ind) ) / 1 )**( -elasIU_DM(prd,regg,ind) ) ;
+    ( 1 / 1 )**( -elasIU_DM(prd,regg,ind) ) ;
 
 Display
 phi_dom
@@ -397,42 +397,42 @@ phi_imp
 * region (regg).
 theta_h_dom(prd,regg)$CONS_H_D(prd,regg)
     = CONS_H_D(prd,regg) / CONS_H_T(prd,regg) *
-    ( ( 1 + tc_h(prd,regg) ) / 1 )**( -elasFU_DM(prd,regg) ) ;
+    ( 1 / 1 )**( -elasFU_DM(prd,regg) ) ;
 
 * Relative share parameter for household consumption of aggregated imported
 * products, versus domestic products, for each product (prd) in each importing
 * region (regg).
 theta_h_imp(prd,regg)$CONS_H_M(prd,regg)
     = CONS_H_M(prd,regg) / CONS_H_T(prd,regg) *
-    ( ( 1 + tc_h(prd,regg) ) / 1 )**( -elasFU_DM(prd,regg) ) ;
+    ( 1 / 1 )**( -elasFU_DM(prd,regg) ) ;
 
 * Relative share parameter for government consumption of domestic products,
 * versus aggregated imported products, for each product (prd) in each importing
 * region (regg).
 theta_g_dom(prd,regg)$CONS_G_D(prd,regg)
     = CONS_G_D(prd,regg) / CONS_G_T(prd,regg) *
-    ( ( 1 + tc_g(prd,regg) ) / 1 )**( -elasFU_DM(prd,regg) ) ;
+    ( 1 / 1 )**( -elasFU_DM(prd,regg) ) ;
 
 * Relative share parameter for government consumption of aggregated imported
 * products, versus domestic products, for each product (prd) in each importing
 * region (regg).
 theta_g_imp(prd,regg)$CONS_G_M(prd,regg)
     = CONS_G_M(prd,regg) / CONS_G_T(prd,regg) *
-    ( ( 1 + tc_g(prd,regg) ) / 1 )**( -elasFU_DM(prd,regg) ) ;
+    ( 1 / 1 )**( -elasFU_DM(prd,regg) ) ;
 
 * Relative share parameter for gross fixed capital formation of domestic
 * products, versus aggregated imported products, for each product (prd) in each
 * importing region (regg).
 theta_gfcf_dom(prd,regg)$GFCF_D(prd,regg)
     = GFCF_D(prd,regg) / GFCF_T(prd,regg) *
-    ( ( 1 + tc_gfcf(prd,regg) ) / 1 )**( -elasFU_DM(prd,regg) ) ;
+    ( 1 / 1 )**( -elasFU_DM(prd,regg) ) ;
 
 * Relative share parameter for gross fixed capital formation of aggregated
 * imported products, versus domestic products, for each product (prd) in each
 *importing region (regg).
 theta_gfcf_imp(prd,regg)$GFCF_M(prd,regg)
     = GFCF_M(prd,regg) / GFCF_T(prd,regg) *
-    ( ( 1 + tc_gfcf(prd,regg) ) / 1 )**( -elasFU_DM(prd,regg) ) ;
+    ( 1 / 1 )**( -elasFU_DM(prd,regg) ) ;
 
 * Share coefficient for stock changes in each product (prd) from each region
 * of origin (reg) to each importing region (regg).
@@ -526,7 +526,7 @@ Variables
     PIMP_T_V(prd,regg)              aggregate total imported product price
     PIMP_MOD_V(prd,regg)            aggregate imported product price for the
                                     # aggregate imported from modeled regions
-    
+
 ;
 
 * Exogenous variables
@@ -571,7 +571,7 @@ Equations
     EQPIMP_MOD(prd,regg)        balance between specific imported product price
                                 # from modeled regions and corresponding
                                 # aggregated imported product price
-    
+
 ;
 
 $label end_variables_equations_declaration
@@ -589,8 +589,7 @@ EQINTU_D(prd,regg,ind)..
     INTER_USE_D_V(prd,regg,ind)
     =E=
     INTER_USE_T_V(prd,regg,ind) * phi_dom(prd,regg,ind) *
-    ( P_V(regg,prd) /
-    ( PIU_V(prd,regg,ind) * ( 1 + tc_ind(prd,regg,ind) ) ) )**
+    ( P_V(regg,prd) / PIU_V(prd,regg,ind) )**
     ( -elasIU_DM(prd,regg,ind) ) ;
 
 * EQUAION 3.2: Demand for aggregated imported intermediate inputs. The demand
@@ -603,8 +602,7 @@ EQINTU_M(prd,regg,ind)..
     INTER_USE_M_V(prd,regg,ind)
     =E=
     INTER_USE_T_V(prd,regg,ind) * phi_imp(prd,regg,ind) *
-    ( PIMP_T_V(prd,regg) /
-    ( PIU_V(prd,regg,ind) * ( 1 + tc_ind(prd,regg,ind) ) ) )**
+    ( PIMP_T_V(prd,regg) / PIU_V(prd,regg,ind) )**
     ( -elasIU_DM(prd,regg,ind) ) ;
 
 
@@ -618,8 +616,7 @@ EQCONS_H_D(prd,regg)..
     CONS_H_D_V(prd,regg)
     =E=
     CONS_H_T_V(prd,regg) * theta_h_dom(prd,regg) *
-    ( P_V(regg,prd) /
-    ( PC_H_V(prd,regg) * ( 1 + tc_h(prd,regg) ) ) )**
+    ( P_V(regg,prd) / PC_H_V(prd,regg) )**
     ( -elasFU_DM(prd,regg) ) ;
 
 * EQUATION 3.4: Household demand for aggregated imported products. The demand
@@ -632,9 +629,8 @@ EQCONS_H_M(prd,regg)..
     CONS_H_M_V(prd,regg)
     =E=
     CONS_H_T_V(prd,regg) * theta_h_imp(prd,regg) *
-    ( PIMP_T_V(prd,regg) /
-    ( PC_H_V(prd,regg) * ( 1 + tc_h(prd,regg) ) ) )
-    **( -elasFU_DM(prd,regg) ) ;
+    ( PIMP_T_V(prd,regg) / PC_H_V(prd,regg) )**
+    ( -elasFU_DM(prd,regg) ) ;
 
 * EQUATION 3.5: Government demand for domestically produced products. The demand
 * function follows CES form, where demand by government in each region (regg)
@@ -646,8 +642,7 @@ EQCONS_G_D(prd,regg)..
     CONS_G_D_V(prd,regg)
     =E=
     CONS_G_T_V(prd,regg) * theta_g_dom(prd,regg) *
-    ( P_V(regg,prd) /
-    ( PC_G_V(prd,regg) * ( 1 + tc_g(prd,regg) ) ) )**
+    ( P_V(regg,prd) / PC_G_V(prd,regg) )**
     ( -elasFU_DM(prd,regg) ) ;
 
 * EQUATION 3.6: Government demand for aggregated imported products. The demand
@@ -660,9 +655,8 @@ EQCONS_G_M(prd,regg)..
     CONS_G_M_V(prd,regg)
     =E=
     CONS_G_T_V(prd,regg) * theta_g_imp(prd,regg) *
-    ( PIMP_T_V(prd,regg) /
-    ( PC_G_V(prd,regg) * ( 1 + tc_g(prd,regg) ) ) )
-    **( -elasFU_DM(prd,regg) ) ;
+    ( PIMP_T_V(prd,regg) / PC_G_V(prd,regg) )**
+    ( -elasFU_DM(prd,regg) ) ;
 
 * EQUATION 3.7: Investment agent demand for domestically produced products. The
 * demand function follows CES form, where demand by investment agent in each
@@ -674,8 +668,7 @@ EQGFCF_D(prd,regg)..
     GFCF_D_V(prd,regg)
     =E=
     GFCF_T_V(prd,regg) * theta_gfcf_dom(prd,regg) *
-    ( P_V(regg,prd) /
-    ( PC_I_V(prd,regg) * ( 1 + tc_gfcf(prd,regg) ) ) )**
+    ( P_V(regg,prd) / PC_I_V(prd,regg) )**
     ( -elasFU_DM(prd,regg) ) ;
 
 * EQUATION 3.8: Investment agent demand for aggregated imported products. The
@@ -688,9 +681,8 @@ EQGFCF_M(prd,regg)..
     GFCF_M_V(prd,regg)
     =E=
     GFCF_T_V(prd,regg) * theta_gfcf_imp(prd,regg) *
-    ( PIMP_T_V(prd,regg) /
-    ( PC_I_V(prd,regg) * ( 1 + tc_gfcf(prd,regg) ) ) )
-    **( -elasFU_DM(prd,regg) ) ;
+    ( PIMP_T_V(prd,regg) / PC_I_V(prd,regg) )**
+    ( -elasFU_DM(prd,regg) ) ;
 
 * EQUATION 3.9: Stock changes of products. Stock changes of each  product (prd)
 * produced in each region (reg) imported to each region (regg) is a share of the
