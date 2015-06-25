@@ -10,6 +10,16 @@ $offtext
 
 $include configuration.gms
 
+$include library/scr/00_simulation_prepare.gms
+
+$include %project%/00-principal/scr/01_external_data_prepare.gms
+
+$setglobal scenario FFSub
+
+$include %project%/00-principal/scr/run_simulation.gms
+
+$exit
+
 * Execute data-creation file
 Execute "if not exist 00_sp.g00 gams library/scr/00_simulation_prepare.gms s=00_sp gdx=00_sp.gdx o=00_simulation_prepare.lst lo=4 ide=1 pw=80 ps=0 --db_check=%db_check% --project=%project% --agg_check=%agg_check% --base_year=%base_year% --base_cur=%base_cur%"  ;
 

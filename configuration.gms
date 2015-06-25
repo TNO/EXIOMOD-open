@@ -24,7 +24,7 @@ $if not set db_check     $setglobal      db_check        'yes'
 
 * name of the project folder, you can just keep it as project or give a more
 * meaningful name
-$if not set project      $setglobal      project         'project_example'
+$if not set project      $setglobal      project         'project_ENVLinkages'
 
 * aggregation checking: set 'yes' to check aggregation schemes between database
 * and model set on consistency
