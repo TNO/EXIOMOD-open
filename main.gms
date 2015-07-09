@@ -12,11 +12,19 @@ $include configuration.gms
 
 $include library/scr/00_simulation_prepare.gms
 
-$include %project%/00-principal/scr/01_external_data_prepare.gms
+*$include %project%/00-principal/scr/01_external_data_prepare.gms
 
-$setglobal scenario FFSub
+*$setglobal scenario DirectEffect
+*$include %project%/00-principal/scr/run_simulation_InternalWS_step1.gms
 
-$include %project%/00-principal/scr/run_simulation.gms
+*$setglobal scenario IOEffect
+*$include %project%/00-principal/scr/run_simulation_InternalWS_step2.gms
+
+*$setglobal scenario DemandEffect
+*$include %project%/00-principal/scr/run_simulation_InternalWS_step3.gms
+
+$setglobal scenario TradeEffect
+$include %project%/00-principal/scr/run_simulation_InternalWS_step4.gms
 
 $exit
 
