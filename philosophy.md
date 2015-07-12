@@ -37,16 +37,18 @@ Besides formal documentation of the structure (equations), EM-PLUS mainly relies
 A block of reading guide in the beginning of the code provides an overview of the structure of code, reference to other similar codes and other general information about the code. Detailed explanations of each element of the code are given right above or next to the elements themselves. For example, consider the definition of an equation in the file `06_module_production.gms` 
 
 ```
-* EQUATION 1.1: Product market balance: product output is equal to total uses,
-* including intermediate use, household consumption, government consumption,
-* gross fixed capital formation, stock changes and, in case of an open economy,
-* export. Product market balance is expressed in volume. Product market balance
+* EQUATION 2.1: Product market balance: product output is equal to total uses,
+* including domestic intermediate use, household consumption, government
+* consumption, gross fixed capital formation, trade with modeled regions, stock
+* changes and, in case of an open economy, export to the rest of the world
+* region. Product market balance is expressed in volume. Product market balance
 * should hold for each product (prd) produced in each region (reg).
 EQBAL(reg,prd)..
-    sum((regg,ind), INTER_USE_V(reg,prd,regg,ind) ) +
-    sum((regg), CONS_H_V(reg,prd,regg) ) +
-    sum((regg), CONS_G_V(reg,prd,regg) ) +
-    sum((regg), GFCF_V(reg,prd,regg) ) +
+    sum(ind, INTER_USE_D_V(prd,reg,ind) ) +
+    CONS_H_D_V(prd,reg) +
+    CONS_G_D_V(prd,reg) +
+    GFCF_D_V(prd,reg) +
+    sum(regg, TRADE_V(reg,prd,regg) ) +
     sum((regg), SV_V(reg,prd,regg) ) +
     EXPORT_ROW_V(reg,prd)
     =E=
