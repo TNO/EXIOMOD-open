@@ -1,11 +1,11 @@
 
 $ontext
 
-File:   read-cepii-data.gms
+File:   01-read-cepii-data.gms
 Author: Jinxue Hu
 Date:   18-02-2015
 
-This script reads in the baseline data from CEPII (version 2.1).
+This script reads in the baseline data from CEPII (version 2.2).
 
 
 PARAMETER NAME
@@ -19,8 +19,27 @@ Resulting parameters are named according to:
 
     3. Extension "_orig" is added to indicate that it is not processed
 
-
 Example of resulting parameter: PRODKL_CEPII_orig
+
+
+INPUTS
+    %project%\library_CEPII\data\CEPII_baseline_database_v2.2.xls
+
+OUTPUTS
+    GDP_CEPII_orig(reg_CP,year_CP)      cepii GDP in original classification
+    PRODKL_CEPII_orig(reg_CP,year_CP)   cepii capital-labour productivity in
+                                        original classification
+    PRODE_CEPII_orig(reg_CP,year_CP)    cepii energy productivity in original
+                                        classification
+    KS_CEPII_orig(reg_CP,year_CP)       cepii capital stock in original
+                                        classification
+    LS_CEPII_orig(reg_CP,year_CP)       cepii labour supply in original
+                                        classification
+    E_CEPII_orig(reg_CP,year_CP)        cepii primary energy consumption in
+                                        original classification
+    POP_CEPII_orig(reg_CP,year_CP)      cepii population in thousands in
+                                        original classification
+
 $offtext
 
 $oneolcom
@@ -32,6 +51,7 @@ sets
     reg_CP      list of regions in cepii data
 /
 $include %project%\library_CEPII\sets\regions_cepii.txt
+$include %project%\library_CEPII\sets\regions_cepii_missing.txt
 /
 
     year_CP     list of years in cepii data
@@ -52,9 +72,9 @@ Parameters
                                             # excel and in gams
 ;
 
-$libinclude xlimport GDP_CP_data            %project%\library_CEPII\data\CEPII_baseline_database_v2.1.xls    GDP!b1:bw442
-$libinclude xlimport productivity_CP_data   %project%\library_CEPII\data\CEPII_baseline_database_v2.1.xls    productivity!b1:bv295
-$libinclude xlimport factors_CP_data        %project%\library_CEPII\data\CEPII_baseline_database_v2.1.xls    factors!b1:bw1177
+$libinclude xlimport GDP_CP_data            %project%\library_CEPII\data\CEPII_baseline_database_v2.2.xls    GDP!b1:bw442
+$libinclude xlimport productivity_CP_data   %project%\library_CEPII\data\CEPII_baseline_database_v2.2.xls    productivity!b1:bv295
+$libinclude xlimport factors_CP_data        %project%\library_CEPII\data\CEPII_baseline_database_v2.2.xls    factors!b1:bw1177
 
 tot_productivity
             = sum((reg_CP,year_CP), productivity_CP_data(reg_CP,"Energy productivity",year_CP) )
@@ -77,6 +97,8 @@ Parameters
                                         # classification
     E_CEPII_orig(reg_CP,year_CP)        cepii primary energy consumption in
                                         # original classification
+    POP_CEPII_orig(reg_CP,year_CP)      cepii population in number of people in
+                                        # original classification
 ;
 
 GDP_CEPII_orig(reg_CP,year_CP)     = GDP_CP_data(reg_CP,"GDP","million constant 2005 USD",year_CP) ;
@@ -85,3 +107,5 @@ PRODE_CEPII_orig(reg_CP,year_CP)   = productivity_CP_data(reg_CP,"Energy product
 KS_CEPII_orig(reg_CP,year_CP)      = factors_CP_data(reg_CP,"Capital stocks","Billion constant 2005 USD",year_CP) ;
 LS_CEPII_orig(reg_CP,year_CP)      = factors_CP_data(reg_CP,"Economically active population","Thousands",year_CP) ;
 E_CEPII_orig(reg_CP,year_CP)       = factors_CP_data(reg_CP,"Primary energy consumption","Thousands barrels of oil equivalent",year_CP) ;
+POP_CEPII_orig(reg_CP,year_CP)     = factors_CP_data(reg_CP,"Population","Thousands",year_CP) * 1000 ;
+Display POP_CEPII_orig ;

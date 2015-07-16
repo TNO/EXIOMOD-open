@@ -1,0 +1,3 @@
+CY	'Cyprus'
+SI	'Slovenia'
+TW	'Taiwan'

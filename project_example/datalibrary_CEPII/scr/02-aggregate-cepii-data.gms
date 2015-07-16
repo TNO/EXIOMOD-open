@@ -1,11 +1,11 @@
 
 $ontext
 
-File:   read-cepii-data.gms
+File:   02-aggregate-cepii-data.gms
 Author: Jinxue Hu
 Date:   18-02-2015
 
-This script processes the baseline data from CEPII (version 2.1).
+This script processes the baseline data from CEPII (version 2.2).
 
 
 PARAMETER NAME
@@ -23,22 +23,64 @@ Resulting parameters are named according to:
 
 Example of resulting parameter: PRODKL_CEPII_change
 
+
+INPUTS
+    GDP_CEPII_orig(reg_CP,year_CP)      cepii GDP in original classification
+    PRODKL_CEPII_orig(reg_CP,year_CP)   cepii capital-labour productivity in
+                                        original classification
+    PRODE_CEPII_orig(reg_CP,year_CP)    cepii energy productivity in original
+                                        classification
+    KS_CEPII_orig(reg_CP,year_CP)       cepii capital stock in original
+                                        classification
+    LS_CEPII_orig(reg_CP,year_CP)       cepii labour supply in original
+                                        classification
+    E_CEPII_orig(reg_CP,year_CP)        cepii primary energy consumption in
+                                        original classification
+    POP_CEPII_orig(reg_CP,year_CP)      cepii population in thousands in
+                                        original classification
+
+OUTPUTS
+    GDP_CEPII_change(reg,year)          annual change in GDP based on cepii data
+    PRODKL_CEPII_change(reg,year)       annual change in capital-labour
+                                        productivity based on cepii data
+    PRODE_CEPII_change(reg,year)        annual change in energy productivity
+                                        based on cepii data
+    KS_CEPII_change(reg,year)           annual change in capital stock based on
+                                        cepii data
+    LS_CEPII_change(reg,year)           annual change in labour supply based on
+                                        cepii data
+    E_CEPII_change(reg,year)            annual change in energy consumption
+                                        based on cepii data
+    POP_CEPII_level(reg,year)           cepii population in thousands model
+                                        classification
+
+annual change is expressed in t/(t-1)-1
 $offtext
 
 $oneolcom
 $eolcom #
+
+
 * ==================== Declaration of aggregation schemes ======================
 Sets
 
     reg_CP_aggr(reg_CP,reg)         aggregation scheme for cepii regions
 /
 $include %project%\library_CEPII\sets\aggregation\regions_cepii_to_model.txt
+$include %project%\library_CEPII\sets\aggregation\regions_cepii_missing_to_model.txt
 /
 
     year_CP_aggr(year_CP,year)      aggregation scheme for cepii years
 /
 $include %project%\library_CEPII\sets\aggregation\years_cepii_to_model.txt
 /
+
+    reg_CP_miss       regions missing in Cepii regions
+/
+$include %project%\library_CEPII\sets\regions_cepii_missing.txt
+/
+    reg_CP_comp(*,*)  comparable regions of missing regions
+/ SI.SVK, TW.CHN, CY.MLT, SI.SK, TW.CN, CY.MT /
 ;
 
 
@@ -55,6 +97,7 @@ Parameters
     KS_CP_yr(reg_CP,year)       cepii capital stock in model years
     LS_CP_yr(reg_CP,year)       cepii labour supply in model years
     E_CP_yr(reg_CP,year)        cepii energy consumption in model years
+    POP_CP_yr(reg_CP,year)      cepii population in model years
 ;
 
 GDP_CP_yr(reg_CP,year)$
@@ -81,6 +124,28 @@ E_CP_yr(reg_CP,year)$
     sum(reg, reg_CP_aggr(reg_CP,reg) )
         = sum(year_CP$year_CP_aggr(year_CP,year), E_CEPII_orig(reg_CP,year_CP) ) ;
 
+POP_CP_yr(reg_CP,year)$
+    sum(reg, reg_CP_aggr(reg_CP,reg) )
+        = sum(year_CP$year_CP_aggr(year_CP,year), POP_CEPII_orig(reg_CP,year_CP) ) ;
+
+
+* ================= Gapfilling of missing regions for population ===============
+
+* Fill gaps in base year
+POP_CP_yr("CY","2007")  =    757916 ;
+POP_CP_yr("SI","2007")  =   2010377 ;
+POP_CP_yr("TW","2007")  =  22918000 ;
+
+* Create time trend for missing regions
+POP_CP_yr(reg_CP,year)$
+    (reg_CP_miss(reg_CP) and ord(year) gt 7 )
+        = POP_CP_yr(reg_CP,"2007")
+        * sum(regg_CP$(reg_CP_comp(reg_CP,regg_CP) and POP_CP_yr(regg_CP,year-1)),
+            POP_CP_yr(regg_CP,year) / POP_CP_yr(regg_CP,year-1) ) ;
+
+* Remove Taiwan population from China to avoid double counting
+POP_CP_yr("CHN",year) = POP_CP_yr("CHN",year) - POP_CP_yr("TW",year) ;
+
 
 * =========================== Aggregation of regions ===========================
 
@@ -93,13 +158,15 @@ Parameters
     KS_CP(reg,year)         cepii capital stock in model classification
     LS_CP(reg,year)         cepii labour supply in model classification
     E_CP(reg,year)          cepii energy consumption in model classification
+    POP_CEPII_level(reg,year)   cepii population in model classification
 ;
 
 GDP_CP(reg,year)    = sum(reg_CP$reg_CP_aggr(reg_CP,reg), GDP_CP_yr(reg_CP,year) ) ;
 KS_CP(reg,year)     = sum(reg_CP$reg_CP_aggr(reg_CP,reg), KS_CP_yr(reg_CP,year) ) ;
 LS_CP(reg,year)     = sum(reg_CP$reg_CP_aggr(reg_CP,reg), LS_CP_yr(reg_CP,year) ) ;
 E_CP(reg,year)      = sum(reg_CP$reg_CP_aggr(reg_CP,reg), E_CP_yr(reg_CP,year) ) ;
-
+POP_CEPII_level(reg,year)
+                    = sum(reg_CP$reg_CP_aggr(reg_CP,reg), POP_CP_yr(reg_CP,year) ) ;
 
 * ====================== Conversion into annual change =========================
 
@@ -220,19 +287,11 @@ $libinclude xldump E_CEPII_change      cepii_baseline_data.xlsx E_CEPII_change
 $offtext
 
 
-* ************************* Gap filling missing countries **********************
+* ************** Gap filling missing countries for growth rates ****************
 
 * Three EXIOBASE countries are missing in the CEPII dataset (reg_CP_miss).
-* These are SI TW CY, assign the value of a comparable country (reg_CP_comp).
+* These are SI TW CY, assign the value of a comparable country (reg_CP_comp).   
 * This is only done when model regions include any of these three countries.
-
-Sets
-    reg_CP_miss       regions missing in Cepii regions
-    / SI, TW, CY /
-
-    reg_CP_comp(*,*)  comparable regions of missing regions
-    / SI.SK, TW.CN, CY.MT /
-;
 
 
 Loop(reg$reg_CP_miss(reg),
@@ -244,8 +303,19 @@ Loop(reg$reg_CP_miss(reg),
         GDP_CEPII_change(reg,year)     = sum(regg$reg_CP_comp(reg,regg), GDP_CEPII_change(regg,year) ) ;
 ) ;
 
+
+* *********************** Baseyear should have value one ***********************
+
+KS_CEPII_change(reg,"2007")      = 1 ;
+LS_CEPII_change(reg,"2007")      = 1 ;
+PRODKL_CEPII_change(reg,"2007")  = 1 ;
+PRODE_CEPII_change(reg,"2007")   = 1 ;
+E_CEPII_change(reg,"2007")       = 1 ;
+GDP_CEPII_change(reg,"2007")     = 1 ;
+
 Display KS_CEPII_change
         LS_CEPII_change
         PRODKL_CEPII_change
         PRODE_CEPII_change
+        POP_CEPII_level
 ;
