@@ -1,6 +1,0 @@
-        NetTaxProduction  Factors  IntMarginsTax
-NTP            1             0           0
-COE            0             1           0
-GOS            0             1           0
-INM            0             0           1
-TSE            0             0           1

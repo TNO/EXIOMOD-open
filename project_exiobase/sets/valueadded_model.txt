@@ -1,5 +1,0 @@
-NTP    'Other net taxes on production'
-COE    'Compensation of employees; wages, salaries, & employers social contributions'
-GOS    'Gross operating surplus: Consumption of fixed capital and net operating surplus'
-INM    'International margins on trade flows'
-TSE    'Taxes less subsidies on products on exported products'
