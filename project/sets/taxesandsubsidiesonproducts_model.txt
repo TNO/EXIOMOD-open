@@ -1,1 +1,0 @@
-TSP             "Taxes less subsidies on products"

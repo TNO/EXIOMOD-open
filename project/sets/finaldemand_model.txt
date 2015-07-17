@@ -1,3 +1,0 @@
-FCH             "Final consumption expenditure of households"
-FCG             "Final consumption expenditure of government"
-GCF             "Gross capital formation"
