@@ -1,2 +1,0 @@
-EU27            "European Union"
-US              "United States"
