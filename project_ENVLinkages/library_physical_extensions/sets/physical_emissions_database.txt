@@ -1,2 +1,0 @@
-'E_CO2_c to air'        'CO2 - combustion to air'
-'E_CO2_n to air'        'CO2 - non combustion to air'

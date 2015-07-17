@@ -1,5 +1,0 @@
-'DEU_1.1'	'Biomass'
-'DEU_1.5'	'Wood'
-'DEU_2.1'	'Metal ores'
-'DEU_2.3'	'Non-metallic minerals'
-'DEU_3'		'Fossil fuels'
