@@ -11,10 +11,8 @@ del *.gdx
 del *.g00
 del library\scr\*.~gm
 del library\scr\*.gms~
-del library\scr\simulation\*.~gm
-del library\scr\simulation\*.gms~
-del library\scr\snippets\*.~gm
-del library\scr\snippets\*.gms~
+del library\includes\*.~gm
+del library\includes\*.gms~
 rmdir 225a
 rmdir 225b
 rmdir 225c
