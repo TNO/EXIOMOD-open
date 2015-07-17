@@ -5,26 +5,24 @@
 * gams-master-file: main.gms
 
 $ontext startdoc
-This is the configuration file for the core input-output model. The file allows
-to configure the following control variables:
+This is the configuration file for the base CGE model. The file allows to
+configure the following control variables:
 
 Variable           | Explanation
 ------------------ | -----------
 `db_check`         | determine whether the database needs checking.
+`project`          | gives name of the project folder
 `agg_check`        | determine whether aggregation schemes need checking.
 `base_year`        | select one of the years available in the database.
 `base_cur`         | select one of the currencies available in the database.
-`io_type`          | select one of input-output model types.
-`simulation_setup` | select out of one of the preprogrammed simulation setup available in `scr/simulation/`.
 $offtext
 
 * database checking: set 'yes' to check the database on consistency
 * set 'no' otherwise
 $if not set db_check     $setglobal      db_check        'yes'
 
-* name of the project folder, you can just keep it as project or give a more
-* meaningful name
-$if not set project      $setglobal      project         'project_ENVLinkages'
+* name of the project folder, please give meaningful name
+$if not set project      $setglobal      project         'project_example'
 
 * aggregation checking: set 'yes' to check aggregation schemes between database
 * and model set on consistency
