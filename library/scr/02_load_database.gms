@@ -33,7 +33,7 @@ Parameters
                             # raw SAM expressed in purchasers prices
  ;
 
-$Gdxin '\\tsn.tno.nl\Data\SV\sv-016648\Databank Economen\European data\EXIOBASE_MRSUT\20141031_version_60sec\MRSUT_to_MRSAM\MRSAM'
+$Gdxin '\\tsn.tno.nl\Data\SV\sv-016648\Databank Economen\European data\EXIOBASE_MRSUT\20150611_version_90sec\MRSUT_to_MRSAM\MRSAM'
 
 $loaddc SAM_bp_data = MRSAM_bp_database
 $loaddc SAM_dt_data = MRSAM_dom_taxsub_database
