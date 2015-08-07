@@ -402,6 +402,7 @@ KLS_V.FX(reg,kl)                  = KLS(reg,kl) ;
 * level variables any price level will be a solution and fixing it to one helps
 * the solver. Additionally, price of the numéraire is fixed.
 PVA_V.L(regg,ind)      = 1 ;
+PVA_V.FX(regg,ind)$(VA_V.L(regg,ind) eq 0)                    = 1 ;
 
 * ======================= Scale variables and equations ========================
 

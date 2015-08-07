@@ -309,7 +309,6 @@ GDPDEF_V.FX                                                   = 1 ;
 PY_V.FX(regg,ind)$(Y_V.L(regg,ind) eq 0)                      = 1 ;
 P_V.FX(reg,prd)$(X_V.L(reg,prd) eq 0)                         = 1 ;
 PKL_V.FX(reg,kl)$(KLS(reg,kl) eq 0)                           = 1 ;
-PVA_V.FX(regg,ind)$(VA_V.L(regg,ind) eq 0)                    = 1 ;
 PIU_V.FX(prd,regg,ind)$(INTER_USE_T_V.L(prd,regg,ind) eq 0)   = 1 ;
 PC_H_V.FX(prd,regg)$(CONS_H_T_V.L(prd,regg) eq 0)             = 1 ;
 PC_G_V.FX(prd,regg)$(CONS_G_T_V.L(prd,regg) eq 0)             = 1 ;
