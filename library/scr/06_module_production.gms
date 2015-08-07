@@ -87,13 +87,13 @@ $if not '%phase%' == 'parameters_calibration' $goto end_parameters_calibration
 
 *## Elasticities and factor productivity ##
 
-$libinclude xlimport elasPROD_data %project%/00-principal/data/Eldata.xlsx elasPROD!a1..zz10000 ;
+$libinclude xlimport elasPROD_data %project%/00-principal/data/Eldata.xlsx elasKL!a1..zz10000 ;
 
-$libinclude xlimport FPROD_data %project%/00-principal/data/Eldata.xlsx FPROD!a1..zz10000 ;
+$libinclude xlimport FPROD_data %project%/00-principal/data/Eldata.xlsx prodKL!a1..zz10000 ;
 
 loop((ind,kl),
     ABORT$( FPROD_data(ind,kl) eq 0 )
-        "Initial level of factor productivity cannot be 0. See file Eldata.xlsx sheet FPROD" ;
+        "Initial level of factor productivity cannot be 0. See file Eldata.xlsx sheet prodKL" ;
 
 ) ;
 
@@ -242,7 +242,7 @@ Variables
                                     # product level
     VA_V(regg,ind)                  use of aggregated production factors
     KL_V(reg,va,regg,ind)           use of specific production factors
-    
+
     PVA_V(regg,ind)                 aggregate production factors price
 ;
 
