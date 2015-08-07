@@ -12,6 +12,7 @@ Variable           | Explanation
 ------------------ | -----------
 `project`          | gives name of the project folder.
 `prodfunc`         | determines type of standard production function.
+`demnfunc`         | determines type of standard demand function.
 `db_check`         | determine whether the database needs checking.
 `agg_check`        | determine whether aggregation schemes need checking.
 `base_year`        | select one of the years available in the database.
@@ -27,6 +28,14 @@ $if not set project      $setglobal      project         'project_example'
 * type 'KL-E': substitution possible between production factors and energy,
 *     other inputs have fixed Leontief coefficients
 $if not set prodfunc     $setglobal      prodfunc        'KL-E'
+
+* form of demand functions: choose between 'CES' and 'LES-CEShh'
+* type 'CES': demand functions of all final consumers follows CES utility
+*     function
+* type 'LES-CEShh': demand function for households includes minimum subsitabnce
+*     level (LES utility form), other demand functions are CES
+$if not set demnfunc     $setglobal      demnfunc        'LES-CEShh'
+
 
 * database checking: set 'yes' to check the database on consistency
 * set 'no' otherwise
