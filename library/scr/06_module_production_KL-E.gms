@@ -572,7 +572,7 @@ PnKL_V.L(regg,ind)   = 1 ;
 PnENER_V.L(regg,ind) = 1 ;
 PnKLE_V.L(regg,ind)  = 1 ;
 
-PnKL_V.L(regg,ind)$(nKL_V.L(regg,ind) eq 0)      = 1 ;
+PnKL_V.FX(regg,ind)$(nKL_V.L(regg,ind) eq 0)     = 1 ;
 PnENER_V.FX(regg,ind)$(nENER_V.L(regg,ind) eq 0) = 1 ;
 PnKLE_V.FX(regg,ind)$(nKLE_V.L(regg,ind) eq 0)   = 1 ;
 
