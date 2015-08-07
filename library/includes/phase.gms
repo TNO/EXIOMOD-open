@@ -33,6 +33,6 @@ $offtext
 
 $setglobal phase %1
 $include library/scr/05_module_demand.gms
-$include library/scr/06_module_production.gms
+$include library/scr/06_module_production_%prodfunc%.gms
 $include library/scr/07_module_trade.gms
 $include library/scr/08_module_closure.gms

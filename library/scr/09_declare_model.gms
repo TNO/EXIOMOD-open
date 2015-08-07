@@ -23,6 +23,10 @@ $eolcom #
 * ========================== Declare model equations ===========================
 * The models here are combined from the models already defined within modules.
 
+* If type of production function differs from 'KL' then don't create input-
+* output model.
+$if not '%prodfunc%' == 'KL' $goto end_io_models
+
 Model IO_product_technology
 /
 production_IO_product_technology
@@ -36,6 +40,8 @@ production_IO_industry_technology
 trade_IO_industry_technology
 /
 ;
+
+$label end_io_models
 
 Model CGE_MCP
 /

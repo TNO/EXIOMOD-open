@@ -10,19 +10,27 @@ configure the following control variables:
 
 Variable           | Explanation
 ------------------ | -----------
+`project`          | gives name of the project folder.
+`prodfunc`         | determines type of standard production function.
 `db_check`         | determine whether the database needs checking.
-`project`          | gives name of the project folder
 `agg_check`        | determine whether aggregation schemes need checking.
 `base_year`        | select one of the years available in the database.
 `base_cur`         | select one of the currencies available in the database.
 $offtext
 
+* name of the project folder, please give meaningful name
+$if not set project      $setglobal      project         'project_example'
+
+* form of production functions: choose between 'KL' and 'KL-E'
+* type 'KL': substitution possible between production factors, other inputs
+*     have fixed Leontief coefficients
+* type 'KL-E': substitution possible between production factors and energy,
+*     other inputs have fixed Leontief coefficients
+$if not set prodfunc     $setglobal      prodfunc        'KL-E'
+
 * database checking: set 'yes' to check the database on consistency
 * set 'no' otherwise
 $if not set db_check     $setglobal      db_check        'yes'
-
-* name of the project folder, please give meaningful name
-$if not set project      $setglobal      project         'project_example'
 
 * aggregation checking: set 'yes' to check aggregation schemes between database
 * and model set on consistency
