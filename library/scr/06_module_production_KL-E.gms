@@ -1,7 +1,7 @@
 * File:   library/scr/06_module_production_KL-E.gms
 * Author: Tatyana Bulavskaya
 * Date:   12 May 2015
-* Adjusted:
+* Adjusted: 7 August 2015
 
 * gams-master-file: phase.gms
 
@@ -13,13 +13,15 @@ The following elements of the model are described within the production module:
 
 - Product market balance: supply equals demand.
 - Link between output by product and output by activity.
-- Demand functions for intermediate inputs, expect for electricity; in other
-  words, how much products the producers want to buy, given the market prices.
-  In this version, the first order conditions from Leontief production function
-  are used.
-- Demand functions for factors of production and electricity. In this version,
-  the first order conditions from 'flexible' nested CES production function are
-  used. The nested form follows KL-E structure.
+- Demand functions for intermediate inputs, except for energy; in other words,
+  how much products the producers want to buy, given the market prices. In this
+  version, the first order conditions from Leontief production function are
+  used.
+- Demand functions for factors of production and energy. In this version, the
+  first order conditions from 'flexible' nested CES production function are
+  used. The nested form follows KL-E structure. The energy types within E nest
+  are all substitutable between each other, meaning no further structure in
+  energy substitution is introduced.
 - Calculation of GDP in constant and current prices.
 
 As with all the other modules, different phases of the code are being called
@@ -36,12 +38,18 @@ $eolcom #
 * ==================== Phase 1: Additional sets and subsets ====================
 $if not '%phase%' == 'additional_sets' $goto end_additional_sets
 
+$if not exist "%project%/00-principal/sets/products_model_energy.txt" $abort "Energy products are not defined. Create %project%/00-principal/sets/products_model_energy.txt"
+
+
 Sets
-    elec(prd)    electricity products   / 'p030', 'p034' /
+    ener(prd)    energy products
+/
+$include %project%/00-principal/sets/products_model_energy.txt
+/
 ;
 
 Alias
-    (elec,elecc)
+    (ener,enerr)
 ;
 
 $label end_additional_sets
@@ -52,23 +60,22 @@ $if not '%phase%' == 'parameters_declaration' $goto end_parameters_declaration
 Parameters
     elasPROD_data(ind,*)        data on substitution elasticities in production
                                 # nests
-    FPROD_data(ind,va)          data on initial level of factor productivity
+    FPROD_data(ind,*)          data on initial level of factor productivity
     elasKLE(regg,ind)           substitution elasticity between capital-labour
-                                # and electricity nests
-    elasE(regg,ind)             substitution elasticity between types of
-                                # electricity
+                                # and energy nests
+    elasE(regg,ind)             substitution elasticity between types of energy
     elasKL(regg,ind)            substitution elasticity between capital and
                                 # labour
     fprod(va,regg,ind)          parameter on productivity on individual factors
                                 # in the nest of aggregated factors of
                                 # production
+    eprod(prd,regg,ind)         energy productivity
     Y(regg,ind)                 output vector by activity (volume)
     X(reg,prd)                  output vector by product (volume)
     INTER_USE_T(prd,regg,ind)   intermediate use on product level (volume)
-    nELEC(regg,ind)             intermediate use of aggregated electricity
+    nENER(regg,ind)             intermediate use of aggregated energy (volume)
+    nKLE(regg,ind)              intermediate use of capital-labour-energy nest
                                 # (volume)
-    nKLE(regg,ind)              intermediate use of capital-labour-electricity
-                                # nest (volume)
     KLS(reg,va)                 supply of production factors (volume)
     GDP(regg)                   gross domestic product (value)
 
@@ -88,18 +95,17 @@ Parameters
     ioc(prd,regg,ind)           technical input coefficients for intermediate
                                 # inputs (relation in volume)
     aKLE(regg,ind)              technical input coefficients for aggregated
-                                # capital-labour-electricity nest (relation in
+                                # capital-labour-energy nest (relation in
                                 # volume)
-    aE(regg,ind)                relative share parameter for electricity nest
-                                # within the aggregated KLE nest (relation in
-                                # volume)
+    aE(regg,ind)                relative share parameter for energy nest within
+                                # the aggregated KL-E nest (relation in volume)
     aKL(regg,ind)               relative share parameter for factors of
-                                # production nest with the aggregated KLE nest
+                                # production nest with the aggregated KL-E nest
                                 # (relation in volume)
-    alphaE(elec,regg,ind)       relative share parameter for types of
-                                # electricity within the aggregated nest
-                                # (relation in volume)
-    alphaKL(reg,va,regg,ind)     relative share parameter for factors of
+    alphaE(ener,regg,ind)       relative share parameter for types of energy
+                                # within the aggregated nest (relation in
+                                # volume)
+    alphaKL(reg,va,regg,ind)    relative share parameter for factors of
                                 # production within the aggregated nest
                                 # (relation in volume)
 
@@ -116,19 +122,26 @@ $if not '%phase%' == 'parameters_calibration' $goto end_parameters_calibration
 
 *## Elasticities and factor productivity ##
 
-$libinclude xlimport elasPROD_data %project%/00-principal/data/Eldata.xlsx elasPROD!a1..zz10000 ;
+$libinclude xlimport elasPROD_data %project%/00-principal/data/Eldata.xlsx elasKL-E!a1..zz10000 ;
 
-$libinclude xlimport FPROD_data %project%/00-principal/data/Eldata.xlsx FPROD!a1..zz10000 ;
+$libinclude xlimport FPROD_data %project%/00-principal/data/Eldata.xlsx prodKL-E!a1..zz10000 ;
 
 loop((ind,kl),
     ABORT$( FPROD_data(ind,kl) eq 0 )
-        "Initial level of factor productivity cannot be 0. See file Eldata.xlsx sheet FPROD" ;
+        "Initial level of factor productivity cannot be 0. See file Eldata.xlsx sheet prodKL-E" ;
+) ;
 
+loop(ind,
+    ABORT$( FPROD_data(ind,"ENER") eq 0 )
+        "Initial level of energy productivity cannot be 0. See file Eldata.xlsx sheet prodKL-E" ;
 ) ;
 
 
-elasKLE(regg,ind) = 0.5 ;
-elasE(regg,ind) = 0.8 ;
+* Substitution elasticity between capital-labour and energy inputs in volume.
+* The elasticity value can be different in each industry (ind) in each region
+* (regg).
+elasKLE(regg,ind)
+    = elasPROD_data(ind,'elasKLE') ;
 
 * Substitution elasticity between capital and labour inputs in volume. The
 * elasticity value can be different in each industry (ind) in each region
@@ -136,11 +149,22 @@ elasE(regg,ind) = 0.8 ;
 elasKL(regg,ind)
     = elasPROD_data(ind,'elasKL') ;
 
+* Substitution elasticity between energy types in volume. The elasticity value
+* can be different in each industry (ind) in each region (regg).
+elasE(regg,ind)
+    = elasPROD_data(ind,'elasE') ;
+
 * Parameter with initial level of productivity of individual factors of
 * production. The parameter value is usually calibrated to 1 for each factor
 * type (kl) in each industry (ind) in each region (regg).
 fprod(kl,regg,ind)
     = FPROD_data(ind,kl) ;
+
+* Parameter with initial level of productivity of energy products within the E
+* nest. The parameter value is usually calibrated to 1 for each energy type
+* (ener) in each industry (ind) in each region (regg).
+eprod(ener,regg,ind)
+    = FPROD_data(ind,"ENER") ;
 
 
 *## Aggregates ##
@@ -168,16 +192,21 @@ X
 INTER_USE_T(prd,regg,ind)
     = INTER_USE_D(prd,regg,ind) + INTER_USE_M(prd,regg,ind) ;
 
-nELEC(regg,ind)
-    = sum(elec, INTER_USE_T(elec,regg,ind) + INTER_USE_dt(elec,regg,ind) ) ;
+* Aggregate intermediate consumption of energy in each industry (ind) in each
+* region (regg), the corresponding basic price in the calibration year is equal
+* to 1.
+nENER(regg,ind)
+    = sum(ener, INTER_USE_T(ener,regg,ind) + INTER_USE_dt(ener,regg,ind) ) ;
 
+* Aggregate intermediate consumption of capital-labour-energy bundle in each
+* industry (ind) in each region (regg), the corresponding basic price in the
+* calibration year is equal to 1.
 nKLE(regg,ind)
-    = nELEC(regg,ind) + sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) ;
-
+    = nENER(regg,ind) + sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) ;
 
 Display
 INTER_USE_T
-nELEC
+nENER
 nKLE
 ;
 
@@ -247,26 +276,31 @@ coprodB(reg,prd,regg,ind)$SUP(reg,prd,regg,ind)
 
 * Leontief technical input coefficients for intermediate inputs of aggregated
 * products for each product (prd) in each industry (ind) in each region (regg).
-ioc(prd,regg,ind)$( INTER_USE_T(prd,regg,ind) and not elec(prd) )
+ioc(prd,regg,ind)$( INTER_USE_T(prd,regg,ind) and not ener(prd) )
     = INTER_USE_T(prd,regg,ind) / Y(regg,ind) ;
 
+* Leontief technical input coefficients for the nest of capital-labour-energy
+* bundle in each industry (ind) in each region (regg).
 aKLE(regg,ind)$nKLE(regg,ind)
     = nKLE(regg,ind) / Y(regg,ind) ;
 
-aE(regg,ind)$nELEC(regg,ind)
-    = nELEC(regg,ind) / nKLE(regg,ind) ;
+* Relative share parameter for the nest of aggregated energy within the
+* capital-labour-energy nest in each industry (ind) in each region (regg).
+aE(regg,ind)$nENER(regg,ind)
+    = nENER(regg,ind) / nKLE(regg,ind) ;
 
+* Relative share parameter for the nest of aggregated factors of production
+* within the capital-labour-energy nest in each industry (ind) in each region
+* (regg).
 aKL(regg,ind)$sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) )
     = sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) / nKLE(regg,ind) ;
 
-alphaE(elec,regg,ind)$INTER_USE_T(elec,regg,ind)
-    = INTER_USE_T(elec,regg,ind) / nELEC(regg,ind) *
-    ( 1 / ( 1 + tc_ind(elec,regg,ind) ) )**( -elasE(regg,ind) ) ;
-
-* Leontief technical input coefficients for the nest of aggregated factors of
-* production in each industry (ind) in each region (regg).
-*aVA(regg,ind)$sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) )
-*    = sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) / Y(regg,ind) ;
+* Relative share parameter for types of energy within the aggregated energy nest
+* for each type of energy (ener) in each industry (ind) in each region (regg).
+alphaE(ener,regg,ind)$INTER_USE_T(ener,regg,ind)
+    = INTER_USE_T(ener,regg,ind) / ( nENER(regg,ind) / eprod(ener,regg,ind) ) *
+    ( 1 * eprod(ener,regg,ind) /
+    ( 1 + tc_ind(ener,regg,ind) ) )**( -elasE(regg,ind) ) ;
 
 * Relative share parameter for factors of production within the aggregated nest
 * for each type of production factor (reg,kl) in each industry (ind) in each
@@ -284,7 +318,6 @@ ioc
 aKLE
 aE
 aKL
-*aVA
 alphaE
 alphaKL
 ;
@@ -311,18 +344,15 @@ Variables
 
     INTER_USE_T_V(prd,regg,ind)     use of intermediate inputs on aggregated
                                     # product level
-    nKLE_V(regg,ind)                use of aggregated capital-labour-electricity
-                                    # nest
-    nELEC_V(regg,ind)               use of aggregated electricity nest
-    VA_V(regg,ind)                  use of aggregated production factors
-    ELEC_V(prd,regg,ind)            use of electricity types
+    nKLE_V(regg,ind)                use of aggregated capital-labour-energy nest
+    nENER_V(regg,ind)               use of aggregated energy nest
+    nKL_V(regg,ind)                 use of aggregated production factors
+    ENER_V(prd,regg,ind)            use of energy types
     KL_V(reg,va,regg,ind)           use of specific production factors
 
-    PELEC_V(regg,ind)               aggregate electricity price
-    PKLE_V(regg,ind)                aggregate capital-labour-electricity price
-
-    GDPCUR_V(regg)                  GDP in current prices (value)
-    GDPCONST_V(regg)                GDP in constant prices (volume)
+    PnKL_V(regg,ind)                aggregate production factors price
+    PnENER_V(regg,ind)              aggregate energy price
+    PnKLE_V(regg,ind)               aggregate capital-labour-energy price
 ;
 
 * Exogenous variables
@@ -344,22 +374,19 @@ Equations
 
     EQINTU_T(prd,regg,ind)      demand for intermediate inputs on aggregated
                                 # product level
-    EQnKLE(regg,ind)            demand for aggregated capital-labour-electricity
-                                # nest
-    EQnELEC(regg,ind)           demand for aggregated electricity nest
+    EQnKLE(regg,ind)            demand for aggregated capital-labour-energy nest
+    EQnENER(regg,ind)           demand for aggregated energy nest
     EQnKL(regg,ind)             demand for aggregated production factors
-    EQELEC(prd,regg,ind)        demand for electricity types
+    EQENER(prd,regg,ind)        demand for energy types
     EQKL(reg,va,regg,ind)       demand for specific production factors
 
-    EQPELEC(regg,ind)           balance between price per electricity type and
-                                # aggregate electricity price
-    EQPKLE(regg,ind)            balance between aggregate electricity price,
+    EQPnKL(regg,ind)            balance between specific production factors
+                                # price and aggregate production factors price
+    EQPnENER(regg,ind)          balance between price per energy type and
+                                # aggregate energy price
+    EQPnKLE(regg,ind)           balance between aggregate energy price and
                                 # aggregate production factors price and
-                                # aggregate capital-labour-electricity price
-
-    EQGDPCUR(regg)              GDP in current prices (value)
-    EQGDPCONST(regg)            GDP in constant prices (volume)
-    EQOBJ                       artificial objective function
+                                # aggregate capital-labour-energy price
 ;
 
 $label end_variables_equations_declaration
@@ -407,53 +434,59 @@ EQY(regg,ind)..
     =E=
     sum((reg,prd), coprodB(reg,prd,regg,ind) * X_V(reg,prd) ) ;
 
-
-* EQUATION 2.3: Demand for intermediate inputs on aggregated product level. The
-* demand function follows Leontief form, where the relation between intermediate
-* inputs of aggregated product (prd) and output of the industry (regg,ind) in
-* volume is kept constant.
+* EQUATION 2.3: Demand for intermediate inputs on aggregated product level. For
+* non-energy products the demand function follows Leontief form, where the
+* relation between intermediate inputs of aggregated product (prd) and output of
+* the industry (regg,ind) in volume is kept constant. The demand for energy
+* products (ener) comes from the solution for capital-labour-energy nest.
 EQINTU_T(prd,regg,ind)..
     INTER_USE_T_V(prd,regg,ind)
     =E=
-    ioc(prd,regg,ind) * Y_V(regg,ind)$( not elec(prd) ) +
-    ELEC_V(prd,regg,ind)$elec(prd) ;
+    ioc(prd,regg,ind) * Y_V(regg,ind)$( not ener(prd) ) +
+    ENER_V(prd,regg,ind)$ener(prd) ;
 
+* EQUATION 2.4: Demand for aggregated capital-labour-energy nest. The demand
+* function follows Leontief form, where the relation between aggregated KL-E and
+* output of the industry (regg,ind) in volume is kept constant.
 EQnKLE(regg,ind)..
     nKLE_V(regg,ind)
     =E=
     aKLE(regg,ind) * Y_V(regg,ind) ;
 
-EQnELEC(regg,ind)..
-    nELEC_V(regg,ind)
+* EQUATION 2.5: Demand for aggregated energy nest. The demand function follows
+* CES form, where demand for aggregated energy of each industry (regg,ind)
+* depends linearly on the demand of the same industry for aggregated KL-E nest
+* and with certain elasticity on relative prices of energy, capital and labour.
+EQnENER(regg,ind)..
+    nENER_V(regg,ind)
     =E=
     nKLE_V(regg,ind) * aE(regg,ind) *
-    ( PELEC_V(regg,ind) / PKLE_V(regg,ind) )**( -elasKLE(regg,ind) ) ;
+    ( PnENER_V(regg,ind) / PnKLE_V(regg,ind) )**( -elasKLE(regg,ind) ) ;
 
+* EQUATION 2.6: Demand for aggregated production factors (capital-labour). The
+* demand function follows CES form, where demand for aggregated production
+* factors of each industry (regg,ind) depends linearly on the demand of the same
+* industry for aggregated KL-E nest and with certain elasticity on relative
+* prices of energy, capital and labour.
 EQnKL(regg,ind)..
-    VA_V(regg,ind)
+    nKL_V(regg,ind)
     =E=
     nKLE_V(regg,ind) * aKL(regg,ind) *
-    ( PVA_V(regg,ind) / PKLE_V(regg,ind) )**( -elasKLE(regg,ind) ) ;
+    ( PnKL_V(regg,ind) / PnKLE_V(regg,ind) )**( -elasKLE(regg,ind) ) ;
 
-EQELEC(elec,regg,ind)..
-    ELEC_V(elec,regg,ind)
+* EQUATION 2.7: Demand for types of energy. The demand function follows CES
+* form, where demand of each industry (regg,ind) for each type of energy (ener)
+* depends linearly on the demand of the same industry for aggregated energy nest
+* and with certain elasticity on relative prices of energy types. The demand for
+* energy types is also augmented with exogenous level of energy productivity.
+EQENER(ener,regg,ind)..
+    ENER_V(ener,regg,ind)
     =E=
-    nELEC_V(regg,ind) * alphaE(elec,regg,ind) *
-    ( PIU_V(elec,regg,ind) * ( 1 + tc_ind(elec,regg,ind) ) /
-    PELEC_V(regg,ind) )**( -elasE(regg,ind) ) ;
+    ( nENER_V(regg,ind) / eprod(ener,regg,ind) ) * alphaE(ener,regg,ind) *
+    ( PIU_V(ener,regg,ind) * ( 1 + tc_ind(ener,regg,ind) ) /
+    ( eprod(ener,regg,ind) * PnENER_V(regg,ind) ) )**( -elasE(regg,ind) ) ;
 
-
-
-
-* EQUATION 2.4: Demand for aggregated production factors. The demand function
-* follows Leontief form, where the relation between aggregated value added and
-* output of the industry (regg,ind) in volume is kept constant.
-*EQVA(regg,ind)..
-*    VA_V(regg,ind)
-*    =E=
-*    aVA(regg,ind) * Y_V(regg,ind) ;
-
-* EQUAION 2.5: Demand for specific production factors. The demand function
+* EQUAION 2.8: Demand for specific production factors. The demand function
 * follows CES form, where demand of each industry (regg,ind) for each factor of
 * production (reg,kl) depends linearly on the demand of the same industry for
 * aggregated production factors and, with certain elasticity, on relative prices
@@ -461,56 +494,41 @@ EQELEC(elec,regg,ind)..
 EQKL(reg,kl,regg,ind)$VALUE_ADDED(reg,kl,regg,ind)..
     KL_V(reg,kl,regg,ind)
     =E=
-    ( VA_V(regg,ind) / fprod(kl,regg,ind) ) * alphaKL(reg,kl,regg,ind) *
+    ( nKL_V(regg,ind) / fprod(kl,regg,ind) ) * alphaKL(reg,kl,regg,ind) *
     ( PKL_V(reg,kl) /
-    ( fprod(kl,regg,ind) * PVA_V(regg,ind) ) )**( -elasKL(regg,ind) ) ;
+    ( fprod(kl,regg,ind) * PnKL_V(regg,ind) ) )**( -elasKL(regg,ind) ) ;
 
-
-EQPELEC(regg,ind)..
-    PELEC_V(regg,ind) * nELEC_V(regg,ind)
+* EQUATION 2.9: Balance between specific production factors price and aggregate
+* production factors price. The aggregate price is different in each industry
+* (ind) in each region (regg) and is a weighted average of the price of specific
+* production factors, where weights are defined as demand by the industry for
+* corresponding production factors.
+EQPnKL(regg,ind)..
+    PnKL_V(regg,ind) * nKL_V(regg,ind)
     =E=
-    sum(elec, PIU_V(elec,regg,ind) * ( 1 + tc_ind(elec,regg,ind) ) *
-    ELEC_V(elec,regg,ind) ) ;
+    sum((reg,kl), PKL_V(reg,kl) * KL_V(reg,kl,regg,ind)) ;
 
-EQPKLE(regg,ind)..
-    PKLE_V(regg,ind) * nKLE_V(regg,ind)
+* EQUATION 2.10: Balance between price per energy type and aggregate energy
+* price. The aggregate price is different in each industry (ind) in each region
+* (regg) and is a weighted average of the price per type of energy, where
+* weights are defined as demand by the industry for the corresponding types of
+* energy.
+EQPnENER(regg,ind)..
+    PnENER_V(regg,ind) * nENER_V(regg,ind)
     =E=
-    PELEC_V(regg,ind) * nELEC_V(regg,ind) + PVA_V(regg,ind) * VA_V(regg,ind) ;
+    sum(ener, PIU_V(ener,regg,ind) * ( 1 + tc_ind(ener,regg,ind) ) *
+    ENER_V(ener,regg,ind) ) ;
 
-
-
-* EQUATION 2.6: Gross domestic product calculated in current prices. GDP is
-* calculated separately for each modeled region (regg).
-EQGDPCUR(regg)..
-    GDPCUR_V(regg)
+* EQUATION 2.11: Balance between aggregate energy price, aggregate production
+* factors price and aggregate capital-labour-energy price. The aggregate KL-E
+* price is different in each industry (ind) in each region (regg) and is a
+* weighted average KL and E prices, where weights are defined as demand by the
+* industry for the corresponding nests.
+EQPnKLE(regg,ind)..
+    PnKLE_V(regg,ind) * nKLE_V(regg,ind)
     =E=
-    sum(ind, Y_V(regg,ind) * PY_V(regg,ind) ) -
-    sum((prd,ind), INTER_USE_T_V(prd,regg,ind) * PIU_V(prd,regg,ind) ) +
-    sum(prd, CONS_H_T_V(prd,regg) * PC_H_V(prd,regg) * tc_h(prd,regg) ) +
-    sum(prd, CONS_G_T_V(prd,regg) * PC_G_V(prd,regg) * tc_g(prd,regg) ) +
-    sum(prd, GFCF_T_V(prd,regg) * PC_I_V(prd,regg) * tc_gfcf(prd,regg) ) +
-    sum((reg,prd), SV_V(reg,prd,regg) * P_V(reg,prd) * tc_sv(prd,regg) ) +
-    sum(prd, SV_ROW_V(prd,regg) * PROW_V * tc_sv(prd,regg) ) ;
-
-* EQUATION 2.7: Gross domestic product calculated in constant prices of the
-* base year. GDP is calculated separately for each modeled region (regg).
-EQGDPCONST(regg)..
-    GDPCONST_V(regg)
-    =E=
-    sum(ind, Y_V(regg,ind) ) -
-    sum((prd,ind), INTER_USE_T_V(prd,regg,ind) ) +
-    sum(prd, CONS_H_T_V(prd,regg) * tc_h_0(prd,regg) ) +
-    sum(prd, CONS_G_T_V(prd,regg) * tc_g_0(prd,regg) ) +
-    sum(prd, GFCF_T_V(prd,regg) * tc_gfcf_0(prd,regg) ) +
-    sum((reg,prd), SV_V(reg,prd,regg) * tc_sv_0(prd,regg) ) +
-    sum(prd, SV_ROW_V(prd,regg) * tc_sv_0(prd,regg) ) ;
-
-* EQUATION 2.8: Artificial objective function: only relevant for users of conopt
-* solver in combination with NLP type of mathematical problem.
-EQOBJ..
-    OBJ
-    =E=
-    1 ;
+    PnENER_V(regg,ind) * nENER_V(regg,ind) +
+    PnKL_V(regg,ind) * nKL_V(regg,ind) ;
 
 $label end_equations_definition
 
@@ -533,32 +551,30 @@ INTER_USE_T_V.L(prd,regg,ind) = INTER_USE_T(prd,regg,ind) ;
 INTER_USE_T_V.FX(prd,regg,ind)$(INTER_USE_T(prd,regg,ind) eq 0) = 0 ;
 
 nKLE_V.L(regg,ind)      = nKLE(regg,ind) ;
-nELEC_V.L(regg,ind)     = nELEC(regg,ind)  ;
-VA_V.L(regg,ind)        = sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) ;
-ELEC_V.L(elec,regg,ind) = INTER_USE_T(elec,regg,ind) ;
+nENER_V.L(regg,ind)     = nENER(regg,ind) ;
+nKL_V.L(regg,ind)       = sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) ;
+ENER_V.L(ener,regg,ind) = INTER_USE_T(ener,regg,ind) ;
 KL_V.L(reg,kl,regg,ind) = VALUE_ADDED(reg,kl,regg,ind) ;
 
-nKLE_V.FX(regg,ind)$(nKLE(regg,ind) eq 0)                             = 0 ;
-nELEC_V.FX(regg,ind)$(nELEC(regg,ind) eq 0)                           = 0 ;
-VA_V.FX(regg,ind)$(sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) eq 0) = 0 ;
-ELEC_V.FX(elec,regg,ind)$(INTER_USE_T(elec,regg,ind) eq 0)            = 0 ;
-KL_V.FX(reg,kl,regg,ind)$(VALUE_ADDED(reg,kl,regg,ind) eq 0 )         = 0 ;
+nKLE_V.FX(regg,ind)$(nKLE(regg,ind) eq 0)                              = 0 ;
+nENER_V.FX(regg,ind)$(nENER(regg,ind) eq 0)                            = 0 ;
+nKL_V.FX(regg,ind)$(sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) eq 0) = 0 ;
+ENER_V.FX(ener,regg,ind)$(INTER_USE_T(ener,regg,ind) eq 0)             = 0 ;
+KL_V.FX(reg,kl,regg,ind)$(VALUE_ADDED(reg,kl,regg,ind) eq 0 )          = 0 ;
 
-GDPCUR_V.L(regg)   = GDP(regg) ;
-GDPCONST_V.L(regg) = GDP(regg) ;
-GDPCUR_V.FX(regg)$( GDP(regg) eq 0 )   = 0 ;
-GDPCONST_V.FX(regg)$( GDP(regg) eq 0 ) = 0 ;
 
 * Price variables: level of basic prices is set to one, which also corresponds
 * to the price level used in calibration. If the the real variable to which the
 * price level is linked is fixed to zero, the price is fixed to one. For zero
 * level variables any price level will be a solution and fixing it to one helps
 * the solver. Additionally, price of the numéraire is fixed.
-PELEC_V.L(regg,ind) = 1 ;
-PKLE_V.L(regg,ind)  = 1 ;
+PnKL_V.L(regg,ind)   = 1 ;
+PnENER_V.L(regg,ind) = 1 ;
+PnKLE_V.L(regg,ind)  = 1 ;
 
-PELEC_V.FX(regg,ind)$(nELEC_V.L(regg,ind) eq 0) = 1 ;
-PKLE_V.FX(regg,ind)$(nKLE_V.L(regg,ind) eq 0)   = 1 ;
+PnKL_V.L(regg,ind)$(nKL_V.L(regg,ind) eq 0)      = 1 ;
+PnENER_V.FX(regg,ind)$(nENER_V.L(regg,ind) eq 0) = 1 ;
+PnKLE_V.FX(regg,ind)$(nKLE_V.L(regg,ind) eq 0)   = 1 ;
 
 * Exogenous variables
 * Exogenous variables are fixed to their calibrated value.
@@ -611,7 +627,7 @@ EQINTU_T.SCALE(prd,regg,ind)$(INTER_USE_T_V.L(prd,regg,ind) lt 0)
 INTER_USE_T_V.SCALE(prd,regg,ind)$(INTER_USE_T_V.L(prd,regg,ind) lt 0)
     = -INTER_USE_T_V.L(prd,regg,ind) ;
 
-
+* EQUATION 2.4
 EQnKLE.SCALE(regg,ind)$(nKLE_V.L(regg,ind) gt 0)
     = nKLE_V.L(regg,ind) ;
 nKLE_V.SCALE(regg,ind)$(nKLE_V.L(regg,ind) gt 0)
@@ -622,54 +638,40 @@ EQnKLE.SCALE(regg,ind)$(nKLE_V.L(regg,ind) lt 0)
 nKLE_V.SCALE(regg,ind)$(nKLE_V.L(regg,ind) lt 0)
     = -nKLE_V.L(regg,ind) ;
 
-
-EQnELEC.SCALE(regg,ind)$(nELEC_V.L(regg,ind) gt 0)
-    = nELEC_V.L(regg,ind) ;
-nELEC_V.SCALE(regg,ind)$(nELEC_V.L(regg,ind) gt 0)
-    = nELEC_V.L(regg,ind) ;
-
-EQnELEC.SCALE(regg,ind)$(nELEC_V.L(regg,ind) lt 0)
-    = -nELEC_V.L(regg,ind) ;
-nELEC_V.SCALE(regg,ind)$(nELEC_V.L(regg,ind) lt 0)
-    = -nELEC_V.L(regg,ind) ;
-
-
-EQnKL.SCALE(regg,ind)$(VA_V.L(regg,ind) gt 0)
-    = VA_V.L(regg,ind) ;
-VA_V.SCALE(regg,ind)$(VA_V.L(regg,ind) gt 0)
-    = VA_V.L(regg,ind) ;
-
-EQnKL.SCALE(regg,ind)$(VA_V.L(regg,ind) lt 0)
-    = -VA_V.L(regg,ind) ;
-VA_V.SCALE(regg,ind)$(VA_V.L(regg,ind) lt 0)
-    = -VA_V.L(regg,ind) ;
-
-
-EQELEC.SCALE(elec,regg,ind)$(ELEC_V.L(elec,regg,ind) gt 0)
-    = ELEC_V.L(elec,regg,ind) ;
-ELEC_V.SCALE(elec,regg,ind)$(ELEC_V.L(elec,regg,ind) gt 0)
-    = ELEC_V.L(elec,regg,ind) ;
-
-EQELEC.SCALE(elec,regg,ind)$(ELEC_V.L(elec,regg,ind) lt 0)
-    = -ELEC_V.L(elec,regg,ind) ;
-ELEC_V.SCALE(elec,regg,ind)$(ELEC_V.L(elec,regg,ind) lt 0)
-    = -ELEC_V.L(elec,regg,ind) ;
-
-
-
-
-* EQUATION 2.4
-*EQVA.SCALE(regg,ind)$(VA_V.L(regg,ind) gt 0)
-*    = VA_V.L(regg,ind) ;
-*VA_V.SCALE(regg,ind)$(VA_V.L(regg,ind) gt 0)
-*    = VA_V.L(regg,ind) ;
-*
-*EQVA.SCALE(regg,ind)$(VA_V.L(regg,ind) lt 0)
-*    = -VA_V.L(regg,ind) ;
-*VA_V.SCALE(regg,ind)$(VA_V.L(regg,ind) lt 0)
-*    = -VA_V.L(regg,ind) ;
-
 * EQUATION 2.5
+EQnENER.SCALE(regg,ind)$(nENER_V.L(regg,ind) gt 0)
+    = nENER_V.L(regg,ind) ;
+nENER_V.SCALE(regg,ind)$(nENER_V.L(regg,ind) gt 0)
+    = nENER_V.L(regg,ind) ;
+
+EQnENER.SCALE(regg,ind)$(nENER_V.L(regg,ind) lt 0)
+    = -nENER_V.L(regg,ind) ;
+nENER_V.SCALE(regg,ind)$(nENER_V.L(regg,ind) lt 0)
+    = -nENER_V.L(regg,ind) ;
+
+* EQUATION 2.6
+EQnKL.SCALE(regg,ind)$(nKL_V.L(regg,ind) gt 0)
+    = nKL_V.L(regg,ind) ;
+nKL_V.SCALE(regg,ind)$(nKL_V.L(regg,ind) gt 0)
+    = nKL_V.L(regg,ind) ;
+
+EQnKL.SCALE(regg,ind)$(nKL_V.L(regg,ind) lt 0)
+    = -nKL_V.L(regg,ind) ;
+nKL_V.SCALE(regg,ind)$(nKL_V.L(regg,ind) lt 0)
+    = -nKL_V.L(regg,ind) ;
+
+* EQUATION 2.7
+EQENER.SCALE(ener,regg,ind)$(ENER_V.L(ener,regg,ind) gt 0)
+    = ENER_V.L(ener,regg,ind) ;
+ENER_V.SCALE(ener,regg,ind)$(ENER_V.L(ener,regg,ind) gt 0)
+    = ENER_V.L(ener,regg,ind) ;
+
+EQENER.SCALE(ener,regg,ind)$(ENER_V.L(ener,regg,ind) lt 0)
+    = -ENER_V.L(ener,regg,ind) ;
+ENER_V.SCALE(ener,regg,ind)$(ENER_V.L(ener,regg,ind) lt 0)
+    = -ENER_V.L(ener,regg,ind) ;
+
+* EQUATION 2.8
 EQKL.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) gt 0)
     = KL_V.L(reg,kl,regg,ind) ;
 KL_V.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) gt 0)
@@ -680,42 +682,26 @@ EQKL.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) lt 0)
 KL_V.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) lt 0)
     = -KL_V.L(reg,kl,regg,ind) ;
 
+* EQUATION 2.9
+EQPnKL.SCALE(reg,ind)$(nKL_V.L(reg,ind) gt 0)
+    = nKL_V.L(reg,ind) ;
 
-EQPELEC.SCALE(reg,ind)$(nELEC_V.L(reg,ind) gt 0)
-    = nELEC_V.L(reg,ind) ;
+EQPnKL.SCALE(reg,ind)$(nKL_V.L(reg,ind) lt 0)
+    = -nKL_V.L(reg,ind) ;
 
-EQPELEC.SCALE(reg,ind)$(nELEC_V.L(reg,ind) lt 0)
-    = -nELEC_V.L(reg,ind) ;
+* EQUATION 2.10
+EQPnENER.SCALE(reg,ind)$(nENER_V.L(reg,ind) gt 0)
+    = nENER_V.L(reg,ind) ;
 
+EQPnENER.SCALE(reg,ind)$(nENER_V.L(reg,ind) lt 0)
+    = -nENER_V.L(reg,ind) ;
 
-EQPKLE.SCALE(reg,ind)$(nKLE_V.L(reg,ind) gt 0)
+* EQUATION 2.11
+EQPnKLE.SCALE(reg,ind)$(nKLE_V.L(reg,ind) gt 0)
     = nKLE_V.L(reg,ind) ;
 
-EQPKLE.SCALE(reg,ind)$(nKLE_V.L(reg,ind) lt 0)
+EQPnKLE.SCALE(reg,ind)$(nKLE_V.L(reg,ind) lt 0)
     = -nKLE_V.L(reg,ind) ;
-
-
-* EQUATION 2.6
-EQGDPCUR.SCALE(regg)$(GDPCUR_V.L(regg) gt 0)
-    = GDPCUR_V.L(regg) ;
-GDPCUR_V.SCALE(regg)$(GDPCUR_V.L(regg) gt 0)
-    = GDPCUR_V.L(regg) ;
-
-EQGDPCUR.SCALE(regg)$(GDPCUR_V.L(regg) lt 0)
-    = -GDPCUR_V.L(regg) ;
-GDPCUR_V.SCALE(regg)$(GDPCUR_V.L(regg) lt 0)
-    = -GDPCUR_V.L(regg) ;
-
-* EQUATION 2.7
-EQGDPCONST.SCALE(regg)$(GDPCONST_V.L(regg) gt 0)
-    = GDPCONST_V.L(regg) ;
-GDPCONST_V.SCALE(regg)$(GDPCONST_V.L(regg) gt 0)
-    = GDPCONST_V.L(regg) ;
-
-EQGDPCONST.SCALE(regg)$(GDPCONST_V.L(regg) lt 0)
-    = -GDPCONST_V.L(regg) ;
-GDPCONST_V.SCALE(regg)$(GDPCONST_V.L(regg) lt 0)
-    = -GDPCONST_V.L(regg) ;
 
 * EXOGENOUS VARIBLES
 KLS_V.SCALE(reg,kl)$(KLS_V.L(reg,kl) gt 0)
@@ -728,26 +714,6 @@ $label end_bounds_and_scales
 * ======================== Phase 7: Declare sub-models  ========================
 $if not '%phase%' == 'submodel_declaration' $goto submodel_declaration
 
-* Include production equations that will enter IO product technology model
-Model production_IO_product_technology
-/
-EQBAL
-EQX
-EQINTU_T
-EQOBJ
-/
-;
-
-* Include production equations that will enter IO product technology model
-Model production_IO_industry_technology
-/
-EQBAL
-EQY
-EQINTU_T
-EQOBJ
-/
-;
-
 * Include production equations that will enter CGE model
 Model production_CGE_MCP
 /
@@ -755,14 +721,13 @@ EQBAL.X_V
 EQY.Y_V
 EQINTU_T.INTER_USE_T_V
 EQnKLE.nKLE_V
-EQnELEC.nELEC_V
-EQnKL.VA_V
-EQELEC.ELEC_V
+EQnENER.nENER_V
+EQnKL.nKL_V
+EQENER.ENER_V
 EQKL.KL_V
-EQPELEC.PELEC_V
-EQPKLE.PKLE_V
-EQGDPCUR.GDPCUR_V
-EQGDPCONST.GDPCONST_V
+EQPnKL.PnKL_V
+EQPnENER.PnENER_V
+EQPnKLE.PnKLE_V
 /
 ;
 
