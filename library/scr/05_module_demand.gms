@@ -40,7 +40,7 @@ $label end_additional_sets
 $if not '%phase%' == 'parameters_declaration' $goto end_parameters_declaration
 
 Parameters
-    elasFU_data(fd,*)           data on elasticities (final demand)
+    elasFU_data(fd,*)           data on substitution elasticities (final demand)
     elasFU_H(regg)              substitution elasticity between products for
                                 # household final use
     elasFU_G(regg)              substitution elasticity between products for
@@ -110,7 +110,7 @@ $if not '%phase%' == 'parameters_calibration' $goto end_parameters_calibration
 
 *## Elasticities ##
 
-$libinclude xlimport elasFU_data %project%/00-principal/data/Eldata.xlsx elasFU!a1..zz10000 ;
+$libinclude xlimport elasFU_data %project%/00-principal/data/Eldata.xlsx elasFU_CES!a1..zz10000 ;
 
 * Substitution elasticity between aggregated products in volume for final use of
 * households. The elasticity value can be different in each region (regg).
@@ -731,9 +731,9 @@ CBUD_H_V.L(regg)$(CBUD_H(regg) eq 0)    = 0 ;
 CBUD_G_V.L(regg)$(CBUD_G(regg) eq 0)    = 0 ;
 CBUD_I_V.L(regg)$(CBUD_I(regg) eq 0)    = 0 ;
 
-SCLFD_H_V.L(regg) = sum((reg,prd), CONS_H(reg,prd,regg) ) ;
-SCLFD_G_V.L(regg) = sum((reg,prd), CONS_G(reg,prd,regg) ) ;
-SCLFD_I_V.L(regg) = sum((reg,prd), GFCF(reg,prd,regg) ) ;
+SCLFD_H_V.L(regg) = sum(prd, CONS_H_T(prd,regg) ) ;
+SCLFD_G_V.L(regg) = sum(prd, CONS_G_T(prd,regg) ) ;
+SCLFD_I_V.L(regg) = sum(prd, GFCF_T(prd,regg) ) ;
 
 SCLFD_H_V.FX(regg)$(SCLFD_H_V.L(regg) eq 0) = 0 ;
 SCLFD_G_V.FX(regg)$(SCLFD_G_V.L(regg) eq 0) = 0 ;
