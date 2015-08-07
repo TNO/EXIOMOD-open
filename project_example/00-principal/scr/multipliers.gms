@@ -32,7 +32,7 @@ $offtext
 *   $if not set model_type  $setglobal  model_type  'IO_product_technology'
 *   $if not set model_type  $setglobal  model_type  'IO_industry_technology'
 
-$if not set model_type $abort "global model_type not defined in project/scr/simulation/multipliers.gms on line %system.line%."
+$if not set model_type $abort "global model_type not defined in %project%/00-principal/scr/multipliers.gms on line %system.line%."
 
 * ======== Declaration and definition of simulation specific parameters ========
 
