@@ -1,4 +1,4 @@
-* File:   library/scr/user_data.gms
+* File:   %project%/00-principal/scr/read_labour_types_data.gms
 * Author: Trond Husby
 * Date:   19 February 2015
 * Adjusted: 19 February 2015
@@ -7,7 +7,7 @@
 
 $ontext
 This is a file where additional project-specific data can be read in. Data
-should be placed in %project%/data/.
+should be placed in %project%/Labour_types/data/.
 
 $offtext
 
@@ -19,21 +19,21 @@ Sets
 *Sets included to map wagedata from EXIOMOD60
 totset60
 /
-$include %project%/datalibrary_labour_types/sets/totalsets_60sec.txt
+$include %project%/Labour_types/sets/totalsets_60sec.txt
 /
 sec60(totset60)
 /
-$include %project%/datalibrary_labour_types/sets/industries_60sec.txt
+$include %project%/Labour_types/sets/industries_60sec.txt
 /
 ;
 
-$onmulti 
+*$onmulti
 Sets
 *Extending value added set to include three different skill groups
-    va /'LOW','MID','HIGH'/
-    klpr(va) / 'GOS', 'LOW','MID','HIGH'/
-; 
-$offmulti 
+    vapr /'NTP','LOW','MID','HIGH','GOS','INM','TSE'/
+    klpr(vapr) / 'GOS', 'LOW','MID','HIGH'/
+;
+*$offmulti
 
 Alias
     (klpr,klprr)
@@ -46,10 +46,10 @@ Parameters
     wag(reg_data,ind,klpr)      wages per skill group per sector
     lz_share(reg,ind,klpr)      skill-groups'share of income
 ;
-   
+
 * Read in data from EXIOBASE60 to create split for wages
-$libinclude xlimport wdata %project%/datalibrary_labour_types/data/EXIOBASE60_aggr_tl.xlsx USE!a1:bj3001 ;
-$libinclude xlimport mapdmod %project%/datalibrary_labour_types/data/mapdmod.xlsx Sheet1!a1:aj61 ;
+$libinclude xlimport wdata %project%/Labour_types/data/EXIOBASE60_aggr_tl.xlsx USE!a1:bj3001 ;
+$libinclude xlimport mapdmod %project%/Labour_types/data/mapdmod.xlsx Sheet1!a1:aj61 ;
 
 wag(reg_data,ind,'LOW')
     = sum(sec60$mapdmod(sec60,ind), Wdata(reg_data,'t206',sec60) ) ;
@@ -66,10 +66,10 @@ lz_share(reg,ind,klpr)$lz_share(reg,ind,klpr)
     / sum(klprr$lz_share(reg,ind,klprr), lz_share(reg,ind,klprr)) ;
 
 Display
-       Wdata
-       mapdmod
-       wag
-       lz_share
-       klpr
-       value_added
-       ;
+Wdata
+mapdmod
+wag
+lz_share
+klpr
+value_added
+;
