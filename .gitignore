@@ -13,4 +13,4 @@ xllink.err
 *.dat
 *.ppr
 results*
-
+*.g00
