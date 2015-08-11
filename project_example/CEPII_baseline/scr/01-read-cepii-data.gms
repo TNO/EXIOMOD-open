@@ -50,13 +50,13 @@ sets
 
     reg_CP      list of regions in cepii data
 /
-$include %project%\library_CEPII\sets\regions_cepii.txt
-$include %project%\library_CEPII\sets\regions_cepii_missing.txt
+$include %project%\CEPII_baseline\sets\regions_cepii.txt
+$include %project%\CEPII_baseline\sets\regions_cepii_missing.txt
 /
 
     year_CP     list of years in cepii data
 /
-$include %project%\library_CEPII\sets\years_cepii.txt
+$include %project%\CEPII_baseline\sets\years_cepii.txt
 /
 
 ;
@@ -72,9 +72,9 @@ Parameters
                                             # excel and in gams
 ;
 
-$libinclude xlimport GDP_CP_data            %project%\library_CEPII\data\CEPII_baseline_database_v2.2.xls    GDP!b1:bw442
-$libinclude xlimport productivity_CP_data   %project%\library_CEPII\data\CEPII_baseline_database_v2.2.xls    productivity!b1:bv295
-$libinclude xlimport factors_CP_data        %project%\library_CEPII\data\CEPII_baseline_database_v2.2.xls    factors!b1:bw1177
+$libinclude xlimport GDP_CP_data            %project%\CEPII_baseline\data\CEPII_baseline_database_v2.2.xls    GDP!b1:bw442
+$libinclude xlimport productivity_CP_data   %project%\CEPII_baseline\data\CEPII_baseline_database_v2.2.xls    productivity!b1:bv295
+$libinclude xlimport factors_CP_data        %project%\CEPII_baseline\data\CEPII_baseline_database_v2.2.xls    factors!b1:bw1177
 
 tot_productivity
             = sum((reg_CP,year_CP), productivity_CP_data(reg_CP,"Energy productivity",year_CP) )

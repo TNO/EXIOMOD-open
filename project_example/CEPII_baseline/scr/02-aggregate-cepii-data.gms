@@ -66,18 +66,18 @@ Sets
 
     reg_CP_aggr(reg_CP,reg)         aggregation scheme for cepii regions
 /
-$include %project%\library_CEPII\sets\aggregation\regions_cepii_to_model.txt
-$include %project%\library_CEPII\sets\aggregation\regions_cepii_missing_to_model.txt
+$include %project%\CEPII_baseline\sets\aggregation\regions_cepii_to_model.txt
+$include %project%\CEPII_baseline\sets\aggregation\regions_cepii_missing_to_model.txt
 /
 
     year_CP_aggr(year_CP,year)      aggregation scheme for cepii years
 /
-$include %project%\library_CEPII\sets\aggregation\years_cepii_to_model.txt
+$include %project%\CEPII_baseline\sets\aggregation\years_cepii_to_model.txt
 /
 
     reg_CP_miss       regions missing in Cepii regions
 /
-$include %project%\library_CEPII\sets\regions_cepii_missing.txt
+$include %project%\CEPII_baseline\sets\regions_cepii_missing.txt
 /
     reg_CP_comp(*,*)  comparable regions of missing regions
 / SI.SVK, TW.CHN, CY.MLT, SI.SK, TW.CN, CY.MT /
@@ -290,7 +290,7 @@ $offtext
 * ************** Gap filling missing countries for growth rates ****************
 
 * Three EXIOBASE countries are missing in the CEPII dataset (reg_CP_miss).
-* These are SI TW CY, assign the value of a comparable country (reg_CP_comp).   
+* These are SI TW CY, assign the value of a comparable country (reg_CP_comp).
 * This is only done when model regions include any of these three countries.
 
 
