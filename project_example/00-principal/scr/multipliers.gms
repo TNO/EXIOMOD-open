@@ -166,9 +166,9 @@ else
 ) ;
 
 * =========================== Write results to Excel ===========================
-execute 'mkdir results'
+execute 'mkdir %project%\results'
 
-$LIBInclude xldump       multipliers            results/multipliers.xls multipliers!a1
+$LIBInclude xldump       multipliers            %project%/results/multipliers.xls multipliers!a1
 
 Display
 multipliers
