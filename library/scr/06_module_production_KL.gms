@@ -68,9 +68,9 @@ Parameters
                                 # assumption (relation in volume)
     ioc(prd,regg,ind)           technical input coefficients for intermediate
                                 # inputs (relation in volume)
-    aVA(regg,ind)               technical input coefficients for aggregated
+    aKL(regg,ind)               technical input coefficients for aggregated
                                 # factors of production (relation in volume)
-    alpha(reg,va,regg,ind)      relative share parameter for factors of
+    alphaKL(reg,va,regg,ind)    relative share parameter for factors of
                                 # production within the aggregated nest
                                 # (relation in volume)
 
@@ -198,13 +198,13 @@ ioc(prd,regg,ind)$INTER_USE_T(prd,regg,ind)
 
 * Leontief technical input coefficients for the nest of aggregated factors of
 * production in each industry (ind) in each region (regg).
-aVA(regg,ind)$sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) )
+aKL(regg,ind)$sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) )
     = sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) / Y(regg,ind) ;
 
 * Relative share parameter for factors of production within the aggregated nest
 * for each type of production factor (reg,kl) in each industry (ind) in each
 * region (regg).
-alpha(reg,kl,regg,ind)$VALUE_ADDED(reg,kl,regg,ind)
+alphaKL(reg,kl,regg,ind)$VALUE_ADDED(reg,kl,regg,ind)
     = VALUE_ADDED(reg,kl,regg,ind) /
     ( sum((reggg,kll), VALUE_ADDED(reggg,kll,regg,ind) ) /
     fprod(kl,regg,ind) )  *
@@ -214,8 +214,8 @@ Display
 coprodA
 coprodB
 ioc
-aVA
-alpha
+aKL
+alphaKL
 ;
 
 
@@ -240,10 +240,10 @@ Variables
 
     INTER_USE_T_V(prd,regg,ind)     use of intermediate inputs on aggregated
                                     # product level
-    VA_V(regg,ind)                  use of aggregated production factors
+    nKL_V(regg,ind)                 use of aggregated production factors
     KL_V(reg,va,regg,ind)           use of specific production factors
 
-    PVA_V(regg,ind)                 aggregate production factors price
+    PnKL_V(regg,ind)                aggregate production factors price
 ;
 
 * Exogenous variables
@@ -265,14 +265,13 @@ Equations
 
     EQINTU_T(prd,regg,ind)      demand for intermediate inputs on aggregated
                                 # product level
-    EQVA(regg,ind)              demand for aggregated production factors
+    EQnKL(regg,ind)             demand for aggregated production factors
     EQKL(reg,va,regg,ind)       demand for specific production factors
 
-    EQOBJ                       artificial objective function
-
-    EQPVA(regg,ind)             balance between specific production factors
+    EQPnKL(regg,ind)            balance between specific production factors
                                 # price and aggregate production factors price
 
+    EQOBJ                       artificial objective function
 ;
 
 $label end_variables_equations_declaration
@@ -333,10 +332,10 @@ EQINTU_T(prd,regg,ind)..
 * EQUATION 2.4: Demand for aggregated production factors. The demand function
 * follows Leontief form, where the relation between aggregated value added and
 * output of the industry (regg,ind) in volume is kept constant.
-EQVA(regg,ind)..
-    VA_V(regg,ind)
+EQnKL(regg,ind)..
+    nKL_V(regg,ind)
     =E=
-    aVA(regg,ind) * Y_V(regg,ind) ;
+    aKL(regg,ind) * Y_V(regg,ind) ;
 
 * EQUAION 2.5: Demand for specific production factors. The demand function
 * follows CES form, where demand of each industry (regg,ind) for each factor of
@@ -346,26 +345,26 @@ EQVA(regg,ind)..
 EQKL(reg,kl,regg,ind)$VALUE_ADDED(reg,kl,regg,ind)..
     KL_V(reg,kl,regg,ind)
     =E=
-    ( VA_V(regg,ind) / fprod(kl,regg,ind) ) * alpha(reg,kl,regg,ind) *
+    ( nKL_V(regg,ind) / fprod(kl,regg,ind) ) * alphaKL(reg,kl,regg,ind) *
     ( PKL_V(reg,kl) /
-    ( fprod(kl,regg,ind) * PVA_V(regg,ind) ) )**( -elasKL(regg,ind) ) ;
+    ( fprod(kl,regg,ind) * PnKL_V(regg,ind) ) )**( -elasKL(regg,ind) ) ;
 
-* EQUATION 2.6: Artificial objective function: only relevant for users of conopt
+* EQUATION 2.6: Balance between specific production factors price and aggregate
+* production factors price. The aggregate price is different in each industry
+* (ind) in each region (regg) and is a weighted average of the price of specific
+* production factors, where weights are defined as demand by the industry for
+* corresponding production factors.
+EQPnKL(regg,ind)..
+    PnKL_V(regg,ind) * nKL_V(regg,ind)
+    =E=
+    sum((reg,kl), PKL_V(reg,kl) * KL_V(reg,kl,regg,ind)) ;
+
+* EQUATION 2.7: Artificial objective function: only relevant for users of conopt
 * solver in combination with NLP type of mathematical problem.
 EQOBJ..
     OBJ
     =E=
     1 ;
-
-* EQUATION 2.7: Balance between specific production factors price and aggregate
-* production factors price. The aggregate price is different in each industry
-* (ind) in each region (regg) and is a weighted average of the price of specific
-* production factors, where weights are defined as demand by the industry for
-* corresponding production factors.
-EQPVA(regg,ind)..
-    PVA_V(regg,ind) * VA_V(regg,ind)
-    =E=
-    sum((reg,kl), PKL_V(reg,kl) * KL_V(reg,kl,regg,ind)) ;
 
 $label end_equations_definition
 
@@ -387,22 +386,22 @@ X_V.FX(reg,prd)$(X(reg,prd) eq 0)   = 0 ;
 INTER_USE_T_V.L(prd,regg,ind) = INTER_USE_T(prd,regg,ind) ;
 INTER_USE_T_V.FX(prd,regg,ind)$(INTER_USE_T(prd,regg,ind) eq 0) = 0 ;
 
-VA_V.L(regg,ind)        = sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) ;
+nKL_V.L(regg,ind)       = sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) ;
 KL_V.L(reg,kl,regg,ind) = VALUE_ADDED(reg,kl,regg,ind) ;
-VA_V.FX(regg,ind)$(sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) eq 0) = 0 ;
-KL_V.FX(reg,kl,regg,ind)$(VALUE_ADDED(reg,kl,regg,ind) eq 0 )         = 0 ;
-
-* Exogenous variables
-* Exogenous variables are fixed to their calibrated value.
-KLS_V.FX(reg,kl)                  = KLS(reg,kl) ;
+nKL_V.FX(regg,ind)$(sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) eq 0) = 0 ;
+KL_V.FX(reg,kl,regg,ind)$(VALUE_ADDED(reg,kl,regg,ind) eq 0 )          = 0 ;
 
 * Price variables: level of basic prices is set to one, which also corresponds
 * to the price level used in calibration. If the the real variable to which the
 * price level is linked is fixed to zero, the price is fixed to one. For zero
 * level variables any price level will be a solution and fixing it to one helps
 * the solver. Additionally, price of the numéraire is fixed.
-PVA_V.L(regg,ind)      = 1 ;
-PVA_V.FX(regg,ind)$(VA_V.L(regg,ind) eq 0)                    = 1 ;
+PnKL_V.L(regg,ind)      = 1 ;
+PnKL_V.FX(regg,ind)$(nKL_V.L(regg,ind) eq 0)                    = 1 ;
+
+* Exogenous variables
+* Exogenous variables are fixed to their calibrated value.
+KLS_V.FX(reg,kl)                  = KLS(reg,kl) ;
 
 * ======================= Scale variables and equations ========================
 
@@ -452,15 +451,15 @@ INTER_USE_T_V.SCALE(prd,regg,ind)$(INTER_USE_T_V.L(prd,regg,ind) lt 0)
     = -INTER_USE_T_V.L(prd,regg,ind) ;
 
 * EQUATION 2.4
-EQVA.SCALE(regg,ind)$(VA_V.L(regg,ind) gt 0)
-    = VA_V.L(regg,ind) ;
-VA_V.SCALE(regg,ind)$(VA_V.L(regg,ind) gt 0)
-    = VA_V.L(regg,ind) ;
+EQnKL.SCALE(regg,ind)$(nKL_V.L(regg,ind) gt 0)
+    = nKL_V.L(regg,ind) ;
+nKL_V.SCALE(regg,ind)$(nKL_V.L(regg,ind) gt 0)
+    = nKL_V.L(regg,ind) ;
 
-EQVA.SCALE(regg,ind)$(VA_V.L(regg,ind) lt 0)
-    = -VA_V.L(regg,ind) ;
-VA_V.SCALE(regg,ind)$(VA_V.L(regg,ind) lt 0)
-    = -VA_V.L(regg,ind) ;
+EQnKL.SCALE(regg,ind)$(nKL_V.L(regg,ind) lt 0)
+    = -nKL_V.L(regg,ind) ;
+nKL_V.SCALE(regg,ind)$(nKL_V.L(regg,ind) lt 0)
+    = -nKL_V.L(regg,ind) ;
 
 * EQUATION 2.5
 EQKL.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) gt 0)
@@ -474,11 +473,11 @@ KL_V.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) lt 0)
     = -KL_V.L(reg,kl,regg,ind) ;
 
 * EQUATION 2.6
-EQPVA.SCALE(reg,ind)$(VA_V.L(reg,ind) gt 0)
-    = VA_V.L(reg,ind) ;
+EQPnKL.SCALE(reg,ind)$(nKL_V.L(reg,ind) gt 0)
+    = nKL_V.L(reg,ind) ;
 
-EQPVA.SCALE(reg,ind)$(VA_V.L(reg,ind) lt 0)
-    = -VA_V.L(reg,ind) ;
+EQPnKL.SCALE(reg,ind)$(nKL_V.L(reg,ind) lt 0)
+    = -nKL_V.L(reg,ind) ;
 
 * EXOGENOUS VARIBLES
 KLS_V.SCALE(reg,kl)$(KLS_V.L(reg,kl) gt 0)
@@ -517,9 +516,9 @@ Model production_CGE_MCP
 EQBAL.X_V
 EQY.Y_V
 EQINTU_T.INTER_USE_T_V
-EQVA.VA_V
+EQnKL.nKL_V
 EQKL.KL_V
-EQPVA.PVA_V
+EQPnKL.PnKL_V
 /
 ;
 
