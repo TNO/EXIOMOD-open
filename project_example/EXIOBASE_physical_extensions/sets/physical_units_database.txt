@@ -1,0 +1,8 @@
+'km2'
+'kg'
+'kg I-TEQ'
+'kg CO2-eq'
+'kt'
+'m3'
+'Mm3'
+'TJ'
