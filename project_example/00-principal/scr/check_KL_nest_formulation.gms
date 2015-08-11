@@ -99,7 +99,7 @@ Equations
                                         # with Cobb-Douglas specification
     EQKL_CES(reg,va,regg,ind)           demand for specific production factors
                                         # with CES specification
-    EQPVA_CES(regg,ind)                 balance between specific production
+    EQPnKL_CES(regg,ind)                balance between specific production
                                         # factors price and aggregate production
                                         # factors price with CES specification
 ;
@@ -111,7 +111,7 @@ EQKL_COBBDOUGLAS(reg,kl,regg,ind)$VALUE_ADDED(reg,kl,regg,ind)..
     =E=
     facC(reg,kl,regg,ind) / prod((reggg,kll)$facC(reggg,kll,regg,ind),
     facC(reggg,kll,regg,ind)**facC(reggg,kll,regg,ind) ) *
-    ( 1 / PKL_V(reg,kl) ) * VA_V(regg,ind) / facA(regg,ind) *
+    ( 1 / PKL_V(reg,kl) ) * nKL_V(regg,ind) / facA(regg,ind) *
     prod((reggg,kll), PKL_V(reggg,kll)**facC(reggg,kll,regg,ind) ) ;
 
 * EQUAION 2.2 CONSTANT ELASTICITY OF SUBSTITUTION: Demand for specific
@@ -119,16 +119,16 @@ EQKL_COBBDOUGLAS(reg,kl,regg,ind)$VALUE_ADDED(reg,kl,regg,ind)..
 EQKL_CES(reg,kl,regg,ind)$VALUE_ADDED(reg,kl,regg,ind)..
     KL_V(reg,kl,regg,ind)
     =E=
-    VA_V(regg,ind) *
+    nKL_V(regg,ind) *
     ( gammaCES(reg,kl,regg,ind) / PKL_V(reg,kl) )**elasKL(regg,ind) *
-    PVA_V(regg,ind)**elasKL(regg,ind) *
+    PnKL_V(regg,ind)**elasKL(regg,ind) *
     aCES(regg,ind)**( elasKL(regg,ind) - 1 ) ;
 
 * EQUATION 10.4 CONSTANT ELASTICITY OF SUBSTITUTION: Price of aggregate
 * production factors defines in explicit CES form, can be only used in
 * combination with EQUATION 9 CONSTANT ELASTICITY OF SUBSTITUTION.
-EQPVA_CES(regg,ind)$sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) )..
-    PVA_V(regg,ind)
+EQPnKL_CES(regg,ind)$sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) )..
+    PnKL_V(regg,ind)
     =E=
     1 / aCES(regg,ind) *
     sum((reg,kl)$gammaCES(reg,kl,regg,ind),
@@ -156,11 +156,11 @@ EQKL_CES.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) lt 0)
     = -KL_V.L(reg,kl,regg,ind) ;
 
 * EQUATION 10.4 CONSTANT ELASTICITY OF SUBSTITUTION
-EQPVA_CES.SCALE(reg,ind)$(VA_V.L(reg,ind) gt 0)
-    = VA_V.L(reg,ind) ;
+EQPnKL_CES.SCALE(reg,ind)$(nKL_V.L(reg,ind) gt 0)
+    = nKL_V.L(reg,ind) ;
 
-EQPVA_CES.SCALE(reg,ind)$(VA_V.L(reg,ind) lt 0)
-    = -VA_V.L(reg,ind) ;
+EQPnKL_CES.SCALE(reg,ind)$(nKL_V.L(reg,ind) lt 0)
+    = -nKL_V.L(reg,ind) ;
 
 
 * ================= Define models with new variables/equations =================
@@ -179,9 +179,9 @@ Model CGE_MCP_CES
 /
 CGE_MCP
 -EQKL
--EQPVA
+-EQPnKL
 EQKL_CES.KL_V
-EQPVA_CES.PVA_V
+EQPnKL_CES.PnKL_V
 /
 ;
 
