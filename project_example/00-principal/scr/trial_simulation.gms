@@ -1,49 +1,46 @@
+* File:   %project%/00-principal/scr/trial_simulation.gms
+* Author: Tatyana Bulavskaya
+* Date:   11 August 2015
+* Adjusted:
+
+* gams-master-file: main.gms
+
+$ontext startdoc
+This code can be used for making small trial simluations with base CGE model.
+The code is useful when we want to test some new features of the model.
+$offtext
+
+
 * activate end of line comment and specify the activating character
 $oneolcom
 $eolcom #
 
-*KLS_V.FX('EU27','COE')                 = 1.1 * KLS('EU27','COE')                      ;
-KLS_V.FX('WEU','COE')                 = 1.1 * KLS('WEU','COE')                      ;
+KLS_V.FX('WEU','COE') = 1.1 * KLS('WEU','COE') ;
 
+* Option with 0 iterations can be used to check calibration of the model, i.e.
+* with without any shock
 *Option iterlim = 0 ;
 Option iterlim = 20000000 ;
-*Option nlp = pathnlp ;
-*Option cns = path ;
 Option decimals = 7 ;
-*CGE_MCP.optfile = 1 ;
-*CGE_TRICK.optfile = 1 ;
-*option nlp=gamschk ;
 option nlp = conopt3 ;
-*CGE_TRICK.scaleopt = 1 ;
 CGE_MCP.scaleopt = 1 ;
 
-
-*Solve CGE_TRICK using nlp maximizing obj;
-*Solve CGE_TRICK using cns ;
 Solve CGE_MCP using MCP ;
 
 Parameter
     Y_change(regg,ind)          change in industry output due to shock
     X_change(reg,prd)           change in product output due to shock
-;
-
-Y_change(regg,ind)$Y(regg,ind)
-    = Y_V.L(regg,ind) / Y(regg,ind) ;
-X_change(reg,prd)$X(reg,prd)
-    = X_V.L(reg,prd) / X(reg,prd) ;
-
-Display
-Y_change
-X_change
-;
-
-Parameter
     Yreg_change(regg)           change in country output due to shock
 ;
+
+Y_change(regg,ind)$Y(regg,ind) = Y_V.L(regg,ind) / Y(regg,ind) ;
+X_change(reg,prd)$X(reg,prd)   = X_V.L(reg,prd) / X(reg,prd) ;
 
 Yreg_change(regg) = sum(ind, Y_V.L(regg,ind) ) - sum(ind, Y(regg,ind) ) ;
 
 Display
+Y_change
+X_change
 Yreg_change
 ;
 
