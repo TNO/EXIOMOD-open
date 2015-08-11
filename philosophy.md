@@ -1,4 +1,4 @@
-# General principles of software development 
+# General principles of software development
 
 We have compiled the following list from various sources on software development (e.g., object-oriented, agile). We are not strictly following one of the existing approaches but rather finding a suitable mix of principles that will support long-term development of Economic Modelling Platform for Sustainability (EM-PLUS).
 
@@ -8,33 +8,32 @@ We have compiled the following list from various sources on software development
 
 3. *A module should be open for extension but closed for modification*: We should write our modules so that they can be extended, without requiring them to be modified. In other words, we want to be able to change what the modules do, without changing the source code of the modules.
 
-4. *Classes that change together, belong together*: A large development project is subdivided into a large network of interrelated packages. The work to manage, test, and release those packages is non-trivial. The more packages that change in any given release, the greater the work to rebuild, test, and deploy the release. 
+4. *Classes that change together, belong together*: A large development project is subdivided into a large network of interrelated packages. The work to manage, test, and release those packages is non-trivial. The more packages that change in any given release, the greater the work to rebuild, test, and deploy the release.
 
-5. *Depend in the direction of stability*: Stability is related to the amount of work required to make a change. One sure way to make a software package  difficult to change, is to make lots of other software packages depend upon it.A package with lots of incoming dependencies is very stable because it requires a great deal of work to reconcile any changes with all the dependent packages. A piece of software that is designed to be stable should not depend on the piece that is designed to be flexible (not stable).
+5. *Depend in the direction of stability*: Stability is related to the amount of work required to make a change. One sure way to make a software package  difficult to change, is to make lots of other software packages depend upon it. A package with lots of incoming dependencies is very stable because it requires a great deal of work to reconcile any changes with all the dependent packages. A piece of software that is designed to be stable should not depend on the piece that is designed to be flexible (not stable).
 
 # How the principles are implemented in EM-PLUS
 
 ### Split between library and project folder (Principles 3., 4., 5.)
-The development of EM-PLUS is based on a split between the code from the *library* and the code developed under each *project*. These two are kept in separate folders. The model in the library is a self-contained model and will be referred to as the *Base Model*. At the beginning of each project, the project team will start with a basic working CGE model, which is used in combination with code created specifically for the project. See the file *sandwichlist.md* for instructions on how to start up your project and how to implement own modifications. Code developed in the project can potentially be merged back into library after the project has been finished.
+The development of EM-PLUS is based on a split between the code from the *library* and the code developed under each *project*. These two are kept in separate folders. The model in the library is a self-contained model and will be referred to as the *Base Model*. At the beginning of each project, the project team will start with a basic working CGE model, which is used in combination with code created specifically for the project. See the file *gettingstarted* for instructions on how to start up your project and how to implement own modifications. Code developed in the project can potentially be merged back into library after the project has been finished.
 
 ###  Version management (Principle 1.)
 Modifications in EM-PLUS should be *incremental* and *well-documented*, facilitating collaborative code development, making it easy to synchronise to the common established code base and to document changes in the code from version to version. The main tool for ensuring proper version management is GitHub. GitHub is a web-based Git repository hosting service, which offers all of the distributed revision control and source code management (SCM) functionality of Git as well as adding its own features. A one page guide to getting started with GitHub can be found at http://rogerdudler.github.io/git-guide/.
 
-In order to make sure changes are incremental, we would like developers to accompany commits with a clear description of what was changed and why. Avoid committing whole bundles of unrelated changes with one commit. As a rule of
-thumb, commits should not contain more than three major changes.
+In order to make sure changes are incremental, we would like developers to accompany commits with a clear description of what was changed and why. Avoid committing whole bundles of unrelated changes with one commit. As a rule of thumb, commits should not contain more than three major changes.
 
 ### Documentation and code (Principle 2.)
 Besides formal documentation of the structure (equations), EM-PLUS mainly relies on documentation within the code itself. Those who contribute a bit of code should label it with their name. At the beginning of each file the following template should be filled in
 ```
-* File: 
-* Author: 
-* Date: 
-* Adjusted: 
+* File:
+* Author:
+* Date:
+* Adjusted:
 
 * gams-master-file:
 ```
 
-A block of reading guide in the beginning of the code provides an overview of the structure of code, reference to other similar codes and other general information about the code. Detailed explanations of each element of the code are given right above or next to the elements themselves. For example, consider the definition of an equation in the file `06_module_production.gms` 
+A block of reading guide in the beginning of the code provides an overview of the structure of code, reference to other similar codes and other general information about the code. Detailed explanations of each element of the code are given right above or next to the elements themselves. For example, consider the definition of an equation in the file `06_module_production_KL.gms`
 
 ```
 * EQUATION 2.1: Product market balance: product output is equal to total uses,
@@ -55,8 +54,7 @@ EQBAL(reg,prd)..
     X_V(reg,prd) ;
 ```
 
-This way, if the model is updated, comments and documentation should be updated
-together with the code. In addition, the length of the documentation should be kept to a minimum.
+This way, if the model is updated, comments and documentation should be updated together with the code. In addition, the length of the documentation should be kept to a minimum.
 
 ### Modular approach (Principles 3., 4., 5.)
 Here modularity means that a large model code is split into rather compact thematic blocks of code, such as producer, consumer, trade, etc. Each module code contains both the calibration and equation parts of the block. We define the content of each module and the connection channels between the modules. The modules and their interconnections should be structured in such a way that replacing one of the modules, for example consumer LES demand function instead of Cobb-Douglas, doesn't require to make changes in other modules. Working with modules also simplifies the development process if several people change code at the same time.

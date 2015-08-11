@@ -6,7 +6,7 @@ Create a new branch from the master branch on GitHub. The master branch consists
 
 2. A project_example-folder containing examples of structure and code one could use for a project. Examples of data aggregation are also included in this folder.
 
-3. The file `configuration.gms` which contains project-specific, linked to project_example, settings such as project name, base-year and base-currency. For each project a new project name should be given, corresponding to the name of the project folder (see below).
+3. The file `configuration.gms` which contains project-specific, linked to project_example, settings such as project name, choice of functions, base-year and base-currency. For each project a new project name should be given, corresponding to the name of the project folder (see below).
 
 4. The file `main.gms` which contains simulation-specific settings, such as which simulation file to run. For each project a new *main* file(s) should be specified, each linking to the simulation-specific .gms file (see below).
 
@@ -16,9 +16,9 @@ A project folder has the following structure:
 
 * *00-principal* (required) contains input files needed to run the base-model. The structure of the sub-folders and file names are predefined and explained in more details below. The names and structure cannot be changed because the files are being called from the library-folder.
 
-* *##-scenario* (optional) contains scenario-specific input files. Presence of this folder(s) is not necessary and is decided according to the needs of the project. In case scenario(s) require input from various external data files (e.g. from other reports and other models) is it recommended to create this structure.
+* *extradata* (optional) contains files for processing of auxliary input data into scenarios. Presence of this folder(s) is not necessary and is decided according to the needs of the project. In case scenario(s) require input from various external data files (e.g. from other reports and other models) is it recommended to create this structure.
 
-By running [make_project_structure](make_project_structure.bat) one creates a project folder structure with *00-principal* and one *##-scenario*. The user will be prompted to provide a title for his/her project.
+By running [make_project_structure](make_project_structure.bat) one creates a project folder structure with *00-principal* and one *extradata*. The user will be prompted to provide a title for his/her project.
 
 ### Inside *00-principal* folder
 
@@ -28,23 +28,23 @@ This folder has a well pre-defined structure:
 
     * *aggregation* contains link between sets with the desired level of detail of the model and sets with the level of detail of the database. [See more](documentation\readme's\readme_principal_sets_aggregation.txt) on the file naming requirements.
 
-* *data* contains user input for the substitution elasticities and starting values of factor productivities. Sectoral and product level of detail in the data file should correspond to the chosen level of detail in the model (as in 00-principal --> sets). The user is required to use the provided template file `Eldata.xlsx`.
+* *data* contains user input for the (substitution) elasticities and starting values of productivities. Sectoral and product level of detail in the data file should correspond to the chosen level of detail in the model (as in 00-principal --> sets). The user is required to use the provided template file `Eldata.xlsx`.
 
 * *scr* contains scripts for running simulations, the scripts will be called from `main.gms`. It is recommended to have two types of scripts in this folder:
 
-    * one for preparation of scenario-specific inputs into a format usable by the model. The user would probably need this script only if *##-scenario* folders are also being created.
+    * one for preparation of auxiliary data inputs into a format usable by the model. The user would probably need this script only if *extradata* folders are also being created.
 
-    * one or multiple for running the actual simulations. The user can wither include all the scenarios into one simulation script, or have a dedicated script per scenario, the choice depends on complexity of the project. It is recommended to follow the structure of provided template file 'run_simulation.gms'.
+    * one or multiple for running the actual simulations. The user can either include all the scenarios into one simulation script, or have a dedicated script per scenario, the choice depends on complexity of the project. It is recommended to follow the structure of provided template file 'run_simulation.gms'.
 
 Examples of specific sets, aggregations, data and script files can be taken from project_example.
 
-### Inside *##-scenario* folder(s)
+### Inside *extradata* folder(s)
 
-This folder(s) follows the same structure as *00-principal*. In the sub-folder *data* the user should include the external data files with information on scenario-specific inputs. In the sub-folder *sets* the dimensions of these external data files should be described and the linkages to the dimensions of the model established. In the sub-folder *scr* the script for conversion of the external data files into model inputs are collected; these scripts will then be called from *00-principal/scr*.
+This folder(s) follows the same structure as *00-principal*. In the sub-folder *data* the user should include the external data files. In the sub-folder *sets* the dimensions of these external data files should be described and the linkages to the dimensions of the model established. In the sub-folder *scr* the script for conversion of the external data files into model inputs are collected; these scripts will then be called from *00-principal/scr*.
 
 # Coding style conventions
 
-These conventions are applied in the base-model and need to be applied to any new code that is being added to the library of the base-model.
+These conventions are applied in the *Base model* and need to be applied to any new code that is being added to the library.
 
 * **Code width** is 80 characters, this allows to code to be readable on most screens and also in print.
 
@@ -72,7 +72,7 @@ Parameters
 ;
 ```
     * Indent each new element with one tab.
-    * Provide sufficient explanatory text for each element. If the explanatory text doesn't fit within the 80-characters limit, use the end of line comments (#), which are activated in the beginning of a .gms file:
+    * Provide sufficient explanatory text for each element. If the explanatory text doesn't fit within the 80-characters limit, use the end of line comments (with character #), which are activated in the beginning of a .gms file:
     ```
     $oneolcom
     $eolcom #
@@ -127,45 +127,20 @@ INTER_USE
 
 # How to make your own modifications
 
-1. Become acquainted with the structure of the thematic modules (which equations
-   and variables belong to which module?). An overview of the modules can be
-   found [here](./documentation/modules/modules.html)
+1. Become acquainted with the structure of the thematic modules (which equations and variables belong to which module?). An overview of the modules can be found [here](./documentation/modules/modules.html)
 
-2. Become acquainted with the sets and the structure of subsets used. Sets are
-   listed in the .txt-files in the */00-principal/sets/* folder.
+2. Become acquainted with the sets and the structure of subsets used. Sets are listed in the .txt-files in the */00-principal/sets/* folder.
 
-3. Become acquainted with the contents of the */00-principal/data/* folder. If
-   elasticities or technology-parameters need to be changed, the
-   excel-sheets already in the folder can be used. Data is read in using the
-   file *user_data.gms* in */00-principal/scr/*.
+3. Become acquainted with the contents of the */00-principal/data/* folder. If elasticities or technology-parameters need to be changed, the excel-sheets already in the folder can be used.
 
-4. Additional data can either be added to the general */00-principal/data/*
-   (simple projects) or to scenario-specific folders *##-scenario/data/* (more
-   extensive projects). Please also consult some project examples to see how
-   this can be done.
+4. Additional data can either be added to the general */00-principal/data/* (simple projects) or to specific folders *extradata/data/* (more extensive projects). Please also consult some project examples to see how this can be done.
 
-5. Open the relevant modules in */library/scr/*. Search
-   for: (i) equations that need to be changed; (ii) variables that
-   need to be changed; (iii) parameters that need to be changed.
+5. Open the relevant modules in */library/scr/*. Search for: (i) equations that need to be changed; (ii) variables that need to be changed; (iii) parameters that need to be changed.
 
-6. Making changes to equations: equations which need to be changed need to be
-   renamed, e.g. from EQKL to EQKL_pr, and restated. Make sure to
-   include scaling of the equations after the model statement.
+6. Making changes to equations: equations which need to be changed need to be renamed, e.g. from EQKL to EQKL_pr, and restated. Make sure to include scaling of the equations after the model statement.
 
-7. Making changes to variables: equations which need to be changed need to be
-   renamed, e.g. from KL to EQKL_pr. Make sure to include
-   bounds/starting values/fixed values of variables after the model
-   statement.
+7. Making changes to variables: equations which need to be changed need to be renamed, e.g. from KL to EQKL_pr. Make sure to include bounds/starting values/fixed values of variables after the model statement.
 
-8. Making changes to the model: a new model needs to be defined with
-   new variables/equations. The new model must state: (i) the original
-   model; (ii) the equations from the original model that needs to be
-   dropped (with a minus (-) sign in front); (iii) additional
-   equations and variables in the new model.
+8. Making changes to the model: a new model needs to be defined with new variables/equations. The new model must state: (i) the original model; (ii) the equations from the original model that needs to be dropped (with a minus (-) sign in front); (iii) additional equations and variables in the new model.
 
-9. Make sure that (i) the project name in *configuration.gms*
-   corresponds to the name of the project folder; (ii) the name of the
-   simulation file in *main.gms* corresponds to the name of the
-   simulation-specific .gms-file.
-
-
+9. Make sure that (i) the project name in *configuration.gms* corresponds to the name of the project folder; (ii) the name of the simulation file in *main.gms* corresponds to the name of the simulation-specific .gms-file.
