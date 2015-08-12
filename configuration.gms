@@ -27,14 +27,14 @@ $if not set project      $setglobal      project         'project_example'
 *     have fixed Leontief coefficients
 * type 'KL-E': substitution possible between production factors and energy,
 *     other inputs have fixed Leontief coefficients
-$if not set prodfunc     $setglobal      prodfunc        'KL-E'
+$if not set prodfunc     $setglobal      prodfunc        'KL'
 
 * form of demand functions: choose between 'CES' and 'LES-CEShh'
 * type 'CES': demand functions of all final consumers follows CES utility
 *     function
 * type 'LES-CEShh': demand function for households includes minimum subsitabnce
 *     level (LES utility form), other demand functions are CES
-$if not set demnfunc     $setglobal      demnfunc        'LES-CEShh'
+$if not set demnfunc     $setglobal      demnfunc        'CES'
 
 
 * database checking: set 'yes' to check the database on consistency
