@@ -76,7 +76,6 @@ Parameters
     nENER(regg,ind)             intermediate use of aggregated energy (volume)
     nKLE(regg,ind)              intermediate use of capital-labour-energy nest
                                 # (volume)
-    KLS(reg,va)                 supply of production factors (volume)
 
     tc_ind(prd,regg,ind)        tax and subsidies on products rates for
                                 # industries (relation in value)
@@ -209,16 +208,6 @@ nENER
 nKLE
 ;
 
-* Supply in volume of each production factor (kl) in each region (reg), the
-* corresponding basic price in the base year is equal to 1, market price can be
-* different from 1 in case of non-zero taxes on factors of production.
-KLS(reg,kl)
-    = sum((regg,ind),VALUE_ADDED(reg,kl,regg,ind) ) ;
-
-Display
-KLS
-;
-
 
 *## Tax rates ##
 
@@ -340,11 +329,6 @@ Variables
     PnKL_V(regg,ind)                aggregate production factors price
     PnENER_V(regg,ind)              aggregate energy price
     PnKLE_V(regg,ind)               aggregate capital-labour-energy price
-;
-
-* Exogenous variables
-Variables
-    KLS_V(reg,va)                   supply of production factors
 ;
 
 * Artificial objective
@@ -563,10 +547,6 @@ PnKL_V.FX(regg,ind)$(nKL_V.L(regg,ind) eq 0)     = 1 ;
 PnENER_V.FX(regg,ind)$(nENER_V.L(regg,ind) eq 0) = 1 ;
 PnKLE_V.FX(regg,ind)$(nKLE_V.L(regg,ind) eq 0)   = 1 ;
 
-* Exogenous variables
-* Exogenous variables are fixed to their calibrated value.
-KLS_V.FX(reg,kl)                  = KLS(reg,kl) ;
-
 * ======================= Scale variables and equations ========================
 
 * Scaling of variables and equations is done in order to help the solver to
@@ -689,12 +669,6 @@ EQPnKLE.SCALE(reg,ind)$(nKLE_V.L(reg,ind) gt 0)
 
 EQPnKLE.SCALE(reg,ind)$(nKLE_V.L(reg,ind) lt 0)
     = -nKLE_V.L(reg,ind) ;
-
-* EXOGENOUS VARIBLES
-KLS_V.SCALE(reg,kl)$(KLS_V.L(reg,kl) gt 0)
-    = KLS_V.L(reg,kl) ;
-KLS_V.SCALE(reg,kl)$(KLS_V.L(reg,kl) lt 0)
-    = -KLS_V.L(reg,kl) ;
 
 $label end_bounds_and_scales
 

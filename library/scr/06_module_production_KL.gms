@@ -51,7 +51,6 @@ Parameters
     Y(regg,ind)                 output vector by activity (volume)
     X(reg,prd)                  output vector by product (volume)
     INTER_USE_T(prd,regg,ind)   intermediate use on product level (volume)
-    KLS(reg,va)                 supply of production factors (volume)
 
     tc_ind(prd,regg,ind)        tax and subsidies on products rates for
                                 # industries (relation in value)
@@ -140,15 +139,6 @@ Display
 INTER_USE_T
 ;
 
-* Supply in volume of each production factor (kl) in each region (reg), the
-* corresponding basic price in the base year is equal to 1, market price can be
-* different from 1 in case of non-zero taxes on factors of production.
-KLS(reg,kl)
-    = sum((regg,ind),VALUE_ADDED(reg,kl,regg,ind) ) ;
-
-Display
-KLS
-;
 
 *## Tax rates ##
 
@@ -244,11 +234,6 @@ Variables
     KL_V(reg,va,regg,ind)           use of specific production factors
 
     PnKL_V(regg,ind)                aggregate production factors price
-;
-
-* Exogenous variables
-Variables
-    KLS_V(reg,va)                   supply of production factors
 ;
 
 * Artificial objective
@@ -399,10 +384,6 @@ KL_V.FX(reg,kl,regg,ind)$(VALUE_ADDED(reg,kl,regg,ind) eq 0 )          = 0 ;
 PnKL_V.L(regg,ind)      = 1 ;
 PnKL_V.FX(regg,ind)$(nKL_V.L(regg,ind) eq 0)                    = 1 ;
 
-* Exogenous variables
-* Exogenous variables are fixed to their calibrated value.
-KLS_V.FX(reg,kl)                  = KLS(reg,kl) ;
-
 * ======================= Scale variables and equations ========================
 
 * Scaling of variables and equations is done in order to help the solver to
@@ -478,12 +459,6 @@ EQPnKL.SCALE(reg,ind)$(nKL_V.L(reg,ind) gt 0)
 
 EQPnKL.SCALE(reg,ind)$(nKL_V.L(reg,ind) lt 0)
     = -nKL_V.L(reg,ind) ;
-
-* EXOGENOUS VARIBLES
-KLS_V.SCALE(reg,kl)$(KLS_V.L(reg,kl) gt 0)
-    = KLS_V.L(reg,kl) ;
-KLS_V.SCALE(reg,kl)$(KLS_V.L(reg,kl) lt 0)
-    = -KLS_V.L(reg,kl) ;
 
 $label end_bounds_and_scales
 
