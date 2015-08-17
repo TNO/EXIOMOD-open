@@ -154,12 +154,13 @@ EQPY(regg,ind)$( Y(regg,ind) ne smax((reggg,indd), Y(reggg,indd) ) and
     Y(regg,ind) )..
     Y_V(regg,ind) * PY_V(regg,ind) *
     ( 1 - sum(reg, txd_ind(reg,regg,ind) ) -
-    sum(reg, txd_tim(reg,regg,ind) ) )
+    sum(reg, txd_inm(reg,regg,ind) ) - sum(reg, txd_tse(reg,regg,ind) ) )
     =E=
     sum(prd, INTER_USE_T_V(prd,regg,ind) * PIU_V(prd,regg,ind) *
     ( 1 + tc_ind(prd,regg,ind) ) ) +
     sum((reg,kl), KL_V(reg,kl,regg,ind) * PKL_V(reg,kl) ) +
-    sum(tim, TAX_INTER_USE_ROW(tim,regg,ind) * PROW_V ) ;
+    sum(inm, TIM_INTER_USE_ROW(inm,regg,ind) * PROW_V ) +
+    sum(tse, TIM_INTER_USE_ROW(tse,regg,ind) * PROW_V ) ;
 
 * EQUATION 4.2: Balance between product price and industry price. Price of each
 * product (prd) in each region of production (reg) is defined as a weighted
@@ -237,12 +238,15 @@ EQPC_I(prd,regg)..
 * users are paying for the products imported from the rest of the world region.
 EQPROW..
     sum((reg,prd), EXPORT_ROW_V(reg,prd) * P_V(reg,prd) ) +
-    sum((reg,tim), TAX_EXPORT_ROW(reg,tim) ) * PROW_V
+    sum((reg,inm), TIM_EXPORT_ROW(reg,inm) ) * PROW_V +
+    sum((reg,tse), TIM_EXPORT_ROW(reg,tse) ) * PROW_V
     =E=
     sum((prd,regg), IMPORT_ROW_V(prd,regg) * PROW_V ) +
     sum((prd,regg), SV_ROW_V(prd,regg) ) * PROW_V +
-    sum((tim,regg,ind), TAX_INTER_USE_ROW(tim,regg,ind) ) * PROW_V +
-    sum((tim,regg,fd), TAX_FINAL_USE_ROW(tim,regg,fd) ) * PROW_V -
+    sum((inm,regg,ind), TIM_INTER_USE_ROW(inm,regg,ind) ) * PROW_V +
+    sum((tse,regg,ind), TIM_INTER_USE_ROW(tse,regg,ind) ) * PROW_V +
+    sum((inm,regg,fd), TIM_FINAL_USE_ROW(inm,regg,fd) ) * PROW_V +
+    sum((tse,regg,fd), TIM_FINAL_USE_ROW(tse,regg,fd) ) * PROW_V -
     sum((reg,fd), TRANSFERS_ROW_V(reg,fd) * PROW_V ) ;
 
 * EQUATION 4.9: Paasche price index for households. The price index is

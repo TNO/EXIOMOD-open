@@ -145,7 +145,8 @@ Set
 /
 'NetTaxProduction'
 'Factors'
-'IntMarginsTax'
+'IntMargins'
+'ExportTax'
 /
 
 Table
@@ -164,7 +165,8 @@ loop(va,
 Sets
     ntp(va)         net taxes on production categories
     kl(va)          capital and labour categories
-    tim(va)         tax on export and international margins categories
+    inm(va)         international margins categories
+    tse(va)         tax on export categories
 ;
 
 Alias
@@ -173,7 +175,8 @@ Alias
 
 ntp(va)$va_assign(va,'NetTaxProduction') = yes ;
 kl(va)$va_assign(va,'Factors')           = yes ;
-tim(va)$va_assign(va,'IntMarginsTax')    = yes ;
+inm(va)$va_assign(va,'IntMargins')       = yes ;
+tse(va)$va_assign(va,'ExportTax')        = yes ;
 
 * ==================== Declaration of types of final demands ===================
 $ontext

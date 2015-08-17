@@ -81,8 +81,10 @@ Parameters
                                 # industries (relation in value)
     txd_ind(reg,regg,ind)       net taxes on production rates (relation in
                                 # value)
-    txd_tim(reg,regg,ind)       rates of net taxes on exports and rates of
-                                # international margins (relation in value)
+    txd_inm(reg,regg,ind)       rates of international margins (relation in
+                                # value)
+    txd_tse(reg,regg,ind)       rates of net taxes on exports (relation in
+                                # value)
 
     coprodA(reg,prd,regg,ind)   co-production coefficients with mix per industry
                                 # - corresponds to product technology assumption
@@ -211,30 +213,24 @@ nKLE
 
 *## Tax rates ##
 
-* Net tax (taxes less subsidies) rates on aggregated products included into
-* purchaser's price of intermediate use, tax rate differs by product (prd) in
-* each industry (ind) in each region (regg).
-tc_ind(prd,regg,ind)$INTER_USE_dt(prd,regg,ind)
-    = INTER_USE_dt(prd,regg,ind) / INTER_USE_T(prd,regg,ind) ;
+* Rates of international margins paid to exporting regions. International
+* margins are modeled as ad valorem tax on value of output, rates differ by
+* exporting region (reg) and by industry (ind) and region of consumption (regg).
+txd_inm(reg,regg,ind)$sum(inm, VALUE_ADDED(reg,inm,regg,ind) )
+    = sum(inm, VALUE_ADDED(reg,inm,regg,ind) ) / Y(regg,ind) ;
 
-* Net tax (taxes less subsidies) rates on production activities, tax rate
-* differs in each industry (ind) in each region (regg) and by the region of
-* government which collects the taxes (reg).
-txd_ind(reg,regg,ind)$sum(ntp, VALUE_ADDED(reg,ntp,regg,ind) )
-    = sum(ntp, VALUE_ADDED(reg,ntp,regg,ind) ) / Y(regg,ind) ;
+* Rates of net taxes paid to exporting regions. Taxes on exports are modeled as
+* ad valorem tax on value of output, tax rates differs by exporting region (reg)
+* and by industry (ind) and region of consumption (regg).
+txd_tse(reg,regg,ind)$sum(tse, VALUE_ADDED(reg,tse,regg,ind) )
+    = sum(tse, VALUE_ADDED(reg,tse,regg,ind) ) / Y(regg,ind) ;
 
-* Rates of net taxes paid to exporting regions on import and rates of
-* international margins paid to exporting regions. Taxes on exports and
-* international margins are modeled as ad valorem tax on value of output,
-* tax rates differs by exporting region (reg) and by industry (ind) and region
-* of consumption (regg).
-txd_tim(reg,regg,ind)$sum(tim, VALUE_ADDED(reg,tim,regg,ind) )
-    = sum(tim, VALUE_ADDED(reg,tim,regg,ind) ) / Y(regg,ind) ;
 
 Display
 tc_ind
 txd_ind
-txd_tim
+txd_inm
+txd_tse
 ;
 
 

@@ -67,22 +67,22 @@ Parameters
                                             # basic (c.i.f.) prices
 
     VALUE_ADDED(reg,va,regg,ind)            value added in model aggregation
-    TAX_INTER_USE_ROW(va,regg,ind)          tax and international margins
+    TIM_INTER_USE_ROW(va,regg,ind)          tax and international margins
                                             # paid on intermediate use of
                                             # products imported from the rest of
                                             # the world region
 
-    TAX_FINAL_USE(reg,va,regg,fd)           tax and international margins paid
+    TIM_FINAL_USE(reg,va,regg,fd)           tax and international margins paid
                                             # on final use of products imported
                                             # from modeled regions
-    TAX_FINAL_USE_ROW(va,regg,fd)           tax and international margins paid
+    TIM_FINAL_USE_ROW(va,regg,fd)           tax and international margins paid
                                             # on final use of products imported
                                             # from the rest of the world region
 
     EXPORT_ROW(reg,prd)                     export to the rest of the world
                                             # region in model aggregation in
                                             # basic (f.o.b.) prices
-    TAX_EXPORT_ROW(reg,va)                  tax and international margin
+    TIM_EXPORT_ROW(reg,va)                  tax and international margin
                                             # received due to export to the rest
                                             # of the world regions
 
@@ -206,7 +206,7 @@ VALUE_ADDED(reg,va,regg,ind)
     all_reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
     SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,ind_data,"Value") ) ;
 
-TAX_INTER_USE_ROW(va,regg,ind)
+TIM_INTER_USE_ROW(va,regg,ind)
     = sum((row_data,va_data,regg_data,ind_data)$
     ( va_aggr(va_data,va) and
     all_reg_aggr(regg_data,regg) and ind_aggr(ind_data,ind) ),
@@ -218,13 +218,13 @@ TAX_INTER_USE_ROW(va,regg,ind)
     SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,ind_data,"Value") ) ) ;
 
 
-TAX_FINAL_USE(reg,va,regg,fd)
+TIM_FINAL_USE(reg,va,regg,fd)
     = sum((reg_data,va_data,regg_data,fd_data)$
     ( all_reg_aggr(reg_data,reg) and va_aggr(va_data,va) and
     all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
     SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,regg_data,fd_data,"Value") ) ;
 
-TAX_FINAL_USE_ROW(va,regg,fd)
+TIM_FINAL_USE_ROW(va,regg,fd)
     = sum((row_data,va_data,regg_data,fd_data)$
     ( va_aggr(va_data,va) and
     all_reg_aggr(regg_data,regg) and fd_aggr(fd_data,fd) ),
@@ -251,7 +251,7 @@ EXPORT_ROW(reg,prd)
     all_reg_aggr(regg_data,row) ),
     SAM_bp_data("%base_year%","%base_cur%",reg_data,prd_data,regg_data,fd_data,"Value") ) ) ;
 
-TAX_EXPORT_ROW(reg,va)
+TIM_EXPORT_ROW(reg,va)
     = sum((reg_data,va_data,row_data,exp_data)$
     ( all_reg_aggr(reg_data,reg) and va_aggr(va_data,va) ),
     SAM_bp_data("%base_year%","%base_cur%",reg_data,va_data,row_data,exp_data,"Value") )
@@ -323,11 +323,11 @@ FINAL_USE_dt
 TRADE
 IMPORT_ROW
 VALUE_ADDED
-TAX_INTER_USE_ROW
-TAX_FINAL_USE
-TAX_FINAL_USE_ROW
+TIM_INTER_USE_ROW
+TIM_FINAL_USE
+TIM_FINAL_USE_ROW
 EXPORT_ROW
-TAX_EXPORT_ROW
+TIM_EXPORT_ROW
 TAX_SUB_PRD_DISTR
 VALUE_ADDED_DISTR
 INCOME_DISTR
