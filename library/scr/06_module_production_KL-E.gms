@@ -77,7 +77,6 @@ Parameters
     nKLE(regg,ind)              intermediate use of capital-labour-energy nest
                                 # (volume)
     KLS(reg,va)                 supply of production factors (volume)
-    GDP(regg)                   gross domestic product (value)
 
     tc_ind(prd,regg,ind)        tax and subsidies on products rates for
                                 # industries (relation in value)
@@ -218,18 +217,6 @@ KLS(reg,kl)
 
 Display
 KLS
-;
-
-* Gross domestic product in each region (regg). GDP calculated as difference
-* between total output and intermediate inputs plus taxes on products paid by
-* final consumers.
-GDP(regg)
-    = sum(ind, Y(regg,ind) ) -
-    sum((prd,ind), INTER_USE_T(prd,regg,ind) ) +
-    sum((prd,fd), FINAL_USE_dt(prd,regg,fd) ) ;
-
-Display
-GDP
 ;
 
 
