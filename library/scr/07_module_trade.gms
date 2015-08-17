@@ -817,10 +817,6 @@ IMPORT_ROW_V.FX(prd,regg)$(IMPORT_ROW(prd,regg) eq 0) = 0 ;
 TRADE_V.FX(reg,prd,regg)$(TRADE(reg,prd,regg) eq 0)   = 0 ;
 EXPORT_ROW_V.FX(reg,prd)$(EXPORT_ROW(reg,prd) eq 0)   = 0 ;
 
-* Exogenous variables
-* Exogenous variables are fixed to their calibrated value.
-SV_ROW_V.FX(prd,regg)             = SV_ROW(prd,regg) ;
-
 * Price variables: level of basic prices is set to one, which also corresponds
 * to the price level used in calibration. If the the real variable to which the
 * price level is linked is fixed to zero, the price is fixed to one. For zero
@@ -828,6 +824,13 @@ SV_ROW_V.FX(prd,regg)             = SV_ROW(prd,regg) ;
 * the solver. Additionally, price of the numéraire is fixed.
 PIMP_T_V.L(prd,regg)   = 1 ;
 PIMP_MOD_V.L(prd,regg) = 1 ;
+
+PIMP_T_V.FX(prd,regg)$(IMPORT_T_V.L(prd,regg)eq 0)            = 1 ;
+PIMP_MOD_V.FX(prd,regg)$(IMPORT_MOD_V.L(prd,regg)eq 0)        = 1 ;
+
+* Exogenous variables
+* Exogenous variables are fixed to their calibrated value.
+SV_ROW_V.FX(prd,regg)             = SV_ROW(prd,regg) ;
 
 * ======================= Scale variables and equations ========================
 

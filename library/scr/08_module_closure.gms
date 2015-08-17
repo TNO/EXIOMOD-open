@@ -313,8 +313,6 @@ PIU_V.FX(prd,regg,ind)$(INTER_USE_T_V.L(prd,regg,ind) eq 0)   = 1 ;
 PC_H_V.FX(prd,regg)$(CONS_H_T_V.L(prd,regg) eq 0)             = 1 ;
 PC_G_V.FX(prd,regg)$(CONS_G_T_V.L(prd,regg) eq 0)             = 1 ;
 PC_I_V.FX(prd,regg)$(GFCF_T_V.L(prd,regg) eq 0)               = 1 ;
-PIMP_T_V.FX(prd,regg)$(IMPORT_T_V.L(prd,regg)eq 0)            = 1 ;
-PIMP_MOD_V.FX(prd,regg)$(IMPORT_MOD_V.L(prd,regg)eq 0)        = 1 ;
 PROW_V.FX$( ( sum((prd,regg), IMPORT_ROW(prd,regg) ) +
             sum((prd,regg), SV_ROW(prd,regg) ) ) eq 0 )       = 1 ;
 PAASCHE_V.FX(regg)$(sum(prd, CONS_H_T_V.L(prd,regg) ) eq 0)   = 1 ;
