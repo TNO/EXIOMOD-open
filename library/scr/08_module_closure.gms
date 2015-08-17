@@ -60,12 +60,20 @@ KLS
 ;
 
 * Gross domestic product in each region (regg). GDP calculated as difference
-* between total output and intermediate inputs plus taxes on products paid by
-* final consumers.
+* between total output and intermediate inputs (including international margins
+* and taxes on exports paid in relation with intermediate inputs) plus taxes on
+* products paid by final consumers and taxes paid on exports.
 GDP(regg)
     = sum(ind, Y(regg,ind) ) -
-    sum((prd,ind), INTER_USE_T(prd,regg,ind) ) +
-    sum((prd,fd), FINAL_USE_dt(prd,regg,fd) ) ;
+    ( sum((prd,ind), INTER_USE_T(prd,regg,ind) ) +
+    sum((reg,inm,ind), VALUE_ADDED(reg,inm,regg,ind) ) +
+    sum((reg,tse,ind), VALUE_ADDED(reg,tse,regg,ind) ) )
+    +
+    sum((prd,fd), FINAL_USE_dt(prd,regg,fd) )
+    +
+    ( sum((tse,reg,ind), VALUE_ADDED(regg,tse,reg,ind) ) +
+    sum((tse,reg,fd), TIM_FINAL_USE(regg,tse,reg,fd) ) +
+    sum(tse, TIM_EXPORT_ROW(regg,tse) ) ) ;
 
 Display
 GDP
@@ -275,12 +283,19 @@ EQGDPCUR(regg)..
     GDPCUR_V(regg)
     =E=
     sum(ind, Y_V(regg,ind) * PY_V(regg,ind) ) -
-    sum((prd,ind), INTER_USE_T_V(prd,regg,ind) * PIU_V(prd,regg,ind) ) +
+    ( sum((prd,ind), INTER_USE_T_V(prd,regg,ind) * PIU_V(prd,regg,ind) ) +
+    sum(ind, Y_V(regg,ind) * PY_V(regg,ind) * sum(reg, txd_inm(reg,regg,ind) ) +
+    Y_V(regg,ind) * PY_V(regg,ind) * sum(reg, txd_tse(reg,regg,ind) ) ) )
+    +
     sum(prd, CONS_H_T_V(prd,regg) * PC_H_V(prd,regg) * tc_h(prd,regg) ) +
     sum(prd, CONS_G_T_V(prd,regg) * PC_G_V(prd,regg) * tc_g(prd,regg) ) +
     sum(prd, GFCF_T_V(prd,regg) * PC_I_V(prd,regg) * tc_gfcf(prd,regg) ) +
     sum((reg,prd), SV_V(reg,prd,regg) * P_V(reg,prd) * tc_sv(prd,regg) ) +
-    sum(prd, SV_ROW_V(prd,regg) * PROW_V * tc_sv(prd,regg) ) ;
+    sum(prd, SV_ROW_V(prd,regg) * PROW_V * tc_sv(prd,regg) )
+    +
+    sum((reg,ind), Y_V(reg,ind) * PY_V(reg,ind) * txd_tse(regg,reg,ind) ) +
+    sum((tse,reg,fd), TIM_FINAL_USE(regg,tse,reg,fd) * LASPEYRES_V(regg) ) +
+    sum(tse, TIM_EXPORT_ROW(regg,tse) * PROW_V ) ;
 
 * EQUATION 4.12: Gross domestic product calculated in constant prices of the
 * base year. GDP is calculated separately for each modeled region (regg).
@@ -288,12 +303,19 @@ EQGDPCONST(regg)..
     GDPCONST_V(regg)
     =E=
     sum(ind, Y_V(regg,ind) ) -
-    sum((prd,ind), INTER_USE_T_V(prd,regg,ind) ) +
+    ( sum((prd,ind), INTER_USE_T_V(prd,regg,ind) ) +
+    sum(ind, Y_V(regg,ind) * sum(reg, txd_inm(reg,regg,ind) ) +
+    Y_V(regg,ind) * sum(reg, txd_tse(reg,regg,ind) ) ) )
+    +
     sum(prd, CONS_H_T_V(prd,regg) * tc_h_0(prd,regg) ) +
     sum(prd, CONS_G_T_V(prd,regg) * tc_g_0(prd,regg) ) +
     sum(prd, GFCF_T_V(prd,regg) * tc_gfcf_0(prd,regg) ) +
     sum((reg,prd), SV_V(reg,prd,regg) * tc_sv_0(prd,regg) ) +
-    sum(prd, SV_ROW_V(prd,regg) * tc_sv_0(prd,regg) ) ;
+    sum(prd, SV_ROW_V(prd,regg) * tc_sv_0(prd,regg) )
+    +
+    sum((reg,ind), Y_V(reg,ind) * txd_tse(regg,reg,ind) ) +
+    sum((tse,reg,fd), TIM_FINAL_USE(regg,tse,reg,fd) ) +
+    sum(tse, TIM_EXPORT_ROW(regg,tse) ) ;
 
 
 * EQUATION 4.13: GDP deflator. The deflator is calculated as a single value for
