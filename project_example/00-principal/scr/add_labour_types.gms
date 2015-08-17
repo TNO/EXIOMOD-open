@@ -173,7 +173,7 @@ EQGRINC_G_pr(regg)..
     GRINC_G_V(regg)
     =E=
     sum((reg,klpr), FACREV_V_pr(reg,klpr) * fac_distr_g_pr(reg,klpr,regg) ) +
-    TSPREV_V(regg) + NTPREV_V(regg) + TIMREV_V(regg) ;
+    TSPREV_V(regg) + NTPREV_V(regg) + INMREV_V(regg) + TSEREV_V(regg) ;
 
 * EQUATION 1.10:
 EQGRINC_I_pr(regg)..
@@ -186,12 +186,13 @@ EQPY_pr(regg,ind)$( Y(regg,ind) ne smax((reggg,indd), Y(reggg,indd) ) and
     Y(regg,ind) )..
     Y_V(regg,ind) * PY_V(regg,ind) *
     ( 1 - sum(reg, txd_ind(reg,regg,ind) ) -
-    sum(reg, txd_tim(reg,regg,ind) ) )
+    sum(reg, txd_inm(reg,regg,ind) ) - sum(reg, txd_tse(reg,regg,ind) ) )
     =E=
     sum(prd, INTER_USE_T_V(prd,regg,ind) * PIU_V(prd,regg,ind) *
     ( 1 + tc_ind(prd,regg,ind) ) ) +
     sum((reg,klpr), KL_V_pr(reg,klpr,regg,ind) * PKL_V_pr(reg,klpr) ) +
-    sum(tim, TAX_INTER_USE_ROW(tim,regg,ind) * PROW_V ) ;
+    sum(inm, TIM_INTER_USE_ROW(inm,regg,ind) * PROW_V ) +
+    sum(tse, TIM_INTER_USE_ROW(tse,regg,ind) * PROW_V ) ;
 
 * EQUATION 4.3:
 EQPKL_pr(reg,klpr)..

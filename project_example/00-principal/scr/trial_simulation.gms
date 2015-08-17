@@ -81,11 +81,12 @@ CBUD_I_check(regg,year)
 
 numer_check(regg,ind,year)$Y(regg,ind) =  Y_V.L(regg,ind) * PY_V.L(regg,ind) *
     ( 1 - sum(reg, txd_ind(reg,regg,ind) ) -
-    sum(reg, txd_tim(reg,regg,ind) ) ) /
+    sum(reg, txd_inm(reg,regg,ind) ) - sum(reg, txd_tse(reg,regg,ind) ) ) /
     ( sum(prd, INTER_USE_T_V.L(prd,regg,ind) * PIU_V.L(prd,regg,ind) *
     ( 1 + tc_ind(prd,regg,ind) ) ) +
     sum((reg,kl), KL_V.L(reg,kl,regg,ind) * PKL_V.L(reg,kl) ) +
-    sum(tim, TAX_INTER_USE_ROW(tim,regg,ind) * PROW_V.L ) ) ;
+    sum(inm, TIM_INTER_USE_ROW(inm,regg,ind) * PROW_V.L ) +
+    sum(tse, TIM_INTER_USE_ROW(tse,regg,ind) * PROW_V.L ) ) ;
 
 * end loop over years
 ) ;
