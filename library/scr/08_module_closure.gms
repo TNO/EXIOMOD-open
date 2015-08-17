@@ -40,13 +40,24 @@ $label end_additional_sets
 $if not '%phase%' == 'parameters_declaration' $goto end_parameters_declaration
 
 Parameters
-        GDP(regg)                   gross domestic product (value)
+    KLS(reg,va)                 supply of production factors (volume)
+    GDP(regg)                   gross domestic product (value)
 ;
 
 $label end_parameters_declaration
 
 * ====================== Phase 3: Definition of parameters =====================
 $if not '%phase%' == 'parameters_calibration' $goto end_parameters_calibration
+
+* Supply in volume of each production factor (kl) in each region (reg), the
+* corresponding basic price in the base year is equal to 1, market price can be
+* different from 1 in case of non-zero taxes on factors of production.
+KLS(reg,kl)
+    = sum((regg,ind),VALUE_ADDED(reg,kl,regg,ind) ) ;
+
+Display
+KLS
+;
 
 * Gross domestic product in each region (regg). GDP calculated as difference
 * between total output and intermediate inputs plus taxes on products paid by
@@ -89,6 +100,11 @@ Variables
     GDPCUR_V(regg)                  GDP in current prices (value)
     GDPCONST_V(regg)                GDP in constant prices (volume)
     GDPDEF_V                        GDP deflator used as numéraire
+;
+
+* Exogenous variables
+Variables
+    KLS_V(reg,va)                   supply of production factors
 ;
 
 * ========================== Declaration of equations ==========================
@@ -290,6 +306,16 @@ $if not '%phase%' == 'bounds_and_scales' $goto end_bounds_and_scales
 
 * ==================== Define level and bounds of variables ====================
 
+* Endogenous variables
+* Variables in real terms: level is set to the calibrated value of the
+* corresponding parameter. If the the calibrated value is equal to zero, the
+* variable value is also fixed to zero. The equation setup will lead to zero
+* solution for this variable and fixing it at this point helps the solver.
+GDPCUR_V.L(regg)   = GDP(regg) ;
+GDPCONST_V.L(regg) = GDP(regg) ;
+GDPCUR_V.FX(regg)$( GDP(regg) eq 0 )   = 0 ;
+GDPCONST_V.FX(regg)$( GDP(regg) eq 0 ) = 0 ;
+
 * Price variables: level of basic prices is set to one, which also corresponds
 * to the price level used in calibration. If the the real variable to which the
 * price level is linked is fixed to zero, the price is fixed to one. For zero
@@ -318,15 +344,9 @@ PROW_V.FX$( ( sum((prd,regg), IMPORT_ROW(prd,regg) ) +
 PAASCHE_V.FX(regg)$(sum(prd, CONS_H_T_V.L(prd,regg) ) eq 0)   = 1 ;
 LASPEYRES_V.FX(regg)$(sum(prd, CONS_H_T_V.L(prd,regg) ) eq 0) = 1 ;
 
-* Endogenous variables
-* Variables in real terms: level is set to the calibrated value of the
-* corresponding parameter. If the the calibrated value is equal to zero, the
-* variable value is also fixed to zero. The equation setup will lead to zero
-* solution for this variable and fixing it at this point helps the solver.
-GDPCUR_V.L(regg)   = GDP(regg) ;
-GDPCONST_V.L(regg) = GDP(regg) ;
-GDPCUR_V.FX(regg)$( GDP(regg) eq 0 )   = 0 ;
-GDPCONST_V.FX(regg)$( GDP(regg) eq 0 ) = 0 ;
+* Exogenous variables
+* Exogenous variables are fixed to their calibrated value.
+KLS_V.FX(reg,kl)                  = KLS(reg,kl) ;
 
 * ======================= Scale variables and equations ========================
 
@@ -421,6 +441,12 @@ GDPCONST_V.SCALE(regg)$(GDPCONST_V.L(regg) lt 0)
     = -GDPCONST_V.L(regg) ;
 
 * EQUATION 4.11 - SCALING IS NOT REQUIRED
+
+* EXOGENOUS VARIBLES
+KLS_V.SCALE(reg,kl)$(KLS_V.L(reg,kl) gt 0)
+    = KLS_V.L(reg,kl) ;
+KLS_V.SCALE(reg,kl)$(KLS_V.L(reg,kl) lt 0)
+    = -KLS_V.L(reg,kl) ;
 
 $label end_bounds_and_scales
 
