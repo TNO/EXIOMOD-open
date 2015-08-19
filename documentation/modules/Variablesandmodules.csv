@@ -41,9 +41,12 @@ Demand;SCLFD_H_V(regg): scale parameter for household consumption;Trade;0
 Demand;SCLFD_I_V(regg):scale parameter for gross fixed capital formation;Production;0
 Demand;SCLFD_I_V(regg):scale parameter for gross fixed capital formation;Closure;0
 Demand;SCLFD_I_V(regg):scale parameter for gross fixed capital formation;Trade;0
-Demand;TIMREV_V(reg):revenue from tax on export and international margins;Production;0
-Demand;TIMREV_V(reg):revenue from tax on export and international margins;Closure;0
-Demand;TIMREV_V(reg):revenue from tax on export and international margins;Trade;0
+Demand;INMREV_V(reg):revenue from international margins;Production;0
+Demand;INMREV_V(reg):revenue from international margins;Closure;0
+Demand;INMREV_V(reg):revenue from international margins;Trade;0
+Demand;TSEREV_V(reg): revenue from tax on export;Production;0
+Demand;TSEREV_V(reg): revenue from tax on export;Closure;0
+Demand;TSEREV_V(reg): revenue from tax on export;Trade;0
 Demand;TSPREV_V(reg):revenue from net tax on products;Production;0
 Demand;TSPREV_V(reg):revenue from net tax on products;Closure;0
 Demand;TSPREV_V(reg):revenue from net tax on products;Trade;0
