@@ -1,4 +1,0 @@
-P1              "Products of agriculture, hunting and fishing"
-P2              "Industrial products (incl Energy)"
-P3              "Construction work"
-P4              "Services"

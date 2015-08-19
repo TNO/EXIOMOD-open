@@ -1,0 +1,157 @@
+Module;Source;Target;Value
+Demand;CBUD_G_V(regg): budget available for government consumption;Production;0
+Demand;CBUD_G_V(regg): budget available for government consumption;Closure;0
+Demand;CBUD_G_V(regg): budget available for government consumption;Trade;0
+Demand;CBUD_H_V(regg):budget available for household consumption;Production;0
+Demand;CBUD_H_V(regg):budget available for household consumption;Closure;0
+Demand;CBUD_H_V(regg):budget available for household consumption;Trade;0
+Demand;CBUD_I_V(regg): budget available for gross fixed capital formation;Production;0
+Demand;CBUD_I_V(regg): budget available for gross fixed capital formation;Closure;0
+Demand;CBUD_I_V(regg): budget available for gross fixed capital formation;Trade;0
+Demand;"CONS_G_T_V(prd;regg): government consumption on aggregated product level";Production;0
+Demand;"CONS_G_T_V(prd;regg): government consumption on aggregated product level";Closure;1
+Demand;"CONS_G_T_V(prd;regg): government consumption on aggregated product level";Trade;1
+Demand;"CONS_H_T_V(prd;regg): household consumption on aggregated product";Production;0
+Demand;"CONS_H_T_V(prd;regg): household consumption on aggregated product";Closure;1
+Demand;"CONS_H_T_V(prd;regg): household consumption on aggregated product";Trade;1
+Demand;"FACREV_V(reg;va):revenue from factors of production";Production;0
+Demand;"FACREV_V(reg;va):revenue from factors of production";Closure;0
+Demand;"FACREV_V(reg;va):revenue from factors of production";Trade;0
+Demand;"GFCF_T_V(prd;regg): gross fixed capital formation on aggregated product level";Production;0
+Demand;"GFCF_T_V(prd;regg): gross fixed capital formation on aggregated product level";Closure;1
+Demand;"GFCF_T_V(prd;regg): gross fixed capital formation on aggregated product level";Trade;1
+Demand;GRINC_G_V(regg):gross income of government;Production;0
+Demand;GRINC_G_V(regg):gross income of government;Closure;0
+Demand;GRINC_G_V(regg):gross income of government;Trade;0
+Demand;GRINC_H_V(regg):gross income of households;Production;0
+Demand;GRINC_H_V(regg):gross income of households;Closure;0
+Demand;GRINC_H_V(regg):gross income of households;Trade;0
+Demand;GRINC_I_V(regg):gross income of investment agent;Production;0
+Demand;GRINC_I_V(regg):gross income of investment agent;Closure;0
+Demand;GRINC_I_V(regg):gross income of investment agent;Trade;0
+Demand;NTPREV_V(reg):revenue from net tax on production;Production;0
+Demand;NTPREV_V(reg):revenue from net tax on production;Closure;0
+Demand;NTPREV_V(reg):revenue from net tax on production;Trade;0
+Demand;SCLFD_G_V(regg: scale parameter for government consumption;Production;0
+Demand;SCLFD_G_V(regg: scale parameter for government consumption;Closure;0
+Demand;SCLFD_G_V(regg: scale parameter for government consumption;Trade;0
+Demand;SCLFD_H_V(regg): scale parameter for household consumption;Production;0
+Demand;SCLFD_H_V(regg): scale parameter for household consumption;Closure;0
+Demand;SCLFD_H_V(regg): scale parameter for household consumption;Trade;0
+Demand;SCLFD_I_V(regg):scale parameter for gross fixed capital formation;Production;0
+Demand;SCLFD_I_V(regg):scale parameter for gross fixed capital formation;Closure;0
+Demand;SCLFD_I_V(regg):scale parameter for gross fixed capital formation;Trade;0
+Demand;INMREV_V(reg):revenue from international margins;Production;0
+Demand;INMREV_V(reg):revenue from international margins;Closure;0
+Demand;INMREV_V(reg):revenue from international margins;Trade;0
+Demand;TSEREV_V(reg): revenue from tax on export;Production;0
+Demand;TSEREV_V(reg): revenue from tax on export;Closure;0
+Demand;TSEREV_V(reg): revenue from tax on export;Trade;0
+Demand;TSPREV_V(reg):revenue from net tax on products;Production;0
+Demand;TSPREV_V(reg):revenue from net tax on products;Closure;0
+Demand;TSPREV_V(reg):revenue from net tax on products;Trade;0
+Closure;GDPDEF_V: GDP deflator used as numeraire;Demand;0
+Closure;GDPDEF_V: GDP deflator used as numeraire;Production;0
+Closure;GDPDEF_V: GDP deflator used as numeraire;Trade;0
+Closure;LASPEYRES_V(regg): Laspeyres price index for household consumption;Demand;1
+Closure;LASPEYRES_V(regg): Laspeyres price index for household consumption;Production;0
+Closure;LASPEYRES_V(regg): Laspeyres price index for household consumption;Trade;0
+Closure;"P_V(reg;prd):basic product price";Demand;1
+Closure;"P_V(reg;prd):basic product price";Production;0
+Closure;"P_V(reg;prd):basic product price";Trade;1
+Closure;PAASCHE_V(regg): Paasche price index for household consumption;Demand;0
+Closure;PAASCHE_V(regg): Paasche price index for household consumption;Production;0
+Closure;PAASCHE_V(regg): Paasche price index for household consumption;Trade;0
+Closure;"PC_G_V(prd;regg): aggregate product price for government consumption";Demand;1
+Closure;"PC_G_V(prd;regg): aggregate product price for government consumption";Production;0
+Closure;"PC_G_V(prd;regg): aggregate product price for government consumption";Trade;1
+Closure;"PC_H_V(prd;regg): aggregate product price for household consumption";Demand;1
+Closure;"PC_H_V(prd;regg): aggregate product price for household consumption";Production;0
+Closure;"PC_H_V(prd;regg): aggregate product price for household consumption";Trade;1
+Closure;"PC_I_V(prd;regg): aggregate product price for gross fixed capital formation";Demand;1
+Closure;"PC_I_V(prd;regg): aggregate product price for gross fixed capital formation";Production;0
+Closure;"PC_I_V(prd;regg): aggregate product price for gross fixed capital formation";Trade;1
+Closure;"PIU_V(prd;regg;ind): aggregate product price for intermediate use";Demand;1
+Closure;"PIU_V(prd;regg;ind): aggregate product price for intermediate use";Production;1
+Closure;"PIU_V(prd;regg;ind): aggregate product price for intermediate use";Trade;1
+Closure;"PKL_V(reg;va): production factor price";Demand;1
+Closure;"PKL_V(reg;va): production factor price";Production;1
+Closure;"PKL_V(reg;va): production factor price";Trade;0
+Closure;PROW_V: price of imports from the rest of the world (similar to exchange rate);Demand;1
+Closure;PROW_V: price of imports from the rest of the world (similar to exchange rate);Production;0
+Closure;PROW_V: price of imports from the rest of the world (similar to exchange rate);Trade;1
+Closure;"PY_V(regg;ind): industry output price";Demand;1
+Closure;"PY_V(regg;ind): industry output price";Production;0
+Closure;"PY_V(regg;ind): industry output price";Trade;0
+Closure;GDPCONST_V(regg): GDP in constant prices (volume);Demand;0
+Closure;GDPCONST_V(regg): GDP in constant prices (volume);Trade;0
+Closure;GDPCONST_V(regg): GDP in constant prices (volume);Production;0
+Closure;GDPCUR_V(regg): GDP in current prices (value);Demand;0
+Closure;GDPCUR_V(regg): GDP in current prices (value);Trade;0
+Closure;GDPCUR_V(regg): GDP in current prices (value);Production;0
+Production;"PnKL_V(regg;ind): aggregate production factors price";Demand;0
+Production;"PnKL_V(regg;ind): aggregate production factors price";Closure;0
+Production;"PnKL_V(regg;ind): aggregate production factors price";Trade;0
+Production;"INTER_USE_T_V(prd;regg;ind): use of intermediate inputs on aggregated product level";Demand;1
+Production;"INTER_USE_T_V(prd;regg;ind): use of intermediate inputs on aggregated product level";Trade;1
+Production;"INTER_USE_T_V(prd;regg;ind): use of intermediate inputs on aggregated product level";Closure;1
+Production;"KL_V(reg;va;regg;ind): use of specific production factors";Demand;1
+Production;"KL_V(reg;va;regg;ind): use of specific production factors";Trade;0
+Production;"KL_V(reg;va;regg;ind): use of specific production factors";Closure;1
+Production;"nKL_V(regg;ind): use of aggregated production factors";Demand;0
+Production;"nKL_V(regg;ind): use of aggregated production factors";Trade;0
+Production;"nKL_V(regg;ind): use of aggregated production factors";Closure;0
+Production;"X_V(reg;prd):output vector on product level";Demand;0
+Production;"X_V(reg;prd):output vector on product level";Trade;1
+Production;"X_V(reg;prd):output vector on product level";Closure;1
+Production;"Y_V(regg;ind): output vector on industry level";Demand;1
+Production;"Y_V(regg;ind): output vector on industry level";Trade;0
+Production;"Y_V(regg;ind): output vector on industry level";Closure;1
+Trade;"PIMP_MOD_V(prd;regg): aggregate imported product price for the aggregate imported from modeled regions";Demand;0
+Trade;"PIMP_MOD_V(prd;regg): aggregate imported product price for the aggregate imported from modeled regions";Production;0
+Trade;"PIMP_MOD_V(prd;regg): aggregate imported product price for the aggregate imported from modeled regions";Closure;0
+Trade;"PIMP_T_V(prd;regg): aggregate total imported product price";Demand;0
+Trade;"PIMP_T_V(prd;regg): aggregate total imported product price";Production;0
+Trade;"PIMP_T_V(prd;regg): aggregate total imported product price";Closure;1
+Trade;"CONS_G_D_V(prd;regg): government consumption of domestically produced products";Demand;0
+Trade;"CONS_G_D_V(prd;regg): government consumption of domestically produced products";Production;1
+Trade;"CONS_G_D_V(prd;regg): government consumption of domestically produced products";Closure;1
+Trade;"CONS_G_M_V(prd;regg): government consumption of aggregated product imported from modeled regions";Demand;0
+Trade;"CONS_G_M_V(prd;regg): government consumption of aggregated product imported from modeled regions";Production;0
+Trade;"CONS_G_M_V(prd;regg): government consumption of aggregated product imported from modeled regions";Closure;1
+Trade;"CONS_H_D_V(prd;regg): household consumption of domestically produced products";Demand;0
+Trade;"CONS_H_D_V(prd;regg): household consumption of domestically produced products";Production;1
+Trade;"CONS_H_D_V(prd;regg): household consumption of domestically produced products";Closure;1
+Trade;"CONS_H_M_V(prd;regg): household consumption of aggregated products imported from modeled regions";Demand;0
+Trade;"CONS_H_M_V(prd;regg): household consumption of aggregated products imported from modeled regions";Production;0
+Trade;"CONS_H_M_V(prd;regg): household consumption of aggregated products imported from modeled regions";Closure;1
+Trade;"EXPORT_ROW_V(reg;prd): export to the rest of the world regions";Demand;0
+Trade;"EXPORT_ROW_V(reg;prd): export to the rest of the world regions";Production;1
+Trade;"EXPORT_ROW_V(reg;prd): export to the rest of the world regions";Closure;1
+Trade;"GFCF_D_V(prd;regg): gross fixed capital formation of domestically produced products";Demand;0
+Trade;"GFCF_D_V(prd;regg): gross fixed capital formation of domestically produced products";Production;1
+Trade;"GFCF_D_V(prd;regg): gross fixed capital formation of domestically produced products";Closure;1
+Trade;"GFCF_M_V(prd;regg): gross fixed capital formation of aggregated product imported from modeled regions";Demand;0
+Trade;"GFCF_M_V(prd;regg): gross fixed capital formation of aggregated product imported from modeled regions";Production;0
+Trade;"GFCF_M_V(prd;regg): gross fixed capital formation of aggregated product imported from modeled regions";Closure;1
+Trade;"IMPORT_MOD_V(prd;regg): aggregated import from modeled regions";Demand;0
+Trade;"IMPORT_MOD_V(prd;regg): aggregated import from modeled regions";Production;0
+Trade;"IMPORT_MOD_V(prd;regg): aggregated import from modeled regions";Closure;0
+Trade;"IMPORT_ROW_V(prd;regg): import from rest of the world region";Demand;0
+Trade;"IMPORT_ROW_V(prd;regg): import from rest of the world region";Production;0
+Trade;"IMPORT_ROW_V(prd;regg): import from rest of the world region";Closure;1
+Trade;"IMPORT_T_V(prd;regg): total use of aggregated imported products";Demand;0
+Trade;"IMPORT_T_V(prd;regg): total use of aggregated imported products";Production;0
+Trade;"IMPORT_T_V(prd;regg): total use of aggregated imported products";Closure;0
+Trade;"INTER_USE_D_V(prd;regg;ind): use of domestically produced intermediate inputs";Demand;0
+Trade;"INTER_USE_D_V(prd;regg;ind): use of domestically produced intermediate inputs";Production;1
+Trade;"INTER_USE_D_V(prd;regg;ind): use of domestically produced intermediate inputs";Closure;1
+Trade;"INTER_USE_M_V(prd;regg;ind): use of aggregated imported intermediate inputs";Demand;0
+Trade;"INTER_USE_M_V(prd;regg;ind): use of aggregated imported intermediate inputs";Production;0
+Trade;"INTER_USE_M_V(prd;regg;ind): use of aggregated imported intermediate inputs";Closure;1
+Trade;"SV_V(reg;prd;regg): stock changes of products on the most detailed level";Demand;1
+Trade;"SV_V(reg;prd;regg): stock changes of products on the most detailed level";Production;1
+Trade;"SV_V(reg;prd;regg): stock changes of products on the most detailed level";Closure;1
+Trade;"TRADE_V(reg;prd;regg): bi-lateral trade flows";Demand;0
+Trade;"TRADE_V(reg;prd;regg): bi-lateral trade flows";Production;1
+Trade;"TRADE_V(reg;prd;regg): bi-lateral trade flows";Closure;0
