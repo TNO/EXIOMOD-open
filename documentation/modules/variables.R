@@ -45,4 +45,5 @@ sankeyPlot$set(
   height = 800
 )
 print(sankeyPlot)
+sankeyPlot$save(paste(variables[i],'.html',sep=''),cdn=TRUE)
 }
