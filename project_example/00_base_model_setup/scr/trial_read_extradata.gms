@@ -1,3 +1,18 @@
+* File:   %project%/00_base_model_setup/scr/trial_read_extradata.gms
+* Author: Tatyana Bulavskaya
+* Date:   11 August 2015
+* Adjusted:
+
+* gams-master-file: run_EXIOMOD.gms
+
+$ontext startdoc
+This code is used to read in external data for further trial simulations with
+base CGE model.
+$offtext
+
+* activate end of line comment and specify the activating character
+$oneolcom
+$eolcom #
 
 Sets
     year            / 2007*2050 /
