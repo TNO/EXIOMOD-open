@@ -1,4 +1,4 @@
-Project --> 00-principal --> sets --> aggregation
+Project --> 00_base_model_setup --> sets --> aggregation
 
 Place here aggregation scheme describing link between sets with the desired level of detail of the model and sets with the level of detail of the database. You need to include the following files:
 

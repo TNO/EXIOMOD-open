@@ -1,0 +1,1 @@
+Describe here the structure of your project folder

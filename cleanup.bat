@@ -9,10 +9,10 @@ del *.lst
 del *.lxi
 del *.gdx
 del *.g00
-del library\scr\*.~gm
-del library\scr\*.gms~
-del library\includes\*.~gm
-del library\includes\*.gms~
+del EXIOMOD_base_model\scr\*.~gm
+del EXIOMOD_base_model\scr\*.gms~
+del EXIOMOD_base_model\includes\*.~gm
+del EXIOMOD_base_model\includes\*.gms~
 rmdir 225a
 rmdir 225b
 rmdir 225c
