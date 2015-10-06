@@ -16,9 +16,9 @@ A project folder has the following structure:
 
 * *00_base_model_setup* (required) contains input files needed to run the base-model. The structure of the sub-folders and file names are predefined and explained in more details below. The names and structure cannot be changed because the files are being called from the EXIOMOD_base_model-folder.
 
-* *extradata* (optional) contains files for processing of auxliary input data into scenarios. Presence of this folder(s) is not necessary and is decided according to the needs of the project. In case scenario(s) require input from various external data files (e.g. from other reports and other models) is it recommended to create this structure.
+* *01_external_data/databaseX* (optional) contains files for processing of auxliary input data into scenarios. Presence of this folder(s) is not necessary and is decided according to the needs of the project. In case scenario(s) require input from various external data files (e.g. from other reports and other models) is it recommended to create this structure.
 
-By running [make_project_structure](make_project_structure.bat) one creates a project folder structure with *00_base_model_setup* and one *extradata*. The user will be prompted to provide a title for his/her project.
+By running [make_project_structure](make_project_structure.bat) one creates a project folder structure with *00_base_model_setup* and one *01_external_data/databaseX*. The user will be prompted to provide a title for his/her project.
 
 ### Inside *00_base_model_setup* folder
 
@@ -32,15 +32,15 @@ This folder has a well pre-defined structure:
 
 * *scr* contains scripts for running simulations, the scripts will be called from `main.gms`. It is recommended to have two types of scripts in this folder:
 
-    * one for preparation of auxiliary data inputs into a format usable by the model. The user would probably need this script only if *extradata* folders are also being created.
+    * one for preparation of auxiliary data inputs into a format usable by the model. The user would probably need this script only if *01_external_data* sub-folders are also being created.
 
     * one or multiple for running the actual simulations. The user can either include all the scenarios into one simulation script, or have a dedicated script per scenario, the choice depends on complexity of the project. It is recommended to follow the structure of provided template file 'run_simulation.gms'.
 
 Examples of specific sets, aggregations, data and script files can be taken from project_example.
 
-### Inside *extradata* folder(s)
+### Inside *01_external_data* folder(s)
 
-This folder(s) follows the same structure as *00_base_model_setup*. In the sub-folder *data* the user should include the external data files. In the sub-folder *sets* the dimensions of these external data files should be described and the linkages to the dimensions of the model established. In the sub-folder *scr* the script for conversion of the external data files into model inputs are collected; these scripts will then be called from *00_base_model_setup/scr*.
+This folder contains sub-folders dedicated to specific external databases. Each database folder follows the same structure as *00_base_model_setup*. In the sub-folder *data* the user should include the external data files. In the sub-folder *sets* the dimensions of these external data files should be described and the linkages to the dimensions of the model established. In the sub-folder *scr* the script for conversion of the external data files into model inputs are collected; these scripts will then be called from *00_base_model_setup/scr*.
 
 # Coding style conventions
 
@@ -133,7 +133,7 @@ INTER_USE
 
 3. Become acquainted with the contents of the */00_base_model_setup/data/* folder. If elasticities or technology-parameters need to be changed, the excel-sheets already in the folder can be used.
 
-4. Additional data can either be added to the general */00_base_model_setup/data/* (simple projects) or to specific folders *extradata/data/* (more extensive projects). Please also consult some project examples to see how this can be done.
+4. Additional data can either be added to the general */00_base_model_setup/data/* (simple projects) or to specific folders *01_external_database* (more extensive projects). Please also consult some project examples to see how this can be done.
 
 5. Open the relevant modules in */EXIOMOD_base_model/scr/*. Search for: (i) equations that need to be changed; (ii) variables that need to be changed; (iii) parameters that need to be changed.
 
