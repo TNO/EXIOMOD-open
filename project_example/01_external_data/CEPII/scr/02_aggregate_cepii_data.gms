@@ -64,20 +64,20 @@ $eolcom #
 * ==================== Declaration of aggregation schemes ======================
 Sets
 
-    reg_CP_aggr(reg_CP,reg)         aggregation scheme for cepii regions
+    reg_CP_aggr(reg_CP,reg_data)    aggregation scheme for cepii regions
 /
-$include %project%\CEPII_baseline\sets\aggregation\regions_cepii_to_model.txt
-$include %project%\CEPII_baseline\sets\aggregation\regions_cepii_missing_to_model.txt
+$include %project%\01_external_data\CEPII\sets\aggregation\regions_cepii_to_model.txt
+$include %project%\01_external_data\CEPII\sets\aggregation\regions_cepii_missing_to_model.txt
 /
 
     year_CP_aggr(year_CP,year)      aggregation scheme for cepii years
 /
-$include %project%\CEPII_baseline\sets\aggregation\years_cepii_to_model.txt
+$include %project%\01_external_data\CEPII\sets\aggregation\years_cepii_to_model.txt
 /
 
-    reg_CP_miss       regions missing in Cepii regions
+    reg_CP_miss                     regions missing in Cepii regions
 /
-$include %project%\CEPII_baseline\sets\regions_cepii_missing.txt
+$include %project%\01_external_data\CEPII\sets\regions_cepii_missing.txt
 /
     reg_CP_comp(*,*)  comparable regions of missing regions
 / SI.SVK, TW.CHN, CY.MLT, SI.SK, TW.CN, CY.MT /
@@ -101,31 +101,31 @@ Parameters
 ;
 
 GDP_CP_yr(reg_CP,year)$
-    sum(reg, reg_CP_aggr(reg_CP,reg) )
+    sum(reg_data, reg_CP_aggr(reg_CP,reg_data) )
         = sum(year_CP$year_CP_aggr(year_CP,year), GDP_CEPII_orig(reg_CP,year_CP) ) ;
 
 prodKL_CP_yr(reg_CP,year)$
-    sum(reg, reg_CP_aggr(reg_CP,reg) )
+    sum(reg_data, reg_CP_aggr(reg_CP,reg_data) )
         = sum(year_CP$year_CP_aggr(year_CP,year), prodKL_CEPII_orig(reg_CP,year_CP) ) ;
 
 prodE_CP_yr(reg_CP,year)$
-    sum(reg, reg_CP_aggr(reg_CP,reg) )
+    sum(reg_data, reg_CP_aggr(reg_CP,reg_data) )
         = sum(year_CP$year_CP_aggr(year_CP,year), prodE_CEPII_orig(reg_CP,year_CP) ) ;
 
 KS_CP_yr(reg_CP,year)$
-    sum(reg, reg_CP_aggr(reg_CP,reg) )
+    sum(reg_data, reg_CP_aggr(reg_CP,reg_data) )
         = sum(year_CP$year_CP_aggr(year_CP,year), KS_CEPII_orig(reg_CP,year_CP) ) ;
 
 LS_CP_yr(reg_CP,year)$
-    sum(reg, reg_CP_aggr(reg_CP,reg) )
+    sum(reg_data, reg_CP_aggr(reg_CP,reg_data) )
         = sum(year_CP$year_CP_aggr(year_CP,year), LS_CEPII_orig(reg_CP,year_CP) ) ;
 
 E_CP_yr(reg_CP,year)$
-    sum(reg, reg_CP_aggr(reg_CP,reg) )
+    sum(reg_data, reg_CP_aggr(reg_CP,reg_data) )
         = sum(year_CP$year_CP_aggr(year_CP,year), E_CEPII_orig(reg_CP,year_CP) ) ;
 
 POP_CP_yr(reg_CP,year)$
-    sum(reg, reg_CP_aggr(reg_CP,reg) )
+    sum(reg_data, reg_CP_aggr(reg_CP,reg_data) )
         = sum(year_CP$year_CP_aggr(year_CP,year), POP_CEPII_orig(reg_CP,year_CP) ) ;
 
 
@@ -149,24 +149,41 @@ POP_CP_yr("CHN",year) = POP_CP_yr("CHN",year) - POP_CP_yr("TW",year) ;
 
 * =========================== Aggregation of regions ===========================
 
+* The spatial aggregation for productivity uses a different procedure because
+* additional weights are needed and there are two options to weigh it. See below.
 
 Parameters
     GDP_CP(reg,year)        cepii GDP in model classification
-    prodKL_CP(reg,year)     cepii capital-labour productivity in model
-                            # classification
-    prodE_CP(reg,year)      cepii energy productivity in model classification
     KS_CP(reg,year)         cepii capital stock in model classification
     LS_CP(reg,year)         cepii labour supply in model classification
     E_CP(reg,year)          cepii energy consumption in model classification
     POP_CEPII_level(reg,year)   cepii population in model classification
 ;
 
-GDP_CP(reg,year)    = sum(reg_CP$reg_CP_aggr(reg_CP,reg), GDP_CP_yr(reg_CP,year) ) ;
-KS_CP(reg,year)     = sum(reg_CP$reg_CP_aggr(reg_CP,reg), KS_CP_yr(reg_CP,year) ) ;
-LS_CP(reg,year)     = sum(reg_CP$reg_CP_aggr(reg_CP,reg), LS_CP_yr(reg_CP,year) ) ;
-E_CP(reg,year)      = sum(reg_CP$reg_CP_aggr(reg_CP,reg), E_CP_yr(reg_CP,year) ) ;
+GDP_CP(reg,year)
+    = sum(reg_data$all_reg_aggr(reg_data,reg),
+        sum(reg_CP$reg_CP_aggr(reg_CP,reg_data),
+            GDP_CP_yr(reg_CP,year) ) ) ;
+
+KS_CP(reg,year)
+    = sum(reg_data$all_reg_aggr(reg_data,reg),
+        sum(reg_CP$reg_CP_aggr(reg_CP,reg_data),
+            KS_CP_yr(reg_CP,year) ) ) ;
+
+LS_CP(reg,year)
+    = sum(reg_data$all_reg_aggr(reg_data,reg),
+        sum(reg_CP$reg_CP_aggr(reg_CP,reg_data),
+            LS_CP_yr(reg_CP,year) ) ) ;
+
+E_CP(reg,year)
+    = sum(reg_data$all_reg_aggr(reg_data,reg),
+        sum(reg_CP$reg_CP_aggr(reg_CP,reg_data),
+            E_CP_yr(reg_CP,year) ) ) ;
+
 POP_CEPII_level(reg,year)
-                    = sum(reg_CP$reg_CP_aggr(reg_CP,reg), POP_CP_yr(reg_CP,year) ) ;
+    = sum(reg_data$all_reg_aggr(reg_data,reg),
+        sum(reg_CP$reg_CP_aggr(reg_CP,reg_data),
+            POP_CP_yr(reg_CP,year) ) ) ;
 
 * ====================== Conversion into annual change =========================
 
@@ -202,7 +219,7 @@ E_CEPII_change(reg,year)$
         = E_CP(reg,year) / E_CP(reg,year-1)  ;
 
 
-* ======================== Aggregation of productivity =========================
+* ================== Aggregation of regions for productivity ===================
 
 * Aggregated productivity would ideally be based on a re-estimation of the
 * productivity, using the original underlying data. Unfortunately we dont have
@@ -211,18 +228,23 @@ E_CEPII_change(reg,year)$
 
 * Option 1: Take weighted average of growth rates, using GDP weights.
 * (option 1 is our preferred option for now)
+
 * Option 2: Take weighted average of productivity, using labour supply or
 * primary energy consumption as weights.
-
 * Then derive growth rates.
 
 
 * Option 1
 Parameters
+*Parameters for option 1
     prodKL_change_CP_yr(reg_CP,year)    annual change in capital-labour
                                         # productivity based on cepii data
     prodE_change_CP_yr(reg_CP,year)     annual change in energy productivity
                                         # based on cepii data
+*Parameters for option 2
+    prodKL_CP(reg,year)     cepii capital-labour productivity in model
+                            # classification
+    prodE_CP(reg,year)      cepii energy productivity in model classification
 ;
 
 prodKL_change_CP_yr(reg_CP,year)$
@@ -234,38 +256,50 @@ prodE_change_CP_yr(reg_CP,year)$
             = prodE_CP_yr(reg_CP,year)  / prodE_CP_yr(reg_CP,year-1)  ;
 
 PRODKL_CEPII_change(reg,year)$
-            sum(regg_CP$reg_CP_aggr(regg_CP,reg), GDP_CP_yr(regg_CP,year) )
-                = sum(reg_CP$reg_CP_aggr(reg_CP,reg),
-                    prodKL_change_CP_yr(reg_CP,year) * GDP_CP_yr(reg_CP,year) )
-                / sum(regg_CP$reg_CP_aggr(regg_CP,reg),
-                    GDP_CP_yr(regg_CP,year) ) ;
+            sum(reg_data$all_reg_aggr(reg_data,reg),
+            sum(regg_CP$reg_CP_aggr(regg_CP,reg_data), GDP_CP_yr(regg_CP,year) ) )
+                = sum(reg_data$all_reg_aggr(reg_data,reg),
+                    sum(reg_CP$reg_CP_aggr(reg_CP,reg_data),
+                        prodKL_change_CP_yr(reg_CP,year) * GDP_CP_yr(reg_CP,year) ) )
+                / sum(reg_data$all_reg_aggr(reg_data,reg),
+                    sum(regg_CP$reg_CP_aggr(regg_CP,reg_data),
+                        GDP_CP_yr(regg_CP,year) ) ) ;
 
 PRODE_CEPII_change(reg,year)$
-            sum(regg_CP$reg_CP_aggr(regg_CP,reg), GDP_CP_yr(regg_CP,year) )
-                = sum(reg_CP$reg_CP_aggr(reg_CP,reg),
-                    prodE_change_CP_yr(reg_CP,year) * GDP_CP_yr(reg_CP,year) )
-                / sum(regg_CP$reg_CP_aggr(regg_CP,reg),
-                    GDP_CP_yr(regg_CP,year) ) ;
+            sum(reg_data$all_reg_aggr(reg_data,reg),
+            sum(regg_CP$reg_CP_aggr(regg_CP,reg_data), GDP_CP_yr(regg_CP,year) ) )
+                = sum(reg_data$all_reg_aggr(reg_data,reg),
+                    sum(reg_CP$reg_CP_aggr(reg_CP,reg_data),
+                        prodE_change_CP_yr(reg_CP,year) * GDP_CP_yr(reg_CP,year) ) )
+                / sum(reg_data$all_reg_aggr(reg_data,reg),
+                    sum(regg_CP$reg_CP_aggr(regg_CP,reg_data),
+                        GDP_CP_yr(regg_CP,year) ) ) ;
 
 
 
 * Option 2
 $ontext
 prodKL_CP(reg,year)$
-             sum(regg_CP$reg_CP_aggr(regg_CP,reg), LS_CP_yr(regg_CP,year) )
+             sum(reg_data$all_reg_aggr(reg_data,reg),
+             sum(regg_CP$reg_CP_aggr(regg_CP,reg_data), LS_CP_yr(regg_CP,year) ) )
                     =
-                    sum(reg_CP$reg_CP_aggr(reg_CP,reg),
-                         prodKL_CP_yr(reg_CP,year) * LS_CP_yr(reg_CP,year) )
-                    / sum(regg_CP$reg_CP_aggr(regg_CP,reg),
-                         LS_CP_yr(regg_CP,year) ) ;
+                    sum(reg_data$all_reg_aggr(reg_data,reg),
+                        sum(reg_CP$reg_CP_aggr(reg_CP,reg_data),
+                            prodKL_CP_yr(reg_CP,year) * LS_CP_yr(reg_CP,year) ) )
+                    / sum(reg_data$all_reg_aggr(reg_data,reg),
+                        sum(regg_CP$reg_CP_aggr(regg_CP,reg_data),
+                            LS_CP_yr(regg_CP,year) ) ) ;
 
 prodE_CP(reg,year)$
-             sum(regg_CP$reg_CP_aggr(regg_CP,reg), E_CP_yr(regg_CP,year) )
+             sum(reg_data$all_reg_aggr(reg_data,reg),
+             sum(regg_CP$reg_CP_aggr(regg_CP,reg_data), E_CP_yr(regg_CP,year) )
                     =
-                    sum(reg_CP$reg_CP_aggr(reg_CP,reg),
-                         prodE_CP_yr(reg_CP,year) * E_CP_yr(reg_CP,year) )
-                    / sum(regg_CP$reg_CP_aggr(regg_CP,reg),
-                         E_CP_yr(regg_CP,year) ) ;
+                    sum(reg_data$all_reg_aggr(reg_data,reg),
+                        sum(reg_CP$reg_CP_aggr(reg_CP,reg_data),
+                            prodE_CP_yr(reg_CP,year) * E_CP_yr(reg_CP,year) ) )
+                    / sum(reg_data$all_reg_aggr(reg_data,reg),
+                        sum(regg_CP$reg_CP_aggr(regg_CP,reg_data),
+                            E_CP_yr(regg_CP,year) ) ) ;
 
 PRODKL_CEPII_change(reg,year)$
     prodKL_CP(reg,year-1)
@@ -290,17 +324,31 @@ $offtext
 * ************** Gap filling missing countries for growth rates ****************
 
 * Three EXIOBASE countries are missing in the CEPII dataset (reg_CP_miss).
-* These are SI TW CY, assign the value of a comparable country (reg_CP_comp).
+* These are SI TW CY, assign the value of a comparable country (reg_CP_comp).   
 * This is only done when model regions include any of these three countries.
 
+* For the gapfilling of population there is a different procedure because
+* population is given in level rather than in annual change.
 
 Loop(reg$reg_CP_miss(reg),
-        KS_CEPII_change(reg,year)      = sum(regg$reg_CP_comp(reg,regg), KS_CEPII_change(regg,year) ) ;
-        LS_CEPII_change(reg,year)      = sum(regg$reg_CP_comp(reg,regg), LS_CEPII_change(regg,year) ) ;
-        PRODKL_CEPII_change(reg,year)  = sum(regg$reg_CP_comp(reg,regg), PRODKL_CEPII_change(regg,year) ) ;
-        PRODE_CEPII_change(reg,year)   = sum(regg$reg_CP_comp(reg,regg), PRODE_CEPII_change(regg,year) ) ;
-        E_CEPII_change(reg,year)       = sum(regg$reg_CP_comp(reg,regg), E_CEPII_change(regg,year) ) ;
-        GDP_CEPII_change(reg,year)     = sum(regg$reg_CP_comp(reg,regg), GDP_CEPII_change(regg,year) ) ;
+
+        KS_CEPII_change(reg,year)      
+            = sum(regg$reg_CP_comp(reg,regg), KS_CEPII_change(regg,year) ) ;
+
+        LS_CEPII_change(reg,year)      
+            = sum(regg$reg_CP_comp(reg,regg), LS_CEPII_change(regg,year) ) ;
+
+        PRODKL_CEPII_change(reg,year)  
+            = sum(regg$reg_CP_comp(reg,regg), PRODKL_CEPII_change(regg,year) ) ;
+
+        PRODE_CEPII_change(reg,year)   
+            = sum(regg$reg_CP_comp(reg,regg), PRODE_CEPII_change(regg,year) ) ;
+
+        E_CEPII_change(reg,year)       
+            = sum(regg$reg_CP_comp(reg,regg), E_CEPII_change(regg,year) ) ;
+
+        GDP_CEPII_change(reg,year)     
+            = sum(regg$reg_CP_comp(reg,regg), GDP_CEPII_change(regg,year) ) ;
 ) ;
 
 

@@ -9,8 +9,8 @@ Alias
 
 * Baseline
 * Contains data, sets and scripts for processing the baseline data from CEPII (v2.1).
-$include %project%\CEPII_baseline\scr\01-read-cepii-data.gms
-$include %project%\CEPII_baseline\scr\02-aggregate-cepii-data.gms
+$include %project%\01_external_data\CEPII\scr\01_read_cepii_data.gms
+$include %project%\01_external_data\CEPII\scr\02_aggregate_cepii_data.gms
 
 * Physical extensions
 * Contains data and scripts for processing the input data from the EXIOBASE

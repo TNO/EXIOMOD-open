@@ -50,13 +50,13 @@ sets
 
     reg_CP      list of regions in cepii data
 /
-$include %project%\CEPII_baseline\sets\regions_cepii.txt
-$include %project%\CEPII_baseline\sets\regions_cepii_missing.txt
+$include %project%\01_external_data\CEPII\sets\regions_cepii.txt
+$include %project%\01_external_data\CEPII\sets\regions_cepii_missing.txt
 /
 
     year_CP     list of years in cepii data
 /
-$include %project%\CEPII_baseline\sets\years_cepii.txt
+$include %project%\01_external_data\CEPII\sets\years_cepii.txt
 /
 
 ;
@@ -68,19 +68,19 @@ Parameters
     factors_CP_data(reg_CP,*,*,year_CP)     KS in bln constant 2005 USD and LS
                                             # in thousands active population and
                                             # E in 1000 barrels of oil eq
-    tot_productivity                        difference between total value in
+    tot_productivity_check                  difference between total value in
                                             # excel and in gams
 ;
 
-$libinclude xlimport GDP_CP_data            %project%\CEPII_baseline\data\CEPII_baseline_database_v2.2.xls    GDP!b1:bw442
-$libinclude xlimport productivity_CP_data   %project%\CEPII_baseline\data\CEPII_baseline_database_v2.2.xls    productivity!b1:bv295
-$libinclude xlimport factors_CP_data        %project%\CEPII_baseline\data\CEPII_baseline_database_v2.2.xls    factors!b1:bw1177
+$libinclude xlimport GDP_CP_data            %project%\01_external_data\CEPII\data\CEPII_baseline_database_v2.2.xls    GDP!b1:bw442
+$libinclude xlimport productivity_CP_data   %project%\01_external_data\CEPII\data\CEPII_baseline_database_v2.2.xls    productivity!b1:bv295
+$libinclude xlimport factors_CP_data        %project%\01_external_data\CEPII\data\CEPII_baseline_database_v2.2.xls    factors!b1:bw1177
 
-tot_productivity
+tot_productivity_check
             = sum((reg_CP,year_CP), productivity_CP_data(reg_CP,"Energy productivity",year_CP) )
             + sum((reg_CP,year_CP), productivity_CP_data(reg_CP,"Total Factor Productivity",year_CP) )
             - 18142988;
-Display tot_productivity ;
+Display tot_productivity_check ;
 * Total should be equal to 18,142,988
 
 * ========================== Assign data to parameters =========================
