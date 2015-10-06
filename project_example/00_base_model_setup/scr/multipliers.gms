@@ -1,4 +1,4 @@
-* File:   00-principal/scr/multipliers.gms
+* File:   %project%/00_base_model_setup/scr/multipliers.gms
 * Author: Tatyana Bulavskaya
 * Date:   14 May 2014
 
@@ -32,7 +32,7 @@ $offtext
 *   $if not set model_type  $setglobal  model_type  'IO_product_technology'
 *   $if not set model_type  $setglobal  model_type  'IO_industry_technology'
 
-$if not set model_type $abort "global model_type not defined in %project%/00-principal/scr/multipliers.gms on line %system.line%."
+$if not set model_type $abort "global model_type not defined in %project%/%project%/00_base_model_setup/scr/multipliers.gms on line %system.line%."
 
 * ======== Declaration and definition of simulation specific parameters ========
 

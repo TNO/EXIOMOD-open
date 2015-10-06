@@ -1,4 +1,4 @@
-Project --> 00-principal --> sets
+Project --> 00_base_model_setup --> sets
 
 Place here sets describing the desired level of detail of the model. You need to include the following files
 

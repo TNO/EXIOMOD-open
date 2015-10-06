@@ -1,4 +1,4 @@
-* File:   %project%/00-principal/scr/read_labour_types_data.gms
+* File:   %project%/00_base_model_setup/scr/read_labour_types_data.gms
 * Author: Trond Husby
 * Date:   19 February 2015
 * Adjusted: 19 February 2015

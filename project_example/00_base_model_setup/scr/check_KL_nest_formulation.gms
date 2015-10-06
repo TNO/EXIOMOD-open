@@ -1,4 +1,4 @@
-* File:   00-principal/scr/check_KL_nest_formulation.gms
+* File:   %project%/00_base_model_setup/scr/check_KL_nest_formulation.gms
 * Author: Jelmer Ypma
 * Date:   17 October 2014
 

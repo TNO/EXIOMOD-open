@@ -1,4 +1,4 @@
-* File:   %project%/00-principal/scr/add_labour_types.gms
+* File:   %project%/00_base_model_setup/scr/add_labour_types.gms
 * Author: Trond Husby
 * Date:   20.03.2015
 

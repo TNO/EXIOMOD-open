@@ -113,12 +113,12 @@ $label end_parameters_declaration
 $if not '%phase%' == 'parameters_calibration' $goto end_parameters_calibration
 
 * Here project-specific data are read in. Data should be placed in
-* %project%/00-principal/data/.
+* %project%/00_base_model_setup/data/.
 
 *## Elasticities ##
 
-$libinclude xlimport elasFU_data   %project%/00-principal/data/Eldata.xlsx elasFU_CES!a1..zz10000 ;
-$libinclude xlimport elasINC_data  %project%/00-principal/data/Eldata.xlsx elasFU_LES!a1..c10000 ;
+$libinclude xlimport elasFU_data   %project%/00_base_model_setup/data/Eldata.xlsx elasFU_CES!a1..zz10000 ;
+$libinclude xlimport elasINC_data  %project%/00_base_model_setup/data/Eldata.xlsx elasFU_LES!a1..c10000 ;
 
 
 * Substitution elasticity between aggregated products in volume for final use of

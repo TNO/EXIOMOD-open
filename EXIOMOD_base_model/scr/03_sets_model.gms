@@ -35,18 +35,18 @@ $eolcom #
 Sets
     all_reg      full list of regions in the model
 /
-$include %project%/00-principal/sets/regions_model.txt
-$include %project%/00-principal/sets/restoftheworld_model.txt
+$include %project%/00_base_model_setup/sets/regions_model.txt
+$include %project%/00_base_model_setup/sets/restoftheworld_model.txt
 /
 
     reg(all_reg)  list of regions in the model
 /
-$include %project%/00-principal/sets/regions_model.txt
+$include %project%/00_base_model_setup/sets/regions_model.txt
 /
 
     row(all_reg)  list of rest of the world regions in the model (one element)
 /
-$include %project%/00-principal/sets/restoftheworld_model.txt
+$include %project%/00_base_model_setup/sets/restoftheworld_model.txt
 /
 ;
 
@@ -58,32 +58,32 @@ ABORT$( card(row) gt 1 )
 Sets
     prd             list of products in the model
 /
-$include %project%/00-principal/sets/products_model.txt
+$include %project%/00_base_model_setup/sets/products_model.txt
 /
 
     ind             list of industries in the model
 /
-$include %project%/00-principal/sets/industries_model.txt
+$include %project%/00_base_model_setup/sets/industries_model.txt
 /
 
     tsp             list of taxes and subsidies on products in the model
 /
-$include %project%/00-principal/sets/taxesandsubsidiesonproducts_model.txt
+$include %project%/00_base_model_setup/sets/taxesandsubsidiesonproducts_model.txt
 /
 
     va              list of value added categories in the model
 /
-$include %project%/00-principal/sets/valueadded_model.txt
+$include %project%/00_base_model_setup/sets/valueadded_model.txt
 /
 
     fd              list of final demand categories in the model
 /
-$include %project%/00-principal/sets/finaldemand_model.txt
+$include %project%/00_base_model_setup/sets/finaldemand_model.txt
 /
 
     exp             list of export categories in the model
 /
-$include %project%/00-principal/sets/export_model.txt
+$include %project%/00_base_model_setup/sets/export_model.txt
 /
 ;
 
@@ -93,40 +93,40 @@ Sets
     all_reg_aggr(all_reg_data,all_reg)  aggregation scheme for full list of
                                         # regions
 /
-$include %project%/00-principal/sets/aggregation/regions_all_database_to_model.txt
+$include %project%/00_base_model_setup/sets/aggregation/regions_all_database_to_model.txt
 /
 
     prd_aggr(prd_data,prd)              aggregation scheme for products
 /
-$include %project%/00-principal/sets/aggregation/products_database_to_model.txt
+$include %project%/00_base_model_setup/sets/aggregation/products_database_to_model.txt
 /
 
     ind_aggr(ind_data,ind)              aggregation scheme for industries
 /
-$include %project%/00-principal/sets/aggregation/industries_database_to_model.txt
+$include %project%/00_base_model_setup/sets/aggregation/industries_database_to_model.txt
 /
 
     tsp_aggr(tsp_data,tsp)              aggregation scheme for taxes and
                                         # subsidies on products
 /
-$include %project%/00-principal/sets/aggregation/taxesandsubsidiesonproducts_database_to_model.txt
+$include %project%/00_base_model_setup/sets/aggregation/taxesandsubsidiesonproducts_database_to_model.txt
 /
 
     va_aggr(va_data,va)                 aggregation scheme for value added
                                         # categories
 /
-$include %project%/00-principal/sets/aggregation/valueadded_database_to_model.txt
+$include %project%/00_base_model_setup/sets/aggregation/valueadded_database_to_model.txt
 /
 
     fd_aggr(fd_data,fd)                 aggregation scheme for final demand
                                         # categories
 /
-$include %project%/00-principal/sets/aggregation/finaldemand_database_to_model.txt
+$include %project%/00_base_model_setup/sets/aggregation/finaldemand_database_to_model.txt
 /
 
     exp_aggr(exp_data,exp)              aggregation scheme for export categories
 /
-$include %project%/00-principal/sets/aggregation/export_database_to_model.txt
+$include %project%/00_base_model_setup/sets/aggregation/export_database_to_model.txt
 /
 ;
 
@@ -152,7 +152,7 @@ Set
 Table
     va_assign(va,va_types)      indicator for types of value added elements in
                                 # the model aggregation
-$include %project%/00-principal/sets/valueadded_categories_model.txt
+$include %project%/00_base_model_setup/sets/valueadded_categories_model.txt
 ;
 
 * Check the assignment structure of value added elements types
@@ -199,7 +199,7 @@ Set
 Table
     fd_assign(fd,fd_types)      indicator for types of final demand in
                                 # the model aggregation
-$include %project%/00-principal/sets/finaldemand_categories_model.txt
+$include %project%/00_base_model_setup/sets/finaldemand_categories_model.txt
 ;
 
 * Check the assignment structure of final demand types

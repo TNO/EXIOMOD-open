@@ -1034,14 +1034,14 @@ body .markdown-body
 <p>A project folder has the following structure:</p>
 <ul>
 <li>
-<p><em>00-principal</em> (required) contains input files needed to run the base-model. The structure of the sub-folders and file names are predefined and explained in more details below. The names and structure cannot be changed because the files are being called from the EXIOMOD_base_model-folder.</p>
+<p><em>00_base_model_setup</em> (required) contains input files needed to run the base-model. The structure of the sub-folders and file names are predefined and explained in more details below. The names and structure cannot be changed because the files are being called from the EXIOMOD_base_model-folder.</p>
 </li>
 <li>
 <p><em>extradata</em> (optional) contains files for processing of auxliary input data into scenarios. Presence of this folder(s) is not necessary and is decided according to the needs of the project. In case scenario(s) require input from various external data files (e.g. from other reports and other models) is it recommended to create this structure.</p>
 </li>
 </ul>
-<p>By running <a href="make_project_structure.bat">make_project_structure</a> one creates a project folder structure with <em>00-principal</em> and one <em>extradata</em>. The user will be prompted to provide a title for his/her project.</p>
-<h3 id="inside-00-principal-folder"><a name="user-content-inside-00-principal-folder" href="#inside-00-principal-folder" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Inside <em>00-principal</em> folder</h3>
+<p>By running <a href="make_project_structure.bat">make_project_structure</a> one creates a project folder structure with <em>00_base_model_setup</em> and one <em>extradata</em>. The user will be prompted to provide a title for his/her project.</p>
+<h3 id="inside-00_base_model_setup-folder"><a name="user-content-inside-00_base_model_setup-folder" href="#inside-00_base_model_setup-folder" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Inside <em>00_base_model_setup</em> folder</h3>
 <p>This folder has a well pre-defined structure:</p>
 <ul>
 <li>
@@ -1051,7 +1051,7 @@ body .markdown-body
 </ul>
 </li>
 <li>
-<p><em>data</em> contains user input for the (substitution) elasticities and starting values of productivities. Sectoral and product level of detail in the data file should correspond to the chosen level of detail in the model (as in 00-principal &ndash;&gt; sets). The user is required to use the provided template file <code>Eldata.xlsx</code>.</p>
+<p><em>data</em> contains user input for the (substitution) elasticities and starting values of productivities. Sectoral and product level of detail in the data file should correspond to the chosen level of detail in the model (as in 00_base_model_setup &ndash;&gt; sets). The user is required to use the provided template file <code>Eldata.xlsx</code>.</p>
 </li>
 <li>
 <p><em>scr</em> contains scripts for running simulations, the scripts will be called from <code>main.gms</code>. It is recommended to have two types of scripts in this folder:</p>
@@ -1067,7 +1067,7 @@ body .markdown-body
 </ul>
 <p>Examples of specific sets, aggregations, data and script files can be taken from project_example.</p>
 <h3 id="inside-extradata-folders"><a name="user-content-inside-extradata-folders" href="#inside-extradata-folders" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Inside <em>extradata</em> folder(s)</h3>
-<p>This folder(s) follows the same structure as <em>00-principal</em>. In the sub-folder <em>data</em> the user should include the external data files. In the sub-folder <em>sets</em> the dimensions of these external data files should be described and the linkages to the dimensions of the model established. In the sub-folder <em>scr</em> the script for conversion of the external data files into model inputs are collected; these scripts will then be called from <em>00-principal/scr</em>.</p>
+<p>This folder(s) follows the same structure as <em>00_base_model_setup</em>. In the sub-folder <em>data</em> the user should include the external data files. In the sub-folder <em>sets</em> the dimensions of these external data files should be described and the linkages to the dimensions of the model established. In the sub-folder <em>scr</em> the script for conversion of the external data files into model inputs are collected; these scripts will then be called from <em>00_base_model_setup/scr</em>.</p>
 <h1 id="coding-style-conventions"><a name="user-content-coding-style-conventions" href="#coding-style-conventions" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Coding style conventions</h1>
 <p>These conventions are applied in the <em>Base model</em> and need to be applied to any new code that is being added to the EXIOMOD_base_model.</p>
 <ul>
@@ -1164,13 +1164,13 @@ INTER_USE
 <p>Become acquainted with the structure of the thematic modules (which equations and variables belong to which module?). An overview of the modules can be found <a href="./documentation/modules/modules.html">here</a></p>
 </li>
 <li>
-<p>Become acquainted with the sets and the structure of subsets used. Sets are listed in the .txt-files in the <em>/00-principal/sets/</em> folder.</p>
+<p>Become acquainted with the sets and the structure of subsets used. Sets are listed in the .txt-files in the <em>/00_base_model_setup/sets/</em> folder.</p>
 </li>
 <li>
-<p>Become acquainted with the contents of the <em>/00-principal/data/</em> folder. If elasticities or technology-parameters need to be changed, the excel-sheets already in the folder can be used.</p>
+<p>Become acquainted with the contents of the <em>/00_base_model_setup/data/</em> folder. If elasticities or technology-parameters need to be changed, the excel-sheets already in the folder can be used.</p>
 </li>
 <li>
-<p>Additional data can either be added to the general <em>/00-principal/data/</em> (simple projects) or to specific folders <em>extradata/data/</em> (more extensive projects). Please also consult some project examples to see how this can be done.</p>
+<p>Additional data can either be added to the general <em>/00_base_model_setup/data/</em> (simple projects) or to specific folders <em>extradata/data/</em> (more extensive projects). Please also consult some project examples to see how this can be done.</p>
 </li>
 <li>
 <p>Open the relevant modules in <em>/EXIOMOD_base_model/scr/</em>. Search for: (i) equations that need to be changed; (ii) variables that need to be changed; (iii) parameters that need to be changed.</p>

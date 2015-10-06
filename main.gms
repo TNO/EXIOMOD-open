@@ -13,10 +13,10 @@ $include configuration.gms
 *$include EXIOMOD_base_model/scr/00_simulation_prepare.gms
 
 * Include file with extra simulation data
-*$include %project%/00-principal/scr/trial_read_extradata.gms
+*$include %project%/00_base_model_setup/scr/trial_read_extradata.gms
 
 * Run simulation
-*$include %project%/00-principal/scr/trial_simulation.gms
+*$include %project%/00_base_model_setup/scr/trial_simulation.gms
 *$exit
 
 * OPTION 2: use save and restarts, this allows to run the data-related codes
@@ -27,8 +27,8 @@ $include configuration.gms
 Execute "if not exist 00_simulation_prepare.g00 gams EXIOMOD_base_model/scr/00_simulation_prepare.gms s=00_simulation_prepare o=00_simulation_prepare.lst lf=00_simulation_prepare.log lo=4 ide=1 pw=80 ps=0 --db_check=%db_check% --project=%project% --prodfunc=%prodfunc% --demnfunc=%demnfunc% --agg_check=%agg_check% --base_year=%base_year% --base_cur=%base_cur%"  ;
 
 * Execute file with extra simulation data
-Execute "if not exist trial_extradata.g00 gams %project%/00-principal/scr/trial_read_extradata.gms r=00_simulation_prepare s=trial_extradata o=trial_extradata.lst lf=trial_extradata.log lo=4 ide=1 pw=80 ps=0 --project=%project%"  ;
+Execute "if not exist trial_extradata.g00 gams %project%/00_base_model_setup/scr/trial_read_extradata.gms r=00_simulation_prepare s=trial_extradata o=trial_extradata.lst lf=trial_extradata.log lo=4 ide=1 pw=80 ps=0 --project=%project%"  ;
 
 * Run simulation
-Execute "gams %project%/00-principal/scr/trial_simulation.gms r=trial_extradata o=trial_simulation.lst lf=trial_simulation.log lo=4 ide=1 pw=80 ps=0 --project=%project% " ;
+Execute "gams %project%/00_base_model_setup/scr/trial_simulation.gms r=trial_extradata o=trial_simulation.lst lf=trial_simulation.log lo=4 ide=1 pw=80 ps=0 --project=%project% " ;
 

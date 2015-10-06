@@ -1,4 +1,4 @@
-* File:   %project%/00-principal/scr/trial_simulation.gms
+* File:   %project%/00_base_model_setup/scr/trial_simulation.gms
 * Author: Tatyana Bulavskaya
 * Date:   11 August 2015
 * Adjusted:
