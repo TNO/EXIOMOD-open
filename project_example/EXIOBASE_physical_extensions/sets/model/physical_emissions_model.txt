@@ -1,4 +1,0 @@
-CO2_c
-CO2_nc
-ghg_other
-nonghg
