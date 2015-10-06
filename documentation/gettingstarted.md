@@ -2,23 +2,29 @@
 
 Create a new branch from the master branch on GitHub. The master branch consists of the following core components:
 
-1. A EXIOMOD_base_model-folder containing the base-model. Files in the EXIOMOD_base_model folder should never be modified.
+1. A EXIOMOD_base_model-folder containing the Base Model. Files in the EXIOMOD_base_model folder should never be modified.
 
 2. A project_example-folder containing examples of structure and code one could use for a project. Examples of data aggregation are also included in this folder.
 
-3. The file `configuration.gms` which contains project-specific, linked to project_example, settings such as project name, choice of functions, base-year and base-currency. For each project a new project name should be given, corresponding to the name of the project folder (see below).
+3. The file `configuration.gms` which contains project-specific, linked to project_example, settings such as project name, choice of functions, base year and base currency. For each project a new project name should be given, corresponding to the name of the project folder (see below).
 
-4. The file `main.gms` which contains simulation-specific settings, such as which simulation file to run. For each project a new *main* file(s) should be specified, each linking to the simulation-specific .gms file (see below).
+4. The file `run_EXIOMOD.gms` which contains simulation-specific settings, such as which simulation file(s) to run. For each project a new *run_EXIOMOD* file(s) should be specified, each linking to the simulation-specific .gms file (see below).
 
 # How to set up a project folder
 
 A project folder has the following structure:
 
-* *00_base_model_setup* (required) contains input files needed to run the base-model. The structure of the sub-folders and file names are predefined and explained in more details below. The names and structure cannot be changed because the files are being called from the EXIOMOD_base_model-folder.
+* *00_base_model_setup* (required) contains input files needed to run the Base Model. The structure of the sub-folders and file names are predefined and explained in more details below. The names and structure cannot be changed because the files are being called from the EXIOMOD_base_model-folder.
 
 * *01_external_data/databaseX* (optional) contains files for processing of auxliary input data into scenarios. Presence of this folder(s) is not necessary and is decided according to the needs of the project. In case scenario(s) require input from various external data files (e.g. from other reports and other models) is it recommended to create this structure.
 
-By running [make_project_structure](make_project_structure.bat) one creates a project folder structure with *00_base_model_setup* and one *01_external_data/databaseX*. The user will be prompted to provide a title for his/her project.
+* *02_project_model_setup* (optional) contains all project specific additional sets and scripts, e.g. if new equations have been defined in the project, and actually runs the model. If your project is large and the simulation setup does not fit in one script in *00_base_model_setup*, it is useful to have *02_project_model_setup*.
+
+* *03_simulation_results* (optional) contains scripts and possible aggregation sets for post-processing of the simulation results. In case results are exported into data files (xls, xlsx, gdx), please make sure that these files are added to .gitignore.
+
+* *readme.txt* contains description of the specific project folder.
+
+By running [make_project_structure](make_project_structure.bat) one creates a project folder structure with *00_base_model_setup*, one *01_external_data/databaseX*, *02_project_model_setup* and *03_simulation_results*. The user will be prompted to provide a title for his/her project.
 
 ### Inside *00_base_model_setup* folder
 
@@ -30,17 +36,23 @@ This folder has a well pre-defined structure:
 
 * *data* contains user input for the (substitution) elasticities and starting values of productivities. Sectoral and product level of detail in the data file should correspond to the chosen level of detail in the model (as in 00_base_model_setup --> sets). The user is required to use the provided template file `Eldata.xlsx`.
 
-* *scr* contains scripts for running simulations, the scripts will be called from `main.gms`. It is recommended to have two types of scripts in this folder:
+* *scr* contains scripts for running simulations, the scripts will be called from `run_EXIOMOD.gms`. It is recommended to have two types of scripts in this folder:
 
     * one for preparation of auxiliary data inputs into a format usable by the model. The user would probably need this script only if *01_external_data* sub-folders are also being created.
 
-    * one or multiple for running the actual simulations. The user can either include all the scenarios into one simulation script, or have a dedicated script per scenario, the choice depends on complexity of the project. It is recommended to follow the structure of provided template file 'run_simulation.gms'.
+    * one or multiple for running the actual simulations. The user can either include all the scenarios into one simulation script, or have a dedicated script per scenario, the choice depends on complexity of the project. It is recommended to follow the file structure of provided template file 'run_simulation.gms'. In case of a complicated project with various scenarios, consder to locate simulation scripts into *02_project_model_setup*.
 
 Examples of specific sets, aggregations, data and script files can be taken from project_example.
 
 ### Inside *01_external_data* folder(s)
 
 This folder contains sub-folders dedicated to specific external databases. Each database folder follows the same structure as *00_base_model_setup*. In the sub-folder *data* the user should include the external data files. In the sub-folder *sets* the dimensions of these external data files should be described and the linkages to the dimensions of the model established. In the sub-folder *scr* the script for conversion of the external data files into model inputs are collected; these scripts will then be called from *00_base_model_setup/scr*.
+
+### Inside *02_project_model_setup* folder
+This folder follows the same structure as *00_base_model_setup*. In the sub-folder *data* the user should include data files with addiional elasiticieties and other extra parameters required to run the project specific model. In the sub-folder *sets* additional sets or subsets which are not used in the Base Model are described. In the sub-folder *scr* the scripts for running scenario simulations are located.
+
+### Inside *03_simulation_results* folder
+This folder would typically have only two sub-folders. In the sub-folder *sets* the user declares the level of aggregation chosen for presentation of the results, one doesn't always have to report the results on the same level of detail as the model simulation. In the sub-folder *scr* the scripts for storing, aggregating and exporting of results are placed.
 
 # Coding style conventions
 
@@ -143,4 +155,4 @@ INTER_USE
 
 8. Making changes to the model: a new model needs to be defined with new variables/equations. The new model must state: (i) the original model; (ii) the equations from the original model that needs to be dropped (with a minus (-) sign in front); (iii) additional equations and variables in the new model.
 
-9. Make sure that (i) the project name in *configuration.gms* corresponds to the name of the project folder; (ii) the name of the simulation file in *main.gms* corresponds to the name of the simulation-specific .gms-file.
+9. Make sure that (i) the project name in *configuration.gms* corresponds to the name of the project folder; (ii) the name of the simulation file in *run_EXIOMOD.gms* corresponds to the name of the simulation-specific .gms-file.
