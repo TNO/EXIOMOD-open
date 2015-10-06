@@ -10,9 +10,6 @@ This code is used to read in external data for further trial simulations with
 base CGE model.
 $offtext
 
-* activate end of line comment and specify the activating character
-$oneolcom
-$eolcom #
 
 Sets
     year            / 2007*2050 /
