@@ -1,4 +1,4 @@
-* File:   library/scr/06_module_production_KL-E.gms
+* File:   EXIOMOD_base_model/scr/06_module_production_KL-E.gms
 * Author: Tatyana Bulavskaya
 * Date:   12 May 2015
 * Adjusted: 7 August 2015

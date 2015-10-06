@@ -1,6 +1,7 @@
-* File:   library/scr/05_module_demand_LES-CEShh.gms
-* Author: Tatyana Bulavskaya
-* Date:   7 August 2015
+* File:   EXIOMOD_base_model/scr/05_module_demand_CES.gms
+* Author: Trond Husby
+* Date:   22 April 2015
+* Adjusted: 4 May 2015
 
 * gams-master-file: phase.gms
 
@@ -12,9 +13,8 @@ described within the demand module:
 
 - Demand functions of households, government and investment agent; in other
   words, how much products they want to buy, given the market prices and their
-  consumption budgets. In this version, for households the first order
-  conditions from 'flexible' LES-CES preferences are used, for other types of
-  final consumers CES preferences are used.
+  consumption budgets. In this version, the first order conditions from
+  'flexible' CES preferences are used.
 - How the income of households, government and investment agent is formed.
 - How the budget available for consumption of households, government and
   investment agent is formed.
@@ -41,7 +41,6 @@ $if not '%phase%' == 'parameters_declaration' $goto end_parameters_declaration
 
 Parameters
     elasFU_data(fd,*)           data on substitution elasticities (final demand)
-    elasINC_data(prd,*)         data on income elasticities (household demand)
     elasFU_H(regg)              substitution elasticity between products for
                                 # household final use
     elasFU_G(regg)              substitution elasticity between products for
@@ -72,15 +71,9 @@ Parameters
     tc_gfcf(prd,regg)           tax and subsidies on products rates for
                                 # gross fixed capital formation (relation in
                                 # value)
-    alpha_h(prd,regg)           share of household expenditure on each product
-                                # in total household demand (relation in volume)
-    alpha_h_les(prd,regg)       share of household expenditure on each product
-                                # corrected for LES
-    CONS_H_T_MIN(prd,regg)      subsistence level of household consumption for
-                                # each product (volume)
-    theta_h_les(prd,regg)       relative share parameter of household
-                                # consumption above subsistence level on product
-                                # level (relation in volume)
+    theta_h(prd,regg)           relative share parameter of household
+                                # consumption on product level in total
+                                # household demand (relation in volume)
     theta_g(prd,regg)           relative share parameter of government
                                 # consumption on product level in total
                                 # government demand (relation in volume)
@@ -117,9 +110,7 @@ $if not '%phase%' == 'parameters_calibration' $goto end_parameters_calibration
 
 *## Elasticities ##
 
-$libinclude xlimport elasFU_data   %project%/00-principal/data/Eldata.xlsx elasFU_CES!a1..zz10000 ;
-$libinclude xlimport elasINC_data  %project%/00-principal/data/Eldata.xlsx elasFU_LES!a1..c10000 ;
-
+$libinclude xlimport elasFU_data %project%/00-principal/data/Eldata.xlsx elasFU_CES!a1..zz10000 ;
 
 * Substitution elasticity between aggregated products in volume for final use of
 * households. The elasticity value can be different in each region (regg).
@@ -274,57 +265,11 @@ tc_gfcf
 
 *## Parameters of final demand functions ##
 
-* Calibration of household demand function is based on the formulas provided in
-* "Worldscan: a model for international economic policy analysis", CPB Document
-* 111, pp. 67-68.
-
-* Auxiliary parameter: share of household expenditure on each product in total
-* household demand.
-alpha_h(prd,regg)
-    = CONS_H_T(prd,regg) * ( 1 + tc_h(prd,regg) ) /
-    sum(prdd, CONS_H_T(prdd,regg) * ( 1 + tc_h(prdd,regg) ) ) ;
-
-* Auxiliary parameter: share of household expenditure corrected with income
-* elasticity
-alpha_h_les(prd,regg)
-    = alpha_h(prd,regg) * elasINC_data(prd,"elasINC") ;
-
-* Rescale auxiliry parameter to sum up to 1.
-alpha_h_les(prd,regg)
-    = alpha_h_les(prd,regg) / sum(prdd, alpha_h_les(prdd,regg) ) ;
-
-* Parameter for subsistence level of household consumption of aggregated
-* products for each product (prd) in each region (regg). Here frisch parameter
-* is specified with product dimension, but the value should be the same for all
-* products.
-CONS_H_T_MIN(prd,regg) = ( alpha_h(prd,regg) + alpha_h_les(prd,regg) /
-    elasINC_data(prd,"frisch") ) *
-    sum(prdd, CONS_H_T(prdd,regg) * ( 1 + tc_h(prdd,regg) ) ) /
-    ( 1 + tc_h(prd,regg) ) ;
-
 * Relative share parameter for household consumption of aggregated products
-* above subsistence level for each product (prd) in each region (regg).
-theta_h_les(prd,regg)$CONS_H_T(prd,regg)
-    = ( CONS_H_T(prd,regg) - CONS_H_T_MIN(prd,regg) ) /
-    sum(prdd, CONS_H_T(prdd,regg) - CONS_H_T_MIN(prdd,regg) ) *
+* for each product (prd) in each region (regg).
+theta_h(prd,regg)$CONS_H_T(prd,regg)
+    = CONS_H_T(prd,regg) / sum(prdd, CONS_H_T(prdd,regg) ) *
     ( 1 / ( 1 + tc_h(prd,regg) ) )**( -elasFU_H(regg) ) ;
-
-Display
-alpha_h
-alpha_h_les
-CONS_H_T_MIN
-theta_h_les
-;
-
-loop((prd,regg),
-    ABORT$( CONS_H_T_MIN(prd,regg) lt 0 )
-        "Subsistence level of consumption is negative. Check income elasticities" ;
-) ;
-
-loop((prd,regg),
-    ABORT$( CONS_H_T_MIN(prd,regg) gt CONS_H_T(prd,regg) )
-        "Subsistence level of consumption is more than 100%. Check income elasticities" ;
-) ;
 
 * Relative share parameter for government consumption of aggregated products
 * for each product (prd) in each region (regg).
@@ -339,6 +284,7 @@ theta_gfcf(prd,regg)$GFCF_T(prd,regg)
     ( 1 / ( 1 + tc_gfcf(prd,regg) ) )**( -elasFU_I(regg) ) ;
 
 Display
+theta_h
 theta_g
 theta_gfcf
 ;
@@ -505,20 +451,17 @@ $label end_variables_equations_declaration
 $if not '%phase%' == 'equations_definition' $goto end_equations_definition
 
 * EQUATION 1.1: Household demand for aggregated products. The demand function
-* follows LES-CES form, where demand by households in each region (regg) for
-* each aggregated product (prd) consists of subsistence and variable parts.
-* The volume of subsistence part is given exogenously and the volume of variable
-* part depends with certain elasticity on relative prices of different
-* aggregated products. The final demand function is derived from utility
-* optimization, but there is no market for utility and corresponding price
-* doesn't exist, contrary to CES demand functions derived from optimization of a
-* production function. Scaling parameter (SCLDF_H_V) is introduced in order to
-* ensure budget constraint (see EQUATION 1.15).
+* follows CES form, where demand by households in each region (regg) for each
+* aggregated product (prd) depends, with certain elasticity, on relative prices
+* of different aggregated products. The final demand function is derived from
+* utility optimization, but there is no market for utility and corresponding
+* price doesn't exist, contrary to CES demand functions derived from
+* optimization of a production function. Scaling parameter (SCLDF_H_V) is
+* introduced in order to ensure budget constraint (see EQUATION 1.15).
 EQCONS_H_T(prd,regg)..
     CONS_H_T_V(prd,regg)
     =E=
-    CONS_H_T_MIN(prd,regg) +
-    SCLFD_H_V(regg) * theta_h_les(prd,regg) *
+    SCLFD_H_V(regg) * theta_h(prd,regg) *
     ( PC_H_V(prd,regg) * ( 1 + tc_h(prd,regg) ) )**( -elasFU_H(regg) ) ;
 
 * EQUATION 1.2: Government demand for aggregated products. The demand function
@@ -820,7 +763,7 @@ CBUD_H_V.L(regg)$(CBUD_H(regg) eq 0)    = 0 ;
 CBUD_G_V.L(regg)$(CBUD_G(regg) eq 0)    = 0 ;
 CBUD_I_V.L(regg)$(CBUD_I(regg) eq 0)    = 0 ;
 
-SCLFD_H_V.L(regg) = sum(prd, CONS_H_T(prd,regg) - CONS_H_T_MIN(prd,regg) ) ;
+SCLFD_H_V.L(regg) = sum(prd, CONS_H_T(prd,regg) ) ;
 SCLFD_G_V.L(regg) = sum(prd, CONS_G_T(prd,regg) ) ;
 SCLFD_I_V.L(regg) = sum(prd, GFCF_T(prd,regg) ) ;
 

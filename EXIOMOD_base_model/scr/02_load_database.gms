@@ -1,4 +1,4 @@
-* File:   library/scr/02_load_database.gms
+* File:   EXIOMOD_base_model/scr/02_load_database.gms
 * Author: Tatyana Bulavskaya
 * Date:   14 May 2014
 * Adjusted:   19 February 2014
@@ -40,4 +40,4 @@ $loaddc SAM_dt_data = MRSAM_dom_taxsub_database
 $loaddc SAM_pp_data = MRSAM_bp_database
 $Gdxin
 
-$if '%db_check%' == 'yes' $include library/scr/02A_checks_database.gms
+$if '%db_check%' == 'yes' $include EXIOMOD_base_model/scr/02A_checks_database.gms

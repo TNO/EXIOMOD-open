@@ -4,10 +4,10 @@
 
 $ontext startdoc
 This simulation scripts checks whether the 'flexible' specification of a CES
-function, which is used in the library codes is indeed correct and produces
-result identical to explicit Cobb-Douglas and CES specifications. The check is
-performed on only one specific nest of the model, namely capital-labour block
-of the production function.
+function, which is used in the EXIOMOD_base_model codes is indeed correct and
+produces result identical to explicit Cobb-Douglas and CES specifications. The
+check is performed on only one specific nest of the model, namely capital-labour
+block of the production function.
 
 Both checks are only relevant if the initial level of productivity of all
 factors (fprod) is set to 1.
@@ -218,5 +218,5 @@ KL_V_CES(reg,kl,regg,ind) = KL_V.L(reg,kl,regg,ind) ;
 
 * Show differences between KL_V variables.
 $setlocal display_tolerance 0.0001
-$batinclude library/includes/compare_data comparison_COBBDOUGLAS KL_V_ORIG KL_V_COBBDOUGLAS reg,va,regg,ind %display_tolerance%
-$batinclude library/includes/compare_data comparison_CES         KL_V_ORIG KL_V_CES         reg,va,regg,ind %display_tolerance%
+$batinclude EXIOMOD_base_model/includes/compare_data comparison_COBBDOUGLAS KL_V_ORIG KL_V_COBBDOUGLAS reg,va,regg,ind %display_tolerance%
+$batinclude EXIOMOD_base_model/includes/compare_data comparison_CES         KL_V_ORIG KL_V_CES         reg,va,regg,ind %display_tolerance%

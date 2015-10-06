@@ -1,4 +1,4 @@
-* File:   library/scr/04_aggregate_database.gms
+* File:   EXIOMOD_base_model/scr/04_aggregate_database.gms
 * Author: Tatyana Bulavskaya
 * Date:   14 May 2014
 * Adjusted: 23 June 2014

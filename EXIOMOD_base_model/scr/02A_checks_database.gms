@@ -1,4 +1,4 @@
-* File:   library/scr/02A_checks_database.gms
+* File:   EXIOMOD_base_model/scr/02A_checks_database.gms
 * Author: Tatyana Bulavskaya
 * Date: 3 June 2014
 * Adjusted:   22 June 2014

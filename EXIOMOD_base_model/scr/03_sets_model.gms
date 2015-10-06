@@ -1,4 +1,4 @@
-* File:   library/scr/03_sets_model.gms
+* File:   EXIOMOD_base_model/scr/03_sets_model.gms
 * Author: Tatyana Bulavskaya
 * Date:   14 May 2014
 * Adjusted:   27 February 2015
@@ -234,17 +234,18 @@ Alias
 $ontext
 In case the configuration file requires check on consistency of aggregation
 schemes, the check is performed in this code. For more details on types of
-checks performed see the included file library/includes/setaggregationcheck.
+checks performed see the included file
+EXIOMOD_base_model/includes/setaggregationcheck.
 $offtext
 
 $if not '%agg_check%' == 'yes' $goto endofcode
 
-$BATINCLUDE "library/includes/setaggregationcheck" all_reg_data  all_reg  all_reg_aggr
-$BATINCLUDE "library/includes/setaggregationcheck" prd_data      prd      prd_aggr
-$BATINCLUDE "library/includes/setaggregationcheck" ind_data      ind      ind_aggr
-$BATINCLUDE "library/includes/setaggregationcheck" fd_data       fd       fd_aggr
-$BATINCLUDE "library/includes/setaggregationcheck" va_data       va       va_aggr
-$BATINCLUDE "library/includes/setaggregationcheck" exp_data      exp      exp_aggr
-$BATINCLUDE "library/includes/setaggregationcheck" tsp_data      tsp      tsp_aggr
+$BATINCLUDE "EXIOMOD_base_model/includes/setaggregationcheck" all_reg_data  all_reg  all_reg_aggr
+$BATINCLUDE "EXIOMOD_base_model/includes/setaggregationcheck" prd_data      prd      prd_aggr
+$BATINCLUDE "EXIOMOD_base_model/includes/setaggregationcheck" ind_data      ind      ind_aggr
+$BATINCLUDE "EXIOMOD_base_model/includes/setaggregationcheck" fd_data       fd       fd_aggr
+$BATINCLUDE "EXIOMOD_base_model/includes/setaggregationcheck" va_data       va       va_aggr
+$BATINCLUDE "EXIOMOD_base_model/includes/setaggregationcheck" exp_data      exp      exp_aggr
+$BATINCLUDE "EXIOMOD_base_model/includes/setaggregationcheck" tsp_data      tsp      tsp_aggr
 
 $label endofcode

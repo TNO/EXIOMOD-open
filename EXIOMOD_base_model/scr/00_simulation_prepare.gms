@@ -1,4 +1,4 @@
-* File:   library/scr/00_simulation_prepare.gms
+* File:   EXIOMOD_base_model/scr/00_simulation_prepare.gms
 * Author: Tatyana Bulavskaya
 * Date:   29 April 2015
 * Adjusted:
@@ -28,18 +28,18 @@ found in the corresponding `.gms` file. These explanation blocks include which
 inputs are necessary for the scripts to run and which changes are possible.
 $offtext
 
-$include library/scr/01_sets_database.gms
-$include library/scr/02_load_database.gms
+$include EXIOMOD_base_model/scr/01_sets_database.gms
+$include EXIOMOD_base_model/scr/02_load_database.gms
 
-$include library/scr/03_sets_model.gms
-$include library/scr/04_aggregate_database.gms
+$include EXIOMOD_base_model/scr/03_sets_model.gms
+$include EXIOMOD_base_model/scr/04_aggregate_database.gms
 
-$batinclude library/includes/phase.gms additional_sets
-$batinclude library/includes/phase.gms parameters_declaration
-$batinclude library/includes/phase.gms parameters_calibration
-$batinclude library/includes/phase.gms variables_equations_declaration
-$batinclude library/includes/phase.gms equations_definition
-$batinclude library/includes/phase.gms bounds_and_scales
-$batinclude library/includes/phase.gms submodel_declaration
+$batinclude EXIOMOD_base_model/includes/phase.gms additional_sets
+$batinclude EXIOMOD_base_model/includes/phase.gms parameters_declaration
+$batinclude EXIOMOD_base_model/includes/phase.gms parameters_calibration
+$batinclude EXIOMOD_base_model/includes/phase.gms variables_equations_declaration
+$batinclude EXIOMOD_base_model/includes/phase.gms equations_definition
+$batinclude EXIOMOD_base_model/includes/phase.gms bounds_and_scales
+$batinclude EXIOMOD_base_model/includes/phase.gms submodel_declaration
 
-$include library/scr/09_declare_model.gms
+$include EXIOMOD_base_model/scr/09_declare_model.gms

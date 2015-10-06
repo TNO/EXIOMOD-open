@@ -1,4 +1,4 @@
-* File:   library/scr/07_module_trade.gms
+* File:   EXIOMOD_base_model/scr/07_module_trade.gms
 * Author: Trond Husby
 * Date:   22 April 2015
 * Adjusted: 6 May 2015

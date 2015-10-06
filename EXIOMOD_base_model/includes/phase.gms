@@ -1,4 +1,4 @@
-* File:   library/includes/phase.gms
+* File:   EXIOMOD_base_model/includes/phase.gms
 * Author: Trond Husby
 * Date:   30 May 2015
 * Adjusted:
@@ -32,7 +32,7 @@ https://docs.google.com/document/d/1__9okBI8LsNnzDw_z4x80vfgUb5GUv3vKV_kptxXIbY/
 $offtext
 
 $setglobal phase %1
-$include library/scr/05_module_demand_%demnfunc%.gms
-$include library/scr/06_module_production_%prodfunc%.gms
-$include library/scr/07_module_trade.gms
-$include library/scr/08_module_closure.gms
+$include EXIOMOD_base_model/scr/05_module_demand_%demnfunc%.gms
+$include EXIOMOD_base_model/scr/06_module_production_%prodfunc%.gms
+$include EXIOMOD_base_model/scr/07_module_trade.gms
+$include EXIOMOD_base_model/scr/08_module_closure.gms

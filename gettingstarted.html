@@ -1018,7 +1018,7 @@ body .markdown-body
 <p>Create a new branch from the master branch on GitHub. The master branch consists of the following core components:</p>
 <ol>
 <li>
-<p>A library-folder containing the base-model. Files in the library folder should never be modified.</p>
+<p>A EXIOMOD_base_model-folder containing the base-model. Files in the EXIOMOD_base_model folder should never be modified.</p>
 </li>
 <li>
 <p>A project_example-folder containing examples of structure and code one could use for a project. Examples of data aggregation are also included in this folder.</p>
@@ -1034,20 +1034,20 @@ body .markdown-body
 <p>A project folder has the following structure:</p>
 <ul>
 <li>
-<p><em>00-principal</em> (required) contains input files needed to run the base-model. The structure of the sub-folders and file names are predefined and explained in more details below. The names and structure cannot be changed because the files are being called from the library-folder.</p>
+<p><em>00-principal</em> (required) contains input files needed to run the base-model. The structure of the sub-folders and file names are predefined and explained in more details below. The names and structure cannot be changed because the files are being called from the EXIOMOD_base_model-folder.</p>
 </li>
 <li>
 <p><em>extradata</em> (optional) contains files for processing of auxliary input data into scenarios. Presence of this folder(s) is not necessary and is decided according to the needs of the project. In case scenario(s) require input from various external data files (e.g. from other reports and other models) is it recommended to create this structure.</p>
 </li>
 </ul>
-<p>By running <a href="///C://Users/bulavskayat/AppData/Local/My%20Local%20Documents/GitHub/TNO-Eco-Mod/make_project_structure.bat">make_project_structure</a> one creates a project folder structure with <em>00-principal</em> and one <em>extradata</em>. The user will be prompted to provide a title for his/her project.</p>
+<p>By running <a href="make_project_structure.bat">make_project_structure</a> one creates a project folder structure with <em>00-principal</em> and one <em>extradata</em>. The user will be prompted to provide a title for his/her project.</p>
 <h3 id="inside-00-principal-folder"><a name="user-content-inside-00-principal-folder" href="#inside-00-principal-folder" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Inside <em>00-principal</em> folder</h3>
 <p>This folder has a well pre-defined structure:</p>
 <ul>
 <li>
-<p><em>sets</em> contains sets describing the desired level of detail of the model. For each project the user needs to define how many sectors and regions he/she wants to model. <a href="///C://Users/bulavskayat/AppData/Local/My%20Local%20Documents/GitHub/TNO-Eco-Mod/documentation/readme%27s/readme_principal_sets.txt">See more</a> on the file naming requirements.</p>
+<p><em>sets</em> contains sets describing the desired level of detail of the model. For each project the user needs to define how many sectors and regions he/she wants to model. <a href="documentation\readme's\readme_principal_sets.txt">See more</a> on the file naming requirements.</p>
 <ul>
-<li><em>aggregation</em> contains link between sets with the desired level of detail of the model and sets with the level of detail of the database. <a href="///C://Users/bulavskayat/AppData/Local/My%20Local%20Documents/GitHub/TNO-Eco-Mod/documentation/readme%27s/readme_principal_sets_aggregation.txt">See more</a> on the file naming requirements.</li>
+<li><em>aggregation</em> contains link between sets with the desired level of detail of the model and sets with the level of detail of the database. <a href="documentation\readme's\readme_principal_sets_aggregation.txt">See more</a> on the file naming requirements.</li>
 </ul>
 </li>
 <li>
@@ -1069,7 +1069,7 @@ body .markdown-body
 <h3 id="inside-extradata-folders"><a name="user-content-inside-extradata-folders" href="#inside-extradata-folders" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Inside <em>extradata</em> folder(s)</h3>
 <p>This folder(s) follows the same structure as <em>00-principal</em>. In the sub-folder <em>data</em> the user should include the external data files. In the sub-folder <em>sets</em> the dimensions of these external data files should be described and the linkages to the dimensions of the model established. In the sub-folder <em>scr</em> the script for conversion of the external data files into model inputs are collected; these scripts will then be called from <em>00-principal/scr</em>.</p>
 <h1 id="coding-style-conventions"><a name="user-content-coding-style-conventions" href="#coding-style-conventions" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Coding style conventions</h1>
-<p>These conventions are applied in the <em>Base model</em> and need to be applied to any new code that is being added to the library.</p>
+<p>These conventions are applied in the <em>Base model</em> and need to be applied to any new code that is being added to the EXIOMOD_base_model.</p>
 <ul>
 <li>
 <p><strong>Code width</strong> is 80 characters, this allows to code to be readable on most screens and also in print.</p>
@@ -1161,7 +1161,7 @@ INTER_USE
 <h1 id="how-to-make-your-own-modifications"><a name="user-content-how-to-make-your-own-modifications" href="#how-to-make-your-own-modifications" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>How to make your own modifications</h1>
 <ol>
 <li>
-<p>Become acquainted with the structure of the thematic modules (which equations and variables belong to which module?). An overview of the modules can be found <a href="///C://Users/bulavskayat/AppData/Local/My%20Local%20Documents/GitHub/TNO-Eco-Mod/documentation/modules/modules.html">here</a></p>
+<p>Become acquainted with the structure of the thematic modules (which equations and variables belong to which module?). An overview of the modules can be found <a href="./documentation/modules/modules.html">here</a></p>
 </li>
 <li>
 <p>Become acquainted with the sets and the structure of subsets used. Sets are listed in the .txt-files in the <em>/00-principal/sets/</em> folder.</p>
@@ -1173,7 +1173,7 @@ INTER_USE
 <p>Additional data can either be added to the general <em>/00-principal/data/</em> (simple projects) or to specific folders <em>extradata/data/</em> (more extensive projects). Please also consult some project examples to see how this can be done.</p>
 </li>
 <li>
-<p>Open the relevant modules in <em>/library/scr/</em>. Search for: (i) equations that need to be changed; (ii) variables that need to be changed; (iii) parameters that need to be changed.</p>
+<p>Open the relevant modules in <em>/EXIOMOD_base_model/scr/</em>. Search for: (i) equations that need to be changed; (ii) variables that need to be changed; (iii) parameters that need to be changed.</p>
 </li>
 <li>
 <p>Making changes to equations: equations which need to be changed need to be renamed, e.g. from EQKL to EQKL_pr, and restated. Make sure to include scaling of the equations after the model statement.</p>

@@ -1,4 +1,4 @@
-* File:   library/scr/06_module_production.gms
+* File:   EXIOMOD_base_model/scr/06_module_production_KL.gms
 * Author: Trond Husby
 * Date:   22 April 2015
 * Adjusted: 6 May 2015

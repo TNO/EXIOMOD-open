@@ -1,4 +1,4 @@
-* File:   library/scr/01_sets_database.gms
+* File:   EXIOMOD_base_model/scr/01_sets_database.gms
 * Author: Tatyana Bulavskaya
 * Date:   14 May 2014
 * Adjusted:   22 June 2014
@@ -42,18 +42,18 @@ $eolcom #
 Sets
    all_reg_data           full region list for reading-in the database
 /
-$include library/sets/regions_database.txt
-$include library/sets/restoftheworld_database.txt
+$include EXIOMOD_base_model/sets/regions_database.txt
+$include EXIOMOD_base_model/sets/restoftheworld_database.txt
 /
 
    reg_data(all_reg_data) list of regions in the database
 /
-$include library/sets/regions_database.txt
+$include EXIOMOD_base_model/sets/regions_database.txt
 /
 
    row_data(all_reg_data) list of rest of the world regions in the database
 /
-$include library/sets/restoftheworld_database.txt
+$include EXIOMOD_base_model/sets/restoftheworld_database.txt
 /
 ;
 
@@ -65,43 +65,43 @@ Sets
    full_cat_list           full rows list (products value-added etc) for
                            # reading-in the database
 /
-$include library/sets/products_database.txt
-$include library/sets/industries_database.txt
-$include library/sets/taxesandsubsidiesonproducts_database.txt
-$include library/sets/valueadded_database.txt
-$include library/sets/finaldemand_database.txt
-$include library/sets/export_database.txt
+$include EXIOMOD_base_model/sets/products_database.txt
+$include EXIOMOD_base_model/sets/industries_database.txt
+$include EXIOMOD_base_model/sets/taxesandsubsidiesonproducts_database.txt
+$include EXIOMOD_base_model/sets/valueadded_database.txt
+$include EXIOMOD_base_model/sets/finaldemand_database.txt
+$include EXIOMOD_base_model/sets/export_database.txt
 /
 
    prd_data(full_cat_list) list of products in the database
 /
-$include library/sets/products_database.txt
+$include EXIOMOD_base_model/sets/products_database.txt
 /
 
    ind_data(full_cat_list) list of industries in the database
 /
-$include library/sets/industries_database.txt
+$include EXIOMOD_base_model/sets/industries_database.txt
 /
 
    tsp_data(full_cat_list) list of taxes and subsidies on products in the
                            # database
 /
-$include library/sets/taxesandsubsidiesonproducts_database.txt
+$include EXIOMOD_base_model/sets/taxesandsubsidiesonproducts_database.txt
 /
 
    va_data(full_cat_list)  list of value added categories in the database
 /
-$include library/sets/valueadded_database.txt
+$include EXIOMOD_base_model/sets/valueadded_database.txt
 /
 
    fd_data(full_cat_list)  list of final demand categories in the database
 /
-$include library/sets/finaldemand_database.txt
+$include EXIOMOD_base_model/sets/finaldemand_database.txt
 /
 
    exp_data(full_cat_list) list of export categories in the database
 /
-$include library/sets/export_database.txt
+$include EXIOMOD_base_model/sets/export_database.txt
 /
 ;
 
@@ -111,12 +111,12 @@ $include library/sets/export_database.txt
 Sets
    year_data               list of time periods in the database
 /
-$include library/sets/years_database.txt
+$include EXIOMOD_base_model/sets/years_database.txt
 /
 
    cur_data                list of currencies in the database
 /
-$include library/sets/currencies_database.txt
+$include EXIOMOD_base_model/sets/currencies_database.txt
 /
 ;
 

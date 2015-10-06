@@ -2,7 +2,7 @@
 
 Create a new branch from the master branch on GitHub. The master branch consists of the following core components:
 
-1. A library-folder containing the base-model. Files in the library folder should never be modified.
+1. A EXIOMOD_base_model-folder containing the base-model. Files in the EXIOMOD_base_model folder should never be modified.
 
 2. A project_example-folder containing examples of structure and code one could use for a project. Examples of data aggregation are also included in this folder.
 
@@ -14,7 +14,7 @@ Create a new branch from the master branch on GitHub. The master branch consists
 
 A project folder has the following structure:
 
-* *00-principal* (required) contains input files needed to run the base-model. The structure of the sub-folders and file names are predefined and explained in more details below. The names and structure cannot be changed because the files are being called from the library-folder.
+* *00-principal* (required) contains input files needed to run the base-model. The structure of the sub-folders and file names are predefined and explained in more details below. The names and structure cannot be changed because the files are being called from the EXIOMOD_base_model-folder.
 
 * *extradata* (optional) contains files for processing of auxliary input data into scenarios. Presence of this folder(s) is not necessary and is decided according to the needs of the project. In case scenario(s) require input from various external data files (e.g. from other reports and other models) is it recommended to create this structure.
 
@@ -44,7 +44,7 @@ This folder(s) follows the same structure as *00-principal*. In the sub-folder *
 
 # Coding style conventions
 
-These conventions are applied in the *Base model* and need to be applied to any new code that is being added to the library.
+These conventions are applied in the *Base model* and need to be applied to any new code that is being added to the EXIOMOD_base_model.
 
 * **Code width** is 80 characters, this allows to code to be readable on most screens and also in print.
 
@@ -135,7 +135,7 @@ INTER_USE
 
 4. Additional data can either be added to the general */00-principal/data/* (simple projects) or to specific folders *extradata/data/* (more extensive projects). Please also consult some project examples to see how this can be done.
 
-5. Open the relevant modules in */library/scr/*. Search for: (i) equations that need to be changed; (ii) variables that need to be changed; (iii) parameters that need to be changed.
+5. Open the relevant modules in */EXIOMOD_base_model/scr/*. Search for: (i) equations that need to be changed; (ii) variables that need to be changed; (iii) parameters that need to be changed.
 
 6. Making changes to equations: equations which need to be changed need to be renamed, e.g. from EQKL to EQKL_pr, and restated. Make sure to include scaling of the equations after the model statement.
 

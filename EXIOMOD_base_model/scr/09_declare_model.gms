@@ -1,4 +1,4 @@
-* File:   library/scr/09_declare_model.gms
+* File:   EXIOMOD_base_model/scr/09_declare_model.gms
 * Author: Trond Husby
 * Date:   22 April 2015
 * Adjusted: 8 May 2015
