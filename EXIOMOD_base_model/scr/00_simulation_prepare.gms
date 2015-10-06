@@ -3,7 +3,7 @@
 * Date:   29 April 2015
 * Adjusted:
 
-* gams-master-file: main.gms
+* gams-master-file: run_EXIOMOD.gms
 
 $ontext startdoc
 This script calls the files that are needed in preparation for running a

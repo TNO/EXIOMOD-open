@@ -1,9 +1,9 @@
-* File:   main.gms
+* File:   run_EXIOMOD.gms
 
 $ontext startdoc
 This file is the one to be used to run simulations from GAMS.
-It is suggested to create a separate 'main' file for each simulation, this will
-allow to exactly reproduce results from reports/presentations.
+It is suggested to create a separate 'run_EXIOMOD' file for each simulation,
+this will allow to exactly reproduce results from reports/presentations.
 $offtext
 
 $include configuration.gms

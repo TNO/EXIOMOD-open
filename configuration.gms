@@ -2,7 +2,7 @@
 * Author: Tatyana Bulavskaya
 * Date:   26 May 2014
 
-* gams-master-file: main.gms
+* gams-master-file: run_EXIOMOD.gms
 
 $ontext startdoc
 This is the configuration file for the base CGE model. The file allows to

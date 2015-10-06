@@ -2,6 +2,8 @@
 * Author: Trond Husby
 * Date:   20.03.2015
 
+* gams-master-file: run_EXIOMOD.gms
+
 $ontext startdoc
 This simulation tests how one can split labour supply into different skill
 groups. Data for wage-share of different skill groups are read in

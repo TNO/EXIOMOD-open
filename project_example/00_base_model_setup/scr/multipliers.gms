@@ -2,6 +2,8 @@
 * Author: Tatyana Bulavskaya
 * Date:   14 May 2014
 
+* gams-master-file: run_EXIOMOD.gms
+
 $ontext startdoc
 This file specifies the simulation setup to use when calculating multipliers.
 
@@ -28,7 +30,7 @@ In the final section, the multipliers are saved to a file.
 $offtext
 
 * === Check whether model_type is defined. =====================================
-* Add one of the two statements below to main.gms to define the model_type
+* Add one of the two statements below to run_EXIOMOD.gms to define the model_type
 *   $if not set model_type  $setglobal  model_type  'IO_product_technology'
 *   $if not set model_type  $setglobal  model_type  'IO_industry_technology'
 

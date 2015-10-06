@@ -3,7 +3,7 @@
 * Date:   11 August 2015
 * Adjusted:
 
-* gams-master-file: main.gms
+* gams-master-file: run_EXIOMOD.gms
 
 $ontext startdoc
 This code can be used for making small trial simluations with base CGE model.

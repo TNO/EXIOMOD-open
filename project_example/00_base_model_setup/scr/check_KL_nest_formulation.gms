@@ -2,6 +2,8 @@
 * Author: Jelmer Ypma
 * Date:   17 October 2014
 
+* gams-master-file: run_EXIOMOD.gms
+
 $ontext startdoc
 This simulation scripts checks whether the 'flexible' specification of a CES
 function, which is used in the EXIOMOD_base_model codes is indeed correct and

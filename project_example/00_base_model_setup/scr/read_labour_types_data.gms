@@ -3,7 +3,7 @@
 * Date:   19 February 2015
 * Adjusted: 19 February 2015
 
-* gams-master-file: main.gms
+* gams-master-file: run_EXIOMOD.gms
 
 $ontext
 This is a file where additional project-specific data can be read in. Data
