@@ -3,7 +3,7 @@
 * Date:   14 May 2014
 * Adjusted:   19 February 2014
 
-* gams-master-file: 00_simulation_prepare.gms
+* gams-master-file: 00_base_model_prepare.gms
 
 $ontext startdoc
 Parameters are read in by loading the social accounting matrix database

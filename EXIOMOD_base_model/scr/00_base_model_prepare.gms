@@ -1,4 +1,4 @@
-* File:   EXIOMOD_base_model/scr/00_simulation_prepare.gms
+* File:   EXIOMOD_base_model/scr/00_base_model_prepare.gms
 * Author: Tatyana Bulavskaya
 * Date:   29 April 2015
 * Adjusted:

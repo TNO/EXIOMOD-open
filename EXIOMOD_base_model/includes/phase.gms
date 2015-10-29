@@ -3,7 +3,7 @@
 * Date:   30 May 2015
 * Adjusted:
 
-* gams-master-file: 00_simulation_prepare.gms
+* gams-master-file: 00_base_model_prepare.gms
 
 $ontext
 This script allows to implement code modularity within GAMS. In this case
@@ -22,7 +22,7 @@ a CGE model the thematic blocks are interconnected, and calling one block after
 another would results in compilation errors.
 
 Input:
-    * phase name (%1), which is passed from 00_simulation_prepare.gms
+    * phase name (%1), which is passed from 00_base_model_prepare.gms
 
 The script then goes through each of the included modules and compiles the
 corresponding phase.

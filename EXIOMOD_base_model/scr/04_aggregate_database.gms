@@ -3,7 +3,7 @@
 * Date:   14 May 2014
 * Adjusted: 23 June 2014
 
-* gams-master-file: 00_simulation_prepare.gms
+* gams-master-file: 00_base_model_prepare.gms
 
 $ontext startdoc
 With this code the database is aggregated to the dimensions of the model, as

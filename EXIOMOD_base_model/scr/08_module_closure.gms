@@ -21,7 +21,7 @@ described within the prices module:
 - Definition of price indexes and GDP deflator, which is used as numéraire.
 
 As with all the other modules, different phases of the code are being called
-from 00_simulation_prepare.gms via phase.gms.
+from 00_base_model_prepare.gms via phase.gms.
 
 Please see the description of the modular approach in philosophy.html and of
 phase.gms for more details.

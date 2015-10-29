@@ -3,7 +3,7 @@
 * Date:   22 April 2015
 * Adjusted: 8 May 2015
 
-* gams-master-file: 00_simulation_prepare.gms
+* gams-master-file: 00_base_model_prepare.gms
 
 $ontext startdoc
 In this code the full base CGE and Input-Output models are defined. The models

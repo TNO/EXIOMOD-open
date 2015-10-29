@@ -3,7 +3,7 @@
 * Date:   14 May 2014
 * Adjusted:   27 February 2015
 
-* gams-master-file: 00_simulation_prepare.gms
+* gams-master-file: 00_base_model_prepare.gms
 
 $ontext startdoc
 This code is used for declaration and definition of sets which are used in the
