@@ -37,7 +37,7 @@ $Gdxin '\\tsn.tno.nl\Data\SV\sv-016648\Databank Economen\European data\EXIOBASE_
 
 $loaddc SAM_bp_data = MRSAM_bp_database
 $loaddc SAM_dt_data = MRSAM_dom_taxsub_database
-$loaddc SAM_pp_data = MRSAM_bp_database
+$loaddc SAM_pp_data = MRSAM_pp_database
 $Gdxin
 
 $if '%db_check%' == 'yes' $include EXIOMOD_base_model/scr/02A_checks_database.gms
