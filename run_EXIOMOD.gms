@@ -10,14 +10,15 @@ $include configuration.gms
 
 * OPTION 1: run all the files for every simulation, using $include
 * Include base model file
-*$include EXIOMOD_base_model/scr/00_base_model_prepare.gms
+$include EXIOMOD_base_model/scr/00_base_model_prepare.gms
 
 * Include file with extra simulation data
-*$include %project%/00_base_model_setup/scr/trial_read_extradata.gms
+$include %project%/00_base_model_setup/scr/trial_read_extradata.gms
 
+$set scenario LS
 * Run simulation
-*$include %project%/00_base_model_setup/scr/trial_simulation.gms
-*$exit
+$include %project%/00_base_model_setup/scr/trial_simulation.gms
+$exit
 
 * OPTION 2: use save and restarts, this allows to run the data-related codes
 * only ones. Be aware that for this options you would need to manually define
