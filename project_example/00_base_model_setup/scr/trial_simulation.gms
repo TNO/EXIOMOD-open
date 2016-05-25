@@ -27,24 +27,22 @@ Parameter
     CBUD_G_check(regg,year)     check that budget constraint for government holds
     CBUD_I_check(regg,year)     check that budget constraint for investment agent holds
     numer_check(regg,ind,year)  check that the numeraire equation holds
-    GDPCONST_time(reg,year)
-    KL_time(reg,va,regg,ind,year)
 ;
 
 * ============================== Simulation setup ==============================
 
-loop(year$( ord(year) le 2 ),
+loop(year$( ord(year) le 3 ),
 
 *$ontext
 * CEPII baseline
-*KLS(reg,kl)             = KLS_V.L(reg,kl) ;
-*KLS_V.FX(reg,"GOS")     = KLS(reg,"GOS") * KS_CEPII_change(reg,year) ;
-*KLS_V.FX(reg,"COE")     = KLS(reg,"COE") * LS_CEPII_change(reg,year) ;
-*fprod(kl,regg,ind)      = fprod(kl,regg,ind) * PRODKL_CEPII_change(regg,year) ;
+KLS(reg,kl)             = KLS_V.L(reg,kl) ;
+KLS_V.FX(reg,"GOS")     = KLS(reg,"GOS") * KS_CEPII_change(reg,year) ;
+KLS_V.FX(reg,"COE")     = KLS(reg,"COE") * LS_CEPII_change(reg,year) ;
+fprod(kl,regg,ind)      = fprod(kl,regg,ind) * PRODKL_CEPII_change(regg,year) ;
 *$offtext
 
 * Additional trial shock
-KLS_V.FX('WEU',"COE")$(ord(year) eq 2 ) = 1.1 * KLS('WEU',"COE") ;
+KLS_V.FX('WEU','COE')$(ord(year) eq 2 ) = 1.1 * KLS('WEU','COE') ;
 
 
 * =============================== Solve statement ==============================
@@ -90,9 +88,6 @@ numer_check(regg,ind,year)$Y(regg,ind) =  Y_V.L(regg,ind) * PY_V.L(regg,ind) *
     sum(inm, TIM_INTER_USE_ROW(inm,regg,ind) * PROW_V.L ) +
     sum(tse, TIM_INTER_USE_ROW(tse,regg,ind) * PROW_V.L ) ) ;
 
-GDPCONST_time(reg,year) = GDPCONST_V.L(reg) ;
-KL_time(regg,kl,reg,ind,year) = KL_V.L(regg,kl,reg,ind) ;
-
 * end loop over years
 ) ;
 
@@ -125,27 +120,3 @@ Display
 CO2_c_time
 CO2reg_c_time
 ;
-
-Parameter
-    K_result(reg,ind,year)
-    L_result(reg,ind,year)
-    aL_result(reg,regg,ind)
-    prodL_result(reg,ind)
-;
-*K_result(reg,ind,year)      = sum(regg, K_time(regg,reg,ind,year)) ;
-*L_result(reg,ind,year)      = sum(regg, L_time(regg,reg,ind,year)) ;
-*aL_result(reg,regg,ind)    = aL(reg,regg,ind) ;
-*prodL_result(reg,ind)      = prodL(reg,ind) ;
-
-K_result(reg,ind,year)      = sum(regg, KL_time(regg,"GOS",reg,ind,year)) ;
-L_result(reg,ind,year)      = sum(regg, KL_time(regg,"COE",reg,ind,year)) ;
-*aL_result(reg,regg,ind)     = alphaKL(reg,'COE',regg,ind) ;
-*prodL_result(reg,ind)       = fprod('COE',reg,ind) ;
-
-*$exit
-$libinclude xldump Y_change                 results.xlsx Y_change_time!
-$libinclude xldump GDPCONST_time            results.xlsx GDP_time!
-$libinclude xldump K_result                 results.xlsx K_time!
-$libinclude xldump L_result                 results.xlsx L_time!
-*$libinclude xldump aL_result                results.xlsx aL_time!
-*$libinclude xldump prodL_result             results.xlsx prodL_time!
