@@ -31,20 +31,20 @@ $include %project%/01_external_data/Labour_types/sets/industries_60sec.txt
 Sets
 *Extending value added set to include three different skill groups
     vapr /'NTP','LOW','MID','HIGH','GOS','INM','TSE'/
-    klpr(vapr) / 'GOS', 'LOW','MID','HIGH'/
+    lpr(vapr) / 'LOW','MID','HIGH'/
 ;
 *$offmulti
 
 Alias
-    (klpr,klprr)
+    (lpr,lprr)
 ;
 
 Parameters
     wdata(reg_data,totset60,sec60) data from EXIOBASE 60
     mapdmod(sec60,ind)          mapping EXIOBASE 60 sectors
                                 #to project specific industries
-    wag(reg_data,ind,klpr)      wages per skill group per sector
-    lz_share(reg,ind,klpr)      skill-groups'share of income
+    wag(reg_data,ind,lpr)      wages per skill group per sector
+    lz_share(reg,ind,lpr)      skill-groups'share of income
 ;
 
 * Read in data from EXIOBASE60 to create split for wages
@@ -58,18 +58,18 @@ wag(reg_data,ind,'MID')
 wag(reg_data,ind,'HIGH')
     = sum(sec60$mapdmod(sec60,ind), Wdata(reg_data,'t208',sec60) ) ;
 
-lz_share(reg,ind,klpr)
-    = sum(reg_data$all_reg_aggr(reg_data,reg), wag(reg_data,ind,klpr ) ) ;
+lz_share(reg,ind,lpr)
+    = sum(reg_data$all_reg_aggr(reg_data,reg), wag(reg_data,ind,lpr ) ) ;
 
-lz_share(reg,ind,klpr)$lz_share(reg,ind,klpr)
-    = lz_share(reg,ind,klpr)
-    / sum(klprr$lz_share(reg,ind,klprr), lz_share(reg,ind,klprr)) ;
+lz_share(reg,ind,lpr)$lz_share(reg,ind,lpr)
+    = lz_share(reg,ind,lpr)
+    / sum(lprr$lz_share(reg,ind,lprr), lz_share(reg,ind,lprr)) ;
 
 Display
 Wdata
 mapdmod
 wag
 lz_share
-klpr
+lpr
 value_added
 ;

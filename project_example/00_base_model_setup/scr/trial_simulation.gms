@@ -29,20 +29,28 @@ Parameter
     numer_check(regg,ind,year)  check that the numeraire equation holds
 ;
 
+$include %project%\03_simulation_results\scr\save_simulation_results_declaration_parameters.gms
+
 * ============================== Simulation setup ==============================
 
-loop(year$( ord(year) le 3 ),
+loop(year$( ord(year) le 2 ),
 
-*$ontext
 * CEPII baseline
-KLS(reg,kl)             = KLS_V.L(reg,kl) ;
-KLS_V.FX(reg,"GOS")     = KLS(reg,"GOS") * KS_CEPII_change(reg,year) ;
-KLS_V.FX(reg,"COE")     = KLS(reg,"COE") * LS_CEPII_change(reg,year) ;
-fprod(kl,regg,ind)      = fprod(kl,regg,ind) * PRODKL_CEPII_change(regg,year) ;
-*$offtext
+KS(reg)                 = KS_V.L(reg) ;
+KS_V.FX(reg)            = KS(reg) * KS_CEPII_change(reg,year) ;
+LS(reg)                 = LS_V.L(reg) ;
+LS_V.FX(reg)            = LS(reg) * LS_CEPII_change(reg,year) ;
+prodK(regg,ind)         = prodK(regg,ind) * PRODKL_CEPII_change(regg,year) ;
+prodL(regg,ind)         = prodL(regg,ind) * PRODKL_CEPII_change(regg,year) ;
 
+* additional baseline assumption
+* reduce the share of output that is inventories
+if(ord(year) gt 1,
+* Phase out share of changes in inventories
+    theta_sv(reg,prd,regg) = theta_sv(reg,prd,regg) * 0.97 ;
+) ;
 * Additional trial shock
-KLS_V.FX('WEU','COE')$(ord(year) eq 2 ) = 1.1 * KLS('WEU','COE') ;
+LS_V.FX('WEU')$(ord(year) eq 2 ) = 1.1 * LS('WEU') ;
 
 
 * =============================== Solve statement ==============================
@@ -84,9 +92,12 @@ numer_check(regg,ind,year)$Y(regg,ind) =  Y_V.L(regg,ind) * PY_V.L(regg,ind) *
     sum(reg, txd_inm(reg,regg,ind) ) - sum(reg, txd_tse(reg,regg,ind) ) ) /
     ( sum(prd, INTER_USE_T_V.L(prd,regg,ind) * PIU_V.L(prd,regg,ind) *
     ( 1 + tc_ind(prd,regg,ind) ) ) +
-    sum((reg,kl), KL_V.L(reg,kl,regg,ind) * PKL_V.L(reg,kl) ) +
+    sum(reg, K_V.L(reg,regg,ind) * PK_V.L(reg) ) +
+    sum(reg, L_V.L(reg,regg,ind) * PL_V.L(reg) ) +
     sum(inm, TIM_INTER_USE_ROW(inm,regg,ind) * PROW_V.L ) +
     sum(tse, TIM_INTER_USE_ROW(tse,regg,ind) * PROW_V.L ) ) ;
+
+$include %project%\03_simulation_results\scr\save_simulation_results.gms
 
 * end loop over years
 ) ;

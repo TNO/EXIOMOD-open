@@ -144,7 +144,8 @@ Set
     va_types
 /
 'NetTaxProduction'
-'Factors'
+'Capital'
+'Labour'
 'IntMargins'
 'ExportTax'
 /
@@ -164,17 +165,16 @@ loop(va,
 
 Sets
     ntp(va)         net taxes on production categories
-    kl(va)          capital and labour categories
+    k(va)           capital categories
+    l(va)           labour categories
     inm(va)         international margins categories
     tse(va)         tax on export categories
 ;
 
-Alias
-    (kl,kll)
-;
 
 ntp(va)$va_assign(va,'NetTaxProduction') = yes ;
-kl(va)$va_assign(va,'Factors')           = yes ;
+k(va)$va_assign(va,'Capital')            = yes ;
+l(va)$va_assign(va,'Labour')             = yes ;
 inm(va)$va_assign(va,'IntMargins')       = yes ;
 tse(va)$va_assign(va,'ExportTax')        = yes ;
 

@@ -80,11 +80,17 @@ Parameters
     theta_gfcf(prd,regg)        relative share parameter of gross fixed capital
                                 # formation on product level in total investment
                                 # demand (relation in volume)
-    fac_distr_h(reg,va,regg)    distribution shares of factor income to
+    k_distr_h(reg,regg)         distribution shares of capital income to
                                 # household budget (shares in value)
-    fac_distr_g(reg,va,regg)    distribution shares of factor income to
+    k_distr_g(reg,regg)         distribution shares of capital income to
                                 # government budget (shares in value)
-    fac_distr_gfcf(reg,va,regg) distribution shares of factor income to
+    k_distr_gfcf(reg,regg)      distribution shares of capital income to
+                                # investment agent budget (shares in value)
+    l_distr_h(reg,regg)         distribution shares of labour income to
+                                # household budget (shares in value)
+    l_distr_g(reg,regg)         distribution shares of labour income to
+                                # government budget (shares in value)
+    l_distr_gfcf(reg,regg)      distribution shares of labour income to
                                 # investment agent budget (shares in value)
     ty(regg)                    household income tax rate
     mps(regg)                   household marginal propensity to save
@@ -199,16 +205,16 @@ CBUD_I
 * excludes transfers from other final users in the same region and transfers
 * from abroad. The gross income value is used to calculated income tax rate.
 GRINC_H(regg)
-    = sum((reg,kl), sum(fd$fd_assign(fd,'Households'),
-    VALUE_ADDED_DISTR(reg,kl,regg,fd) ) ) ;
+    = sum(reg, sum(fd$fd_assign(fd,'Households'), sum(va$(k(va) or l(va)),
+    VALUE_ADDED_DISTR(reg,va,regg,fd) ) ) ) ;
 
 * Gross income of government in each region (regg) from production factors,
 * collected taxes on production, international margins and taxes on exports, as
 * well as domestically collected taxes on products. The gross income value
 * excludes household income taxes and transfers from abroad.
 GRINC_G(regg)
-    = sum((reg,kl), sum(fd$fd_assign(fd,'Government'),
-    VALUE_ADDED_DISTR(reg,kl,regg,fd) ) ) +
+    = sum(reg, sum(fd$fd_assign(fd,'Government'), sum(va$(k(va) or l(va)),
+    VALUE_ADDED_DISTR(reg,va,regg,fd) ) ) ) +
     sum((reg,ntp), sum(fd$fd_assign(fd,'Government'),
     VALUE_ADDED_DISTR(reg,ntp,regg,fd) ) ) +
     sum((reg,inm), sum(fd$fd_assign(fd,'Government'),
@@ -222,8 +228,8 @@ GRINC_G(regg)
 * includes only income received from production factors, but excludes transfers
 * from other final user in the same region and transfers from abroad.
 GRINC_I(regg)
-    = sum((reg,kl), sum(fd$fd_assign(fd,'GrossFixCapForm'),
-    VALUE_ADDED_DISTR(reg,kl,regg,fd) ) ) ;
+    = sum(reg, sum(fd$fd_assign(fd,'GrossFixCapForm'), sum(va$(k(va) or l(va)),
+    VALUE_ADDED_DISTR(reg,va,regg,fd) ) ) ) ;
 
 Display
 GRINC_H
@@ -292,32 +298,57 @@ theta_gfcf
 
 *## Distribution of value added revenues to final consumers ##
 
-* Distribution shares of factor revenues to household budget for each factor
-* type (reg,kl) in each region (regg).
-fac_distr_h(reg,kl,regg)$sum(fd$fd_assign(fd,'Households'),
-    VALUE_ADDED_DISTR(reg,kl,regg,fd) )
-    = sum(fd$fd_assign(fd,'Households'), VALUE_ADDED_DISTR(reg,kl,regg,fd) ) /
-    sum((reggg,fdd), VALUE_ADDED_DISTR(reg,kl,reggg,fdd) ) ;
+* Distribution shares of factor revenues to household budget for capital (reg)
+* in each region (regg).
+k_distr_h(reg,regg)$sum((k,fd)$fd_assign(fd,'Households'),
+    VALUE_ADDED_DISTR(reg,k,regg,fd) )
+    = sum((k,fd)$fd_assign(fd,'Households'), VALUE_ADDED_DISTR(reg,k,regg,fd) ) /
+    sum((k,reggg,fdd), VALUE_ADDED_DISTR(reg,k,reggg,fdd) ) ;
 
-* Distribution shares of factor revenues to government budget for each factor
-* type (reg,kl) in each region (regg).
-fac_distr_g(reg,kl,regg)$sum(fd$fd_assign(fd,'Government'),
-    VALUE_ADDED_DISTR(reg,kl,regg,fd) )
-    = sum(fd$fd_assign(fd,'Government'), VALUE_ADDED_DISTR(reg,kl,regg,fd) ) /
-    sum((reggg,fdd), VALUE_ADDED_DISTR(reg,kl,reggg,fdd) ) ;
+* Distribution shares of factor revenues to government budget for capital (reg)
+* in each region (regg).
+k_distr_g(reg,regg)$sum((k,fd)$fd_assign(fd,'Government'),
+    VALUE_ADDED_DISTR(reg,k,regg,fd) )
+    = sum((k,fd)$fd_assign(fd,'Government'), VALUE_ADDED_DISTR(reg,k,regg,fd) ) /
+    sum((k,reggg,fdd), VALUE_ADDED_DISTR(reg,k,reggg,fdd) ) ;
 
-* Distribution shares of factor revenues to investment agent budget for each
-* factor type (reg,kl) in each region (regg).
-fac_distr_gfcf(reg,kl,regg)$sum(fd$fd_assign(fd,'GrossFixCapForm'),
-    VALUE_ADDED_DISTR(reg,kl,regg,fd) )
-    = sum(fd$fd_assign(fd,'GrossFixCapForm'),
-    VALUE_ADDED_DISTR(reg,kl,regg,fd) ) /
-    sum((reggg,fdd), VALUE_ADDED_DISTR(reg,kl,reggg,fdd) ) ;
+* Distribution shares of factor revenues to investment agent budget for capital
+* (reg) in each region (regg).
+k_distr_gfcf(reg,regg)$sum((k,fd)$fd_assign(fd,'GrossFixCapForm'),
+    VALUE_ADDED_DISTR(reg,k,regg,fd) )
+    = sum((k,fd)$fd_assign(fd,'GrossFixCapForm'),
+    VALUE_ADDED_DISTR(reg,k,regg,fd) ) /
+    sum((k,reggg,fdd), VALUE_ADDED_DISTR(reg,k,reggg,fdd) ) ;
+
+* Distribution shares of factor revenues to household budget for labour (reg)
+* in each region (regg).
+l_distr_h(reg,regg)$sum((l,fd)$fd_assign(fd,'Households'),
+    VALUE_ADDED_DISTR(reg,l,regg,fd) )
+    = sum((l,fd)$fd_assign(fd,'Households'), VALUE_ADDED_DISTR(reg,l,regg,fd) ) /
+    sum((l,reggg,fdd), VALUE_ADDED_DISTR(reg,l,reggg,fdd) ) ;
+
+* Distribution shares of factor revenues to government budget for labour (reg)
+* in each region (regg).
+l_distr_g(reg,regg)$sum((l,fd)$fd_assign(fd,'Government'),
+    VALUE_ADDED_DISTR(reg,l,regg,fd) )
+    = sum((l,fd)$fd_assign(fd,'Government'), VALUE_ADDED_DISTR(reg,l,regg,fd) ) /
+    sum((l,reggg,fdd), VALUE_ADDED_DISTR(reg,l,reggg,fdd) ) ;
+
+* Distribution shares of factor revenues to investment agent budget for labour
+* (reg) in each region (regg).
+l_distr_gfcf(reg,regg)$sum((l,fd)$fd_assign(fd,'GrossFixCapForm'),
+    VALUE_ADDED_DISTR(reg,l,regg,fd) )
+    = sum((l,fd)$fd_assign(fd,'GrossFixCapForm'),
+    VALUE_ADDED_DISTR(reg,l,regg,fd) ) /
+    sum((l,reggg,fdd), VALUE_ADDED_DISTR(reg,l,reggg,fdd) ) ;
 
 Display
-fac_distr_h
-fac_distr_g
-fac_distr_gfcf
+k_distr_h
+k_distr_g
+k_distr_gfcf
+l_distr_h
+l_distr_g
+l_distr_gfcf
 ;
 
 
@@ -389,7 +420,8 @@ Variables
     GFCF_T_V(prd,regg)              gross fixed capital formation on aggregated
                                     # product level
 
-    FACREV_V(reg,va)                revenue from factors of production
+    CAPREV_V(reg)                   revenue from capital
+    LABREV_V(reg)                   revenue from labour
     TSPREV_V(reg)                   revenue from net tax on products
     NTPREV_V(reg)                   revenue from net tax on production
     INMREV_V(reg)                   revenue from international margins
@@ -426,7 +458,8 @@ Equations
     EQGFCF_T(prd,regg)          demand of investment agent for products on
                                 # aggregated product level
 
-    EQFACREV(reg,va)            revenue from factors of production
+    EQCAPREV(reg)               revenue from capital
+    EQLABREV(reg)               revenue from labour
     EQTSPREV(reg)               revenue from net tax on products
     EQNTPREV(reg)               revenue from net tax on production
     EQINMREV(reg)               revenue from international margins
@@ -457,7 +490,7 @@ $if not '%phase%' == 'equations_definition' $goto end_equations_definition
 * utility optimization, but there is no market for utility and corresponding
 * price doesn't exist, contrary to CES demand functions derived from
 * optimization of a production function. Scaling parameter (SCLDF_H_V) is
-* introduced in order to ensure budget constraint (see EQUATION 1.15).
+* introduced in order to ensure budget constraint (see EQUATION 1.16).
 EQCONS_H_T(prd,regg)..
     CONS_H_T_V(prd,regg)
     =E=
@@ -468,7 +501,7 @@ EQCONS_H_T(prd,regg)..
 * follows CES form, where demand by government in each region (regg) for each
 * aggregated product (prd) depends, with certain elasticity, on relative prices
 * of different aggregated products. Scaling parameter (SCLDF_G_V) is
-* introduced in order to ensure budget constraint (see EQUATION 1.16).
+* introduced in order to ensure budget constraint (see EQUATION 1.17).
 EQCONS_G_T(prd,regg)..
     CONS_G_T_V(prd,regg)
     =E=
@@ -480,7 +513,7 @@ EQCONS_G_T(prd,regg)..
 * (regg) for each aggregated product (prd) depends, with certain elasticity, on
 * relative prices of different aggregated products. Scaling parameter
 * (SCLDF_I_V) is introduced in order to ensure budget constraint (see EQUATION
-* 1.17).
+* 1.18).
 EQGFCF_T(prd,regg)..
     GFCF_T_V(prd,regg)
     =E=
@@ -488,15 +521,24 @@ EQGFCF_T(prd,regg)..
     ( PC_I_V(prd,regg) * ( 1 + tc_gfcf(prd,regg) ) )**( -elasFU_I(regg) ) ;
 
 
-* EQUATION 1.4: Revenue from factors of production. The revenue of each specific
-* factor (reg,kl) is a sum of revenues earned by the corresponding factor in
-* each industry (ind) in each region (regg).
-EQFACREV(reg,kl)..
-    FACREV_V(reg,kl)
+* EQUATION 1.4: Revenue from factors of production. The revenue of capital
+* (reg) is a sum of revenues earned by the corresponding factor in each
+* industry (ind) in each region (regg).
+EQCAPREV(reg)..
+    CAPREV_V(reg)
     =E=
-    sum((regg,ind), KL_V(reg,kl,regg,ind) * PKL_V(reg,kl) ) ;
+    sum((regg,ind), K_V(reg,regg,ind) * PK_V(reg) ) ;
 
-* EQUATION 1.5: Revenue from net taxes on products. The revenue in each region
+
+* EQUATION 1.5: Revenue from factors of production. The revenue of labour (reg)
+* is a sum of revenues earned by the corresponding factor in each industry (ind)
+* in each region (regg).
+EQLABREV(reg)..
+    LABREV_V(reg)
+    =E=
+    sum((regg,ind), L_V(reg,regg,ind) * PL_V(reg) ) ;
+
+* EQUATION 1.6: Revenue from net taxes on products. The revenue in each region
 * (reg) is a sum of revenues earned from sales of products to industries (ind)
 * for intermediate use, households, government, investment agent in the same
 * region.
@@ -511,7 +553,7 @@ EQTSPREV(reg)..
     sum((regg,prd), SV_V(regg,prd,reg) * P_V(regg,prd) * tc_sv(prd,reg) ) +
     sum(prd, SV_ROW_V(prd,reg) * PROW_V * tc_sv(prd,reg) ) ;
 
-* EQUATION 1.6: Revenue from net taxes on production. The revenue in each region
+* EQUATION 1.7: Revenue from net taxes on production. The revenue in each region
 * (reg) is a sum of revenues earned from production activities of each industry
 * (ind,regg).
 EQNTPREV(reg)..
@@ -520,7 +562,7 @@ EQNTPREV(reg)..
     sum((regg,ind), Y_V(regg,ind) * PY_V(regg,ind) *
     txd_ind(reg,regg,ind) ) ;
 
-* EQUATION 1.7: Revenue from international margins. The revenue in each region
+* EQUATION 1.8: Revenue from international margins. The revenue in each region
 * (reg) is a sum of revenues earned from production activities of each industry
 * (ind,regg) and from final consumers in each modeled region (regg) and rest of
 * the world region. The revenues from final consumers and rest of the world are
@@ -536,7 +578,7 @@ EQINMREV(reg)..
     LASPEYRES_V(regg) ) +
     sum(inm, TIM_EXPORT_ROW(reg,inm) * PROW_V ) ;
 
-* EQUATION 1.8: Revenue from tax on export. The revenue in each region (reg) is
+* EQUATION 1.9: Revenue from tax on export. The revenue in each region (reg) is
 * a sum of revenues earned from production activities of each industry
 * (ind,regg) and from final consumers in each modeled region (regg) and rest of
 * the world region. The revenues from final consumers and rest of the world are
@@ -553,15 +595,17 @@ EQTSEREV(reg)..
     sum((tse), TIM_EXPORT_ROW(reg,tse) * PROW_V ) ;
 
 
-* EQUATION 1.9: Gross income of households from factors of production. Gross
-* income is composed of shares of factor revenues attributable to households
-* in each region (regg).
+* EQUATION 1.10: Gross income of households from the production factor capital.
+* Gross income is composed of shares of factor revenues attributable to
+* households in each region (regg).
 EQGRINC_H(regg)..
     GRINC_H_V(regg)
     =E=
-    sum((reg,kl), FACREV_V(reg,kl) * fac_distr_h(reg,kl,regg) ) ;
+    sum(reg, CAPREV_V(reg) * k_distr_h(reg,regg) ) +
+    sum(reg, LABREV_V(reg) * l_distr_h(reg,regg) ) ;
 
-* EQUATION 1.10: Gross income of government. Gross income is composed of
+
+* EQUATION 1.11: Gross income of government. Gross income is composed of
 * shares of factor revenues attributable to government in each region (regg),
 * tax revenues from production, international trade and from sale of products
 * (domestically and exported). Tax revenues from household income are not
@@ -569,18 +613,20 @@ EQGRINC_H(regg)..
 EQGRINC_G(regg)..
     GRINC_G_V(regg)
     =E=
-    sum((reg,kl), FACREV_V(reg,kl) * fac_distr_g(reg,kl,regg) ) +
+    sum(reg, CAPREV_V(reg) * k_distr_g(reg,regg) ) +
+    sum(reg, LABREV_V(reg) * l_distr_g(reg,regg) ) +
     TSPREV_V(regg) + NTPREV_V(regg) + INMREV_V(regg) + TSEREV_V(regg) ;
 
-* EQUATION 1.11: Gross income of investment agent. Gross income is composed of
+* EQUATION 1.12: Gross income of investment agent. Gross income is composed of
 * shares of factor revenues attributable to investment agent in each region
 * (regg).
 EQGRINC_I(regg)..
     GRINC_I_V(regg)
     =E=
-    sum((reg,kl), FACREV_V(reg,kl) * fac_distr_gfcf(reg,kl,regg) ) ;
+    sum(reg, CAPREV_V(reg) * k_distr_gfcf(reg,regg) ) +
+    sum(reg, LABREV_V(reg) * l_distr_gfcf(reg,regg) ) ;
 
-* EQUATION 1.12: Budget available for household consumption. Budget is composed
+* EQUATION 1.13: Budget available for household consumption. Budget is composed
 * of (1) gross income of households in each region (regg) plus (2) net income
 * transfers from other final users and less (3) international margin and tax on
 * export paid by household. At the moment income transfers is one of the
@@ -611,7 +657,7 @@ EQCBUD_H(regg)..
     sum(inm, TIM_FINAL_USE_ROW(inm,regg,fd) * PROW_V ) +
     sum(tse, TIM_FINAL_USE_ROW(tse,regg,fd) * PROW_V ) ) ;
 
-* EQUATION 1.13: Budget available for government consumption. Budget is composed
+* EQUATION 1.14: Budget available for government consumption. Budget is composed
 * of (1) gross income of government in each region (regg) plus (2) household
 * income tax revenue plus (3) net income transfers from other final users and
 * less (4) international margin and tax on export paid by government. At the
@@ -642,7 +688,7 @@ EQCBUD_G(regg)..
     sum(inm, TIM_FINAL_USE_ROW(inm,regg,fd) * PROW_V ) +
     sum(tse, TIM_FINAL_USE_ROW(tse,regg,fd) * PROW_V ) ) ;
 
-* EQUATION 1.14: Budget available for gross fixed capital formation. Budget is
+* EQUATION 1.15: Budget available for gross fixed capital formation. Budget is
 * composed of (1) gross income of investment agent in each region (regg) plus
 * (2) net income transfers from other final users less (3) expenditures on stock
 * changes, and less (4) international margin and tax on export on gross fixed
@@ -688,7 +734,7 @@ EQCBUD_I(regg)..
     sum(tse, TIM_FINAL_USE_ROW(tse,regg,fd) * PROW_V ) ) ;
 
 
-* EQUATION 1.15: Budget constraint of households. The equation ensures that the
+* EQUATION 1.16: Budget constraint of households. The equation ensures that the
 * total budget available for household consumption is spent on purchase of
 * products. The equation defines scaling parameter of households, see also
 * explanation for EQUATION 1.1.
@@ -698,7 +744,7 @@ EQSCLFD_H(regg)..
     sum(prd, CONS_H_T_V(prd,regg) * PC_H_V(prd,regg) *
     ( 1 + tc_h(prd,regg) ) ) ;
 
-* EQUATION 1.16: Budget constraint of government. The equation ensures that the
+* EQUATION 1.17: Budget constraint of government. The equation ensures that the
 * total budget available for government consumption is spent on purchase of
 * products. The equation defines scaling parameter of government.
 EQSCLFD_G(regg)..
@@ -707,7 +753,7 @@ EQSCLFD_G(regg)..
     sum(prd, CONS_G_T_V(prd,regg) * PC_G_V(prd,regg) *
     ( 1 + tc_g(prd,regg) ) ) ;
 
-* EQUATION 1.17: Budget constraint of investment agent. The equation ensures
+* EQUATION 1.18: Budget constraint of investment agent. The equation ensures
 * that the total budget available for gross fixed capital formation is spent on
 * purchase of products. The equation defines scaling parameter of investment
 * agent.
@@ -737,13 +783,15 @@ CONS_H_T_V.FX(prd,regg)$(CONS_H_T(prd,regg) eq 0) = 0 ;
 CONS_G_T_V.FX(prd,regg)$(CONS_G_T(prd,regg) eq 0) = 0 ;
 GFCF_T_V.FX(prd,regg)$(GFCF_T(prd,regg) eq 0)     = 0 ;
 
-FACREV_V.L(reg,kl) = sum((regg,fd), VALUE_ADDED_DISTR(reg,kl,regg,fd) ) ;
+CAPREV_V.L(reg)    = sum((k,regg,fd), VALUE_ADDED_DISTR(reg,k,regg,fd) ) ;
+LABREV_V.L(reg)    = sum((l,regg,fd), VALUE_ADDED_DISTR(reg,l,regg,fd) ) ;
 TSPREV_V.L(reg)    = sum((tsp,regg,fd), TAX_SUB_PRD_DISTR(reg,tsp,regg,fd) ) ;
 NTPREV_V.L(reg)    = sum((ntp,regg,fd), VALUE_ADDED_DISTR(reg,ntp,regg,fd) ) ;
 INMREV_V.L(reg)    = sum((inm,regg,fd), VALUE_ADDED_DISTR(reg,inm,regg,fd) ) ;
 TSEREV_V.L(reg)    = sum((tse,regg,fd), VALUE_ADDED_DISTR(reg,tse,regg,fd) ) ;
 
-FACREV_V.FX(reg,kl)$(sum((regg,fd), VALUE_ADDED_DISTR(reg,kl,regg,fd) ) eq 0)    = 0 ;
+CAPREV_V.FX(reg)$(sum((k,regg,fd),   VALUE_ADDED_DISTR(reg,k,regg,fd) )    eq 0) = 0 ;
+LABREV_V.FX(reg)$(sum((l,regg,fd),   VALUE_ADDED_DISTR(reg,l,regg,fd) )    eq 0) = 0 ;
 TSPREV_V.FX(reg)$(sum((tsp,regg,fd), TAX_SUB_PRD_DISTR(reg,tsp,regg,fd) )  eq 0) = 0 ;
 NTPREV_V.FX(reg)$(sum((ntp,regg,fd), VALUE_ADDED_DISTR(reg,ntp,regg,fd) )  eq 0) = 0 ;
 INMREV_V.FX(reg)$(sum((inm,regg,fd), VALUE_ADDED_DISTR(reg,inm,regg,fd) )  eq 0) = 0 ;
@@ -820,17 +868,28 @@ GFCF_T_V.SCALE(prd,regg)$(GFCF_T_V.L(prd,regg) lt 0)
     = -GFCF_T_V.L(prd,regg) ;
 
 * EQUATION 1.4
-EQFACREV.SCALE(reg,kl)$(FACREV_V.L(reg,kl) gt 0)
-    = FACREV_V.L(reg,kl) ;
-FACREV_V.SCALE(reg,kl)$(FACREV_V.L(reg,kl) gt 0)
-    = FACREV_V.L(reg,kl) ;
+EQCAPREV.SCALE(reg)$(CAPREV_V.L(reg) gt 0)
+    = CAPREV_V.L(reg) ;
+CAPREV_V.SCALE(reg)$(CAPREV_V.L(reg) gt 0)
+    = CAPREV_V.L(reg) ;
 
-EQFACREV.SCALE(reg,kl)$(FACREV_V.L(reg,kl) lt 0)
-    = -FACREV_V.L(reg,kl) ;
-FACREV_V.SCALE(reg,kl)$(FACREV_V.L(reg,kl) lt 0)
-    = -FACREV_V.L(reg,kl) ;
+EQCAPREV.SCALE(reg)$(CAPREV_V.L(reg) lt 0)
+    = -CAPREV_V.L(reg) ;
+CAPREV_V.SCALE(reg)$(CAPREV_V.L(reg) lt 0)
+    = -CAPREV_V.L(reg) ;
 
 * EQUATION 1.5
+EQLABREV.SCALE(reg)$(LABREV_V.L(reg) gt 0)
+    = LABREV_V.L(reg) ;
+LABREV_V.SCALE(reg)$(LABREV_V.L(reg) gt 0)
+    = LABREV_V.L(reg) ;
+
+EQLABREV.SCALE(reg)$(LABREV_V.L(reg) lt 0)
+    = -LABREV_V.L(reg) ;
+LABREV_V.SCALE(reg)$(LABREV_V.L(reg) lt 0)
+    = -LABREV_V.L(reg) ;
+
+* EQUATION 1.6
 EQTSPREV.SCALE(reg)$(TSPREV_V.L(reg) gt 0)
     = TSPREV_V.L(reg) ;
 TSPREV_V.SCALE(reg)$(TSPREV_V.L(reg) gt 0)
@@ -841,7 +900,7 @@ EQTSPREV.SCALE(reg)$(TSPREV_V.L(reg) lt 0)
 TSPREV_V.SCALE(reg)$(TSPREV_V.L(reg) lt 0)
     = -TSPREV_V.L(reg) ;
 
-* EQUATION 1.6
+* EQUATION 1.7
 EQNTPREV.SCALE(reg)$(NTPREV_V.L(reg) gt 0)
     = NTPREV_V.L(reg) ;
 NTPREV_V.SCALE(reg)$(NTPREV_V.L(reg) gt 0)
@@ -852,7 +911,7 @@ EQNTPREV.SCALE(reg)$(NTPREV_V.L(reg) lt 0)
 NTPREV_V.SCALE(reg)$(NTPREV_V.L(reg) lt 0)
     = -NTPREV_V.L(reg) ;
 
-* EQUATION 1.7
+* EQUATION 1.8
 EQINMREV.SCALE(reg)$(INMREV_V.L(reg) gt 0)
     = INMREV_V.L(reg) ;
 INMREV_V.SCALE(reg)$(INMREV_V.L(reg) gt 0)
@@ -863,7 +922,7 @@ EQINMREV.SCALE(reg)$(INMREV_V.L(reg) lt 0)
 INMREV_V.SCALE(reg)$(INMREV_V.L(reg) lt 0)
     = -INMREV_V.L(reg) ;
 
-* EQUATION 1.8
+* EQUATION 1.9
 EQTSEREV.SCALE(reg)$(TSEREV_V.L(reg) gt 0)
     = TSEREV_V.L(reg) ;
 TSEREV_V.SCALE(reg)$(TSEREV_V.L(reg) gt 0)
@@ -874,7 +933,7 @@ EQTSEREV.SCALE(reg)$(TSEREV_V.L(reg) lt 0)
 TSEREV_V.SCALE(reg)$(TSEREV_V.L(reg) lt 0)
     = -TSEREV_V.L(reg) ;
 
-* EQUATION 1.9
+* EQUATION 1.10
 EQGRINC_H.SCALE(reg)$(GRINC_H_V.L(reg) gt 0)
     = GRINC_H_V.L(reg) ;
 GRINC_H_V.SCALE(reg)$(GRINC_H_V.L(reg) gt 0)
@@ -885,7 +944,7 @@ EQGRINC_H.SCALE(reg)$(GRINC_H_V.L(reg) lt 0)
 GRINC_H_V.SCALE(reg)$(GRINC_H_V.L(reg) lt 0)
     = -GRINC_H_V.L(reg) ;
 
-* EQUATION 1.10
+* EQUATION 1.11
 EQGRINC_G.SCALE(reg)$(GRINC_G_V.L(reg) gt 0)
     = GRINC_G_V.L(reg) ;
 GRINC_G_V.SCALE(reg)$(GRINC_G_V.L(reg) gt 0)
@@ -896,7 +955,7 @@ EQGRINC_G.SCALE(reg)$(GRINC_G_V.L(reg) lt 0)
 GRINC_G_V.SCALE(reg)$(GRINC_G_V.L(reg) lt 0)
     = -GRINC_G_V.L(reg) ;
 
-* EQUATION 1.11
+* EQUATION 1.12
 EQGRINC_I.SCALE(reg)$(GRINC_I_V.L(reg) gt 0)
     = GRINC_I_V.L(reg) ;
 GRINC_I_V.SCALE(reg)$(GRINC_I_V.L(reg) gt 0)
@@ -907,7 +966,7 @@ EQGRINC_I.SCALE(reg)$(GRINC_I_V.L(reg) lt 0)
 GRINC_I_V.SCALE(reg)$(GRINC_I_V.L(reg) lt 0)
     = -GRINC_I_V.L(reg) ;
 
-* EQUATION 1.12
+* EQUATION 1.13
 EQCBUD_H.SCALE(reg)$(CBUD_H_V.L(reg) gt 0)
     = CBUD_H_V.L(reg) ;
 CBUD_H_V.SCALE(reg)$(CBUD_H_V.L(reg) gt 0)
@@ -918,7 +977,7 @@ EQCBUD_H.SCALE(reg)$(CBUD_H_V.L(reg) lt 0)
 CBUD_H_V.SCALE(reg)$(CBUD_H_V.L(reg) lt 0)
     = -CBUD_H_V.L(reg) ;
 
-* EQUATION 1.13
+* EQUATION 1.14
 EQCBUD_G.SCALE(reg)$(CBUD_G_V.L(reg) gt 0)
     = CBUD_G_V.L(reg) ;
 CBUD_G_V.SCALE(reg)$(CBUD_G_V.L(reg) gt 0)
@@ -929,7 +988,7 @@ EQCBUD_G.SCALE(reg)$(CBUD_G_V.L(reg) lt 0)
 CBUD_G_V.SCALE(reg)$(CBUD_G_V.L(reg) lt 0)
     = -CBUD_G_V.L(reg) ;
 
-* EQUATION 1.14
+* EQUATION 1.15
 EQCBUD_I.SCALE(reg)$(CBUD_I_V.L(reg) gt 0)
     = CBUD_I_V.L(reg) ;
 CBUD_I_V.SCALE(reg)$(CBUD_I_V.L(reg) gt 0)
@@ -940,7 +999,7 @@ EQCBUD_I.SCALE(reg)$(CBUD_I_V.L(reg) lt 0)
 CBUD_I_V.SCALE(reg)$(CBUD_I_V.L(reg) lt 0)
     = -CBUD_I_V.L(reg) ;
 
-* EQUATION 1.15
+* EQUATION 1.16
 EQSCLFD_H.SCALE(regg)$(SCLFD_H_V.L(regg) gt 0)
     = SCLFD_H_V.L(regg) ;
 SCLFD_H_V.SCALE(regg)$(SCLFD_H_V.L(regg) gt 0)
@@ -951,7 +1010,7 @@ EQSCLFD_H.SCALE(regg)$(SCLFD_H_V.L(regg) lt 0)
 SCLFD_H_V.SCALE(regg)$(SCLFD_H_V.L(regg) lt 0)
     = -SCLFD_H_V.L(regg) ;
 
-* EQUATION 1.16
+* EQUATION 1.17
 EQSCLFD_G.SCALE(regg)$(SCLFD_G_V.L(regg) gt 0)
     = SCLFD_G_V.L(regg) ;
 SCLFD_G_V.SCALE(regg)$(SCLFD_G_V.L(regg) gt 0)
@@ -962,7 +1021,7 @@ EQSCLFD_G.SCALE(regg)$(SCLFD_G_V.L(regg) lt 0)
 SCLFD_G_V.SCALE(regg)$(SCLFD_G_V.L(regg) lt 0)
     = -SCLFD_G_V.L(regg) ;
 
-* EQUATION 1.17
+* EQUATION 1.18
 EQSCLFD_I.SCALE(regg)$(SCLFD_I_V.L(regg) gt 0)
     = SCLFD_I_V.L(regg) ;
 SCLFD_I_V.SCALE(regg)$(SCLFD_I_V.L(regg) gt 0)
@@ -973,7 +1032,7 @@ EQSCLFD_I.SCALE(regg)$(SCLFD_I_V.L(regg) lt 0)
 SCLFD_I_V.SCALE(regg)$(SCLFD_I_V.L(regg) lt 0)
     = -SCLFD_I_V.L(regg) ;
 
-* EXOGENOUS VARIBLES
+* EXOGENOUS VARIABLES
 INCTRANSFER_V.SCALE(reg,fd,regg,fdd)$(INCTRANSFER_V.L(reg,fd,regg,fdd) gt 0)
     = INCTRANSFER_V.L(reg,fd,regg,fdd) ;
 INCTRANSFER_V.SCALE(reg,fd,regg,fdd)$(INCTRANSFER_V.L(reg,fd,regg,fdd) lt 0)
@@ -995,7 +1054,8 @@ Model demand_CGE_MCP
 EQCONS_H_T.CONS_H_T_V
 EQCONS_G_T.CONS_G_T_V
 EQGFCF_T.GFCF_T_V
-EQFACREV.FACREV_V
+EQCAPREV.CAPREV_V
+EQLABREV.LABREV_V
 EQTSPREV.TSPREV_V
 EQNTPREV.NTPREV_V
 EQINMREV.INMREV_V

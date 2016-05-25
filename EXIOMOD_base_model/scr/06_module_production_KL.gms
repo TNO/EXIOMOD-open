@@ -45,9 +45,10 @@ Parameters
     FPROD_data(ind,va)          data on initial level of factor productivity
     elasKL(regg,ind)            substitution elasticity between capital and
                                 # labour
-    fprod(va,regg,ind)          parameter on productivity on individual factors
-                                # in the nest of aggregated factors of
-                                # production
+    prodK(regg,ind)             parameter on productivity on capital in the nest
+                                # of aggregated factors of production
+    prodL(regg,ind)             parameter on productivity on labour in the nest
+                                # of aggregated factors of production
     Y(regg,ind)                 output vector by activity (volume)
     X(reg,prd)                  output vector by product (volume)
     INTER_USE_T(prd,regg,ind)   intermediate use on product level (volume)
@@ -71,10 +72,10 @@ Parameters
                                 # inputs (relation in volume)
     aKL(regg,ind)               technical input coefficients for aggregated
                                 # factors of production (relation in volume)
-    alphaKL(reg,va,regg,ind)    relative share parameter for factors of
-                                # production within the aggregated nest
-                                # (relation in volume)
-
+    aK(reg,regg,ind)            relative share parameter for capital within the
+                                # capital-labour nest (relation in volume)
+    aL(reg,regg,ind)            relative share parameter for labour within the
+                                # capital-labour nest (relation in volume)
     tc_ind_0(prd,regg,ind)      calibrated tax and subsidies on products rates
                                 # for industries (relation in value)
     ;
@@ -92,10 +93,9 @@ $libinclude xlimport elasPROD_data %project%/00_base_model_setup/data/Eldata.xls
 
 $libinclude xlimport FPROD_data %project%/00_base_model_setup/data/Eldata.xlsx prodKL!a1..zz10000 ;
 
-loop((ind,kl),
-    ABORT$( FPROD_data(ind,kl) eq 0 )
-        "Initial level of factor productivity cannot be 0. See file Eldata.xlsx sheet prodKL" ;
-
+loop((ind,va)$(k(va) or l(va)),
+        ABORT$( FPROD_data(ind,va) eq 0 )
+            "Initial level of factor productivity cannot be 0. See file Eldata.xlsx sheet prodKL" ;
 ) ;
 
 
@@ -107,9 +107,12 @@ elasKL(regg,ind)
 
 * Parameter with initial level of productivity of individual factors of
 * production. The parameter value is usually calibrated to 1 for each factor
-* type (kl) in each industry (ind) in each region (regg).
-fprod(kl,regg,ind)
-    = FPROD_data(ind,kl) ;
+* type (capital and labour) in each industry (ind) in each region (regg).
+prodK(regg,ind)
+    = sum(k,FPROD_data(ind,k)) ;
+
+prodL(regg,ind)
+    = sum(l,FPROD_data(ind,l)) ;
 
 
 *## Aggregates ##
@@ -195,25 +198,33 @@ ioc(prd,regg,ind)$INTER_USE_T(prd,regg,ind)
     = INTER_USE_T(prd,regg,ind) / Y(regg,ind) ;
 
 * Leontief technical input coefficients for the nest of aggregated factors of
-* production in each industry (ind) in each region (regg).
-aKL(regg,ind)$sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) )
-    = sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) / Y(regg,ind) ;
+* production (capital and labour) in each industry (ind) in each region (regg).
+aKL(regg,ind)$sum((reg,va)$(k(va) or l(va)), VALUE_ADDED(reg,va,regg,ind) )
+    = sum((reg,va)$(k(va) or l(va)), VALUE_ADDED(reg,va,regg,ind) ) /
+    Y(regg,ind) ;
 
 * Relative share parameter for factors of production within the aggregated nest
 * for each type of production factor (reg,kl) in each industry (ind) in each
 * region (regg).
-alphaKL(reg,kl,regg,ind)$VALUE_ADDED(reg,kl,regg,ind)
-    = VALUE_ADDED(reg,kl,regg,ind) /
-    ( sum((reggg,kll), VALUE_ADDED(reggg,kll,regg,ind) ) /
-    fprod(kl,regg,ind) )  *
-    fprod(kl,regg,ind)**( -elasKL(regg,ind) ) ;
+aK(reg,regg,ind)$sum(k, VALUE_ADDED(reg,k,regg,ind) )
+    = sum(k, VALUE_ADDED(reg,k,regg,ind) ) /
+    ( sum((reggg,va)$(k(va) or l(va)), VALUE_ADDED(reggg,va,regg,ind) ) /
+    prodK(regg,ind) )  *
+    prodK(regg,ind)**( -elasKL(regg,ind) ) ;
+
+aL(reg,regg,ind)$sum(l, VALUE_ADDED(reg,l,regg,ind) )
+    = sum(l, VALUE_ADDED(reg,l,regg,ind) ) /
+    ( sum((reggg,va)$(k(va) or l(va)), VALUE_ADDED(reggg,va,regg,ind) ) /
+    prodL(regg,ind) )  *
+    prodL(regg,ind)**( -elasKL(regg,ind) ) ;
 
 Display
 coprodA
 coprodB
 ioc
 aKL
-alphaKL
+aK
+aL
 ;
 
 
@@ -239,7 +250,8 @@ Variables
     INTER_USE_T_V(prd,regg,ind)     use of intermediate inputs on aggregated
                                     # product level
     nKL_V(regg,ind)                 use of aggregated production factors
-    KL_V(reg,va,regg,ind)           use of specific production factors
+    K_V(reg,regg,ind)               use of the production factor capital
+    L_V(reg,regg,ind)               use of the production factor labour
 
     PnKL_V(regg,ind)                aggregate production factors price
 ;
@@ -259,7 +271,8 @@ Equations
     EQINTU_T(prd,regg,ind)      demand for intermediate inputs on aggregated
                                 # product level
     EQnKL(regg,ind)             demand for aggregated production factors
-    EQKL(reg,va,regg,ind)       demand for specific production factors
+    EQK(reg,regg,ind)           demand for the production factor capital
+    EQL(reg,regg,ind)           demand for the production factor labour
 
     EQPnKL(regg,ind)            balance between specific production factors
                                 # price and aggregate production factors price
@@ -330,19 +343,31 @@ EQnKL(regg,ind)..
     =E=
     aKL(regg,ind) * Y_V(regg,ind) ;
 
-* EQUAION 2.5: Demand for specific production factors. The demand function
+* EQUAION 2.5: Demand for the production factor capital. The demand function
 * follows CES form, where demand of each industry (regg,ind) for each factor of
-* production (reg,kl) depends linearly on the demand of the same industry for
+* production (reg) depends linearly on the demand of the same industry for
 * aggregated production factors and, with certain elasticity, on relative prices
 * of specific factors of production.
-EQKL(reg,kl,regg,ind)$VALUE_ADDED(reg,kl,regg,ind)..
-    KL_V(reg,kl,regg,ind)
+EQK(reg,regg,ind)$sum(k, VALUE_ADDED(reg,k,regg,ind) )..
+    K_V(reg,regg,ind)
     =E=
-    ( nKL_V(regg,ind) / fprod(kl,regg,ind) ) * alphaKL(reg,kl,regg,ind) *
-    ( PKL_V(reg,kl) /
-    ( fprod(kl,regg,ind) * PnKL_V(regg,ind) ) )**( -elasKL(regg,ind) ) ;
+    ( nKL_V(regg,ind) / prodK(regg,ind) ) * aK(reg,regg,ind) *
+    ( PK_V(reg) /
+    ( prodK(regg,ind) * PnKL_V(regg,ind) ) )**( -elasKL(regg,ind) ) ;
 
-* EQUATION 2.6: Balance between specific production factors price and aggregate
+* EQUAION 2.6: Demand for the production factor labour. The demand function
+* follows CES form, where demand of each industry (regg,ind) for each factor of
+* production (reg) depends linearly on the demand of the same industry for
+* aggregated production factors and, with certain elasticity, on relative prices
+* of specific factors of production.
+EQL(reg,regg,ind)$sum(l, VALUE_ADDED(reg,l,regg,ind) )..
+    L_V(reg,regg,ind)
+    =E=
+    ( nKL_V(regg,ind) / prodL(regg,ind) ) * aL(reg,regg,ind) *
+    ( PL_V(reg) /
+    ( prodL(regg,ind) * PnKL_V(regg,ind) ) )**( -elasKL(regg,ind) ) ;
+
+* EQUATION 2.7: Balance between specific production factors price and aggregate
 * production factors price. The aggregate price is different in each industry
 * (ind) in each region (regg) and is a weighted average of the price of specific
 * production factors, where weights are defined as demand by the industry for
@@ -350,9 +375,10 @@ EQKL(reg,kl,regg,ind)$VALUE_ADDED(reg,kl,regg,ind)..
 EQPnKL(regg,ind)..
     PnKL_V(regg,ind) * nKL_V(regg,ind)
     =E=
-    sum((reg,kl), PKL_V(reg,kl) * KL_V(reg,kl,regg,ind)) ;
+    sum(reg, PK_V(reg) * K_V(reg,regg,ind) ) +
+    sum(reg, PL_V(reg) * L_V(reg,regg,ind) ) ;
 
-* EQUATION 2.7: Artificial objective function: only relevant for users of conopt
+* EQUATION 2.8: Artificial objective function: only relevant for users of conopt
 * solver in combination with NLP type of mathematical problem.
 EQOBJ..
     OBJ
@@ -379,10 +405,12 @@ X_V.FX(reg,prd)$(X(reg,prd) eq 0)   = 0 ;
 INTER_USE_T_V.L(prd,regg,ind) = INTER_USE_T(prd,regg,ind) ;
 INTER_USE_T_V.FX(prd,regg,ind)$(INTER_USE_T(prd,regg,ind) eq 0) = 0 ;
 
-nKL_V.L(regg,ind)       = sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) ;
-KL_V.L(reg,kl,regg,ind) = VALUE_ADDED(reg,kl,regg,ind) ;
-nKL_V.FX(regg,ind)$(sum((reg,kl), VALUE_ADDED(reg,kl,regg,ind) ) eq 0) = 0 ;
-KL_V.FX(reg,kl,regg,ind)$(VALUE_ADDED(reg,kl,regg,ind) eq 0 )          = 0 ;
+nKL_V.L(regg,ind)       = sum((reg,va)$(k(va) or l(va)), VALUE_ADDED(reg,va,regg,ind) ) ;
+K_V.L(reg,regg,ind)     = sum(k, VALUE_ADDED(reg,k,regg,ind) ) ;
+L_V.L(reg,regg,ind)     = sum(l, VALUE_ADDED(reg,l,regg,ind) ) ;
+nKL_V.FX(regg,ind)$(sum((reg,va)$(k(va) or l(va)), VALUE_ADDED(reg,va,regg,ind) ) eq 0) = 0 ;
+K_V.FX(reg,regg,ind)$(sum(k, VALUE_ADDED(reg,k,regg,ind) ) eq 0 ) = 0 ;
+L_V.FX(reg,regg,ind)$(sum(l, VALUE_ADDED(reg,l,regg,ind) ) eq 0 ) = 0 ;
 
 * Price variables: level of basic prices is set to one, which also corresponds
 * to the price level used in calibration. If the the real variable to which the
@@ -451,17 +479,28 @@ nKL_V.SCALE(regg,ind)$(nKL_V.L(regg,ind) lt 0)
     = -nKL_V.L(regg,ind) ;
 
 * EQUATION 2.5
-EQKL.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) gt 0)
-    = KL_V.L(reg,kl,regg,ind) ;
-KL_V.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) gt 0)
-    = KL_V.L(reg,kl,regg,ind) ;
+EQK.SCALE(reg,regg,ind)$(K_V.L(reg,regg,ind) gt 0)
+    = K_V.L(reg,regg,ind) ;
+K_V.SCALE(reg,regg,ind)$(K_V.L(reg,regg,ind) gt 0)
+    = K_V.L(reg,regg,ind) ;
 
-EQKL.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) lt 0)
-    = -KL_V.L(reg,kl,regg,ind) ;
-KL_V.SCALE(reg,kl,regg,ind)$(KL_V.L(reg,kl,regg,ind) lt 0)
-    = -KL_V.L(reg,kl,regg,ind) ;
+EQK.SCALE(reg,regg,ind)$(K_V.L(reg,regg,ind) lt 0)
+    = -K_V.L(reg,regg,ind) ;
+K_V.SCALE(reg,regg,ind)$(K_V.L(reg,regg,ind) lt 0)
+    = -K_V.L(reg,regg,ind) ;
 
 * EQUATION 2.6
+EQL.SCALE(reg,regg,ind)$(L_V.L(reg,regg,ind) gt 0)
+    = L_V.L(reg,regg,ind) ;
+L_V.SCALE(reg,regg,ind)$(L_V.L(reg,regg,ind) gt 0)
+    = L_V.L(reg,regg,ind) ;
+
+EQL.SCALE(reg,regg,ind)$(L_V.L(reg,regg,ind) lt 0)
+    = -L_V.L(reg,regg,ind) ;
+L_V.SCALE(reg,regg,ind)$(L_V.L(reg,regg,ind) lt 0)
+    = -L_V.L(reg,regg,ind) ;
+
+* EQUATION 2.7
 EQPnKL.SCALE(reg,ind)$(nKL_V.L(reg,ind) gt 0)
     = nKL_V.L(reg,ind) ;
 
@@ -500,7 +539,8 @@ EQBAL.X_V
 EQY.Y_V
 EQINTU_T.INTER_USE_T_V
 EQnKL.nKL_V
-EQKL.KL_V
+EQK.K_V
+EQL.L_V
 EQPnKL.PnKL_V
 /
 ;

@@ -12,20 +12,19 @@ user-data.gms
 
 1. List of sets that need to be changed
 -va
--kl
+-l
 
 2. List of equations that need to be changed
--EQKL
+-EQL
 -EQPY
--EQPKL
--EQPVA
+-EQPL
 
 3. List of variables that need to be changed
 -KL
--PKL
+-PL
 
 4. List of parameter that need to be changed
--KLS
+-LS
 -new elasticity for different education types
 -alpha (share parameter)
 
@@ -43,145 +42,138 @@ $eolcom #
 
 * Calibration of production function
 Parameters
-    fprod_pr(klpr,regg,ind)     parameter on productivity on individual factors
-                                # in the nest of aggregated factors of
-                                # production
+    prodL_pr(lpr,regg,ind)      parameter on productivity of labour in the nest
+                                # of aggregated factors of production
 
-    wz_share(reg,klpr)          wages share of different skill levels
-    VALUE_ADDED_pr(reg,klpr,regg,ind) value added in model aggregation
-    VALUE_ADDED_DISTR_pr(reg,klpr,regg,fd) value added in model aggregation
-    alphaKL_pr(reg,klpr,regg,ind) relative share parameter for factors of
-                                # production within the aggregated nest
-                                # (relation in volume)
+    wz_share(reg,lpr)           wages share of different skill levels
+    VALUE_ADDED_pr(reg,vapr,regg,ind) value added in model aggregation
+    VALUE_ADDED_DISTR_pr(reg,vapr,regg,fd) value added in model aggregation
+    aL_pr(reg,lpr,regg,ind)     relative share parameter for labour skill levels
+                                # within the capital-labour nes  (relation in
+                                # volume)
 
-    KLS_pr(reg,klpr)            supply of production factors (volume)
-    fac_distr_h_pr(reg,klpr,regg) distribution shares of factor income to
+    LS_pr(reg,lpr)              supply of labour per skill level (volume)
+    l_distr_h_pr(reg,lpr,regg)  distribution shares of labour income to
                                 # household budget (shares in value)
-    fac_distr_g_pr(reg,klpr,regg) distribution shares of factor income to
+    l_distr_g_pr(reg,lpr,regg)  distribution shares of labour income to
                                 # government budget (shares in value)
-    fac_distr_gfcf_pr(reg,klpr,regg) distribution shares of factor income to
+    l_distr_gfcf_pr(reg,lpr,regg)   distribution shares of labour income to
                                 # gross fixed capital formation budget (shares
                                 # in value)
 ;
 
-$offorder
-fprod_pr(klpr,regg,ind)$(ord(klpr) = 1)
-    = sum(kl$(ord(kl) = 2),fprod(kl,regg,ind) ) ;
-fprod_pr(klpr,regg,ind)$(ord(klpr) > 1)
-    = sum(kl$(ord(kl) = 1),fprod(kl,regg,ind) ) ;
+prodL_pr(lpr,regg,ind) = prodL(regg,ind) ;
 
-wz_share(reg,klpr) = sum(ind, lz_share(reg,ind,klpr)) / sum(ind, 1) ;
-wz_share(reg,klpr) = wz_share(reg,klpr) / sum(klprr, wz_share(reg,klprr)) ;
+wz_share(reg,lpr) = sum(ind, lz_share(reg,ind,lpr)) / sum(ind, 1) ;
+wz_share(reg,lpr) = wz_share(reg,lpr) / sum(lprr, wz_share(reg,lprr)) ;
 
-VALUE_ADDED_pr(reg,klpr,regg,ind)$(ord(klpr) = 1)
-    = sum(kl$(ord(kl) = 2), VALUE_ADDED(reg,kl,regg,ind)) ;
-VALUE_ADDED_pr(reg,klpr,regg,ind)$(ord(klpr) > 1)
-    = sum(kl$(ord(kl) = 1), VALUE_ADDED(reg,kl,regg,ind))*WZ_share(reg,klpr) ;
+loop(k,
+    VALUE_ADDED_pr(reg,vapr,regg,ind)$sameas(vapr,k) =
+    VALUE_ADDED(reg,k,regg,ind) ;
+) ;
+VALUE_ADDED_pr(reg,lpr,regg,ind) =
+    sum(l, VALUE_ADDED(reg,l,regg,ind) ) * lz_share(regg,ind,lpr) ;
+VALUE_ADDED_pr(reg,lpr,regg,ind)$( sum(lprr, lz_share(regg,ind,lprr) ) eq 0 ) =
+    sum(l, VALUE_ADDED(reg,l,regg,ind) ) * wz_share(regg,lpr) ;
 
-VALUE_ADDED_DISTR_pr(reg,klpr,regg,fd)$(ord(klpr) = 1)
-    = sum(kl$(ord(kl) = 2), VALUE_ADDED_DISTR(reg,kl,regg,fd)) ;
-VALUE_ADDED_DISTR_pr(reg,klpr,regg,fd)$(ord(klpr) > 1)
-    = sum(kl$(ord(kl) = 1), VALUE_ADDED_DISTR(reg,kl,regg,fd))
-    * WZ_share(reg,klpr);
+loop(k,
+    VALUE_ADDED_DISTR_pr(reg,vapr,regg,fd)$sameas(vapr,k) =
+    VALUE_ADDED_DISTR(reg,k,regg,fd) ;
+) ;
+VALUE_ADDED_DISTR_pr(reg,lpr,regg,fd)$sum(l, VALUE_ADDED_DISTR(reg,l,regg,fd) )
+    = sum(ind, VALUE_ADDED_pr(reg,lpr,regg,ind) ) *
+    sum(l, VALUE_ADDED_DISTR(reg,l,regg,fd) ) /
+    sum((l,fdd), VALUE_ADDED_DISTR(reg,l,regg,fdd) ) ;
 
+l_distr_h_pr(reg,lpr,regg) = l_distr_h(reg,regg) ;
 
-fac_distr_h_pr(reg,klpr,regg)$(ord(klpr) = 1)
-    = sum(kl$(ord(kl) = 2), fac_distr_h(reg,kl,regg)) ;
-fac_distr_h_pr(reg,klpr,regg)$(ord(klpr) > 1)
-    = sum(kl$(ord(kl) = 1), fac_distr_h(reg,kl,regg)) ;
+l_distr_g_pr(reg,lpr,regg) = l_distr_g(reg,regg) ;
 
-fac_distr_g_pr(reg,klpr,regg)$(ord(klpr) = 1)
-    = sum(kl$(ord(kl) = 2), fac_distr_g(reg,kl,regg)) ;
-fac_distr_g_pr(reg,klpr,regg)$(ord(klpr) > 1)
-    = sum(kl$(ord(kl) = 1), fac_distr_g(reg,kl,regg)) ;
+l_distr_gfcf_pr(reg,lpr,regg) = l_distr_gfcf(reg,regg) ;
 
-fac_distr_gfcf_pr(reg,klpr,regg)$(ord(klpr) = 1)
-    = sum(kl$(ord(kl) = 2), fac_distr_gfcf(reg,kl,regg)) ;
-fac_distr_gfcf_pr(reg,klpr,regg)$(ord(klpr) > 1)
-    = sum(kl$(ord(kl) = 1), fac_distr_gfcf(reg,kl,regg)) ;
-$onorder
+LS_pr(reg,lpr)
+    = sum((regg,ind),VALUE_ADDED_pr(reg,lpr,regg,ind) ) ;
 
-KLS_pr(reg,klpr)
-    = sum((regg,ind),VALUE_ADDED_pr(reg,klpr,regg,ind) ) ;
-
-alphaKL_pr(reg,klpr,regg,ind)$VALUE_ADDED_pr(reg,klpr,regg,ind)
-    = VALUE_ADDED_pr(reg,klpr,regg,ind) /
-    sum((reggg,klprr), VALUE_ADDED_pr(reggg,klprr,regg,ind) ) ;
+aL_pr(reg,lpr,regg,ind)$VALUE_ADDED_pr(reg,lpr,regg,ind)
+    = VALUE_ADDED_pr(reg,lpr,regg,ind) /
+    ( sum((reggg,va)$(k(va) or l(va)), VALUE_ADDED(reggg,va,regg,ind) ) /
+    prodL_pr(lpr,regg,ind) )  *
+    prodL_pr(lpr,regg,ind)**( -elasKL(regg,ind) ) ;
 
 Display
 lz_share
 wz_share
-KL
-KLPR
-value_added
 VALUE_ADDED_pr
-KLS_pr
-alphaKL
-alphaKL_pr
-fac_distr_h
-fac_distr_h_pr
-fac_distr_g
-fac_distr_g_pr
-fac_distr_gfcf
-fac_distr_gfcf_pr
+VALUE_ADDED_DISTR_pr
+LS_pr
+aL
+aL_pr
+l_distr_h
+l_distr_h_pr
+l_distr_g
+l_distr_g_pr
+l_distr_gfcf
+l_distr_gfcf_pr
 ;
 
 Equations
-    EQKL_pr(reg,klpr,regg,ind)  demand for specific production factors
-    EQFACREV_pr(reg,klpr)       revenue from factors of production
+    EQL_pr(reg,lpr,regg,ind)    demand for production factor labour by skill
+    EQLABREV_pr(reg,lpr)        revenue from labour by skill level
     EQGRINC_H_pr(regg)          gross income of households
     EQGRINC_G_pr(regg)          gross income of government
     EQGRINC_I_pr(regg)          gross income of investment agent
 
     EQPY_pr(regg,ind)           zero-profit condition (including possible
                                 # margins)
-    EQPKL_pr(reg,klpr)          balance on production factors market
+    EQPL_pr(reg,lpr)            balance on labour market by skill level
     EQPnKL_pr(regg,ind)         balance between specific production factors
                                 # price and aggregate production factors price
 ;
 
 Variables
-    KL_V_pr(reg,klpr,regg,ind)  use of specific production factors
-    FACREV_V_pr(reg,klpr)       revenue from factors of production
-    PKL_V_pr(reg,klpr)          production factor price
-    KLS_V_pr(reg,klpr)          supply of production factors
+    L_V_pr(reg,lpr,regg,ind)    use of production factor labour by skill level
+    LABREV_V_pr(reg,lpr)        revenue from labour by skill level
+    PL_V_pr(reg,lpr)            labour price by skill level
+    LS_V_pr(reg,lpr)            supply of labour by skill level
 ;
 
 * ============= Define new variables/equations ============================
 
 * EQUATION 2.5:
-EQKL_pr(reg,klpr,regg,ind)$VALUE_ADDED_pr(reg,klpr,regg,ind)..
-    KL_V_pr(reg,klpr,regg,ind)
+EQL_pr(reg,lpr,regg,ind)$VALUE_ADDED_pr(reg,lpr,regg,ind)..
+    L_V_pr(reg,lpr,regg,ind)
     =E=
-    ( nKL_V(regg,ind) / fprod_pr(klpr,regg,ind) ) *
-    alphaKL_pr(reg,klpr,regg,ind) *
-    ( PKL_V_pr(reg,klpr) /
-    ( fprod_pr(klpr,regg,ind) * PnKL_V(regg,ind) ) )**( -elasKL(regg,ind) ) ;
+    ( nKL_V(regg,ind) / prodL_pr(lpr,regg,ind) ) * aL_pr(reg,lpr,regg,ind) *
+    ( PL_V_pr(reg,lpr) /
+    ( prodL_pr(lpr,regg,ind) * PnKL_V(regg,ind) ) )**( -elasKL(regg,ind) ) ;
 
 * EQUATION 1.4:
-EQFACREV_pr(reg,klpr)..
-    FACREV_V_pr(reg,klpr)
+EQLABREV_pr(reg,lpr)..
+    LABREV_V_pr(reg,lpr)
     =E=
-    sum((regg,ind), KL_V_pr(reg,klpr,regg,ind) * PKL_V_pr(reg,klpr) ) ;
+    sum((regg,ind), L_V_pr(reg,lpr,regg,ind) * PL_V_pr(reg,lpr) ) ;
 
 * EQUATION 1.8:
 EQGRINC_H_pr(regg)..
     GRINC_H_V(regg)
     =E=
-    sum((reg,klpr), FACREV_V_pr(reg,klpr) * fac_distr_h_pr(reg,klpr,regg) ) ;
+    sum(reg, CAPREV_V(reg) * k_distr_h(reg,regg) ) +
+    sum((reg,lpr), LABREV_V_pr(reg,lpr) * l_distr_h_pr(reg,lpr,regg) ) ;
 
 * EQUATION 1.9:
 EQGRINC_G_pr(regg)..
     GRINC_G_V(regg)
     =E=
-    sum((reg,klpr), FACREV_V_pr(reg,klpr) * fac_distr_g_pr(reg,klpr,regg) ) +
+    sum(reg, CAPREV_V(reg) * k_distr_g(reg,regg) ) +
+    sum((reg,lpr), LABREV_V_pr(reg,lpr) * l_distr_g_pr(reg,lpr,regg) ) +
     TSPREV_V(regg) + NTPREV_V(regg) + INMREV_V(regg) + TSEREV_V(regg) ;
 
 * EQUATION 1.10:
 EQGRINC_I_pr(regg)..
     GRINC_I_V(regg)
     =E=
-    sum((reg,klpr), FACREV_V_pr(reg,klpr) * fac_distr_gfcf_pr(reg,klpr,regg) ) ;
+    sum(reg, CAPREV_V(reg) * k_distr_gfcf(reg,regg) ) +
+    sum((reg,lpr), LABREV_V_pr(reg,lpr) * l_distr_gfcf_pr(reg,lpr,regg) ) ;
 
 * EQUATION 4.1:
 EQPY_pr(regg,ind)$( Y(regg,ind) ne smax((reggg,indd), Y(reggg,indd) ) and
@@ -192,59 +184,61 @@ EQPY_pr(regg,ind)$( Y(regg,ind) ne smax((reggg,indd), Y(reggg,indd) ) and
     =E=
     sum(prd, INTER_USE_T_V(prd,regg,ind) * PIU_V(prd,regg,ind) *
     ( 1 + tc_ind(prd,regg,ind) ) ) +
-    sum((reg,klpr), KL_V_pr(reg,klpr,regg,ind) * PKL_V_pr(reg,klpr) ) +
+    sum(reg, K_V(reg,regg,ind) * PK_V(reg) ) +
+    sum((reg,lpr), L_V_pr(reg,lpr,regg,ind) * PL_V_pr(reg,lpr) ) +
     sum(inm, TIM_INTER_USE_ROW(inm,regg,ind) * PROW_V ) +
     sum(tse, TIM_INTER_USE_ROW(tse,regg,ind) * PROW_V ) ;
 
 * EQUATION 4.3:
-EQPKL_pr(reg,klpr)..
-    KLS_V_pr(reg,klpr)
+EQPL_pr(reg,lpr)..
+    LS_V_pr(reg,lpr)
     =E=
-    sum((regg,ind), KL_V_pr(reg,klpr,regg,ind) ) ;
+    sum((regg,ind), L_V_pr(reg,lpr,regg,ind) ) ;
 
 * EQUATION 2.6:
 EQPnKL_pr(regg,ind)..
     PnKL_V(regg,ind) * nKL_V(regg,ind)
     =E=
-    sum((reg,klpr), PKL_V_pr(reg,klpr) * KL_V_pr(reg,klpr,regg,ind)) ;
+    sum(reg, PK_V(reg) * K_V(reg,regg,ind) ) +
+    sum((reg,lpr), PL_V_pr(reg,lpr) * L_V_pr(reg,lpr,regg,ind)) ;
 
 * ======== Define levels and lower and upper bounds and fixed variables ========
 
-KL_V_pr.L(reg,klpr,regg,ind) = VALUE_ADDED_pr(reg,klpr,regg,ind) ;
-KL_V_pr.FX(reg,klpr,regg,ind)$(KL_V_pr.L(reg,klpr,regg,ind) = 0 ) = 0 ;
+L_V_pr.L(reg,lpr,regg,ind) = VALUE_ADDED_pr(reg,lpr,regg,ind) ;
+L_V_pr.FX(reg,lpr,regg,ind)$(L_V_pr.L(reg,lpr,regg,ind) = 0 ) = 0 ;
 
-FACREV_V_pr.L(reg,klpr) = sum((regg,fd), VALUE_ADDED_DISTR_pr(reg,klpr,regg,fd) ) ;
-FACREV_V_pr.FX(reg,klpr)$(FACREV_V_pr.L(reg,klpr) = 0) = 0 ;
+LABREV_V_pr.L(reg,lpr) = sum((regg,fd), VALUE_ADDED_DISTR_pr(reg,lpr,regg,fd) ) ;
+LABREV_V_pr.FX(reg,lpr)$(LABREV_V_pr.L(reg,lpr) = 0) = 0 ;
 
-PKL_V_pr.L(reg,klpr)       = 1 ;
-PKL_V_pr.FX(reg,klpr)$(KLS_pr(reg,klpr) = 0)       = 0 ;
+PL_V_pr.L(reg,lpr)       = 1 ;
+PL_V_pr.FX(reg,lpr)$(LS_pr(reg,lpr) = 0)       = 0 ;
 
 * Exogenous variables are fixed to their calibrated value.
-KLS_V_pr.FX(reg,klpr)                   = KLS_pr(reg,klpr) ;
+LS_V_pr.FX(reg,lpr)                   = LS_pr(reg,lpr) ;
 
 * ============= Scale and define levels of new variables/equations =============
 
 * EQUAION 2.5
-EQKL_pr.SCALE(reg,klpr,regg,ind)$(KL_V_pr.L(reg,klpr,regg,ind) gt 0)
-    = KL_V_pr.L(reg,klpr,regg,ind) ;
-KL_V_pr.SCALE(reg,klpr,regg,ind)$(KL_V_pr.L(reg,klpr,regg,ind) gt 0)
-    = KL_V_pr.L(reg,klpr,regg,ind) ;
+EQL_pr.SCALE(reg,lpr,regg,ind)$(L_V_pr.L(reg,lpr,regg,ind) gt 0)
+    = L_V_pr.L(reg,lpr,regg,ind) ;
+L_V_pr.SCALE(reg,lpr,regg,ind)$(L_V_pr.L(reg,lpr,regg,ind) gt 0)
+    = L_V_pr.L(reg,lpr,regg,ind) ;
 
-EQKL_pr.SCALE(reg,klpr,regg,ind)$(KL_V_pr.L(reg,klpr,regg,ind) lt 0)
-    = -KL_V_pr.L(reg,klpr,regg,ind) ;
-KL_V_pr.SCALE(reg,klpr,regg,ind)$(KL_V_pr.L(reg,klpr,regg,ind) lt 0)
-    = -KL_V_pr.L(reg,klpr,regg,ind) ;
+EQL_pr.SCALE(reg,lpr,regg,ind)$(L_V_pr.L(reg,lpr,regg,ind) lt 0)
+    = -L_V_pr.L(reg,lpr,regg,ind) ;
+L_V_pr.SCALE(reg,lpr,regg,ind)$(L_V_pr.L(reg,lpr,regg,ind) lt 0)
+    = -L_V_pr.L(reg,lpr,regg,ind) ;
 
 * EQUATION 1.4
-EQFACREV_pr.SCALE(reg,klpr)$(FACREV_V_pr.L(reg,klpr) gt 0)
-    = FACREV_V_pr.L(reg,klpr) ;
-FACREV_V_pr.SCALE(reg,klpr)$(FACREV_V_pr.L(reg,klpr) gt 0)
-    = FACREV_V_pr.L(reg,klpr) ;
+EQLABREV_pr.SCALE(reg,lpr)$(LABREV_V_pr.L(reg,lpr) gt 0)
+    = LABREV_V_pr.L(reg,lpr) ;
+LABREV_V_pr.SCALE(reg,lpr)$(LABREV_V_pr.L(reg,lpr) gt 0)
+    = LABREV_V_pr.L(reg,lpr) ;
 
-EQFACREV_pr.SCALE(reg,klpr)$(FACREV_V_pr.L(reg,klpr) lt 0)
-    = -FACREV_V_pr.L(reg,klpr) ;
-FACREV_V_pr.SCALE(reg,klpr)$(FACREV_V_pr.L(reg,klpr) lt 0)
-    = -FACREV_V_pr.L(reg,klpr) ;
+EQLABREV_pr.SCALE(reg,lpr)$(LABREV_V_pr.L(reg,lpr) lt 0)
+    = -LABREV_V_pr.L(reg,lpr) ;
+LABREV_V_pr.SCALE(reg,lpr)$(LABREV_V_pr.L(reg,lpr) lt 0)
+    = -LABREV_V_pr.L(reg,lpr) ;
 
 * EQUATION 1.8
 EQGRINC_H_pr.SCALE(regg)$(GRINC_H_V.L(regg) gt 0)
@@ -275,11 +269,11 @@ EQPY_pr.SCALE(regg,ind)$(Y_V.L(regg,ind) lt 0)
     = -Y_V.L(regg,ind) ;
 
 * EQUATION 4.3
-EQPKL_pr.SCALE(reg,klpr)$(KLS_V_pr.L(reg,klpr) gt 0)
-    = KLS_V_pr.L(reg,klpr) ;
+EQPL_pr.SCALE(reg,lpr)$(LS_V_pr.L(reg,lpr) gt 0)
+    = LS_V_pr.L(reg,lpr) ;
 
-EQPKL_pr.SCALE(reg,klpr)$(KLS_V_pr.L(reg,klpr) lt 0)
-    = -KLS_V_pr.L(reg,klpr) ;
+EQPL_pr.SCALE(reg,lpr)$(LS_V_pr.L(reg,lpr) lt 0)
+    = -LS_V_pr.L(reg,lpr) ;
 
 * EQUATION 2.6
 EQPnKL_pr.SCALE(reg,ind)$(nKL_V.L(reg,ind) gt 0)
@@ -296,22 +290,22 @@ EQPnKL_pr.SCALE(reg,ind)$(nKL_V.L(reg,ind) lt 0)
 Model CGE_MCP_hh_types
 /
 CGE_MCP
--EQKL
--EQFACREV
+-EQL
+-EQLABREV
 -EQGRINC_H
 -EQGRINC_G
 -EQGRINC_I
 -EQPY
--EQPKL
+-EQPL
 -EQPnKL
 
-EQKL_pr.KL_V_pr
-EQFACREV_pr.FACREV_V_pr
+EQL_pr.L_V_pr
+EQLABREV_pr.LABREV_V_pr
 EQGRINC_H_pr.GRINC_H_V
 EQGRINC_G_pr.GRINC_G_V
 EQGRINC_I_pr.GRINC_I_V
 EQPY_pr
-EQPKL_pr.PKL_V_pr
+EQPL_pr.PL_V_pr
 EQPnKL_pr.PnKL_V
 
 /
@@ -320,8 +314,7 @@ EQPnKL_pr.PnKL_V
 * ============================== Simulation setup ==============================
 
 * Set value for experiment.
-*KLS_V_pr.FX('EEU','GOS')  = 1.1 * KLS_pr('EEU','GOS') ;
-KLS_V_pr.FX('EEU','HIGH')   = 1.1 * KLS_pr('EEU','HIGH')       ;
+LS_V_pr.FX('EEU','HIGH') = 1.1 * LS_pr('EEU','HIGH')       ;
 
 * Define options.
 Option iterlim   = 20000000 ;
@@ -337,6 +330,3 @@ CGE_MCP_hh_types.scaleopt = 1 ;
 
 * Solve multiple household specification.
 Solve CGE_MCP_hh_types using MCP ;
-
-
-

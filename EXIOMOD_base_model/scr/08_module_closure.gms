@@ -40,7 +40,8 @@ $label end_additional_sets
 $if not '%phase%' == 'parameters_declaration' $goto end_parameters_declaration
 
 Parameters
-    KLS(reg,va)                 supply of production factors (volume)
+    KS(reg)                     supply of capital (volume)
+    LS(reg)                     supply of labour (volume)
     GDP(regg)                   gross domestic product (value)
 ;
 
@@ -49,14 +50,21 @@ $label end_parameters_declaration
 * ====================== Phase 3: Definition of parameters =====================
 $if not '%phase%' == 'parameters_calibration' $goto end_parameters_calibration
 
-* Supply in volume of each production factor (kl) in each region (reg), the
+* Supply in volume of the production factor capital in each region (reg), the
 * corresponding basic price in the base year is equal to 1, market price can be
 * different from 1 in case of non-zero taxes on factors of production.
-KLS(reg,kl)
-    = sum((regg,ind),VALUE_ADDED(reg,kl,regg,ind) ) ;
+KS(reg)
+    = sum((k,regg,ind),VALUE_ADDED(reg,k,regg,ind) ) ;
+
+* Supply in volume of the production factor labour in each region (reg), the
+* corresponding basic price in the base year is equal to 1, market price can be
+* different from 1 in case of non-zero taxes on factors of production.
+LS(reg)
+    = sum((l,regg,ind),VALUE_ADDED(reg,l,regg,ind) ) ;
 
 Display
-KLS
+KS
+LS
 ;
 
 * Gross domestic product in each region (regg). GDP calculated as difference
@@ -90,7 +98,8 @@ $if not '%phase%' == 'variables_equations_declaration' $goto end_variables_equat
 Variables
     PY_V(regg,ind)                  industry output price
     P_V(reg,prd)                    basic product price
-    PKL_V(reg,va)                   production factor price
+    PK_V(reg)                       capital price
+    PL_V(reg)                       labour price
 
     PIU_V(prd,regg,ind)             aggregate product price for intermediate use
     PC_H_V(prd,regg)                aggregate product price for household
@@ -112,7 +121,8 @@ Variables
 
 * Exogenous variables
 Variables
-    KLS_V(reg,va)                   supply of production factors
+    KS_V(reg)                       supply of capital
+    LS_V(reg)                       supply of labour
 ;
 
 * ========================== Declaration of equations ==========================
@@ -121,7 +131,8 @@ Equations
     EQPY(regg,ind)              zero-profit condition (including possible
                                 # margins)
     EQP(reg,prd)                balance between product price and industry price
-    EQPKL(reg,va)               balance on production factors market
+    EQPK(reg)                   balance on capital market
+    EQPL(reg)                   balance on labour market
     EQPIU(prd,regg,ind)         balance between specific product price and
                                 # aggregate product price for intermediate use
     EQPC_H(prd,regg)            balance between specific product price and
@@ -166,7 +177,8 @@ EQPY(regg,ind)$( Y(regg,ind) ne smax((reggg,indd), Y(reggg,indd) ) and
     =E=
     sum(prd, INTER_USE_T_V(prd,regg,ind) * PIU_V(prd,regg,ind) *
     ( 1 + tc_ind(prd,regg,ind) ) ) +
-    sum((reg,kl), KL_V(reg,kl,regg,ind) * PKL_V(reg,kl) ) +
+    sum(reg, K_V(reg,regg,ind) * PK_V(reg) ) +
+    sum(reg, L_V(reg,regg,ind) * PL_V(reg) ) +
     sum(inm, TIM_INTER_USE_ROW(inm,regg,ind) * PROW_V ) +
     sum(tse, TIM_INTER_USE_ROW(tse,regg,ind) * PROW_V ) ;
 
@@ -182,17 +194,27 @@ EQP(reg,prd)..
     sum((regg,ind), PY_V(regg,ind) *
     ( coprodB(reg,prd,regg,ind) * X_V(reg,prd) ) ) ;
 
-* EQUATION 4.3: Balance on production factors market. Price of each production
-* factor (reg,kl) is defined in such a way that total demand for the
+* EQUATION 4.3: Balance on the capital market. Price of each production
+* factor (reg) is defined in such a way that total demand for the
 * corresponding production factor is equal to the supply of the factor less,
 * if modeled, unemployment or non-utilized capacity. Supply of production
 * factors is one of the exogenous variables of the model.
-EQPKL(reg,kl)..
-    KLS_V(reg,kl)
+EQPK(reg)..
+    KS_V(reg)
     =E=
-    sum((regg,ind), KL_V(reg,kl,regg,ind) ) ;
+    sum((regg,ind), K_V(reg,regg,ind) ) ;
 
-* EQUATION 4.4: Balance between specific product price and aggregate product
+* EQUATION 4.4: Balance on the labour market. Price of each production
+* factor (reg) is defined in such a way that total demand for the
+* corresponding production factor is equal to the supply of the factor less,
+* if modeled, unemployment or non-utilized capacity. Supply of production
+* factors is one of the exogenous variables of the model.
+EQPL(reg)..
+    LS_V(reg)
+    =E=
+    sum((regg,ind), L_V(reg,regg,ind) ) ;
+
+* EQUATION 4.5: Balance between specific product price and aggregate product
 * price for intermediate use. The aggregate price is different for each
 * aggregated product (prd) in each industry (ind) in each region (regg) and is
 * a weighted average of the price of domestically produced product and the
@@ -204,7 +226,7 @@ EQPIU(prd,regg,ind)..
     P_V(regg,prd) * INTER_USE_D_V(prd,regg,ind) +
     PIMP_T_V(prd,regg) * INTER_USE_M_V(prd,regg,ind) ;
 
-* EQUATION 4.5: Balance between specific product price and aggregate product
+* EQUATION 4.6: Balance between specific product price and aggregate product
 * price for household consumption. The aggregate price is different for each
 * aggregated product (prd) demanded by households in each region (regg) and is a
 * weighted average of the price of domestically produced product and the
@@ -216,7 +238,7 @@ EQPC_H(prd,regg)..
     P_V(regg,prd) * CONS_H_D_V(prd,regg) +
     PIMP_T_V(prd,regg) * CONS_H_M_V(prd,regg) ;
 
-* EQUATION 4.6: Balance between specific product price and aggregate product
+* EQUATION 4.7: Balance between specific product price and aggregate product
 * price for government consumption. The aggregate price is different for each
 * aggregated product (prd) demanded by government in each region (regg) and is a
 * weighted average of the price of domestically produced product and the
@@ -228,7 +250,7 @@ EQPC_G(prd,regg)..
     P_V(regg,prd) * CONS_G_D_V(prd,regg) +
     PIMP_T_V(prd,regg) * CONS_G_M_V(prd,regg) ;
 
-* EQUATION 4.7: Balance between specific product price and aggregate product
+* EQUATION 4.8: Balance between specific product price and aggregate product
 * price for gross fixed capital formation. The aggregate price is different for
 * each aggregated product (prd) demanded by investment agent in each region
 * (regg) and is a weighted average of the price of domestically produced product
@@ -240,7 +262,7 @@ EQPC_I(prd,regg)..
     P_V(regg,prd) * GFCF_D_V(prd,regg) +
     PIMP_T_V(prd,regg) * GFCF_M_V(prd,regg) ;
 
-* EQUATION 4.8: Balance of payments. Expenditures of the rest of the world
+* EQUATION 4.9: Balance of payments. Expenditures of the rest of the world
 * region on exports and income transfers are equal to the region's receipts from
 * its imports. The balance is regulated by the price that intermediate and final
 * users are paying for the products imported from the rest of the world region.
@@ -257,7 +279,7 @@ EQPROW..
     sum((tse,regg,fd), TIM_FINAL_USE_ROW(tse,regg,fd) ) * PROW_V -
     sum((reg,fd), TRANSFERS_ROW_V(reg,fd) * PROW_V ) ;
 
-* EQUATION 4.9: Paasche price index for households. The price index is
+* EQUATION 4.10: Paasche price index for households. The price index is
 * calculated separately for each region (regg).
 EQPAASCHE(regg)..
     PAASCHE_V(regg)
@@ -267,7 +289,7 @@ EQPAASCHE(regg)..
     sum(prd, CONS_H_T_V(prd,regg) * 1 *
     ( 1 + tc_h_0(prd,regg) ) ) ;
 
-* EQUATION 4.10: Laspeyres price index for households. The price index is
+* EQUATION 4.11: Laspeyres price index for households. The price index is
 * calculated separately for each region (regg).
 EQLASPEYRES(regg)..
     LASPEYRES_V(regg)
@@ -277,7 +299,7 @@ EQLASPEYRES(regg)..
     sum((reg,prd), CONS_H(reg,prd,regg) * 1 *
     ( 1 + tc_h_0(prd,regg) ) ) ;
 
-* EQUATION 4.11: Gross domestic product calculated in current prices. GDP is
+* EQUATION 4.12: Gross domestic product calculated in current prices. GDP is
 * calculated separately for each modeled region (regg).
 EQGDPCUR(regg)..
     GDPCUR_V(regg)
@@ -297,7 +319,7 @@ EQGDPCUR(regg)..
     sum((tse,reg,fd), TIM_FINAL_USE(regg,tse,reg,fd) * LASPEYRES_V(regg) ) +
     sum(tse, TIM_EXPORT_ROW(regg,tse) * PROW_V ) ;
 
-* EQUATION 4.12: Gross domestic product calculated in constant prices of the
+* EQUATION 4.13: Gross domestic product calculated in constant prices of the
 * base year. GDP is calculated separately for each modeled region (regg).
 EQGDPCONST(regg)..
     GDPCONST_V(regg)
@@ -318,7 +340,7 @@ EQGDPCONST(regg)..
     sum(tse, TIM_EXPORT_ROW(regg,tse) ) ;
 
 
-* EQUATION 4.13: GDP deflator. The deflator is calculated as a single value for
+* EQUATION 4.14: GDP deflator. The deflator is calculated as a single value for
 * all modeled regions and is used as a numéraire in the model.
 EQGDPDEF..
     GDPDEF_V
@@ -349,7 +371,8 @@ GDPCONST_V.FX(regg)$( GDP(regg) eq 0 ) = 0 ;
 * the solver. Additionally, price of the numéraire is fixed.
 PY_V.L(regg,ind)       = 1 ;
 P_V.L(reg,prd)         = 1 ;
-PKL_V.L(reg,kl)        = 1 ;
+PK_V.L(reg)            = 1 ;
+PL_V.L(reg)            = 1 ;
 PIU_V.L(prd,regg,ind)  = 1 ;
 PC_H_V.L(prd,regg)     = 1 ;
 PC_G_V.L(prd,regg)     = 1 ;
@@ -360,7 +383,8 @@ LASPEYRES_V.L(regg)    = 1 ;
 GDPDEF_V.FX                                                   = 1 ;
 PY_V.FX(regg,ind)$(Y_V.L(regg,ind) eq 0)                      = 1 ;
 P_V.FX(reg,prd)$(X_V.L(reg,prd) eq 0)                         = 1 ;
-PKL_V.FX(reg,kl)$(KLS(reg,kl) eq 0)                           = 1 ;
+PK_V.FX(reg)$(KS(reg) eq 0)                                   = 1 ;
+PL_V.FX(reg)$(LS(reg) eq 0)                                   = 1 ;
 PIU_V.FX(prd,regg,ind)$(INTER_USE_T_V.L(prd,regg,ind) eq 0)   = 1 ;
 PC_H_V.FX(prd,regg)$(CONS_H_T_V.L(prd,regg) eq 0)             = 1 ;
 PC_G_V.FX(prd,regg)$(CONS_G_T_V.L(prd,regg) eq 0)             = 1 ;
@@ -372,7 +396,8 @@ LASPEYRES_V.FX(regg)$(sum(prd, CONS_H_T_V.L(prd,regg) ) eq 0) = 1 ;
 
 * Exogenous variables
 * Exogenous variables are fixed to their calibrated value.
-KLS_V.FX(reg,kl)                  = KLS(reg,kl) ;
+KS_V.FX(reg)                  = KS(reg) ;
+LS_V.FX(reg)                  = LS(reg) ;
 
 * ======================= Scale variables and equations ========================
 
@@ -399,52 +424,59 @@ EQP.SCALE(reg,prd)$(X_V.L(reg,prd) lt 0)
     = -X_V.L(reg,prd)  ;
 
 * EQUATION 4.3
-EQPKL.SCALE(reg,kl)$(KLS_V.L(reg,kl) gt 0)
-    = KLS_V.L(reg,kl) ;
+EQPK.SCALE(reg)$(KS_V.L(reg) gt 0)
+    = KS_V.L(reg) ;
 
-EQPKL.SCALE(reg,kl)$(KLS_V.L(reg,kl) lt 0)
-    = -KLS_V.L(reg,kl) ;
+EQPK.SCALE(reg)$(KS_V.L(reg) lt 0)
+    = -KS_V.L(reg) ;
 
 * EQUATION 4.4
+EQPL.SCALE(reg)$(LS_V.L(reg) gt 0)
+    = LS_V.L(reg) ;
+
+EQPL.SCALE(reg)$(LS_V.L(reg) lt 0)
+    = -LS_V.L(reg) ;
+
+* EQUATION 4.5
 EQPIU.SCALE(prd,regg,ind)$(INTER_USE_T_V.L(prd,regg,ind) gt 0)
     = INTER_USE_T_V.L(prd,regg,ind) ;
 
 EQPIU.SCALE(prd,regg,ind)$(INTER_USE_T_V.L(prd,regg,ind) lt 0)
     = -INTER_USE_T_V.L(prd,regg,ind) ;
 
-* EQUATION 4.5
+* EQUATION 4.6
 EQPC_H.SCALE(prd,regg)$(CONS_H_T_V.L(prd,regg) gt 0)
     = CONS_H_T_V.L(prd,regg) ;
 
 EQPC_H.SCALE(prd,regg)$(CONS_H_T_V.L(prd,regg) lt 0)
     = -CONS_H_T_V.L(prd,regg) ;
 
-* EQUATION 4.6
+* EQUATION 4.7
 EQPC_G.SCALE(prd,regg)$(CONS_G_T_V.L(prd,regg) gt 0)
     = CONS_G_T_V.L(prd,regg) ;
 
 EQPC_G.SCALE(prd,regg)$(CONS_G_T_V.L(prd,regg) lt 0)
     = -CONS_G_T_V.L(prd,regg) ;
 
-* EQUATION 4.7
+* EQUATION 4.8
 EQPC_I.SCALE(prd,regg)$(GFCF_T_V.L(prd,regg) gt 0)
     = GFCF_T_V.L(prd,regg) ;
 
 EQPC_I.SCALE(prd,regg)$(GFCF_T_V.L(prd,regg) lt 0)
     = -GFCF_T_V.L(prd,regg) ;
 
-* EQUATION 4.8
+* EQUATION 4.9
 EQPROW.SCALE$(sum((reg,prd), EXPORT_ROW_V.L(reg,prd) ) gt 0   )
     = sum((reg,prd), EXPORT_ROW_V.L(reg,prd) ) ;
 
 EQPROW.SCALE$(sum((reg,prd), EXPORT_ROW_V.L(reg,prd) ) lt 0   )
     = -sum((reg,prd), EXPORT_ROW_V.L(reg,prd) ) ;
 
-* EQUATION 4.9 - SCALING IS NOT REQUIRED
-
 * EQUATION 4.10 - SCALING IS NOT REQUIRED
 
-* EQUATION 4.11
+* EQUATION 4.11 - SCALING IS NOT REQUIRED
+
+* EQUATION 4.12
 EQGDPCUR.SCALE(regg)$(GDPCUR_V.L(regg) gt 0)
     = GDPCUR_V.L(regg) ;
 GDPCUR_V.SCALE(regg)$(GDPCUR_V.L(regg) gt 0)
@@ -455,7 +487,7 @@ EQGDPCUR.SCALE(regg)$(GDPCUR_V.L(regg) lt 0)
 GDPCUR_V.SCALE(regg)$(GDPCUR_V.L(regg) lt 0)
     = -GDPCUR_V.L(regg) ;
 
-* EQUATION 4.12
+* EQUATION 4.13
 EQGDPCONST.SCALE(regg)$(GDPCONST_V.L(regg) gt 0)
     = GDPCONST_V.L(regg) ;
 GDPCONST_V.SCALE(regg)$(GDPCONST_V.L(regg) gt 0)
@@ -466,13 +498,19 @@ EQGDPCONST.SCALE(regg)$(GDPCONST_V.L(regg) lt 0)
 GDPCONST_V.SCALE(regg)$(GDPCONST_V.L(regg) lt 0)
     = -GDPCONST_V.L(regg) ;
 
-* EQUATION 4.11 - SCALING IS NOT REQUIRED
+* EQUATION 4.14 - SCALING IS NOT REQUIRED
 
-* EXOGENOUS VARIBLES
-KLS_V.SCALE(reg,kl)$(KLS_V.L(reg,kl) gt 0)
-    = KLS_V.L(reg,kl) ;
-KLS_V.SCALE(reg,kl)$(KLS_V.L(reg,kl) lt 0)
-    = -KLS_V.L(reg,kl) ;
+* EXOGENOUS VARIABLES
+KS_V.SCALE(reg)$(KS_V.L(reg) gt 0)
+    = KS_V.L(reg) ;
+KS_V.SCALE(reg)$(KS_V.L(reg) lt 0)
+    = -KS_V.L(reg) ;
+
+* EXOGENOUS VARIABLES
+LS_V.SCALE(reg)$(LS_V.L(reg) gt 0)
+    = LS_V.L(reg) ;
+LS_V.SCALE(reg)$(LS_V.L(reg) lt 0)
+    = -LS_V.L(reg) ;
 
 $label end_bounds_and_scales
 
@@ -489,7 +527,8 @@ Model price_CGE_MCP
 /
 EQPY
 EQP.P_V
-EQPKL.PKL_V
+EQPK.PK_V
+EQPL.PL_V
 EQPIU.PIU_V
 EQPC_H.PC_H_V
 EQPC_G.PC_G_V
