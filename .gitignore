@@ -14,3 +14,6 @@ xllink.err
 *.ppr
 results*
 *.g00
+
+.Rhistory
+*.Rproj*
