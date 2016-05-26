@@ -1,4 +1,4 @@
-* File:   EXIOMOD_base_model/includes/phase.gms
+* File:   EXIOMOD_base_model/utils/phase.gms
 * Author: Trond Husby
 * Date:   30 May 2015
 * Adjusted:

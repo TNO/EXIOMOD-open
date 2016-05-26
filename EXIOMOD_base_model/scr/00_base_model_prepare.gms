@@ -34,12 +34,12 @@ $include EXIOMOD_base_model/scr/02_load_database.gms
 $include EXIOMOD_base_model/scr/03_sets_model.gms
 $include EXIOMOD_base_model/scr/04_aggregate_database.gms
 
-$batinclude EXIOMOD_base_model/includes/phase.gms additional_sets
-$batinclude EXIOMOD_base_model/includes/phase.gms parameters_declaration
-$batinclude EXIOMOD_base_model/includes/phase.gms parameters_calibration
-$batinclude EXIOMOD_base_model/includes/phase.gms variables_equations_declaration
-$batinclude EXIOMOD_base_model/includes/phase.gms equations_definition
-$batinclude EXIOMOD_base_model/includes/phase.gms bounds_and_scales
-$batinclude EXIOMOD_base_model/includes/phase.gms submodel_declaration
+$batinclude EXIOMOD_base_model/utils/phase.gms additional_sets
+$batinclude EXIOMOD_base_model/utils/phase.gms parameters_declaration
+$batinclude EXIOMOD_base_model/utils/phase.gms parameters_calibration
+$batinclude EXIOMOD_base_model/utils/phase.gms variables_equations_declaration
+$batinclude EXIOMOD_base_model/utils/phase.gms equations_definition
+$batinclude EXIOMOD_base_model/utils/phase.gms bounds_and_scales
+$batinclude EXIOMOD_base_model/utils/phase.gms submodel_declaration
 
 $include EXIOMOD_base_model/scr/09_declare_model.gms

@@ -297,7 +297,7 @@ L_V_CES(reg,regg,ind) = L_V.L(reg,regg,ind) ;
 
 * Show differences between KL_V variables.
 $setlocal display_tolerance 0.0001
-$batinclude EXIOMOD_base_model/includes/compare_data comparison_COBBDOUGLAS K_V_ORIG K_V_COBBDOUGLAS reg,regg,ind %display_tolerance%
-$batinclude EXIOMOD_base_model/includes/compare_data comparison_COBBDOUGLAS L_V_ORIG L_V_COBBDOUGLAS reg,regg,ind %display_tolerance%
-$batinclude EXIOMOD_base_model/includes/compare_data comparison_CES         K_V_ORIG K_V_CES         reg,regg,ind %display_tolerance%
-$batinclude EXIOMOD_base_model/includes/compare_data comparison_CES         L_V_ORIG L_V_CES         reg,regg,ind %display_tolerance%
+$batinclude EXIOMOD_base_model/utils/compare_data comparison_COBBDOUGLAS K_V_ORIG K_V_COBBDOUGLAS reg,regg,ind %display_tolerance%
+$batinclude EXIOMOD_base_model/utils/compare_data comparison_COBBDOUGLAS L_V_ORIG L_V_COBBDOUGLAS reg,regg,ind %display_tolerance%
+$batinclude EXIOMOD_base_model/utils/compare_data comparison_CES         K_V_ORIG K_V_CES         reg,regg,ind %display_tolerance%
+$batinclude EXIOMOD_base_model/utils/compare_data comparison_CES         L_V_ORIG L_V_CES         reg,regg,ind %display_tolerance%

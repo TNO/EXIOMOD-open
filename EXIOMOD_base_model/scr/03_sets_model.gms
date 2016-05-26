@@ -235,17 +235,17 @@ $ontext
 In case the configuration file requires check on consistency of aggregation
 schemes, the check is performed in this code. For more details on types of
 checks performed see the included file
-EXIOMOD_base_model/includes/setaggregationcheck.
+EXIOMOD_base_model/utils/setaggregationcheck.
 $offtext
 
 $if not '%agg_check%' == 'yes' $goto endofcode
 
-$BATINCLUDE "EXIOMOD_base_model/includes/setaggregationcheck" all_reg_data  all_reg  all_reg_aggr
-$BATINCLUDE "EXIOMOD_base_model/includes/setaggregationcheck" prd_data      prd      prd_aggr
-$BATINCLUDE "EXIOMOD_base_model/includes/setaggregationcheck" ind_data      ind      ind_aggr
-$BATINCLUDE "EXIOMOD_base_model/includes/setaggregationcheck" fd_data       fd       fd_aggr
-$BATINCLUDE "EXIOMOD_base_model/includes/setaggregationcheck" va_data       va       va_aggr
-$BATINCLUDE "EXIOMOD_base_model/includes/setaggregationcheck" exp_data      exp      exp_aggr
-$BATINCLUDE "EXIOMOD_base_model/includes/setaggregationcheck" tsp_data      tsp      tsp_aggr
+$BATINCLUDE "EXIOMOD_base_model/utils/setaggregationcheck" all_reg_data  all_reg  all_reg_aggr
+$BATINCLUDE "EXIOMOD_base_model/utils/setaggregationcheck" prd_data      prd      prd_aggr
+$BATINCLUDE "EXIOMOD_base_model/utils/setaggregationcheck" ind_data      ind      ind_aggr
+$BATINCLUDE "EXIOMOD_base_model/utils/setaggregationcheck" fd_data       fd       fd_aggr
+$BATINCLUDE "EXIOMOD_base_model/utils/setaggregationcheck" va_data       va       va_aggr
+$BATINCLUDE "EXIOMOD_base_model/utils/setaggregationcheck" exp_data      exp      exp_aggr
+$BATINCLUDE "EXIOMOD_base_model/utils/setaggregationcheck" tsp_data      tsp      tsp_aggr
 
 $label endofcode

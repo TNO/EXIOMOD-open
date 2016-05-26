@@ -11,8 +11,8 @@ del *.gdx
 del *.g00
 del EXIOMOD_base_model\scr\*.~gm
 del EXIOMOD_base_model\scr\*.gms~
-del EXIOMOD_base_model\includes\*.~gm
-del EXIOMOD_base_model\includes\*.gms~
+del EXIOMOD_base_model\utils\*.~gm
+del EXIOMOD_base_model\utils\*.gms~
 rmdir 225a
 rmdir 225b
 rmdir 225c
