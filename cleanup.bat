@@ -9,6 +9,11 @@ del *.lst
 del *.lxi
 del *.gdx
 del *.g00
+del runmodel.bat
+del ssadef.gms
+del ssagen.gms
+del ssainputs.gen
+del ssa_eval.gms
 del EXIOMOD_base_model\scr\*.~gm
 del EXIOMOD_base_model\scr\*.gms~
 del EXIOMOD_base_model\utils\*.~gm
