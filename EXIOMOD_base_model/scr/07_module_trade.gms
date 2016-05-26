@@ -163,7 +163,7 @@ $if not '%phase%' == 'parameters_calibration' $goto end_parameters_calibration
 
 *## Elasticities ##
 
-$libinclude xlimport elasTRADE_data %project%/00_base_model_setup/data/Eldata.xlsx elasTRADE!a1..zz10000 ;
+$libinclude xlimport elasTRADE_data %project%/00_base_model_setup/data/Eldata.xlsx elasTRADE!a1..e10000 ;
 
 * Substitution elasticity between domestic and aggregated imported products in
 * volume for intermediate use. The elasticity value can be different for each
