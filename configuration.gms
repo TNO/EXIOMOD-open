@@ -47,7 +47,7 @@ $if not set db_check     $setglobal      db_check        'yes'
 $if not set agg_check    $setglobal      agg_check       'yes'
 
 * base year
-$if not set base_year    $setglobal      base_year       'y2007'
+$if not set base_year    $setglobal      base_year       'y2011'
 
 * base currency
 $if not set base_cur     $setglobal      base_cur        'MEUR'

@@ -129,7 +129,7 @@ times.
 $offtext
 
 Alias
-   (reg_data,regg_data)
+   (reg_data,regg_data,reggg_data)
    (all_reg_data,all_regg_data)
    (full_cat_list,full_catt_list)
    (fd_data,fdd_data)
