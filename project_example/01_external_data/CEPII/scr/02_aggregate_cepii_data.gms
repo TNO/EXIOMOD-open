@@ -132,19 +132,24 @@ POP_CP_yr(reg_CP,year)$
 * ================= Gapfilling of missing regions for population ===============
 
 * Fill gaps in base year
-POP_CP_yr("CY","2007")  =    757916 ;
-POP_CP_yr("SI","2007")  =   2010377 ;
-POP_CP_yr("TW","2007")  =  22918000 ;
+POP_CP_yr("CY","2011")  =   1124835 ;
+* Worldbank
+POP_CP_yr("SI","2011")  =   2052843 ;
+* Worldbank
+POP_CP_yr("TW","2011")  =  23530000 ;
+* https://tradingeconomics.com/taiwan/population
 
 * Create time trend for missing regions
 POP_CP_yr(reg_CP,year)$
-    (reg_CP_miss(reg_CP) and ord(year) gt 7 )
-        = POP_CP_yr(reg_CP,"2007")
+    (reg_CP_miss(reg_CP) and ord(year) gt 1 )
+        = POP_CP_yr(reg_CP,"2011")
         * sum(regg_CP$(reg_CP_comp(reg_CP,regg_CP) and POP_CP_yr(regg_CP,year-1)),
             POP_CP_yr(regg_CP,year) / POP_CP_yr(regg_CP,year-1) ) ;
 
 * Remove Taiwan population from China to avoid double counting
 POP_CP_yr("CHN",year) = POP_CP_yr("CHN",year) - POP_CP_yr("TW",year) ;
+* https://tradingeconomics.com/taiwan/population
+
 
 
 * =========================== Aggregation of regions ===========================
@@ -324,7 +329,7 @@ $offtext
 * ************** Gap filling missing countries for growth rates ****************
 
 * Three EXIOBASE countries are missing in the CEPII dataset (reg_CP_miss).
-* These are SI TW CY, assign the value of a comparable country (reg_CP_comp).   
+* These are SI TW CY, assign the value of a comparable country (reg_CP_comp).
 * This is only done when model regions include any of these three countries.
 
 * For the gapfilling of population there is a different procedure because
@@ -332,34 +337,34 @@ $offtext
 
 Loop(reg$reg_CP_miss(reg),
 
-        KS_CEPII_change(reg,year)      
+        KS_CEPII_change(reg,year)
             = sum(regg$reg_CP_comp(reg,regg), KS_CEPII_change(regg,year) ) ;
 
-        LS_CEPII_change(reg,year)      
+        LS_CEPII_change(reg,year)
             = sum(regg$reg_CP_comp(reg,regg), LS_CEPII_change(regg,year) ) ;
 
-        PRODKL_CEPII_change(reg,year)  
+        PRODKL_CEPII_change(reg,year)
             = sum(regg$reg_CP_comp(reg,regg), PRODKL_CEPII_change(regg,year) ) ;
 
-        PRODE_CEPII_change(reg,year)   
+        PRODE_CEPII_change(reg,year)
             = sum(regg$reg_CP_comp(reg,regg), PRODE_CEPII_change(regg,year) ) ;
 
-        E_CEPII_change(reg,year)       
+        E_CEPII_change(reg,year)
             = sum(regg$reg_CP_comp(reg,regg), E_CEPII_change(regg,year) ) ;
 
-        GDP_CEPII_change(reg,year)     
+        GDP_CEPII_change(reg,year)
             = sum(regg$reg_CP_comp(reg,regg), GDP_CEPII_change(regg,year) ) ;
 ) ;
 
 
 * *********************** Baseyear should have value one ***********************
 
-KS_CEPII_change(reg,"2007")      = 1 ;
-LS_CEPII_change(reg,"2007")      = 1 ;
-PRODKL_CEPII_change(reg,"2007")  = 1 ;
-PRODE_CEPII_change(reg,"2007")   = 1 ;
-E_CEPII_change(reg,"2007")       = 1 ;
-GDP_CEPII_change(reg,"2007")     = 1 ;
+KS_CEPII_change(reg,"2011")      = 1 ;
+LS_CEPII_change(reg,"2011")      = 1 ;
+PRODKL_CEPII_change(reg,"2011")  = 1 ;
+PRODE_CEPII_change(reg,"2011")   = 1 ;
+E_CEPII_change(reg,"2011")       = 1 ;
+GDP_CEPII_change(reg,"2011")     = 1 ;
 
 Display KS_CEPII_change
         LS_CEPII_change

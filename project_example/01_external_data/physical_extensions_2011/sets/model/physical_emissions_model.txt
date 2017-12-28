@@ -1,0 +1,11 @@
+CO2_c
+CO2_nc
+CH4_c
+CH4_nc
+N2O_c
+N2O_nc
+SOX_c
+SOX_nc
+NOX_c
+NOX_nc
+other
