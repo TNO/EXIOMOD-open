@@ -117,17 +117,17 @@ numer_check
 ;
 
 * Calculate new CO2 emissions
-Parameter
-    CO2_c_time(regg,ind,year)   combustion C02 emissions over time
-    CO2reg_c_time(regg,year)    combustion C02 emissions on region level
-;
+*Parameter
+*    CO2_c_time(regg,ind,year)   combustion C02 emissions over time
+*    CO2reg_c_time(regg,year)    combustion C02 emissions on region level
+*;
 
-CO2_c_time(regg,ind,year)$Y_time(regg,ind,year) = Y_time(regg,ind,year) *
-    EMIS_model(regg,ind,'CO2_c') / Y(regg,ind) ;
+*CO2_c_time(regg,ind,year)$Y_time(regg,ind,year) = Y_time(regg,ind,year) *
+*    EMIS_model(regg,ind,'CO2_c') / Y(regg,ind) ;
 
-CO2reg_c_time(regg,year) = sum(ind, CO2_c_time(regg,ind,year) ) ;
+*CO2reg_c_time(regg,year) = sum(ind, CO2_c_time(regg,ind,year) ) ;
 
-Display
-CO2_c_time
-CO2reg_c_time
-;
+*Display
+*CO2_c_time
+*CO2reg_c_time
+*;
