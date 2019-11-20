@@ -1,0 +1,6 @@
+CO2_c
+CH4_c
+N2O_c
+SOX_c
+NOX_c
+

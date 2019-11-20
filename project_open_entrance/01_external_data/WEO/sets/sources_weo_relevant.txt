@@ -1,0 +1,11 @@
+Coal
+Oil
+Gas
+Nuclear
+Hydro
+Bioenergy
+Wind
+Geothermal
+"Solar PV"
+CSP
+Marine

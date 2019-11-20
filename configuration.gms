@@ -20,7 +20,7 @@ Variable           | Explanation
 $offtext
 
 * name of the project folder, please give meaningful name
-$if not set project      $setglobal      project         'project_example'
+$if not set project      $setglobal      project         'project_open_entrance'
 
 * form of production functions: choose between 'KL' and 'KL-E'
 * type 'KL': substitution possible between production factors, other inputs

@@ -1,0 +1,11 @@
+Coal.i4011a
+Oil.i4011f
+Gas.i4011b
+Nuclear.i4011c
+Hydro.i4011d
+Bioenergy.i4011g
+Wind.i4011e
+Geothermal.i4011k
+"Solar PV".i4011h
+CSP.i4011i
+Marine.i4011j
