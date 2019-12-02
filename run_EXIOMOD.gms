@@ -8,13 +8,14 @@ $offtext
 
 $include configuration.gms
 
+
 * OPTION 1: run all the files for every simulation, using $include
 * Include base model file
 *$include EXIOMOD_base_model/scr/00_base_model_prepare.gms
 *$exit
 * Include file with extra simulation data
-*$include %project%/00_base_model_setup/scr/trial_read_extradata.gms
-*$exit
+$include %project%/00_base_model_setup/scr/trial_read_extradata.gms
+$exit
 * Run simulation
 $include %project%/00_base_model_setup/scr/trial_simulation.gms
 $exit

@@ -50,7 +50,7 @@ if(ord(year) gt 1,
     theta_sv(reg,prd,regg) = theta_sv(reg,prd,regg) * 0.97 ;
 ) ;
 * Additional trial shock
-LS_V.FX('WEU')$(ord(year) eq 2 ) = 1.1 * LS('WEU') ;
+* LS_V.FX('WEU')$(ord(year) eq 2 ) = 1.1 * LS('WEU') ;
 
 
 * =============================== Solve statement ==============================
