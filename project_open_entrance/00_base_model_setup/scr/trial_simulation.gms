@@ -27,6 +27,7 @@ Parameter
     CBUD_G_check(regg,year)     check that budget constraint for government holds
     CBUD_I_check(regg,year)     check that budget constraint for investment agent holds
     numer_check(regg,ind,year)  check that the numeraire equation holds
+    coprodB_loop(reg,prd,regg,ind,year)    coprodB over the years
 ;
 
 $include %project%\03_simulation_results\scr\save_simulation_results_declaration_parameters.gms
@@ -34,7 +35,7 @@ $include %project%\03_simulation_results\scr\save_simulation_results_declaration
 * ============================== Simulation setup ==============================
 
 loop(year$( ord(year) le 2 ),
-
+$ontext
 * CEPII baseline
 KS(reg)                 = KS_V.L(reg) ;
 KS_V.FX(reg)            = KS(reg) * KS_CEPII_change(reg,year) ;
@@ -51,6 +52,15 @@ if(ord(year) gt 1,
 ) ;
 * Additional trial shock
 * LS_V.FX('WEU')$(ord(year) eq 2 ) = 1.1 * LS('WEU') ;
+
+$offtext
+
+*Shock in coprodB
+*Note: there seem to be no errors but the running takes ages 
+coprodB(reg,"pELCC",regg,ind_elec) =
+    elec_WEO_shares(reg,ind_elec,year)
+    / sum(ind_elecc, elec_WEO_shares(reg,ind_elecc,year) ) ;
+coprodB_loop(reg,prd,regg,ind,year) =  coprodB(reg,prd,regg,ind)  ;
 
 
 * =============================== Solve statement ==============================

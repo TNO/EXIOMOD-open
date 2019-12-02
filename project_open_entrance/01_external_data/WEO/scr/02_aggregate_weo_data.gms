@@ -160,18 +160,15 @@ Display elec_WEO_change;
 * ====================== Conversion into percentages ==========================
 
 Parameters
-    elec_WEO_perc(reg, ind_elec, year)     calculate technology shares for
-                                           # every year and country
-*    share_electricty_total(reg, year)     share of total electricty production
+    elec_WEO_shares(reg,ind_elec,year)            shares of electricty mix
 ;
 
-elec_WEO_perc(reg, ind_elec, year) = elec_WEO(reg, ind_elec, year) / sum(ind_elecc, elec_WEO(reg, ind_elecc, year))
-*coprodB_subset(reg,prd,regg,ind)   = coprodB(reg,prd,regg,ind) ;
-*share_electricty_total(reg, year)  = sum(
+elec_WEO_shares(reg,ind_elec,year) =
+    elec_WEO(reg,ind_elec,year) / sum(ind_elecc, elec_WEO(reg,ind_elecc,year) ) ;
+
 
 Display
-elec_WEO_perc
-*coprodB_subset ;
+elec_WEO_shares ;
 
 * ===================== Declaration of subset (trial) ========================
 
