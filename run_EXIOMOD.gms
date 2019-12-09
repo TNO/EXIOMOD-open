@@ -8,6 +8,77 @@ $offtext
 
 $include configuration.gms
 
+$ontext
+Parameter
+coprodB2(reg,prd,regg,ind)           Same as coprodB, so we don't change the
+*                                     # actual coprodB table
+end_result(reg,ind_elec,year)        What you want to replace in coprodB
+coprodB2_loop(reg,prd,regg,ind,year)  Keep track of coprodB over the years
+coprodB2_display(reg,ind_elec)
+coprodB2_loop_display(reg,ind_elec,year)
+Combine_coprod_WEO(reg,ind_elec,*)
+year_par(year)
+check_year(year)
+elec_WEO_scaled(reg,ind_elec,year)
+;
+
+
+coprodB2_display(reg,ind_elec) =  coprodB(reg,"pELCC",reg,ind_elec)  ;
+coprodB2(reg,prd,regg,ind) = coprodB(reg,prd,regg,ind) ;
+
+coprodB2_loop(reg,prd,regg,ind,"2011") =  coprodB2(reg,prd,regg,ind)  ;
+coprodB2_loop(reg,"pELCC",reg,ind_elec,"2016") =  elec_WEO_shares(reg,ind_elec,"2016")
+    * sum((ind_elecc,reggg), coprodB(reg,"pELCC",reggg,ind_elecc) ) ;
+coprodB2_loop_display(reg,ind_elec,"2011") = coprodB2_loop(reg,"pELCC",reg,ind_elec,"2011")  ;
+coprodB2_loop_display(reg,ind_elec,"2016") = coprodB2_loop(reg,"pELCC",reg,ind_elec,"2016")  ;
+
+loop(year$( ord(year) ge 2 and ord(year) le 5 ),
+    year_par(year) = ord(year) ;
+
+*Shock in coprodB
+coprodB2(reg,"pELCC",reg,ind_elec)
+    = ( year_par(year) - 1 ) / 5 * elec_WEO_shares(reg,ind_elec,"2016")
+    * sum((ind_elecc,reggg), coprodB2(reg,"pELCC",reggg,ind_elecc) )
+    + (5 - (year_par(year)-1) ) / 5 * coprodB2(reg,"pELCC",reg,ind_elec) ;
+coprodB2_loop(reg,prd,regg,ind,year) =  coprodB2(reg,prd,regg,ind)  ;
+coprodB2_loop_display(reg,ind_elec,year) = coprodB2_loop(reg,"pELCC",reg,ind_elec,year) ;
+check_year(year) =  (year_par(year)-1) / 5 +  (5 - (year_par(year)-1) ) / 5 ;
+elec_WEO_scaled(reg,ind_elec,year) = elec_WEO_shares(reg,ind_elec,"2016")
+                                     * sum((ind_elecc,reggg), coprodB2(reg,"pELCC",reggg,ind_elecc) ) ;
+);
+
+
+*Combine_coprod_WEO(reg,ind_elec,"WEO") =
+*end_result_display(reg,ind_elec) ;
+
+*Combine_coprod_WEO(reg,ind_elec,"coprod") =
+*coprodB2_display(reg,ind_elec) ;
+
+
+Display
+ind_elec
+elec_WEO_shares
+elec_WEO_scaled
+coprodB2_loop_display
+*end_result
+*Combine_coprod_WEO
+check_year
+;
+
+*Export coprodB and end_result to Excel
+*$libinclude xldump Combine_coprod_WEO  project_open_entrance/03_simulation_results/output/Results.xlsx    Results!    ;
+*$libinclude xldump Combine_coprod_WEO  project_open_entrance/03_simulation_results/output/Results.xlsx    Results!    ;
+$offtext
+
+Display
+elec_WEO_data
+elec_WEO_shares
+;
+
+
+
+
+
 
 * OPTION 1: run all the files for every simulation, using $include
 * Include base model file

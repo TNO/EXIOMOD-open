@@ -27,14 +27,104 @@ Parameter
     CBUD_G_check(regg,year)     check that budget constraint for government holds
     CBUD_I_check(regg,year)     check that budget constraint for investment agent holds
     numer_check(regg,ind,year)  check that the numeraire equation holds
-    coprodB_loop(reg,prd,regg,ind,year)    coprodB over the years
+    coprodB_loop(reg,prd,regg,ind,year)  coprodB over the years
+    coprodB_loop_display(reg,ind_elec,year)  display only relevant parts of coprodB_loop
+    check_year(year)                  should add up to 1
+    year_par(year)
+    smooth_time
 ;
 
 $include %project%\03_simulation_results\scr\save_simulation_results_declaration_parameters.gms
 
 * ============================== Simulation setup ==============================
 
+
+*We want: (eg smooth_time = 5)
+* 2011: coprodB = 1.0 * coprodB + 0.0 * WEO
+* 2012: coprodB = 0.8 * coprodB + 0.2 * WEO
+* 2013: coprodB = 0.6 * coprodB + 0.4 * WEO
+* 2014: coprodB = 0.4 * coprodB + 0.6 * WEO
+* 2015: coprodB = 0.2 * coprodB + 0.8 * WEO
+* 2016: coprodB = 0.0 * coprodB + 1.0 * WEO
+smooth_time = 100;
+
+$setglobal      jaartal         '2021'
+
+*Set initial and end value for coprodB_loop
+coprodB_loop(reg,prd,regg,ind,year) =  coprodB(reg,prd,regg,ind)  ;
+coprodB_loop(reg,"pELCC",reg,ind_elec,"%jaartal%") =  elec_WEO_shares(reg,ind_elec,"2016")
+    * sum((ind_elecc,reggg), coprodB(reg,"pELCC",reggg,ind_elecc) ) ;
+*Same for coprodB_loop_display
+*This parameter makes it easier to see the applied changed
+* ie changes made in pELCC and ind_elec
+coprodB_loop_display(reg,ind_elec,"2011") = coprodB_loop(reg,"pELCC",reg,ind_elec,"2011") ;
+coprodB_loop_display(reg,ind_elec,"%jaartal%") = coprodB_loop(reg,"pELCC",reg,ind_elec,"%jaartal%") ;
+
+*Start a loop to change value for years inbetween:
+loop(year$( ord(year) ge 2 and ord(year) le smooth_time ),
+    year_par(year) = ord(year) ;
+
+*Shock in coprodB
+coprodB_loop(reg,"pELCC",reg,ind_elec,year)
+    = ( year_par(year) - 1 ) / smooth_time * elec_WEO_shares(reg,ind_elec,"2016")
+    * sum((ind_elecc,reggg), coprodB(reg,"pELCC",reggg,ind_elecc) )
+    + (smooth_time - (year_par(year)-1) ) / smooth_time * coprodB(reg,"pELCC",reg,ind_elec) ;
+coprodB_loop_display(reg,ind_elec,year) = coprodB_loop(reg,"pELCC",reg,ind_elec,year) ;
+check_year(year) = ( year_par(year) - 1 ) / smooth_time  + (smooth_time - (year_par(year)-1) ) / smooth_time ;
+
+);
+
+Parameter
+coprodB_year(reg,prd,reg,ind,year)
+;
+
+coprodB_year(reg,prd,reg,ind,year) = coprodB(reg,prd,reg,ind)   ;
+
+*$libinclude xldump coprodB_year  project_open_entrance/03_simulation_results/output/Results.xlsx    coprodB!    ;
+*$libinclude xldump coprodB_loop  project_open_entrance/03_simulation_results/output/Results.xlsx    coprodB_loop! ;
+
+
+$ontext
+Parameter
+coprodB_trial(reg,prd,regg,ind,year)
+coprodB_trial_display(reg,ind_elec,year)
+;
+
+coprodB_trial(reg,prd,regg,ind,year) = coprodB(reg,prd,regg,ind) ;
+coprodB_trial("AUT","pELCC","AUT","iELCN","2012") = 0.100  ;
+coprodB_trial("AUT","pELCC","AUT","iELCP","2012") = 0.100  ;
+coprodB_trial("AUT","pELCC","AUT","iELCM","2012") = 0.100  ;
+coprodB_trial("AUT","pELCC","AUT","iELCH","2012") = coprodB("AUT","pELCC","AUT","iELCH") - 0.300 ;
+
+coprodB_trial("BEL","pELCC","AUT","iELCT","2012") = 0.100  ;
+coprodB_trial("BEL","pELCC","AUT","iELCP","2012") = 0.100  ;
+coprodB_trial("BEL","pELCC","AUT","iELCM","2012") = 0.100  ;
+coprodB_trial("BEL","pELCC","AUT","iELCN","2012") = coprodB("AUT","pELCC","AUT","iELCH") - 0.300 ;
+
+coprodB_trial("BGR","pELCC","AUT","iELCT","2012") = 0.100  ;
+coprodB_trial("BGR","pELCC","AUT","iELCP","2012") = 0.100  ;
+coprodB_trial("BGR","pELCC","AUT","iELCM","2012") = 0.100  ;
+coprodB_trial("BGR","pELCC","AUT","iELCN","2012") = coprodB("AUT","pELCC","AUT","iELCH") - 0.100 ;
+coprodB_trial("BGR","pELCC","AUT","iELCC","2012") = coprodB("AUT","pELCC","AUT","iELCC") - 0.200 ;
+
+coprodB_trial("HRV","pELCC","AUT","iELCN","2012") = 0.100  ;
+coprodB_trial("HRV","pELCC","AUT","iELCT","2012") = 0.100  ;
+coprodB_trial("HRV","pELCC","AUT","iELCS","2012") = 0.100  ;
+coprodB_trial("HRV","pELCC","AUT","iELCP","2012") = 0.100  ;
+coprodB_trial("HRV","pELCC","AUT","iELCM","2012") = 0.100  ;
+coprodB_trial("HRV","pELCC","AUT","iELCH","2012") = coprodB("AUT","pELCC","AUT","iELCH") - 0.400 ;
+coprodB_trial("HRV","pELCC","AUT","iELCG","2012") = coprodB("AUT","pELCC","AUT","iELCG") - 0.100 ;
+
+coprodB_trial_display(reg,ind_elec,year)  =  coprodB_trial(reg,"pELCC",reg,ind_elec,year)
+
+Display
+coprodB_trial_display
+;
+$offtext
+
+
 loop(year$( ord(year) le 2 ),
+
 $ontext
 * CEPII baseline
 KS(reg)                 = KS_V.L(reg) ;
@@ -55,13 +145,8 @@ if(ord(year) gt 1,
 
 $offtext
 
-*Shock in coprodB
-*Note: there seem to be no errors but the running takes ages 
-coprodB(reg,"pELCC",regg,ind_elec) =
-    elec_WEO_shares(reg,ind_elec,year)
-    / sum(ind_elecc, elec_WEO_shares(reg,ind_elecc,year) ) ;
-coprodB_loop(reg,prd,regg,ind,year) =  coprodB(reg,prd,regg,ind)  ;
-
+coprodB(reg,prd,regg,ind) = coprodB_loop(reg,prd,regg,ind,year)
+*coprodB(reg,prd,regg,ind) = coprodB_trial(reg,prd,regg,ind,year) ;
 
 * =============================== Solve statement ==============================
 
@@ -124,6 +209,9 @@ CBUD_H_check
 CBUD_G_check
 CBUD_I_check
 numer_check
+*coprodB_loop_display
+*year_par
+*check_year
 ;
 
 * Calculate new CO2 emissions
