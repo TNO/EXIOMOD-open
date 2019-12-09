@@ -32,6 +32,7 @@ Parameter
     check_year(year)                  should add up to 1
     year_par(year)
     smooth_time
+    coprodB_short(reg,ind_elec,year)
 ;
 
 $include %project%\03_simulation_results\scr\save_simulation_results_declaration_parameters.gms
@@ -46,12 +47,24 @@ $include %project%\03_simulation_results\scr\save_simulation_results_declaration
 * 2014: coprodB = 0.4 * coprodB + 0.6 * WEO
 * 2015: coprodB = 0.2 * coprodB + 0.8 * WEO
 * 2016: coprodB = 0.0 * coprodB + 1.0 * WEO
-smooth_time = 100;
+smooth_time = 5;
 
-$setglobal      jaartal         '2021'
+$setglobal      jaartal         '2016'
 
 *Set initial and end value for coprodB_loop
 coprodB_loop(reg,prd,regg,ind,year) =  coprodB(reg,prd,regg,ind)  ;
+
+
+coprodB_short(reg,ind_elec,"2011") = coprodB_loop(reg,"pELCC",reg,ind_elec,"2011") ;
+
+loop ( (reg,ind_elec)$ (coprodB_short(reg,ind_elec,"2011") = 0),
+          coprodB_short(reg,ind_elec,"2011") = 0.0001
+          );
+
+coprodB_loop(reg,"pELCC",reg,ind_elec,"2011") = coprodB_short(reg,ind_elec,"2011");
+
+
+
 coprodB_loop(reg,"pELCC",reg,ind_elec,"%jaartal%") =  elec_WEO_shares(reg,ind_elec,"2016")
     * sum((ind_elecc,reggg), coprodB(reg,"pELCC",reggg,ind_elecc) ) ;
 *Same for coprodB_loop_display
@@ -74,21 +87,19 @@ check_year(year) = ( year_par(year) - 1 ) / smooth_time  + (smooth_time - (year_
 
 );
 
+
+
+$ontext
+
 Parameter
 coprodB_year(reg,prd,reg,ind,year)
+coprodB_trial_display(reg,ind_elec,year)
 ;
 
 coprodB_year(reg,prd,reg,ind,year) = coprodB(reg,prd,reg,ind)   ;
 
 *$libinclude xldump coprodB_year  project_open_entrance/03_simulation_results/output/Results.xlsx    coprodB!    ;
 *$libinclude xldump coprodB_loop  project_open_entrance/03_simulation_results/output/Results.xlsx    coprodB_loop! ;
-
-
-$ontext
-Parameter
-coprodB_trial(reg,prd,regg,ind,year)
-coprodB_trial_display(reg,ind_elec,year)
-;
 
 coprodB_trial(reg,prd,regg,ind,year) = coprodB(reg,prd,regg,ind) ;
 coprodB_trial("AUT","pELCC","AUT","iELCN","2012") = 0.100  ;
@@ -101,26 +112,13 @@ coprodB_trial("BEL","pELCC","AUT","iELCP","2012") = 0.100  ;
 coprodB_trial("BEL","pELCC","AUT","iELCM","2012") = 0.100  ;
 coprodB_trial("BEL","pELCC","AUT","iELCN","2012") = coprodB("AUT","pELCC","AUT","iELCH") - 0.300 ;
 
-coprodB_trial("BGR","pELCC","AUT","iELCT","2012") = 0.100  ;
-coprodB_trial("BGR","pELCC","AUT","iELCP","2012") = 0.100  ;
-coprodB_trial("BGR","pELCC","AUT","iELCM","2012") = 0.100  ;
-coprodB_trial("BGR","pELCC","AUT","iELCN","2012") = coprodB("AUT","pELCC","AUT","iELCH") - 0.100 ;
-coprodB_trial("BGR","pELCC","AUT","iELCC","2012") = coprodB("AUT","pELCC","AUT","iELCC") - 0.200 ;
-
-coprodB_trial("HRV","pELCC","AUT","iELCN","2012") = 0.100  ;
-coprodB_trial("HRV","pELCC","AUT","iELCT","2012") = 0.100  ;
-coprodB_trial("HRV","pELCC","AUT","iELCS","2012") = 0.100  ;
-coprodB_trial("HRV","pELCC","AUT","iELCP","2012") = 0.100  ;
-coprodB_trial("HRV","pELCC","AUT","iELCM","2012") = 0.100  ;
-coprodB_trial("HRV","pELCC","AUT","iELCH","2012") = coprodB("AUT","pELCC","AUT","iELCH") - 0.400 ;
-coprodB_trial("HRV","pELCC","AUT","iELCG","2012") = coprodB("AUT","pELCC","AUT","iELCG") - 0.100 ;
-
 coprodB_trial_display(reg,ind_elec,year)  =  coprodB_trial(reg,"pELCC",reg,ind_elec,year)
 
 Display
 coprodB_trial_display
 ;
 $offtext
+
 
 
 loop(year$( ord(year) le 2 ),
@@ -209,6 +207,7 @@ CBUD_H_check
 CBUD_G_check
 CBUD_I_check
 numer_check
+coprodB_short
 *coprodB_loop_display
 *year_par
 *check_year
