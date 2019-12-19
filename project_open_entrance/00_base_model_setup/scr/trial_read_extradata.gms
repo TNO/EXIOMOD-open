@@ -21,9 +21,11 @@ Alias
 
 * Baseline
 * Contains data, sets and scripts for processing the baseline data from WEO.
-$include %project%\01_external_data\WEO\scr\01_read_weo_data.gms
-$include %project%\01_external_data\WEO\scr\02_aggregate_weo_data.gms
-*$include %project%\01_external_data\WEO\scr\04_replace_coprodB_data.gms
+*$include %project%\01_external_data\WEO\scr\01_read_weo_data.gms
+*$include %project%\01_external_data\WEO\scr\02_aggregate_weo_data.gms
+
+$include %project%\01_external_data\EU_reference\scr\01_read_ref_data.gms
+$include %project%\01_external_data\EU_reference\scr\02_aggregate_ref_data.gms
 
 * Physical extensions
 * Contains data and scripts for processing the input data from the EXIOBASE

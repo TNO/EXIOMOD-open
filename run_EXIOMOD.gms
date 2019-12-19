@@ -9,27 +9,45 @@ $offtext
 $include configuration.gms
 
 $ontext
-Parameter
-coprodB_trial(reg,ind_elec,year)
+Sets
+subset_year(year)
+/
+2015, 2016
+/
 ;
 
-coprodB_trial(reg,ind_elec,"2011") = coprodB(reg,"pELCC",reg,ind_elec) ;
-coprodB_trial(reg,ind_elec,"2012") = coprodB(reg,"pELCC",reg,ind_elec) ;
+Parameters
+elec_ref_shares_malta(ind_ref,year)
+;
 
-loop ( (reg,ind_elec)$ (coprodB_trial(reg,ind_elec,"2012") = 0),
-          coprodB_trial(reg,ind_elec,"2012") = 0.0001
-          );
+elec_ref_shares_malta(ind_ref,year) = elec_ref_shares_yr("MLT",ind_ref,year);
+
+Display
+elec_ref_shares_malta
+elec_ref_shares_yr
+;
+$exit
 
 
-*coprodB_trial_display(reg,ind_elec,year) = coprodB_trial(reg,"pELCC",ind_elec,reg,year)
+
+Set reg_min_malta(reg)
+/
+$include %project%/00_base_model_setup/sets/regions_model.txt
+/
+;
+
+reg_min_malta('MLT') = no ;
+
+Display
+reg_min_malta
+;
 
 
-*Export coprodB and end_result to Excel
-*$libinclude xldump Combine_coprod_WEO  project_open_entrance/03_simulation_results/output/Results.xlsx    Results!    ;
-*$libinclude xldump Combine_coprod_WEO  project_open_entrance/03_simulation_results/output/Results.xlsx    Results!    ;
+Display
+elec_ref_shares_yr
+;
+$exit
 $offtext
-
-
 
 
 
@@ -44,7 +62,8 @@ $offtext
 *$include %project%/00_base_model_setup/scr/trial_read_extradata.gms
 *$exit
 * Run simulation
-$include %project%/00_base_model_setup/scr/trial_simulation.gms
+*$include %project%/00_base_model_setup/scr/trial_simulation.gms
+$include %project%/00_base_model_setup/scr/trial_simulation_EU_ref.gms
 $exit
 
 * OPTION 2: use save and restarts, this allows to run the data-related codes

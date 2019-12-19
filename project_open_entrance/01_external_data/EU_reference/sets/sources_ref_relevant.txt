@@ -1,0 +1,10 @@
+"Nuclear energy"
+Solids
+"Oil (including refinery gas)"
+"Gas (including derived gases)"
+"Biomass-waste"
+"Hydro (pumping excluded)"
+Wind
+Solar
+"Geothermal and other renewables"
+"Other fuels (hydrogen, methanol)"
