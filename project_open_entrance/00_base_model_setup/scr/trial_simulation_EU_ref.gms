@@ -26,7 +26,7 @@ Alias
 ;
 * Choose which countries to exclude
 reg_min_problems('MLT') = no ;
-reg_min_problems('CYP') = no ;
+*reg_min_problems('CYP') = no ;
 
 Display
 reg_min_problems
@@ -60,7 +60,7 @@ $include %project%\03_simulation_results\scr\save_simulation_results_declaration
 
 * ============================== Simulation setup ==============================
 
-loop(year$( ord(year) le 40),
+loop(year$( ord(year) le 6),
 
 $ontext
 * CEPII baseline

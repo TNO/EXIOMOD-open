@@ -22,34 +22,13 @@ elec_ref_shares_malta(ind_ref,year)
 
 elec_ref_shares_malta(ind_ref,year) = elec_ref_shares_yr("MLT",ind_ref,year);
 
+$offtext 
+
 Display
 elec_ref_shares_malta
 elec_ref_shares_yr
 ;
 $exit
-
-
-
-Set reg_min_malta(reg)
-/
-$include %project%/00_base_model_setup/sets/regions_model.txt
-/
-;
-
-reg_min_malta('MLT') = no ;
-
-Display
-reg_min_malta
-;
-
-
-Display
-elec_ref_shares_yr
-;
-$exit
-$offtext
-
-
 
 
 

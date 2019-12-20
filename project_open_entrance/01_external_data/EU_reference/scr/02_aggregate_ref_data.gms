@@ -242,12 +242,56 @@ loop((problem_ind,year)$(elec_ref_shares_yr("MLT",problem_ind,year) = 0.000),
      = elec_ref_shares_yr("MLT",problem_ind,year-1)
 );
 
+$ontext
+
+loop(year$(ord(year) > 5),
+     elec_ref_shares_yr("MLT","iELCG",year)
+     = elec_ref_shares_yr("MLT","iELCG","2015")
+);
+
+
+
+
+loop(year$(ord(year) > 5),
+     elec_ref_shares_yr("MLT","iELCO",year)
+     = 1.000 - elec_ref_shares_yr("MLT","iELCS",year) -
+     elec_ref_shares_yr("MLT","iELCB",year) -
+     elec_ref_shares_yr("MLT","iELCW",year)
+);
+
+
+
+loop(year$(ord(year) > 5 and ord(year) < 40),
+    year_par(year) = 2010 + ord(year)
+);
+
+loop(year$(ord(year) > 5 and ord(year) < 40),
+     elec_ref_shares_yr("MLT","iELCG",year) =
+     elec_ref_shares_yr("MLT","iELCG","2015") +
+     (elec_ref_shares_yr("MLT","iELCG","2050") - elec_ref_shares_yr("MLT","iELCG","2015") ) /
+     ( 2050 - 2015) * (year_par(year) - 2015)
+);
+
+loop(year$(ord(year) > 5 and ord(year) < 40),
+     elec_ref_shares_yr("MLT","iELCO",year) =
+     elec_ref_shares_yr("MLT","iELCO","2015") -
+     elec_ref_shares_yr("MLT","iELCG",year)
+);
+$offtext
+
+Parameters
+elec_ref_shares_malta(ind_ref,year)
+;
+
+elec_ref_shares_malta(ind_ref,year) = elec_ref_shares_yr("MLT",ind_ref,year);
+
 
 
 
 
 Display
 elec_ref_shares_yr
+elec_ref_shares_malta
 ;
 
 * ====================== Conversion into annual change =========================
