@@ -1,6 +1,0 @@
-kg
-'kg CO2-eq'
-TJ
-kt
-Mm3
-km2

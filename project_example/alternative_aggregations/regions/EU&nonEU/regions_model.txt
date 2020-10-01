@@ -1,2 +1,0 @@
-EU      'EU27 countries'
-NEU     'Non-EU27 countries'

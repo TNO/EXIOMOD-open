@@ -8,38 +8,16 @@ $offtext
 
 $include configuration.gms
 
-$ontext
-Sets
-subset_year(year)
-/
-2015, 2016
-/
-;
-
-Parameters
-elec_ref_shares_malta(ind_ref,year)
-;
-
-elec_ref_shares_malta(ind_ref,year) = elec_ref_shares_yr("MLT",ind_ref,year);
-
-$offtext 
-
-Display
-elec_ref_shares_malta
-elec_ref_shares_yr
-;
-$exit
-
-
-
 
 * OPTION 1: run all the files for every simulation, using $include
 * Include base model file
 *$include EXIOMOD_base_model/scr/00_base_model_prepare.gms
 *$exit
+
 * Include file with extra simulation data
-*$include %project%/00_base_model_setup/scr/trial_read_extradata.gms
-*$exit
+$include %project%/00_base_model_setup/scr/read_extradata.gms
+$exit
+
 * Run simulation
 *$include %project%/00_base_model_setup/scr/trial_simulation.gms
 $include %project%/00_base_model_setup/scr/trial_simulation_EU_ref.gms

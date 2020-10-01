@@ -1,5 +1,0 @@
-air
-water
-soil
-undef
-nature

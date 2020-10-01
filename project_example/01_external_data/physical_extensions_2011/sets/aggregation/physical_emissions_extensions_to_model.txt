@@ -1,3 +1,0 @@
-emis_ext.emis.GWP
-'E_CO2_c to air'.'CO2_c'.'1'
-'E_CO2_n to air'.'CO2_nc'.'1'

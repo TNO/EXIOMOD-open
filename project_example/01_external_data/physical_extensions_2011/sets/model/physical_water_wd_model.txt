@@ -1,3 +1,0 @@
-WWB_manu	'Water Withdrawal Blue 	- Manufactoring'
-WWB_elec	'Water Withdrawal Blue  - Electricity'
-WWB_dom 	'Water Withdrawal Blue  - Domestic use'

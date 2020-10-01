@@ -1,5 +1,0 @@
-        Households  Government  GrossFixCapForm StockChange
-FCH         1           0               0           0
-FCG         0           1               0           0
-GFCF        0           0               1           0
-INVCH       0           0               0           1
