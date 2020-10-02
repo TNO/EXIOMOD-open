@@ -10,7 +10,7 @@ This code is used to read in external data for further trial simulations with
 base CGE model.
 $offtext
 
-$ontext
+
 Sets
     year            / 2011*2050 /
 ;
@@ -18,7 +18,7 @@ Sets
 Alias
     (year,yearr)
 ;
-$offtext
+
 * Baseline
 * Contains data, sets and scripts for processing the baseline data from WEO.
 *$include %project%\01_external_data\WEO\scr\01_read_weo_data.gms
@@ -28,7 +28,7 @@ $offtext
 *$include %project%\01_external_data\EU_reference\scr\02_aggregate_ref_data.gms
 
 * Scenario data
-*$include %project%\01_external_data\scenarios\scr\01_read_scenario_data.gms
+$include %project%\01_external_data\scenarios\scr\01_read_scenario_data.gms
 $include %project%\01_external_data\scenarios\scr\02_aggregate_scenario_data.gms
 
 
