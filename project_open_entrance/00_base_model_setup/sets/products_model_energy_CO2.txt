@@ -1,5 +1,3 @@
-pELEC	 'Electricity'
-pTRDI	 'Trade and distribution services of electricity'
 pOIL	 'Crude Oil'
 pGSL	 'Gasoline'
 pDSL	 'Diesel'

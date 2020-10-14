@@ -15,13 +15,32 @@ $include configuration.gms
 *$exit
 
 * Include file with extra simulation data
-$include %project%/00_base_model_setup/scr/read_extradata.gms
-$exit
+*$include %project%/00_base_model_setup/scr/read_extradata.gms
+*$exit
+
+********************************************************************************
+* Set for simulation (do not outcomment)
+
+* Choose from:
+* 01_BAU_loop_fprod
+* 01_BAU
+
+
+
+$if not set scenario      $setglobal      scenario   '01_BAU'
+
+* Do you want to calculate and export results from footprint?
+* footprint_y   (yes)
+* footprint_n   (no)
+
+$if not set footprint_yn      $setglobal      footprint_yn         'footprint_y'
+********************************************************************************
 
 * Run simulation
-*$include %project%/00_base_model_setup/scr/trial_simulation.gms
-$include %project%/00_base_model_setup/scr/trial_simulation_EU_ref.gms
+$include %project%/02_project_model_setup/scr/simulation_%scenario%.gms
 $exit
+
+
 
 * OPTION 2: use save and restarts, this allows to run the data-related codes
 * only ones. Be aware that for this options you would need to manually define

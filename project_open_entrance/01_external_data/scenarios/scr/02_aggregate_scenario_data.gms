@@ -202,10 +202,10 @@ Display
 * Because the base year changed from 2007 to 2011 in our case
 
 Parameters
-    techmix_norm(reg,ind,year,prd)                Technology mix in %
-    GDP_change(reg,year)                            GDP growth wrt 2007
-    POP_change(reg,year)                            POP growth wrt 2007
-    CO2budget_change(reg,year)
+    techmix_norm(reg,ind,year,prd)                  Technology mix in %
+    GDP_change_2011(reg,year)                            GDP growth wrt 2007
+    POP_change_2011(reg,year)                            POP growth wrt 2007
+    CO2budget_change_2011(reg,year)
 ;
 
 techmix_norm(reg,ind,year,prd)
@@ -213,20 +213,58 @@ techmix_norm(reg,ind,year,prd)
     = techmix_aggr(reg,ind,year,prd)
         / sum(prdd, techmix_aggr(reg,ind,year,prdd) );
 
-GDP_change(reg,year)$GDP_aggr(reg,'2011')
+GDP_change_2011(reg,year)$GDP_aggr(reg,'2011')
     = GDP_aggr(reg,year) / GDP_aggr(reg,'2011') ;
 
-POP_change(reg,year)$POP_aggr(reg,'2011')
+POP_change_2011(reg,year)$POP_aggr(reg,'2011')
     = POP_aggr(reg,year) / POP_aggr(reg,'2011') ;
 
-CO2budget_change(reg,year)$CO2budget_aggr(reg,'2011')
+CO2budget_change_2011(reg,year)$CO2budget_aggr(reg,'2011')
     = CO2budget_aggr(reg,year) / CO2budget_aggr(reg,'2011') ;
+
+* All regions that have no GDP trajectory, set the change equal to 1.
+GDP_change_2011(reg,year)$(not GDP_change_2011(reg,year)) = 1 ;
+POP_change_2011(reg,year)$(not POP_change_2011(reg,year)) = 1 ;
+CO2budget_change_2011(reg,year)$(not CO2budget_change_2011(reg,year)) = 1 ;
 
 Display
     techmix_norm
-    GDP_change
-    POP_change
+    GDP_change_2011
+    POP_change_2011
+    CO2budget_change_2011
+;
+
+
+* ========================== Create index wrt year before ======================
+
+* Because the indices above can be aggregated over products and industries
+* Because the base year changed from 2007 to 2011 in our case
+
+Parameters
+    techmix_norm(reg,ind,year,prd)                Technology mix in %
+    GDP_scen_change(reg,year)                            GDP growth wrt 2007
+    POP_scen_change(reg,year)                            POP growth wrt 2007
+    CO2budget_change(reg,year)
+;
+
+GDP_scen_change(reg,year)$GDP_aggr(reg,year-1)
+    = GDP_aggr(reg,year) / GDP_aggr(reg,year-1) ;
+
+POP_scen_change(reg,year)$POP_aggr(reg,year-1)
+    = POP_aggr(reg,year) / POP_aggr(reg,year-1) ;
+
+CO2budget_change(reg,year)$CO2budget_aggr(reg,year-1)
+    = CO2budget_aggr(reg,year) / CO2budget_aggr(reg,year-1) ;
+
+* All regions that have no GDP trajectory, set the change equal to 1.
+GDP_scen_change(reg,year)$(not GDP_scen_change(reg,year)) = 1 ;
+POP_scen_change(reg,year)$(not POP_scen_change(reg,year)) = 1 ;
+CO2budget_change(reg,year)$(not CO2budget_change(reg,year)) = 1 ;
+
+Display
+    GDP_scen_change
+    POP_scen_change
     CO2budget_change
 ;
-$exit
+
 

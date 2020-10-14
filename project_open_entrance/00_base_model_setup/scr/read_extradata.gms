@@ -13,6 +13,11 @@ $offtext
 
 Sets
     year            / 2011*2050 /
+    ener(prd)
+/
+$include %project%\00_base_model_setup\sets\products_model_energy.txt
+/
+
 ;
 
 Alias
@@ -35,5 +40,8 @@ $include %project%\01_external_data\scenarios\scr\02_aggregate_scenario_data.gms
 * Physical extensions
 * Contains data and scripts for processing the input data from the EXIOBASE
 * physical extensions database v2.2.0.
-* $include %project%\01_external_data\physical_extensions_2011\scr\01_read_EXIOBASE_physical_extensions_data.gms
-* $include %project%\01_external_data\physical_extensions_2011\scr\02_aggregate_EXIOBASE_physical_extensions_data.gms
+$include %project%\01_external_data\physical_extensions_2011\scr\01_read_EXIOBASE_physical_extensions_data.gms
+$include %project%\01_external_data\physical_extensions_2011\scr\02_aggregate_EXIOBASE_physical_extensions_data.gms
+$include %project%\01_external_data\physical_extensions_2011\scr\03_calculate_physical_coefficients.gms
+$include %project%\01_external_data\physical_extensions_2011\scr\04_rescale_physical_coefficients_2011.gms
+$include %project%\01_external_data\physical_extensions_2011\scr\05_rescale_physical_coefficients_2012-2050.gms

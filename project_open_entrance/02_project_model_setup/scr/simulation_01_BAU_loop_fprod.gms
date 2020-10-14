@@ -38,7 +38,21 @@ Parameter
     value_added_time(regg,ind,year)     value added
     FINAL_USE_time(reg,prd,reg,year)    final demand
 
+    prodK_year(regg,ind,year)           Save prodK by year
+    prodL_year(regg,ind,year)           Save prodL by year
+    GDP_change(reg,year)                Check how much GDP differs from value
+                                        # that is aimed at
+    GDP_check(regg,year)                Check if GDP is correct in the loop
+
 ;
+
+scalars
+    GDP_check_min                        Minimium of GDP_check
+    nr_loops                             Number of iterations in loop to find
+                                         # best fitting prodK and prodL for
+                                         # correct change in GDP
+;
+
 
 
 $include %project%\03_simulation_results\scr\save_simulation_results_declaration_parameters.gms
@@ -54,18 +68,9 @@ Parameters
 
 ;
 
-
-
-sets
-    reg_pol(reg)
-/ NLD /
-
-;
-
 * Read in productivity values for GDP loop
-$libinclude xlimport prodK_change %project%\02_project_model_setup\data\prodKL.xlsx prodK!a1:ap100000
-$libinclude xlimport prodL_change %project%\02_project_model_setup\data\prodKL.xlsx prodL!a1:ap100000
-
+*$libinclude xlimport prodK_change %project%\02_project_model_setup\data\prodKL.xlsx prodK!a1:ap100000
+*$libinclude xlimport prodL_change %project%\02_project_model_setup\data\prodKL.xlsx prodL!a1:ap100000
 
 
 * ============================= Include constraint =============================
@@ -74,21 +79,29 @@ $libinclude xlimport prodL_change %project%\02_project_model_setup\data\prodKL.x
 * ============================== Simulation setup ==============================
 
 loop(year$( ord(year) le 36 ),
+* There is an error after year 37. Figure out why this happens?
 
 * ============================== Baseline scenario =============================
 
 * Baseline
 * We do not need this anymore, when labor supply is endogenous.
 
-LS(reg)                 = LS_V.L(reg) ;
-LS_V.FX(reg)            = LS(reg) * POP_scen_change(reg,year) ;
+LS(reg)                          = LS_V.L(reg) ;
+LS_V.FX(reg)                     = LS(reg) * POP_scen_change(reg,year) ;
 
-* Forecasted GDP values via prodK and prodL
-prodK(regg,ind)      = prodK(regg,ind) * prodK_change(regg,ind,year) ;
-prodL(regg,ind)      = prodL(regg,ind) * prodL_change(regg,ind,year) ;
+KS(reg)             = KS_V.L(reg) ;
+LS(reg)             = LS_V.L(reg) ;
+
+prodK(reg,ind)
+                    = prodK(reg,ind) *
+                          ( 1 + (GDP_scen_change(reg,year) -1)
+                          - (POP_scen_change(reg,year) -1) );
+prodL(reg,ind)      = prodL(reg,ind)*
+                          (1 + (GDP_scen_change(reg,year) -1)
+                          - (POP_scen_change(reg,year) -1) );
 
 * transfers from the government to the households grows at the rate of population
-GTRF(reg) = GTRF(reg) * POP_scen_change(reg,year) ;
+GTRF(reg)           = GTRF(reg) * POP_scen_change(reg,year) ;
 
 * additional baseline assumption
 * reduce the share of output that is inventories
@@ -100,6 +113,26 @@ if(ord(year) gt 1,
 
 
 * =============================== Solve statement ==============================
+
+
+* Bring growth in GDP (by changing parameters prodK and prodL) as close as
+* possible to the growth in GDP in policy scenario. In general it holds that
+* deltaGDP=deltaPopulation+deltafprod. By use of a loop with at most 10 iterations
+* we find the fprod that gives us the best fitting GDP growth.
+
+GDP_change(regg,'2011')=1;
+GDP_check_min =1;
+GDP_check(regg,year)=0;
+nr_loops=0;
+
+while(nr_loops le 10 and GDP_check_min ge 0.00001,
+
+*fprod(kl,regg,ind)       = fprod(kl,regg,ind)*(1-GDP_check(regg,year)) ;
+*fprod_year(kl,regg,ind,year)  = fprod(kl,regg,ind);
+prodK(regg,ind)            = prodK(regg,ind)*(1-GDP_check(regg,year)) ;
+prodK_year(regg,ind,year)  = prodK(regg,ind);
+prodL(regg,ind)            = prodL(regg,ind)*(1-GDP_check(regg,year)) ;
+prodL_year(regg,ind,year)  = prodL(regg,ind);
 
 * To test whether your model is calibrated well, run the model without any
 * shocks. It should give an optimal solution even with zero iterations:
@@ -113,7 +146,24 @@ Solve CGE_MCP using MCP ;
 
 
 * Store simulation results after each year
-$include %project%\03_simulation_results\scr\save_simulation_results.gms
+$include %project%\03_simulation_results\scr\save_simulation_results_calibrate_fprod.gms
+
+GDP_change(regg,year)$GDPCONST_time(regg,year-1)
+                        = GDPCONST_time(regg,year)
+                           / GDPCONST_time(regg,year-1) ;
+
+GDP_check(regg,year)     = GDP_change(regg,year)
+                          - GDP_scen_change(regg,year) ;
+
+GDP_check_min           = abs(smax((regg),GDP_check(regg,year)));
+
+nr_loops                = nr_loops+1 ;
+
+Display nr_loops;
+Display GDP_check, GDP_check_min;
+
+);
+
 
 
 * =========================== Save selected results ============================
@@ -222,31 +272,11 @@ FINAL_USE_time(reg,prd,reg,year)
                 + SV_time(reg,prd,reg,year)
                 + EXPORT_ROW_time(reg,prd,year) ;
 
-*value_added_time(regg,ind,year)  =
-*    sum(reg, Y_time(regg,ind,year) * txd_ind(reg,regg,ind) ) +
-*    sum(reg, Y_time(regg,ind,year) * txd_inm(reg,regg,ind) ) +
-*    sum(reg, Y_time(regg,ind,year) * txd_tse(reg,regg,ind) ) +
-*    sum(reg, K_time(reg,regg,ind,year) ) +
-*    sum(reg, L_time(reg,regg,ind,year) ) ;
-
-* Estimate results on physical indicators:
-$include  %project%\03_simulation_results\scr\save_results_physical_extensions.gms
-
-* Estimate effect on employment
-*$include  %project%\02_project_model_setup\scr\sub_simulation_employment.gms
-
-* Calculate footprint
-*$include %project%/02_project_model_setup/scr/footprint.gms
-
-
 
 Display
-*EMIS_cons
 GDPCONST_time
 ;
 
 * ========================= Exporting of results ===============================
 
-* Drop all variables in GDX file
-EXECUTE_unload "gdx/%scenario%"
-;
+$include %project%\03_simulation_results\scr\export_simulation_results_calibrate_fprod.gms

@@ -144,7 +144,7 @@ coef_emis_c(reg,"FCH",emis_c)$
           / sum(ener_CO2, CONS_H_T(ener_CO2,reg) ) ;
 
 coef_emis_c(reg,"FCG",emis_c)$
-    sum(ener_CO2, CONS_H_T(ener_CO2,reg) )
+    sum(ener_CO2, CONS_G_T(ener_CO2,reg) )
         = Emissions_model(reg,"FCG",emis_c,'kg CO2-eq')
           / sum(ener_CO2, CONS_G_T(ener_CO2,reg) ) ;
 
