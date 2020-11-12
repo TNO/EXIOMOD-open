@@ -32,9 +32,14 @@ Alias
 *$include %project%\01_external_data\EU_reference\scr\01_read_ref_data.gms
 *$include %project%\01_external_data\EU_reference\scr\02_aggregate_ref_data.gms
 
+
 * Scenario data
 $include %project%\01_external_data\scenarios\scr\01_read_scenario_data.gms
 $include %project%\01_external_data\scenarios\scr\02_aggregate_scenario_data.gms
+
+* Data from OpenEntrance platform
+$include %project%\01_external_data\OEplatform\scr\01_read_OEplatform_data.gms
+$include %project%\01_external_data\OEplatform\scr\02_aggregate_OEplatform_data.gms
 
 
 * Physical extensions
