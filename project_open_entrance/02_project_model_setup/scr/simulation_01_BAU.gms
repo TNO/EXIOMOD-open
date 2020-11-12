@@ -66,26 +66,38 @@ sets
 $libinclude xlimport prodK_change %project%\02_project_model_setup\data\prodKL.xlsx prodK!a1:ap100000
 $libinclude xlimport prodL_change %project%\02_project_model_setup\data\prodKL.xlsx prodL!a1:ap100000
 
-
+Display
+prodK_change
+prodL_change
+;
 
 * ============================= Include constraint =============================
 * Possibly add the labour model
 
 * ============================== Simulation setup ==============================
 
-loop(year$( ord(year) le 36 ),
+loop(year$( ord(year) le 40 ),
 
 * ============================== Baseline scenario =============================
 
 * Baseline
 * We do not need this anymore, when labor supply is endogenous.
 
-LS(reg)                 = LS_V.L(reg) ;
-LS_V.FX(reg)            = LS(reg) * POP_scen_change(reg,year) ;
+LS(reg)                          = LS_V.L(reg) ;
+LS_V.FX(reg)                     = LS(reg) * POP_scen_change(reg,year) ;
+
+KS(reg)             = KS_V.L(reg) ;
+LS(reg)             = LS_V.L(reg) ;
+
 
 * Forecasted GDP values via prodK and prodL
+
 prodK(regg,ind)      = prodK(regg,ind) * prodK_change(regg,ind,year) ;
 prodL(regg,ind)      = prodL(regg,ind) * prodL_change(regg,ind,year) ;
+
+
+
+Display prodK, prodL;
 
 * transfers from the government to the households grows at the rate of population
 GTRF(reg) = GTRF(reg) * POP_scen_change(reg,year) ;

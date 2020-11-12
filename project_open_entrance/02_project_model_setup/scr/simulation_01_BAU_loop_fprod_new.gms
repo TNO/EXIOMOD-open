@@ -44,6 +44,8 @@ Parameter
                                         # that is aimed at
     GDP_check(regg,year)                Check if GDP is correct in the loop
 
+    GDP_scen_change_KS(reg,year)        Change in KS
+
 ;
 
 scalars
@@ -56,6 +58,25 @@ scalars
 
 
 $include %project%\03_simulation_results\scr\save_simulation_results_declaration_parameters.gms
+
+
+
+
+* =============================Small adjustments in GDP loop ===================
+
+GDP_scen_change_KS(reg,year)
+    = GDP_scen_change(reg,year) ;
+
+* Sector iELCO in region SVN results in an error in GDP loop. This error is
+* caused by KS that is increasing too fast, which results in price PnKL that
+* goes towards zero. At some point, in year 2034, this price is equal to zero
+* and there is no solution anymore. Therefore, set half the KS increase for this
+* region.
+* We do not set it to 1, because then this region is in advantage compared to
+* other regions. If SVN only has a higher productivity, this acutally increases
+* PnKL. Where increasing KS decreases price PnKL.
+GDP_scen_change_KS('SVN',year)
+    = (GDP_scen_change_KS('SVN',year)-1)*0.5 +1 ;
 
 
 * ============================= Simulation preparation =========================
@@ -79,12 +100,15 @@ Parameters
 * ============================== Simulation setup ==============================
 
 loop(year$( ord(year) le 40 ),
-* There is an error after year 37. Figure out why this happens?
+
 
 * ============================== Baseline scenario =============================
 
 * Baseline
 * We do not need this anymore, when labor supply is endogenous.
+
+KS(reg)                          = KS_V.L(reg) ;
+KS_V.FX(reg)                     = KS(reg) * GDP_scen_change_KS(reg,year) ;
 
 LS(reg)                          = LS_V.L(reg) ;
 LS_V.FX(reg)                     = LS(reg) * POP_scen_change(reg,year) ;
@@ -92,11 +116,11 @@ LS_V.FX(reg)                     = LS(reg) * POP_scen_change(reg,year) ;
 KS(reg)             = KS_V.L(reg) ;
 LS(reg)             = LS_V.L(reg) ;
 
-prodK(reg,ind)
-                    = prodK(reg,ind) *
+prodK(reg,ind)      = prodK(reg,ind) *
                           ( 1 + (GDP_scen_change(reg,year) -1)
                           - (POP_scen_change(reg,year) -1) );
-prodL(reg,ind)      = prodL(reg,ind)*
+prodL(reg,ind)      = prodL(reg,ind)
+                            *
                           (1 + (GDP_scen_change(reg,year) -1)
                           - (POP_scen_change(reg,year) -1) );
 
@@ -110,7 +134,7 @@ if(ord(year) gt 1,
     theta_sv(reg,prd,regg) = theta_sv(reg,prd,regg) * 0.97 ;
 ) ;
 
-
+Display KS;
 
 * =============================== Solve statement ==============================
 

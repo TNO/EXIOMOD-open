@@ -11,7 +11,7 @@ $include configuration.gms
 
 * OPTION 1: run all the files for every simulation, using $include
 * Include base model file
-*$include EXIOMOD_base_model/scr/00_base_model_prepare.gms
+*$include %project%/00_base_model_setup/scr/00_base_model_prepare_OpenEntrance.gms
 *$exit
 
 * Include file with extra simulation data
@@ -23,11 +23,15 @@ $include configuration.gms
 
 * Choose from:
 * 01_BAU_loop_fprod
+* 01_BAU_loop_fprod_new
 * 01_BAU
+* 01_BAU_new
+* 02_test_H2
+* 03_test_elecmix
 
 
 
-$if not set scenario      $setglobal      scenario   '01_BAU'
+$if not set scenario      $setglobal      scenario   '03_test_elecmix'
 
 * Do you want to calculate and export results from footprint?
 * footprint_y   (yes)
@@ -37,10 +41,11 @@ $if not set footprint_yn      $setglobal      footprint_yn         'footprint_y'
 ********************************************************************************
 
 * Run simulation
-$include %project%/02_project_model_setup/scr/simulation_%scenario%.gms
-$exit
+*$include %project%/02_project_model_setup/scr/simulation_%scenario%.gms
+*$exit
 
-
+*$include %project%/02_project_model_setup/scr/merge_gdx_files.gms
+*$exit
 
 * OPTION 2: use save and restarts, this allows to run the data-related codes
 * only ones. Be aware that for this options you would need to manually define

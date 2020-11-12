@@ -38,25 +38,31 @@ Parameter
     value_added_time(regg,ind,year)     value added
     FINAL_USE_time(reg,prd,reg,year)    final demand
 
-    prodK_year(regg,ind,year)           Save prodK by year
-    prodL_year(regg,ind,year)           Save prodL by year
-    GDP_change(reg,year)                Check how much GDP differs from value
-                                        # that is aimed at
-    GDP_check(regg,year)                Check if GDP is correct in the loop
+* Extra parameters for in loop
+    coprodB_loop(reg,prd,regg,ind,year)     coprodB in loop
 
+    GDP_scen_change_KS(reg,year)        Change in KS
 ;
-
-scalars
-    GDP_check_min                        Minimium of GDP_check
-    nr_loops                             Number of iterations in loop to find
-                                         # best fitting prodK and prodL for
-                                         # correct change in GDP
-;
-
 
 
 $include %project%\03_simulation_results\scr\save_simulation_results_declaration_parameters.gms
 
+
+* =============================Small adjustments in GDP loop ===================
+
+GDP_scen_change_KS(reg,year)
+    = GDP_scen_change(reg,year) ;
+
+* Sector iELCO in region SVN results in an error in GDP loop. This error is
+* caused by KS that is increasing too fast, which results in price PnKL that
+* goes towards zero. At some point, in year 2034, this price is equal to zero
+* and there is no solution anymore. Therefore, set half the KS increase for this
+* region.
+* We do not set it to 1, because then this region is in advantage compared to
+* other regions. If SVN only has a higher productivity, this acutally increases
+* PnKL. Where increasing KS decreases price PnKL.
+GDP_scen_change_KS('SVN',year)
+    = (GDP_scen_change_KS('SVN',year)-1)*0.5 +1 ;
 
 * ============================= Simulation preparation =========================
 
@@ -68,9 +74,48 @@ Parameters
 
 ;
 
+Parameter
+    sum_coprodB(reg,prd)
+;
+
+
+sets
+    reg_pol(reg)
+*/ HUN /
+    ind_no_elec(ind)
+
+    ind_elec(ind)
+/
+iELCC     'Production of electricity by coal'
+iELCG     'Production of electricity by gas'
+iELCN     'Production of electricity by nuclear'
+iELCH     'Production of electricity by hydro'
+iELCW     'Production of electricity by wind'
+iELCO     'Production of electricity by petroleum and other oil derivatives'
+iELCB     'Production of electricity by biomass and waste'
+iELCS     'Production of electricity by solar photovoltaic'
+iELCE     'Production of electricity nec'
+iELCT     'Production of electricity by Geothermal'
+/
+;
+
+reg_pol(reg)= yes;
+
+ind_no_elec(ind)=yes;
+ind_no_elec(ind_elec)=no;
+
+
+Alias (ind_no_elec,indd_no_elec);
+
 * Read in productivity values for GDP loop
-*$libinclude xlimport prodK_change %project%\02_project_model_setup\data\prodKL.xlsx prodK!a1:ap100000
-*$libinclude xlimport prodL_change %project%\02_project_model_setup\data\prodKL.xlsx prodL!a1:ap100000
+$libinclude xlimport prodK_change %project%\02_project_model_setup\data\prodKL.xlsx prodK!a1:ap100000
+$libinclude xlimport prodL_change %project%\02_project_model_setup\data\prodKL.xlsx prodL!a1:ap100000
+
+
+Display
+prodK_change
+prodL_change
+;
 
 
 * ============================= Include constraint =============================
@@ -79,12 +124,14 @@ Parameters
 * ============================== Simulation setup ==============================
 
 loop(year$( ord(year) le 40 ),
-* There is an error after year 37. Figure out why this happens?
 
 * ============================== Baseline scenario =============================
 
 * Baseline
 * We do not need this anymore, when labor supply is endogenous.
+
+KS(reg)                          = KS_V.L(reg) ;
+KS_V.FX(reg)                     = KS(reg) * GDP_scen_change_KS(reg,year) ;
 
 LS(reg)                          = LS_V.L(reg) ;
 LS_V.FX(reg)                     = LS(reg) * POP_scen_change(reg,year) ;
@@ -92,16 +139,34 @@ LS_V.FX(reg)                     = LS(reg) * POP_scen_change(reg,year) ;
 KS(reg)             = KS_V.L(reg) ;
 LS(reg)             = LS_V.L(reg) ;
 
-prodK(reg,ind)
-                    = prodK(reg,ind) *
-                          ( 1 + (GDP_scen_change(reg,year) -1)
-                          - (POP_scen_change(reg,year) -1) );
-prodL(reg,ind)      = prodL(reg,ind)*
-                          (1 + (GDP_scen_change(reg,year) -1)
-                          - (POP_scen_change(reg,year) -1) );
+* Because the model cannot handle efficiencies in this sector. However, when
+* numbers have increased over the years, it is possible.
+
+* Forecasted GDP values via prodK and prodL
+prodK(regg,ind)      = prodK(regg,ind) * prodK_change(regg,ind,year) ;
+prodL(regg,ind)      = prodL(regg,ind) * prodL_change(regg,ind,year) ;
+
+coprodB(reg_pol,'pELEC',reg_pol,ind)
+    = coprodB(reg_pol,'pELEC',reg_pol,ind) *  electricity_mix_change('GENeSYS-MOD 2.9.0-oe','Directed Transition 1.0',reg_pol,ind,year) ;
+
+* rescale pNG production
+coprodB(reg_pol,'pELEC',reg_pol,ind_no_elec)
+    $sum((regg,indd_no_elec),coprodB(reg_pol,'pELEC',regg,indd_no_elec))
+    = coprodB(reg_pol,'pELEC',reg_pol,ind_no_elec)
+        / sum((regg,indd_no_elec),coprodB(reg_pol,'pELEC',regg,indd_no_elec))
+        * (1 - sum(ind_elec,coprodB(reg_pol,'pELEC',reg_pol,ind_elec)) ) ;
+
+sum_coprodB(reg,'pNG') =
+    sum((regg,ind),coprodB(reg,'pNG',regg,ind)) ;
+
+coprodB_loop(reg,prd,regg,ind,year) =  coprodB(reg,prd,regg,ind) ;
+
+Display coprodB, sum_coprodB ;
+
+Display prodK, prodL ;
 
 * transfers from the government to the households grows at the rate of population
-GTRF(reg)           = GTRF(reg) * POP_scen_change(reg,year) ;
+GTRF(reg) = GTRF(reg) * POP_scen_change(reg,year) ;
 
 * additional baseline assumption
 * reduce the share of output that is inventories
@@ -113,26 +178,6 @@ if(ord(year) gt 1,
 
 
 * =============================== Solve statement ==============================
-
-
-* Bring growth in GDP (by changing parameters prodK and prodL) as close as
-* possible to the growth in GDP in policy scenario. In general it holds that
-* deltaGDP=deltaPopulation+deltafprod. By use of a loop with at most 10 iterations
-* we find the fprod that gives us the best fitting GDP growth.
-
-GDP_change(regg,'2011')=1;
-GDP_check_min =1;
-GDP_check(regg,year)=0;
-nr_loops=0;
-
-while(nr_loops le 10 and GDP_check_min ge 0.00001,
-
-*fprod(kl,regg,ind)       = fprod(kl,regg,ind)*(1-GDP_check(regg,year)) ;
-*fprod_year(kl,regg,ind,year)  = fprod(kl,regg,ind);
-prodK(regg,ind)            = prodK(regg,ind)*(1-GDP_check(regg,year)) ;
-prodK_year(regg,ind,year)  = prodK(regg,ind);
-prodL(regg,ind)            = prodL(regg,ind)*(1-GDP_check(regg,year)) ;
-prodL_year(regg,ind,year)  = prodL(regg,ind);
 
 * To test whether your model is calibrated well, run the model without any
 * shocks. It should give an optimal solution even with zero iterations:
@@ -146,24 +191,7 @@ Solve CGE_MCP using MCP ;
 
 
 * Store simulation results after each year
-$include %project%\03_simulation_results\scr\save_simulation_results_calibrate_fprod.gms
-
-GDP_change(regg,year)$GDPCONST_time(regg,year-1)
-                        = GDPCONST_time(regg,year)
-                           / GDPCONST_time(regg,year-1) ;
-
-GDP_check(regg,year)     = GDP_change(regg,year)
-                          - GDP_scen_change(regg,year) ;
-
-GDP_check_min           = abs(smax((regg),GDP_check(regg,year)));
-
-nr_loops                = nr_loops+1 ;
-
-Display nr_loops;
-Display GDP_check, GDP_check_min;
-
-);
-
+$include %project%\03_simulation_results\scr\save_simulation_results.gms
 
 
 * =========================== Save selected results ============================
@@ -246,31 +274,40 @@ Loop(reg,
 
 * ========================= Post-processing of results =========================
 
-Display
-Y_time
-X_time
-*LS_ENDO_time
-Y_change
-X_change
-Yreg_change
-CBUD_H_check
-CBUD_G_check
-CBUD_I_check
-numer_check
+Parameter
+    TOTCONS_time(regg,year)
+    CONS_H_TT_time(regg,year)
+    CONS_G_TT_time(regg,year)
+    INTER_USE_TT_time(regg,year)
+    INTER_USE_MM_time(prd,regg,year)
+    INTER_USE_DD_time(prd,regg,year)
 ;
 
 
-value_added_time(regg,ind,year)  =
-    Y_time(regg,ind,year)
-    - sum(prd, INTER_USE_T_time(prd,regg,ind,year) *
-    ( 1 + tc_ind(prd,regg,ind) ) ) ;
+TOTCONS_time(regg,year)
+    = sum(prd,CONS_H_T_time(prd,regg,year))
+        + sum(prd,CONS_H_T_time(prd,regg,year))
+        + sum(prd,GFCF_T_time(prd,regg,year)) ;
 
-FINAL_USE_time(reg,prd,reg,year)
-                = CONS_H_D_time(prd,reg,year)
-                + CONS_G_D_time(prd,reg,year)
-                + GFCF_D_time(prd,reg,year)
-                + SV_time(reg,prd,reg,year)
-                + EXPORT_ROW_time(reg,prd,year) ;
+CONS_H_TT_time(regg,year)
+    = sum(prd,CONS_H_T_time(prd,regg,year)) ;
+
+CONS_G_TT_time(regg,year)
+    = sum(prd,CONS_G_T_time(prd,regg,year)) ;
+
+INTER_USE_TT_time(regg,year)
+    = sum((prd,ind),INTER_USE_T_time(prd,regg,ind,year)) ;
+
+INTER_USE_MM_time(prd,regg,year)
+    = sum(ind,INTER_USE_M_time(prd,regg,ind,year)) ;
+
+INTER_USE_DD_time(prd,regg,year)
+    = sum(ind,INTER_USE_D_time(prd,regg,ind,year)) ;
+
+
+
+* Estimate results on physical indicators:
+$include  %project%\03_simulation_results\scr\save_results_physical_extensions.gms
 
 
 Display
@@ -279,4 +316,6 @@ GDPCONST_time
 
 * ========================= Exporting of results ===============================
 
-$include %project%\03_simulation_results\scr\export_simulation_results_calibrate_fprod.gms
+* Drop all variables in GDX file
+EXECUTE_unload "gdx/%scenario%"
+;
