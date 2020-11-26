@@ -13,10 +13,10 @@ $offtext
 
 Sets
     year            / 2011*2050 /
-    ener(prd)
-/
-$include %project%\00_base_model_setup\sets\products_model_energy.txt
-/
+*    ener(prd)
+*/
+*$include %project%\00_base_model_setup\sets\products_model_energy.txt
+*/
 
 ;
 

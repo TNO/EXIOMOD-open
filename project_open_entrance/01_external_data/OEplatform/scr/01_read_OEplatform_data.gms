@@ -1,9 +1,9 @@
 
 $ontext
 
-File:   01-read-ref-data.gms
-Author: Anke van den Beukel
-Date:   17-12-2019
+File:   01_read_OEplatform_data.gms
+Author: Hettie Boonman
+Date:   26-11-2020
 
 This script reads in template data from the EU reference scenario.
 
@@ -11,25 +11,12 @@ This script reads in template data from the EU reference scenario.
 PARAMETER NAME
 Resulting parameters are named according to:
 
-    1. Indicator
-    "elec"        electricity (TWh)
-
-    2. Data source (should be the same as name of the library)
-    "_ref"        EU reference database database
-
-    3. Extension "_orig" is added to indicate that it is not processed
-
-Example of resulting parameter: elec_ref_orig
-
 
 INPUTS
-    %project%\library_ref\data\data_template.xlsx
+    %project%\01_external_data\OEplatform\data\GENeSYS-MOD-pathways_v1.0.xlsx
 
 OUTPUTS
-    elec_ref_orig(reg_ref, source_ref, year_ref)     ref electricity mix in
-                                                     original classification
-    elec_ref_perc(reg_ref,source_ref,year_ref)       percentage change in
-                                                     electricity mix
+    OEdatabase_data(mod_OE,sce_OE,reg_OE,var_OE,unit_OE,year_OE)
 
 $offtext
 

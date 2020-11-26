@@ -15,8 +15,8 @@ $include configuration.gms
 *$exit
 
 * Include file with extra simulation data
-*$include %project%/00_base_model_setup/scr/read_extradata.gms
-*$exit
+$include %project%/00_base_model_setup/scr/read_extradata.gms
+$exit
 
 ********************************************************************************
 * Set for simulation (do not outcomment)
@@ -28,6 +28,7 @@ $include configuration.gms
 * 01_BAU_new
 * 02_test_H2
 * 03_test_elecmix
+* 04_CO2tax
 
 
 

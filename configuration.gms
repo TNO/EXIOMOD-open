@@ -27,7 +27,7 @@ $if not set project      $setglobal      project         'project_open_entrance'
 *     have fixed Leontief coefficients
 * type 'KL-E': substitution possible between production factors and energy,
 *     other inputs have fixed Leontief coefficients
-$if not set prodfunc     $setglobal      prodfunc        'KL'
+$if not set prodfunc     $setglobal      prodfunc        'KL-E'
 
 * form of demand functions: choose between 'CES' and 'LES-CEShh'
 * type 'CES': demand functions of all final consumers follows CES utility
