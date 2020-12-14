@@ -82,6 +82,13 @@ L_time=rgdx('gdx\merged_gdx\merged',L_time)
 %         X_time.uels{1,1}{1,1}
 
 
+
+%% Database is not yet ready for industry iH2
+% So take this industry out. 
+
+
+
+
 %% X_time
 "X_time"
 
@@ -98,7 +105,7 @@ X_time_OE(1:size(X_time.val,1),1) = ["EXIOMOD 2.0" ];
 X_time_OE(:,2)=stringtable(:,1);
 X_time_OE(:,3)=stringtable(:,2);
 X_time_OE(:,4)=strcat("Output|Product|",stringtable(:,3));
-X_time_OE(:,5)="million euro/yr";
+X_time_OE(:,5)="million EUR/yr";
 X_time_OE(:,6)=stringtable(:,4);
 X_time_OE(:,7)=X_time.val(:,5);
 
@@ -112,6 +119,11 @@ X_time_OE_table_unstack = unstack(X_time_OE_table,'Value','Year');
 
 %% Y_time
 "Y_time"
+
+%%%%%%%%%%% TAKE OUT iH2 for now!!
+idx_iH2=find(Y_time.uels{1,1}=="iH2");
+Y_time.val(Y_time.val(:,3)==idx_iH2,:)=[];
+%%%%%%%%%%%
 
 clear stringtable
 tic
@@ -127,7 +139,7 @@ Y_time_OE(1:size(Y_time.val,1),1) = ["EXIOMOD 2.0" ];
 Y_time_OE(:,2)=stringtable(:,1);
 Y_time_OE(:,3)=stringtable(:,2);
 Y_time_OE(:,4)=strcat("Output|Industry|",stringtable(:,3));
-Y_time_OE(:,5)="million euro/yr";
+Y_time_OE(:,5)="million EUR/yr";
 Y_time_OE(:,6)=stringtable(:,4);
 Y_time_OE(:,7)=Y_time.val(:,5);
 
@@ -140,6 +152,11 @@ Y_time_OE_table_unstack = unstack(Y_time_OE_table,'Value','Year');
 
 %% K_time
 "K_time"
+
+%%%%%%%%%%% TAKE OUT iH2 for now!!
+idx_iH2=find(K_time.uels{1,1}=="iH2");
+K_time.val(K_time.val(:,4)==idx_iH2,:)=[];
+%%%%%%%%%%%
 
 clear stringtable
 tic
@@ -155,7 +172,7 @@ K_time_OE(1:size(K_time.val,1),1) = ["EXIOMOD 2.0" ];           % Model
 K_time_OE(:,2)=stringtable(:,1);                                % Scenario
 K_time_OE(:,3)=stringtable(:,2);                                % Region
 K_time_OE(:,4)=strcat("Capital|",stringtable(:,4));     % Variable
-K_time_OE(:,5)="million euro/yr";                               % Unit
+K_time_OE(:,5)="million EUR/yr";                               % Unit
 K_time_OE(:,6)=stringtable(:,5);                                % Year
 K_time_OE(:,7)=K_time.val(:,6);                                 % Value
 
@@ -182,8 +199,8 @@ toc
 PK_time_OE(1:size(PK_time.val,1),1) = ["EXIOMOD 2.0" ];
 PK_time_OE(:,2)=stringtable(:,1);
 PK_time_OE(:,3)=stringtable(:,2);
-PK_time_OE(:,4)="Capital Price Index|"; % Note mistake with nomenclature
-PK_time_OE(:,5)="";
+PK_time_OE(:,4)="Capital Price Index"; % Note mistake with nomenclature
+PK_time_OE(:,5)="-";
 PK_time_OE(:,6)=stringtable(:,3);
 PK_time_OE(:,7)=PK_time.val(:,4);
 
@@ -211,7 +228,7 @@ L_time_OE(1:size(L_time.val,1),1) = ["EXIOMOD 2.0" ];           % Model
 L_time_OE(:,2)=stringtable(:,1);                                % Scenario
 L_time_OE(:,3)=stringtable(:,2);                                % Region
 L_time_OE(:,4)=strcat("Labor|",stringtable(:,4));     % Variable
-L_time_OE(:,5)="million euro/yr";                               % Unit
+L_time_OE(:,5)="million EUR/yr";                               % Unit
 L_time_OE(:,6)=stringtable(:,5);                                % Year
 L_time_OE(:,7)=L_time.val(:,6);                                 % Value
 
@@ -238,8 +255,8 @@ toc
 PL_time_OE(1:size(PL_time.val,1),1) = ["EXIOMOD 2.0" ];
 PL_time_OE(:,2)=stringtable(:,1);
 PL_time_OE(:,3)=stringtable(:,2);
-PL_time_OE(:,4)="Labor Price Index|"; % Note mistake with nomenclature
-PL_time_OE(:,5)="";
+PL_time_OE(:,4)="Labor Price Index"; % Note mistake with nomenclature
+PL_time_OE(:,5)="-";
 PL_time_OE(:,6)=stringtable(:,3);
 PL_time_OE(:,7)=PL_time.val(:,4);
 
@@ -266,8 +283,8 @@ toc
 P_time_OE(1:size(P_time.val,1),1) = ["EXIOMOD 2.0" ];
 P_time_OE(:,2)=stringtable(:,1);
 P_time_OE(:,3)=stringtable(:,2);
-P_time_OE(:,4)=strcat("Price index|",stringtable(:,3)); % Note mistake with nomenclature
-P_time_OE(:,5)="";
+P_time_OE(:,4)=strcat("Product Price Index|",stringtable(:,3)); % Note mistake with nomenclature
+P_time_OE(:,5)="-";
 P_time_OE(:,6)=stringtable(:,4);
 P_time_OE(:,7)=P_time.val(:,5);
 
@@ -295,7 +312,7 @@ GDPCONST_time_OE(1:size(GDPCONST_time.val,1),1) = ["EXIOMOD 2.0" ];
 GDPCONST_time_OE(:,2)=stringtable(:,1);
 GDPCONST_time_OE(:,3)=stringtable(:,2);
 GDPCONST_time_OE(:,4)="GDP|MER"; % Note mistake with nomenclature
-GDPCONST_time_OE(:,5)="million euro/yr";
+GDPCONST_time_OE(:,5)="million EUR/yr";
 GDPCONST_time_OE(:,6)=stringtable(:,3);
 GDPCONST_time_OE(:,7)=GDPCONST_time.val(:,4);
 
@@ -323,7 +340,7 @@ CONS_H_M_time_OE(1:size(CONS_H_M_time.val,1),1) = ["EXIOMOD 2.0" ];
 CONS_H_M_time_OE(:,2)=stringtable(:,1);
 CONS_H_M_time_OE(:,3)=stringtable(:,3);
 CONS_H_M_time_OE(:,4)=strcat("Consumption|Households|",stringtable(:,2),"|Imported");
-CONS_H_M_time_OE(:,5)="million euro/yr";
+CONS_H_M_time_OE(:,5)="million EUR/yr";
 CONS_H_M_time_OE(:,6)=stringtable(:,4);
 CONS_H_M_time_OE(:,7)=CONS_H_M_time.val(:,5);
 
@@ -351,7 +368,7 @@ CONS_H_D_time_OE(1:size(CONS_H_D_time.val,1),1) = ["EXIOMOD 2.0" ];
 CONS_H_D_time_OE(:,2)=stringtable(:,1);
 CONS_H_D_time_OE(:,3)=stringtable(:,3);
 CONS_H_D_time_OE(:,4)=strcat("Consumption|Households|",stringtable(:,2),"|Domestic");
-CONS_H_D_time_OE(:,5)="million euro/yr";
+CONS_H_D_time_OE(:,5)="million EUR/yr";
 CONS_H_D_time_OE(:,6)=stringtable(:,4);
 CONS_H_D_time_OE(:,7)=CONS_H_D_time.val(:,5);
 
@@ -379,7 +396,7 @@ CONS_G_M_time_OE(1:size(CONS_G_M_time.val,1),1) = ["EXIOMOD 2.0" ];
 CONS_G_M_time_OE(:,2)=stringtable(:,1);
 CONS_G_M_time_OE(:,3)=stringtable(:,3);
 CONS_G_M_time_OE(:,4)=strcat("Consumption|Government|",stringtable(:,2),"|Imported");
-CONS_G_M_time_OE(:,5)="million euro/yr";
+CONS_G_M_time_OE(:,5)="million EUR/yr";
 CONS_G_M_time_OE(:,6)=stringtable(:,4);
 CONS_G_M_time_OE(:,7)=CONS_G_M_time.val(:,5);
 
@@ -407,7 +424,7 @@ CONS_G_D_time_OE(1:size(CONS_G_D_time.val,1),1) = ["EXIOMOD 2.0" ];
 CONS_G_D_time_OE(:,2)=stringtable(:,1);
 CONS_G_D_time_OE(:,3)=stringtable(:,3);
 CONS_G_D_time_OE(:,4)=strcat("Consumption|Government|",stringtable(:,2),"|Domestic");
-CONS_G_D_time_OE(:,5)="million euro/yr";
+CONS_G_D_time_OE(:,5)="million EUR/yr";
 CONS_G_D_time_OE(:,6)=stringtable(:,4);
 CONS_G_D_time_OE(:,7)=CONS_G_D_time.val(:,5);
 
@@ -434,8 +451,8 @@ toc
 GFCF_M_time_OE(1:size(GFCF_M_time.val,1),1) = ["EXIOMOD 2.0" ];
 GFCF_M_time_OE(:,2)=stringtable(:,1);
 GFCF_M_time_OE(:,3)=stringtable(:,3);
-GFCF_M_time_OE(:,4)=strcat("Gross Capital Formation|",stringtable(:,2),"|Imported");
-GFCF_M_time_OE(:,5)="million euro/yr";
+GFCF_M_time_OE(:,4)=strcat("Consumption|Gross Capital Formation|",stringtable(:,2),"|Imported");
+GFCF_M_time_OE(:,5)="million EUR/yr";
 GFCF_M_time_OE(:,6)=stringtable(:,4);
 GFCF_M_time_OE(:,7)=GFCF_M_time.val(:,5);
 
@@ -462,8 +479,8 @@ toc
 GFCF_D_time_OE(1:size(GFCF_D_time.val,1),1) = ["EXIOMOD 2.0" ];
 GFCF_D_time_OE(:,2)=stringtable(:,1);
 GFCF_D_time_OE(:,3)=stringtable(:,3);
-GFCF_D_time_OE(:,4)=strcat("Gross Capital Formation|",stringtable(:,2),"|Domestic");
-GFCF_D_time_OE(:,5)="million euro/yr";
+GFCF_D_time_OE(:,4)=strcat("Consumption|Gross Capital Formation|",stringtable(:,2),"|Domestic");
+GFCF_D_time_OE(:,5)="million EUR/yr";
 GFCF_D_time_OE(:,6)=stringtable(:,4);
 GFCF_D_time_OE(:,7)=GFCF_D_time.val(:,5);
 
@@ -492,7 +509,7 @@ TOTCONS_time_OE(1:size(TOTCONS_time.val,1),1) = ["EXIOMOD 2.0" ];
 TOTCONS_time_OE(:,2)=stringtable(:,1);
 TOTCONS_time_OE(:,3)=stringtable(:,2);
 TOTCONS_time_OE(:,4)=strcat("Consumption");
-TOTCONS_time_OE(:,5)="million euro/yr";
+TOTCONS_time_OE(:,5)="million EUR/yr";
 TOTCONS_time_OE(:,6)=stringtable(:,3);
 TOTCONS_time_OE(:,7)=TOTCONS_time.val(:,4);
 
@@ -521,7 +538,7 @@ CONS_H_TT_time_OE(1:size(CONS_H_TT_time.val,1),1) = ["EXIOMOD 2.0" ];
 CONS_H_TT_time_OE(:,2)=stringtable(:,1);
 CONS_H_TT_time_OE(:,3)=stringtable(:,2);
 CONS_H_TT_time_OE(:,4)=strcat("Consumption|Households");
-CONS_H_TT_time_OE(:,5)="million euro/yr";
+CONS_H_TT_time_OE(:,5)="million EUR/yr";
 CONS_H_TT_time_OE(:,6)=stringtable(:,3);
 CONS_H_TT_time_OE(:,7)=CONS_H_TT_time.val(:,4);
 
@@ -549,7 +566,7 @@ CONS_G_TT_time_OE(1:size(CONS_G_TT_time.val,1),1) = ["EXIOMOD 2.0" ];
 CONS_G_TT_time_OE(:,2)=stringtable(:,1);
 CONS_G_TT_time_OE(:,3)=stringtable(:,2);
 CONS_G_TT_time_OE(:,4)=strcat("Consumption|Government");
-CONS_G_TT_time_OE(:,5)="million euro/yr";
+CONS_G_TT_time_OE(:,5)="million EUR/yr";
 CONS_G_TT_time_OE(:,6)=stringtable(:,3);
 CONS_G_TT_time_OE(:,7)=CONS_G_TT_time.val(:,4);
 
@@ -578,7 +595,7 @@ INTER_USE_TT_time_OE(1:size(INTER_USE_TT_time.val,1),1) = ["EXIOMOD 2.0" ];
 INTER_USE_TT_time_OE(:,2)=stringtable(:,1);
 INTER_USE_TT_time_OE(:,3)=stringtable(:,2);
 INTER_USE_TT_time_OE(:,4)=strcat("Consumption|Industry");
-INTER_USE_TT_time_OE(:,5)="million euro/yr";
+INTER_USE_TT_time_OE(:,5)="million EUR/yr";
 INTER_USE_TT_time_OE(:,6)=stringtable(:,3);
 INTER_USE_TT_time_OE(:,7)=INTER_USE_TT_time.val(:,4);
 
@@ -606,8 +623,8 @@ toc
 INTER_USE_MM_time_OE(1:size(INTER_USE_MM_time.val,1),1) = ["EXIOMOD 2.0" ];
 INTER_USE_MM_time_OE(:,2)=stringtable(:,1);
 INTER_USE_MM_time_OE(:,3)=stringtable(:,3);
-INTER_USE_MM_time_OE(:,4)=strcat("Consumption|Industry|",stringtable(:,2),"|Import");
-INTER_USE_MM_time_OE(:,5)="million euro/yr";
+INTER_USE_MM_time_OE(:,4)=strcat("Consumption|Industry|",stringtable(:,2),"|Imported");
+INTER_USE_MM_time_OE(:,5)="million EUR/yr";
 INTER_USE_MM_time_OE(:,6)=stringtable(:,4);
 INTER_USE_MM_time_OE(:,7)=INTER_USE_MM_time.val(:,5);
 
@@ -635,7 +652,7 @@ INTER_USE_DD_time_OE(1:size(INTER_USE_DD_time.val,1),1) = ["EXIOMOD 2.0" ];
 INTER_USE_DD_time_OE(:,2)=stringtable(:,1);
 INTER_USE_DD_time_OE(:,3)=stringtable(:,3);
 INTER_USE_DD_time_OE(:,4)=strcat("Consumption|Industry|",stringtable(:,2),"|Domestic");
-INTER_USE_DD_time_OE(:,5)="million euro/yr";
+INTER_USE_DD_time_OE(:,5)="million EUR/yr";
 INTER_USE_DD_time_OE(:,6)=stringtable(:,4);
 INTER_USE_DD_time_OE(:,7)=INTER_USE_DD_time.val(:,5);
 
@@ -714,9 +731,16 @@ for i=1:size(Country_def,1)
    xxx=find(ismember(OE_table.Region,Country_def(i,1)));
    OE_table.Region(xxx)=Country_def(i,2); 
 end
-    
+   
 
-    
+%% Create metadata
+
+meta_table=table(unique(OE_table.Scenario))
+meta_table.Properties.VariableNames{'Var1'} = 'scenario';
+meta_table.model(:)="EXIOMOD 2.0";
+meta_table.exclude(:)="FALSE";
+meta_table = meta_table(:,{'model' 'scenario' 'exclude'});
+
 %% Write data to excel
 % writetable(P_time_OE_table_unstack,'project_open_entrance\03_simulation_results\Output\Result_matlab.xlsx','Sheet','P_time')
 % writetable(X_time_OE_table_unstack,'project_open_entrance\03_simulation_results\Output\Result_matlab.xlsx','Sheet','X_time')
@@ -735,5 +759,9 @@ end
 % writetable(GFCF_D_time_OE_table_unstack,'project_open_entrance\03_simulation_results\Output\Result_matlab.xlsx','Sheet','GFCF_D_time')
 % writetable(GFCF_M_time_OE_table_unstack,'project_open_entrance\03_simulation_results\Output\Result_matlab.xlsx','Sheet','GFCF_M_time')
 
-writetable(OE_table,'project_open_entrance\03_simulation_results\Output\Result_matlab.xlsx','Sheet','data')
+!del 'project_open_entrance\03_simulation_results\Output\Result_matlab.xlsx'
+
+writetable(OE_table,'project_open_entrance\03_simulation_results\Output\Result_matlab.xlsx','Sheet','data','WriteMode','overwritesheet')
+writetable(meta_table,'project_open_entrance\03_simulation_results\Output\Result_matlab.xlsx','Sheet','meta','WriteMode','overwritesheet')
+
 
