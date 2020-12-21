@@ -15,13 +15,14 @@ $include configuration.gms
 *$exit
 
 * Include file with extra simulation data
-$include %project%/00_base_model_setup/scr/read_extradata.gms
-$exit
+*$include %project%/00_base_model_setup/scr/read_extradata.gms
+*$exit
 
 ********************************************************************************
 * Set for simulation (do not outcomment)
 
 * Choose from:
+* 00_test_CFC_GOS
 * 01_BAU_loop_fprod
 * 01_BAU_loop_fprod_new
 * 01_BAU
@@ -32,7 +33,7 @@ $exit
 
 
 
-$if not set scenario      $setglobal      scenario   '03_test_elecmix'
+$if not set scenario      $setglobal      scenario   '00_test_CFC_GOS'
 
 * Do you want to calculate and export results from footprint?
 * footprint_y   (yes)
@@ -42,8 +43,8 @@ $if not set footprint_yn      $setglobal      footprint_yn         'footprint_y'
 ********************************************************************************
 
 * Run simulation
-*$include %project%/02_project_model_setup/scr/simulation_%scenario%.gms
-*$exit
+$include %project%/02_project_model_setup/scr/simulation_%scenario%.gms
+$exit
 
 *$include %project%/02_project_model_setup/scr/merge_gdx_files.gms
 *$exit
