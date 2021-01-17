@@ -69,14 +69,17 @@ Parameters
                                                          # wrt 2007
     GDP_data(reg_sce,year_sce)                           GDP growth wrt 2007
     POP_data(reg_sce,year_sce)                           POP growth wrt 2007
+    mat_red_data(year)                                   Reduction in materials
+                                                         # (index, 2011=100)
 ;
 
 $libinclude xlimport techmix_data           %project%\01_external_data\scenarios\data\Scenario_input_communication_file.xlsx    techmix!A2:P10000
 $libinclude xlimport CO2budget_data         %project%\01_external_data\scenarios\data\Scenario_input_communication_file.xlsx    CO2budget!A3:B10000
 $libinclude xlimport GDP_data               %project%\01_external_data\scenarios\data\Scenario_input_communication_file.xlsx    GDP!A3:K10000
 $libinclude xlimport POP_data               %project%\01_external_data\scenarios\data\Scenario_input_communication_file.xlsx    Population!A3:K10000
+$libinclude xlimport mat_red_data           %project%\01_external_data\scenarios\data\Scenario_input_communication_file.xlsx    Materials!B1:AO2
 
-Display techmix_data, CO2budget_data, GDP_data, POP_data;
+Display techmix_data, CO2budget_data, GDP_data, POP_data, mat_red_data;
 
 $exit
 

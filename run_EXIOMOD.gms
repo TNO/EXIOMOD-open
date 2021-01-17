@@ -30,10 +30,12 @@ $include configuration.gms
 * 02_test_H2
 * 03_test_elecmix
 * 04_CO2tax
+* 05_BAU_mat_reduction
+* 05_mat_reduction
 
 
 
-$if not set scenario      $setglobal      scenario   '00_test_CFC_GOS'
+$if not set scenario      $setglobal      scenario   '05_mat_reduction'
 
 * Do you want to calculate and export results from footprint?
 * footprint_y   (yes)
@@ -43,11 +45,11 @@ $if not set footprint_yn      $setglobal      footprint_yn         'footprint_y'
 ********************************************************************************
 
 * Run simulation
-$include %project%/02_project_model_setup/scr/simulation_%scenario%.gms
-$exit
-
-*$include %project%/02_project_model_setup/scr/merge_gdx_files.gms
+*$include %project%/02_project_model_setup/scr/simulation_%scenario%.gms
 *$exit
+
+$include %project%/02_project_model_setup/scr/merge_gdx_files.gms
+$exit
 
 * OPTION 2: use save and restarts, this allows to run the data-related codes
 * only ones. Be aware that for this options you would need to manually define

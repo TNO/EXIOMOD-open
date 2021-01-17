@@ -28,8 +28,8 @@ found in the corresponding `.gms` file. These explanation blocks include which
 inputs are necessary for the scripts to run and which changes are possible.
 $offtext
 
-*$include EXIOMOD_base_model/scr/01_sets_database.gms
-*$include EXIOMOD_base_model/scr/02_load_database.gms
+$include EXIOMOD_base_model/scr/01_sets_database.gms
+$include EXIOMOD_base_model/scr/02_load_database.gms
 
 * Make changes to the database
 $include %project%/00_base_model_setup/scr/adjust_MRSAM.gms

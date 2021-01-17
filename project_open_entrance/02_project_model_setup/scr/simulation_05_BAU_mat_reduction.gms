@@ -72,6 +72,9 @@ Parameters
                                          # obtained in calibrate fprod loop
     prodL_change(regg,ind,year)          Change in labour productivity
                                          # obtained in calibrate fprod loop
+    ioc_sum(reg,ind)                     Sum over all products
+    ioc_missing(reg,ind)
+    ioc_sum_check(reg,ind)
 
 ;
 
@@ -79,9 +82,17 @@ Parameters
 
 sets
     reg_pol(reg)
-/ NLD /
+/ AUT, BEL, BGR, HRV, CZE, CYP, DNK, EST, FIN, FRA, DEU, GRC, HUN, IRL, ITA, LVA
+LTU, LUX, MLT, NLD, POL, PRT, ROU, SVK, SVN, ESP, SWE /
+
+    prd_mat_input(prd)
+/pINDU, pALUM  /
 
 ;
+
+* Sum over all products in ioc table
+ioc_sum(reg,ind) = sum(prd, ioc(prd,reg,ind) ) ;
+
 
 * Read in productivity values for GDP loop
 $libinclude xlimport prodK_change %project%\02_project_model_setup\data\prodKL.xlsx prodK!a1:ap100000
@@ -90,6 +101,7 @@ $libinclude xlimport prodL_change %project%\02_project_model_setup\data\prodKL.x
 Display
 prodK_change
 prodL_change
+ioc_sum
 ;
 
 * ============================= Include constraint =============================
@@ -131,6 +143,34 @@ if(ord(year) gt 1,
     theta_sv(reg,prd,regg) = theta_sv(reg,prd,regg) * 0.97 ;
 ) ;
 
+* ============================= Material reduction =============================
+
+* Reduce all materials from type XX
+* Increase services
+
+* 1. (Reduction of materials for all sectors)
+ioc(prd_mat_input,reg_pol,ind)
+    $( mat_red_change(year) and ioc(prd_mat_input,reg_pol,ind) )
+    = ioc(prd_mat_input,reg_pol,ind)
+        * mat_red_change(year) ;
+
+ioc_missing(reg_pol,ind)
+    = ioc_sum(reg_pol,ind) - sum(prd,ioc(prd,reg_pol,ind)) ;
+
+* 2. (Increase service sectors with amount that materials has decreased)
+ioc('pSERV',reg_pol,ind) = ioc('pSERV',reg_pol,ind) + ioc_missing(reg_pol,ind) ;
+
+ioc_sum_check(reg_pol,ind)
+    = sum(prd,ioc(prd,reg_pol,ind))-ioc_sum(reg_pol,ind);
+
+ioc_sum_check(reg,ind)$(abs(ioc_sum_check(reg,ind)) lt 0.000000001) = 0;
+
+
+Display
+    ioc_missing
+    ioc
+    ioc_sum_check
+;
 
 
 * =============================== Solve statement ==============================

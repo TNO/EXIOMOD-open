@@ -245,6 +245,7 @@ Parameters
     GDP_scen_change(reg,year)                            GDP growth wrt 2007
     POP_scen_change(reg,year)                            POP growth wrt 2007
     CO2budget_change(reg,year)
+    mat_red_change(year)
 ;
 
 GDP_scen_change(reg,year)$GDP_aggr(reg,year-1)
@@ -256,15 +257,20 @@ POP_scen_change(reg,year)$POP_aggr(reg,year-1)
 CO2budget_change(reg,year)$CO2budget_aggr(reg,year-1)
     = CO2budget_aggr(reg,year) / CO2budget_aggr(reg,year-1) ;
 
+mat_red_change(year)$mat_red_data(year-1)
+    = mat_red_data(year)/ mat_red_data(year-1) ;
+
 * All regions that have no GDP trajectory, set the change equal to 1.
 GDP_scen_change(reg,year)$(not GDP_scen_change(reg,year)) = 1 ;
 POP_scen_change(reg,year)$(not POP_scen_change(reg,year)) = 1 ;
 CO2budget_change(reg,year)$(not CO2budget_change(reg,year)) = 1 ;
+mat_red_change('2011') = 1 ;
 
 Display
     GDP_scen_change
     POP_scen_change
     CO2budget_change
+    mat_red_change
 ;
 
 
