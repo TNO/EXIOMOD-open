@@ -32,10 +32,11 @@ $include configuration.gms
 * 04_CO2tax
 * 05_BAU_mat_reduction
 * 05_mat_reduction
+* 05_mat_reduction_v2 --> test why prices go up
 
 
 
-$if not set scenario      $setglobal      scenario   '05_mat_reduction'
+$if not set scenario      $setglobal      scenario   '05_mat_reduction_v2'
 
 * Do you want to calculate and export results from footprint?
 * footprint_y   (yes)
@@ -45,8 +46,8 @@ $if not set footprint_yn      $setglobal      footprint_yn         'footprint_y'
 ********************************************************************************
 
 * Run simulation
-*$include %project%/02_project_model_setup/scr/simulation_%scenario%.gms
-*$exit
+$include %project%/02_project_model_setup/scr/simulation_%scenario%.gms
+$exit
 
 $include %project%/02_project_model_setup/scr/merge_gdx_files.gms
 $exit
