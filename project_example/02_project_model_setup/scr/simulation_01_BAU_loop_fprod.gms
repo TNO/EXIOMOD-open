@@ -1,13 +1,23 @@
-* File:   %project%/02_project_model_setup/scr/simulation_BL.gms
+* File:   %project%/02_project_model_setup/scr/simulation_01_BAU_loop_fprod.gms
 * Author: Hettie Boonman
-* Date:   08 December 2017
-* Adjusted:
+* Organization: TNO, Netherlands
+* Date:   17 February 2021
 
 * gams-master-file: run_EXIOMOD.gms
 
 $ontext startdoc
-This code can be used for making small trial simluations with base CGE model.
-The code is useful when we want to test some new features of the model.
+This simulation file is used to find capital and labor productivities that
+correspond to the growth in GDP for the baseline. GDPCONST is an endogenous
+variable in this model.
+
+Growth in GDP is taken from the exogenenous scenario files, and is
+given by GDP_scen_change.
+The output of this file are capital and labor productivities that are exported
+in an excel-file: %project%\03_simulation_results\data\prodKL.xlsx
+
+The capital and labor productivies are imported from excel every time a
+scenario includes the GDP and population growth in the baseline.
+
 $offtext
 
 
@@ -68,26 +78,23 @@ Parameters
 
 ;
 
-* Read in productivity values for GDP loop
-*$libinclude xlimport prodK_change %project%\02_project_model_setup\data\prodKL.xlsx prodK!a1:ap100000
-*$libinclude xlimport prodL_change %project%\02_project_model_setup\data\prodKL.xlsx prodL!a1:ap100000
 
 
 * ============================= Include constraint =============================
-* Possibly add the labour model
+* Possibly add additional equations to the model
 
 * ============================== Simulation setup ==============================
 
+* Run simulation for 2011-2050
 loop(year$( ord(year) le 40 ),
-* There is an error after year 37. Figure out why this happens?
 
 * ============================== Baseline scenario =============================
 
 * Baseline
 * We do not need this anymore, when labor supply is endogenous.
 
-LS(reg)                          = LS_V.L(reg) ;
-LS_V.FX(reg)                     = LS(reg) * POP_scen_change(reg,year) ;
+LS(reg)             = LS_V.L(reg) ;
+LS_V.FX(reg)        = LS(reg) * POP_scen_change(reg,year) ;
 
 KS(reg)             = KS_V.L(reg) ;
 LS(reg)             = LS_V.L(reg) ;
@@ -127,8 +134,6 @@ nr_loops=0;
 
 while(nr_loops le 10 and GDP_check_min ge 0.00001,
 
-*fprod(kl,regg,ind)       = fprod(kl,regg,ind)*(1-GDP_check(regg,year)) ;
-*fprod_year(kl,regg,ind,year)  = fprod(kl,regg,ind);
 prodK(regg,ind)            = prodK(regg,ind)*(1-GDP_check(regg,year)) ;
 prodK_year(regg,ind,year)  = prodK(regg,ind);
 prodL(regg,ind)            = prodL(regg,ind)*(1-GDP_check(regg,year)) ;
@@ -170,7 +175,6 @@ Display GDP_check, GDP_check_min;
 
 Y_time(regg,ind,year) = Y_V.L(regg,ind) ;
 X_time(reg,prd,year) = X_V.L(reg,prd) ;
-*LS_ENDO_time(reg,year) = LS_ENDO_V.L(reg) ;
 
 Y_change(regg,ind,year)$Y(regg,ind) = Y_V.L(regg,ind) / Y(regg,ind) ;
 X_change(reg,prd,year)$X(reg,prd)   = X_V.L(reg,prd) / X(reg,prd) ;
@@ -198,8 +202,6 @@ numer_check(regg,ind,year)$Y(regg,ind) =  Y_V.L(regg,ind) * PY_V.L(regg,ind) *
     sum(reg, L_V.L(reg,regg,ind) * PL_V.L(reg) ) +
     sum(inm, TIM_INTER_USE_ROW(inm,regg,ind) * PROW_V.L ) +
     sum(tse, TIM_INTER_USE_ROW(tse,regg,ind) * PROW_V.L ) ) ;
-
-*$include %project%\03_simulation_results\scr\save_simulation_results.gms
 
 
 * Abort if negative values occur in output or CBUD.
@@ -249,7 +251,6 @@ Loop(reg,
 Display
 Y_time
 X_time
-*LS_ENDO_time
 Y_change
 X_change
 Yreg_change
@@ -260,22 +261,7 @@ numer_check
 ;
 
 
-value_added_time(regg,ind,year)  =
-    Y_time(regg,ind,year)
-    - sum(prd, INTER_USE_T_time(prd,regg,ind,year) *
-    ( 1 + tc_ind(prd,regg,ind) ) ) ;
 
-FINAL_USE_time(reg,prd,reg,year)
-                = CONS_H_D_time(prd,reg,year)
-                + CONS_G_D_time(prd,reg,year)
-                + GFCF_D_time(prd,reg,year)
-                + SV_time(reg,prd,reg,year)
-                + EXPORT_ROW_time(reg,prd,year) ;
-
-
-Display
-GDPCONST_time
-;
 
 * ========================= Exporting of results ===============================
 

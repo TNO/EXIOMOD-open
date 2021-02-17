@@ -1,11 +1,10 @@
-
 $ontext
 
 File:   01_read_OEplatform_data.gms
 Author: Hettie Boonman
 Date:   26-11-2020
 
-This script reads in template data from the EU reference scenario.
+This script reads in data from the OpenEnttrance platform.
 
 
 PARAMETER NAME
@@ -60,12 +59,13 @@ $include %project%\01_external_data\OEplatform\sets\year_OEplatform.txt
 * ================================ Load data ===================================
 
 Parameters
-    OEdatabase_data(mod_OE,sce_OE,reg_OE,var_OE,unit_OE,year_OE)      all data from platfrom
+    database_OE_data(mod_OE,sce_OE,reg_OE,var_OE,unit_OE,year_OE)   All data from
+                                                                   # platform
 ;
 
-$libinclude xlimport OEdatabase_data           %project%\01_external_data\OEplatform\data\GENeSYS-MOD-pathways_v1.0.xlsx    data!A1:M7705
+$libinclude xlimport database_OE_data          %project%\01_external_data\OEplatform\data\GENeSYS-MOD-pathways_v1.0.xlsx    data!A1:M7705
 
-Display OEdatabase_data;
+Display database_OE_data;
 
 $exit
 

@@ -1,35 +1,24 @@
 
 $ontext
 
-File:   01-read-ref-data.gms
-Author: Anke van den Beukel
-Date:   17-12-2019
+File:   01_read_scenario_data.gms
+Author: Hettie Boonman
+Date:   26-11-2020
 
-This script reads in template data from the EU reference scenario.
+This script reads in data from a scenario (no official source).
 
 
 PARAMETER NAME
-Resulting parameters are named according to:
-
-    1. Indicator
-    "elec"        electricity (TWh)
-
-    2. Data source (should be the same as name of the library)
-    "_ref"        EU reference database database
-
-    3. Extension "_orig" is added to indicate that it is not processed
-
-Example of resulting parameter: elec_ref_orig
 
 
 INPUTS
-    %project%\library_ref\data\data_template.xlsx
+    %project%\01_external_data\scenarios\data\Scenario_input_communication_file.xlsx
 
 OUTPUTS
-    elec_ref_orig(reg_ref, source_ref, year_ref)     ref electricity mix in
-                                                     original classification
-    elec_ref_perc(reg_ref,source_ref,year_ref)       percentage change in
-                                                     electricity mix
+    GDP_data(reg_sce,year_sce)                           GDP growth wrt 2007
+    POP_data(reg_sce,year_sce)                           POP growth wrt 2007
+    mat_red_data(year)                                   Reduction in materials
+                                                         # (index, 2011=100)
 
 $offtext
 
@@ -64,22 +53,21 @@ $include %project%\01_external_data\scenarios\sets\year_scenario.txt
 * ================================ Load data ===================================
 
 Parameters
-    techmix_data(reg_sce,ind_sce,year_sce,prd_sce)       Technology mix in %
-    CO2budget_data(reg_sce,*)                            CO2 budget in 2050 in %
-                                                         # wrt 2007
     GDP_data(reg_sce,year_sce)                           GDP growth wrt 2007
     POP_data(reg_sce,year_sce)                           POP growth wrt 2007
     mat_red_data(year)                                   Reduction in materials
                                                          # (index, 2011=100)
 ;
 
-$libinclude xlimport techmix_data           %project%\01_external_data\scenarios\data\Scenario_input_communication_file.xlsx    techmix!A2:P10000
-$libinclude xlimport CO2budget_data         %project%\01_external_data\scenarios\data\Scenario_input_communication_file.xlsx    CO2budget!A3:B10000
 $libinclude xlimport GDP_data               %project%\01_external_data\scenarios\data\Scenario_input_communication_file.xlsx    GDP!A3:K10000
 $libinclude xlimport POP_data               %project%\01_external_data\scenarios\data\Scenario_input_communication_file.xlsx    Population!A3:K10000
 $libinclude xlimport mat_red_data           %project%\01_external_data\scenarios\data\Scenario_input_communication_file.xlsx    Materials!B1:AO2
 
-Display techmix_data, CO2budget_data, GDP_data, POP_data, mat_red_data;
+Display
+    GDP_data
+    POP_data
+    mat_red_data
+;
 
 $exit
 

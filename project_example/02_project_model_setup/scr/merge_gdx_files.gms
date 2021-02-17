@@ -17,12 +17,7 @@ $eolcom #
 
 
 * ========================== Include sets ======================================
-*Sets
-*    scen_PR     list of years in cepii data
-*/
-*$include %project%\02_project_model_setup\sets\scenario_CICERONE.txt
-*/
-*;
+
 
 * ==========================  Merge gdx files ==================================
 
@@ -72,7 +67,6 @@ $libinclude xldump X_time            %project%/03_simulation_results/output/Resu
 $libinclude xldump INTER_USE_T_time  %project%/03_simulation_results/output/Results.xlsx  INTER_USE_T_time!
 $libinclude xldump INTER_USE_M_time  %project%/03_simulation_results/output/Results.xlsx  INTER_USE_M_time!
 $libinclude xldump INTER_USE_D_time  %project%/03_simulation_results/output/Results.xlsx  INTER_USE_D_time!
-$libinclude xldump ioc_loop          %project%/03_simulation_results/output/Results.xlsx  ioc_loop!
 $libinclude xldump P_time            %project%/03_simulation_results/output/Results.xlsx  P_time!
 $libinclude xldump PY_time           %project%/03_simulation_results/output/Results.xlsx  PY_time!
 $libinclude xldump PIU_time          %project%/03_simulation_results/output/Results.xlsx  PIU_time!
@@ -80,9 +74,3 @@ $libinclude xldump PIMP_T_time       %project%/03_simulation_results/output/Resu
 $libinclude xldump IMPORT_T_time     %project%/03_simulation_results/output/Results.xlsx  IMPORT_T_time!
 $libinclude xldump PL_time           %project%/03_simulation_results/output/Results.xlsx  PL_time!
 
-
-$if not '%footprint_yn%' == 'footprint_y' $goto end_merge_gdx_files
-
-**** nothing here yet.
-
-$label end_merge_gdx_files

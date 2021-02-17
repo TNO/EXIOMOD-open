@@ -1,9 +1,21 @@
 * File:   EXIOMOD_base_model/scr/03_sets_model.gms
 * Author: Tatyana Bulavskaya
+* Organization: TNO, Netherlands 
 * Date:   14 May 2014
-* Adjusted:   27 February 2015
+* Adjusted: 17 Februari 2021 by Hettie Boonman
 
 * gams-master-file: 00_base_model_prepare.gms
+
+********************************************************************************
+* THIS MODEL IS A CUSTOM-LICENSE MODEL.
+* EXIOMOD 2.0 shall not be used for commercial purposes until an exploitation
+* aggreement is signed, subject to similar conditions as for the underlying
+* database (EXIOBASE). EXIOBASE limitations are based on open source license
+* agreements to be found here:
+* http://exiobase.eu/index.php/terms-of-use
+
+* For information on a license, please contact: hettie.boonman@tno.nl
+********************************************************************************
 
 $ontext startdoc
 This code is used for declaration and definition of sets which are used in the

@@ -1,9 +1,21 @@
 * File:   EXIOMOD_base_model/scr/02A_checks_database.gms
 * Author: Tatyana Bulavskaya
+* Organization: TNO, Netherlands 
 * Date: 3 June 2014
-* Adjusted:   22 June 2014
+* Adjusted: 17 Februari 2021 by Hettie Boonman
 
 * gams-master-file: 02_load_database.gms
+
+********************************************************************************
+* THIS MODEL IS A CUSTOM-LICENSE MODEL.
+* EXIOMOD 2.0 shall not be used for commercial purposes until an exploitation
+* aggreement is signed, subject to similar conditions as for the underlying
+* database (EXIOBASE). EXIOBASE limitations are based on open source license
+* agreements to be found here:
+* http://exiobase.eu/index.php/terms-of-use
+
+* For information on a license, please contact: hettie.boonman@tno.nl
+********************************************************************************
 
 $ontext
 This code is used for checking consistency of the multi-regional social

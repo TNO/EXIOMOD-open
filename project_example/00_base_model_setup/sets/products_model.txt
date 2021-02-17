@@ -14,4 +14,4 @@ pNG	 'Natural gas'
 pCOA	 'Coal'
 pBIO	 'Biofuels'
 pFUL	 'Other fuels'
-*pH2	 'Hydrogen'
+

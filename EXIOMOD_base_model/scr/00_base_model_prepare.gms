@@ -1,9 +1,21 @@
 * File:   EXIOMOD_base_model/scr/00_base_model_prepare.gms
 * Author: Tatyana Bulavskaya
+* Organization: TNO, Netherlands
 * Date:   29 April 2015
-* Adjusted:
+* Adjusted: 17 Februari 2021 by Hettie Boonman
 
 * gams-master-file: run_EXIOMOD.gms
+
+********************************************************************************
+* THIS MODEL IS A CUSTOM-LICENSE MODEL.
+* EXIOMOD 2.0 shall not be used for commercial purposes until an exploitation
+* aggreement is signed, subject to similar conditions as for the underlying
+* database (EXIOBASE). EXIOBASE limitations are based on open source license
+* agreements to be found here:
+* http://exiobase.eu/index.php/terms-of-use
+
+* For information on a license, please contact: hettie.boonman@tno.nl
+********************************************************************************
 
 $ontext startdoc
 This script calls the files that are needed in preparation for running a

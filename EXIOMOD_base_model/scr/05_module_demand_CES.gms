@@ -1,9 +1,21 @@
 * File:   EXIOMOD_base_model/scr/05_module_demand_CES.gms
 * Author: Trond Husby
+* Organization: TNO, Netherlands 
 * Date:   22 April 2015
-* Adjusted: 4 May 2015
+* Adjusted: 17 Februari 2021 by Hettie Boonman
 
 * gams-master-file: phase.gms
+
+********************************************************************************
+* THIS MODEL IS A CUSTOM-LICENSE MODEL.
+* EXIOMOD 2.0 shall not be used for commercial purposes until an exploitation
+* aggreement is signed, subject to similar conditions as for the underlying
+* database (EXIOBASE). EXIOBASE limitations are based on open source license
+* agreements to be found here:
+* http://exiobase.eu/index.php/terms-of-use
+
+* For information on a license, please contact: hettie.boonman@tno.nl
+********************************************************************************
 
 $ontext startdoc
 This is a module describing demand side equations of the base CGE model. The

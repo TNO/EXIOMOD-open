@@ -1,5 +1,0 @@
-WCG_agri	'Water Consumption Green - Agricultural'
-WCB_agri	'Water Consumption Blue  - Agricultural' 
-WCB_manu	'Water Consumption Blue  - Manufactoring'
-WCB_elec	'Water Consumption Blue  - Electricity'
-WCB_dom 	'Water Consumption Blue  - Domestic use'

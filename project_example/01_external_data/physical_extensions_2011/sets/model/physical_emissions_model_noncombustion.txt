@@ -1,6 +1,0 @@
-CO2_nc
-CH4_nc
-N2O_nc
-SOX_nc
-NOX_nc
-

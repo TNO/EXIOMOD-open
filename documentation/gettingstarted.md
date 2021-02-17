@@ -52,7 +52,7 @@ This folder contains sub-folders dedicated to specific external databases. Each 
 This folder follows the same structure as *00_base_model_setup*. In the sub-folder *data* the user should include data files with addiional elasiticieties and other extra parameters required to run the project specific model. In the sub-folder *sets* additional sets or subsets which are not used in the Base Model are described. In the sub-folder *scr* the scripts for running scenario simulations are located.
 
 ### Inside *03_simulation_results* folder
-This folder would typically have only two sub-folders. In the sub-folder *sets* the user declares the level of aggregation chosen for presentation of the results, one doesn't always have to report the results on the same level of detail as the model simulation. In the sub-folder *scr* the scripts for storing, aggregating and exporting of results are placed.
+This folder would typically have only three sub-folders. In the sub-folder *sets* the user declares the level of aggregation chosen for presentation of the results, one doesn't always have to report the results on the same level of detail as the model simulation. In the sub-folder *scr* the scripts for storing, aggregating and exporting of results are placed. In the sub-folder *output* the excel files with outputs can be stored. 
 
 # Coding style conventions
 

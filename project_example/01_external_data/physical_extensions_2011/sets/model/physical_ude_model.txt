@@ -1,6 +1,0 @@
-'UDE_Biomassa'
-'UDE_Wood'
-'UDE_Fishery'
-'UDE_Metal ores'
-'UDE_Non-metalic minerals'
-'UDE_Fossil fuels'

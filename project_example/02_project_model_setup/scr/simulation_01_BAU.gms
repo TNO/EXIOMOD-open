@@ -1,4 +1,4 @@
-* File:   %project%/02_project_model_setup/scr/simulation_BL.gms
+* File:   %project%/02_project_model_setup/scr/simulation_01_BAU.gms
 * Author: Hettie Boonman
 * Date:   08 December 2017
 * Adjusted:
@@ -6,8 +6,12 @@
 * gams-master-file: run_EXIOMOD.gms
 
 $ontext startdoc
-This code can be used for making small trial simluations with base CGE model.
-The code is useful when we want to test some new features of the model.
+This simulation file runs the baseline, it includes
+* growth in GDP
+* growth in population
+* transfers from the government to the households grows at the rate of
+*   population
+* reduce the share of output that is inventories
 $offtext
 
 
@@ -35,9 +39,6 @@ Parameter
     check_neg_CBUD_G(reg,year)          check for any negatives due to shock
     check_neg_CBUD_I(reg,year)          check for any negatives due to shock
 
-    value_added_time(regg,ind,year)     value added
-    FINAL_USE_time(reg,prd,reg,year)    final demand
-
 ;
 
 
@@ -55,13 +56,6 @@ Parameters
 ;
 
 
-
-sets
-    reg_pol(reg)
-/ NLD /
-
-;
-
 * Read in productivity values for GDP loop
 $libinclude xlimport prodK_change %project%\02_project_model_setup\data\prodKL.xlsx prodK!a1:ap100000
 $libinclude xlimport prodL_change %project%\02_project_model_setup\data\prodKL.xlsx prodL!a1:ap100000
@@ -72,17 +66,17 @@ prodL_change
 ;
 
 * ============================= Include constraint =============================
-* Possibly add the labour model
+* Possibly add additional equations to the model
 
 * ============================== Simulation setup ==============================
 
+* Run simulation for 2011-2050
 loop(year$( ord(year) le 40 ),
 
 * ============================== Baseline scenario =============================
 
-* Baseline
-* We do not need this anymore, when labor supply is endogenous.
 
+* increase in population results in increase in total spend on wages
 LS(reg)                          = LS_V.L(reg) ;
 LS_V.FX(reg)                     = LS(reg) * POP_scen_change(reg,year) ;
 
@@ -90,8 +84,7 @@ KS(reg)             = KS_V.L(reg) ;
 LS(reg)             = LS_V.L(reg) ;
 
 
-* Forecasted GDP values via prodK and prodL
-
+* Forecasted GDP increase via prodK and prodL
 prodK(regg,ind)      = prodK(regg,ind) * prodK_change(regg,ind,year) ;
 prodL(regg,ind)      = prodL(regg,ind) * prodL_change(regg,ind,year) ;
 
@@ -132,7 +125,6 @@ $include %project%\03_simulation_results\scr\save_simulation_results.gms
 
 Y_time(regg,ind,year) = Y_V.L(regg,ind) ;
 X_time(reg,prd,year) = X_V.L(reg,prd) ;
-*LS_ENDO_time(reg,year) = LS_ENDO_V.L(reg) ;
 
 Y_change(regg,ind,year)$Y(regg,ind) = Y_V.L(regg,ind) / Y(regg,ind) ;
 X_change(reg,prd,year)$X(reg,prd)   = X_V.L(reg,prd) / X(reg,prd) ;
@@ -211,7 +203,6 @@ Loop(reg,
 Display
 Y_time
 X_time
-*LS_ENDO_time
 Y_change
 X_change
 Yreg_change
@@ -222,43 +213,22 @@ numer_check
 ;
 
 
-value_added_time(regg,ind,year)  =
-    Y_time(regg,ind,year)
-    - sum(prd, INTER_USE_T_time(prd,regg,ind,year) *
-    ( 1 + tc_ind(prd,regg,ind) ) ) ;
-
-FINAL_USE_time(reg,prd,reg,year)
-                = CONS_H_D_time(prd,reg,year)
-                + CONS_G_D_time(prd,reg,year)
-                + GFCF_D_time(prd,reg,year)
-                + SV_time(reg,prd,reg,year)
-                + EXPORT_ROW_time(reg,prd,year) ;
-
-*value_added_time(regg,ind,year)  =
-*    sum(reg, Y_time(regg,ind,year) * txd_ind(reg,regg,ind) ) +
-*    sum(reg, Y_time(regg,ind,year) * txd_inm(reg,regg,ind) ) +
-*    sum(reg, Y_time(regg,ind,year) * txd_tse(reg,regg,ind) ) +
-*    sum(reg, K_time(reg,regg,ind,year) ) +
-*    sum(reg, L_time(reg,regg,ind,year) ) ;
-
-* Estimate results on physical indicators:
-$include  %project%\03_simulation_results\scr\save_results_physical_extensions.gms
-
-* Estimate effect on employment
-*$include  %project%\02_project_model_setup\scr\sub_simulation_employment.gms
-
-* Calculate footprint
-*$include %project%/02_project_model_setup/scr/footprint.gms
 
 
-
-Display
-*EMIS_cons
-GDPCONST_time
-;
 
 * ========================= Exporting of results ===============================
+* selection of variables exported to excel
+$libinclude xldump Y_time            %project%/03_simulation_results/output/Results_%scenario%.xlsx  Y_time!
+$libinclude xldump X_time            %project%/03_simulation_results/output/Results_%scenario%.xlsx  X_time!
+$libinclude xldump INTER_USE_T_time  %project%/03_simulation_results/output/Results_%scenario%.xlsx  INTER_USE_T_time!
+$libinclude xldump INTER_USE_M_time  %project%/03_simulation_results/output/Results_%scenario%.xlsx  INTER_USE_M_time!
+$libinclude xldump INTER_USE_D_time  %project%/03_simulation_results/output/Results_%scenario%.xlsx  INTER_USE_D_time!
+$libinclude xldump P_time            %project%/03_simulation_results/output/Results_%scenario%.xlsx  P_time!
+$libinclude xldump PY_time           %project%/03_simulation_results/output/Results_%scenario%.xlsx  PY_time!
+$libinclude xldump PIU_time          %project%/03_simulation_results/output/Results_%scenario%.xlsx  PIU_time!
+$libinclude xldump PIMP_T_time       %project%/03_simulation_results/output/Results_%scenario%.xlsx  PIMP_T_time!
+$libinclude xldump IMPORT_T_time     %project%/03_simulation_results/output/Results_%scenario%.xlsx  IMPORT_T_time!
+$libinclude xldump PL_time           %project%/03_simulation_results/output/Results_%scenario%.xlsx  PL_time!
 
 * Drop all variables in GDX file
 EXECUTE_unload "gdx/%scenario%"
-;

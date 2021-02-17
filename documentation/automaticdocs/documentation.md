@@ -16,7 +16,7 @@
 
 Global        | Value         | Defined in file
 ------------- |:------------- |:---------------
-`base_year` | `2007` | [`configuration.gms`](#configuration.gms-index)
+`base_year` | `2011` | [`configuration.gms`](#configuration.gms-index)
 `base_cur` | `MEUR` | [`configuration.gms`](#configuration.gms-index)
 `io_type` | `industry_technology` | [`configuration.gms`](#configuration.gms-index)
 `simulation_setup` | `final_demand_shock` | [`configuration.gms`](#configuration.gms-index)

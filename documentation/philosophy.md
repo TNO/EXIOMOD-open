@@ -27,6 +27,7 @@ Besides formal documentation of the structure (equations), EM-PLUS mainly relies
 ```
 * File:
 * Author:
+* Organization:
 * Date:
 * Adjusted:
 

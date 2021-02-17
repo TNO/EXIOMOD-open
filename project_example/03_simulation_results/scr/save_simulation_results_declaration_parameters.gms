@@ -1,6 +1,7 @@
 
 * File:   project_COMPLEX/03_simulation_results/scr/save_simulation_results_declaration_parameters.gms
 * Author: Jinxue Hu
+* Organization: TNO, Netherlands
 * Date:   19 October 2015
 * Adjusted: 14 April 2016
 

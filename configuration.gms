@@ -1,8 +1,22 @@
 * File:   configuration.gms
 * Author: Tatyana Bulavskaya
+* Organization: TNO, Netherlands
 * Date:   26 May 2014
+* Adjusted: 17 Februari 2021 by Hettie Boonman
 
 * gams-master-file: run_EXIOMOD.gms
+
+********************************************************************************
+* THIS MODEL IS A CUSTOM-LICENSE MODEL.
+* EXIOMOD 2.0 shall not be used for commercial purposes until an exploitation
+* aggreement is signed, subject to similar conditions as for the underlying
+* database (EXIOBASE). EXIOBASE limitations are based on open source license
+* agreements to be found here:
+* http://exiobase.eu/index.php/terms-of-use
+
+* For information on a license, please contact: hettie.boonman@tno.nl
+********************************************************************************
+
 
 $ontext startdoc
 This is the configuration file for the base CGE model. The file allows to
@@ -20,7 +34,7 @@ Variable           | Explanation
 $offtext
 
 * name of the project folder, please give meaningful name
-$if not set project      $setglobal      project         'project_open_entrance'
+$if not set project      $setglobal      project         'project_example'
 
 * form of production functions: choose between 'KL' and 'KL-E'
 * type 'KL': substitution possible between production factors, other inputs

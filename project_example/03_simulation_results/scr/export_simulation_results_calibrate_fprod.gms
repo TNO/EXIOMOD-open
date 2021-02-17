@@ -2,6 +2,7 @@ $ontext
 
 File:   export-simulation-results_calibrate_prodK_prodL.gms
 Author: Jinxue Hu
+Organization: TNO, Netherlands
 Date:   18-02-2015
 
 This file exports factor productivity to file prodKL.xlsx. This ensures that
