@@ -1,11 +1,4 @@
 pELEC	 'Electricity'
 pTRDI	 'Trade and distribution services of electricity'
-pOIL	 'Crude Oil'
-pGSL	 'Gasoline'
-pDSL	 'Diesel'
-pHDI	 'Heavy distillate'
-pNG	 'Natural gas'
-pCOA	 'Coal'
-pBIO	 'Biofuels'
-pFUL	 'Other fuels'
+pENER		'Other energy products'
 

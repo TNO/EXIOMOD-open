@@ -1,0 +1,2 @@
+After each simulation, a results_scenario.xlsx file will be stored in this folder. 
+After running merge_gdx.gms script, a results.xlsx file will be stored in this folder that places data for all scenarios combined in one excel file. 

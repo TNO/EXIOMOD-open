@@ -74,8 +74,8 @@ $if not set scenario      $setglobal      scenario   '03_BAU_mat_reduction'
 
 * (3) Run simulation
 * (uncomment the two lines below, and type r=read_extradata in the command line)
-*$include %project%/02_project_model_setup/scr/simulation_%scenario%.gms
-*$exit
+$include %project%/02_project_model_setup/scr/simulation_%scenario%.gms
+$exit
 
 * (4) Merge output off all simulations in one excel file
 * (uncomment the two lines below, and type r=read_extradata in the command line)

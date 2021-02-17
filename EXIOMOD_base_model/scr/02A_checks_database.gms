@@ -1,6 +1,6 @@
 * File:   EXIOMOD_base_model/scr/02A_checks_database.gms
 * Author: Tatyana Bulavskaya
-* Organization: TNO, Netherlands 
+* Organization: TNO, Netherlands
 * Date: 3 June 2014
 * Adjusted: 17 Februari 2021 by Hettie Boonman
 
@@ -111,7 +111,7 @@ BAL_bp_reg(reg_data,full_cat_list)
     full_cat_list,"Value") ) ;
 
 BAL_bp_reg(reg_data,full_cat_list)$
-    (abs(BAL_bp_reg(reg_data,full_cat_list)) lt 1e-7 )
+    (abs(BAL_bp_reg(reg_data,full_cat_list)) lt 1e-6 )
     = 0 ;
 
 BAL_bp_reg(reg_data,full_cat_list)$BAL_bp_reg(reg_data,full_cat_list)
@@ -126,7 +126,7 @@ BAL_pp_reg(reg_data,full_cat_list)
     full_cat_list,"Value") ) ;
 
 BAL_pp_reg(reg_data,full_cat_list)$
-    (abs(BAL_pp_reg(reg_data,full_cat_list)) lt 1e-7 )
+    (abs(BAL_pp_reg(reg_data,full_cat_list)) lt 1e-6 )
     = 0 ;
 
 BAL_pp_reg(reg_data,full_cat_list)$BAL_pp_reg(reg_data,full_cat_list)
@@ -148,7 +148,7 @@ BAL_bp_row(row_data)
     SAM_bp_data("%base_year%","%base_cur%",all_reg_data,full_cat_list,row_data,
     full_catt_list,"Value") ) ;
 
-BAL_bp_row(row_data)$(abs(BAL_bp_row(row_data)) lt 1e-7 )
+BAL_bp_row(row_data)$(abs(BAL_bp_row(row_data)) lt 1e-6 )
     = 0 ;
 
 BAL_bp_row(row_data)$BAL_bp_row(row_data)
@@ -162,7 +162,7 @@ BAL_pp_row(row_data)
     SAM_pp_data("%base_year%","%base_cur%",all_reg_data,full_cat_list,row_data,
     full_catt_list,"Value") ) ;
 
-BAL_pp_row(row_data)$(abs(BAL_pp_row(row_data)) lt 1e-7 )
+BAL_pp_row(row_data)$(abs(BAL_pp_row(row_data)) lt 1e-6 )
     = 0 ;
 
 BAL_pp_row(row_data)$BAL_pp_row(row_data)

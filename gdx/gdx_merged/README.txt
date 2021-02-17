@@ -1,0 +1,1 @@
+After running the merge_gdx.gms script, the merged GDX file (that includes all scenarios) will be placed in this folder.

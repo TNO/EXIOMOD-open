@@ -1,6 +1,6 @@
 * File:   EXIOMOD_base_model/scr/02_load_database.gms
 * Author: Tatyana Bulavskaya
-* Organization: TNO, Netherlands 
+* Organization: TNO, Netherlands
 * Date:   14 May 2014
 * Adjusted: 17 Februari 2021 by Hettie Boonman
 
@@ -45,11 +45,11 @@ Parameters
                             # raw SAM expressed in purchasers prices
  ;
 
-$Gdxin '\\tsn.tno.nl\Data\sv\sv-016648\Databank Economen\European data\EXIOBASE_MRSUT\20170831_EXIOBASE_3_3_NTNU\MRSUT_to_MRSAM_200_by_163\MRSAM'
+$Gdxin 'EXIOMOD_base_model\data\EXIOBASE_aggr.gdx'
 
-$loaddc SAM_bp_data = MRSAM_bp_database
-$loaddc SAM_dt_data = MRSAM_dom_taxsub_database
-$loaddc SAM_pp_data = MRSAM_pp_database
+$loaddc SAM_bp_data = MRSAM_bp_database_aggr0
+$loaddc SAM_dt_data = MRSAM_dom_taxsub_database_aggr0
+$loaddc SAM_pp_data = MRSAM_pp_database_aggr0
 $Gdxin
 
 $if '%db_check%' == 'yes' $include EXIOMOD_base_model/scr/02A_checks_database.gms

@@ -1,0 +1,1 @@
+After each simulation, a textfile will be stored in this folder
