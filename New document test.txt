@@ -1,2 +1,0 @@
-test conflict
-Add some text

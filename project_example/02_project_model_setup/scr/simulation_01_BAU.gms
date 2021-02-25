@@ -38,7 +38,6 @@ Parameter
     check_neg_CBUD_H(reg,year)          check for any negatives due to shock
     check_neg_CBUD_G(reg,year)          check for any negatives due to shock
     check_neg_CBUD_I(reg,year)          check for any negatives due to shock
-
 ;
 
 
