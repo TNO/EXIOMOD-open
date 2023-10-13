@@ -1,0 +1,7 @@
+pAGRI	 'Agriculture'
+pINDU	 'Manufacturing industry'
+pALUM	 'Aluminium production'
+pSERV	 'Services'
+pTRAN	 'Transport services'
+pELEC	 'Electricity'
+pENER	 'Other energy products'

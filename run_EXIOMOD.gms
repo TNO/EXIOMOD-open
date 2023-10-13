@@ -37,6 +37,9 @@ $include configuration.gms
 
 * (1) Include base model file
 * (uncomment the two lines below, and type s=run_exiomod in the command line)
+* NOTE!!!: GET IN TOUCH WITH TNO FIRST, BECAUSE THIS PROJECT RUNS ON THE FULL
+* VERSION OF THE DATABASE. THE OPENSOURCE VERSION ONLY PROVIDES THE AGGREGATED
+* DATABASE.
 *$include EXIOMOD_base_model\scr\00_base_model_prepare.gms
 *$exit
 

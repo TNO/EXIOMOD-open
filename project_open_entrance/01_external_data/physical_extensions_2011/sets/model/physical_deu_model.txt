@@ -1,0 +1,6 @@
+'DEU_Biomassa'
+'DEU_Wood'
+'DEU_Fishery'
+'DEU_Metal ores'
+'DEU_Non-metalic minerals'
+'DEU_Fossil fuels'

@@ -1,0 +1,16 @@
+'FinalEnergy|Transportation|Electricity'.pELEC
+'FinalEnergy|Transportation|Hydrogen'.pNG
+'FinalEnergy|Transportation|Liquids|Biomass'.pBIO
+'FinalEnergy|Transportation|Liquids|Oil'.pDSL
+'FinalEnergy|Industry|Electricity'.pELEC
+'FinalEnergy|Industry|Gases'.pNG
+'FinalEnergy|Industry|Hydrogen'.pNG
+'FinalEnergy|Industry|Liquids|Oil'.pDSL
+'FinalEnergy|Industry|Solids|Biomass'.pBIO
+'FinalEnergy|Industry|Solids|Coal'.pCOA
+'FinalEnergy|ResidentialandCommercial|Electricity'.pELEC
+'FinalEnergy|ResidentialandCommercial|Gases'.pNG
+'FinalEnergy|ResidentialandCommercial|Hydrogen'.pNG
+'FinalEnergy|ResidentialandCommercial|Liquids|Oil'.pDSL
+'FinalEnergy|ResidentialandCommercial|Solids|Biomass'.pBIO
+'FinalEnergy|ResidentialandCommercial|Solids|Coal'.pCOA

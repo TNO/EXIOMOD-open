@@ -1,0 +1,4 @@
+'DirectedTransition1.0'
+'GradualDevelopment1.0'
+'SocietalCommitment1.0'
+'Techno-Friendly1.0'

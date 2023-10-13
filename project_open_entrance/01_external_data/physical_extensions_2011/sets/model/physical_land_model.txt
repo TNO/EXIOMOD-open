@@ -1,0 +1,4 @@
+'Arable land'
+'Used forest land and wood fuel'
+'Infrastructure land'
+

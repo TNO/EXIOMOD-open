@@ -1,4 +1,0 @@
-pELEC	 'Electricity'
-pTRDI	 'Trade and distribution services of electricity'
-pENER		'Other energy products'
-

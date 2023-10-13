@@ -1,0 +1,26 @@
+iAGR
+iIND
+iALU
+iSER
+iTRA
+iELC
+iTRD
+iCOA
+iCOI
+iNG
+iECC
+iH2S
+iH2E
+iH2C
+*Not part of REMES:
+iELCC
+iELCG
+iELCN
+iELCH
+iELCW
+iELCO
+iELCB
+iELCS
+iELCE
+iELCT
+iH2

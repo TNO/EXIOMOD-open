@@ -1,0 +1,6 @@
+'FinalEnergy|Transportation|Hydrogen'.iH2
+'FinalEnergy|Industry|Gases'.iNGAS
+'FinalEnergy|Industry|Hydrogen'.iH2
+'FinalEnergy|ResidentialandCommercial|Gases'.iNGAS
+'FinalEnergy|ResidentialandCommercial|Hydrogen'.iH2
+

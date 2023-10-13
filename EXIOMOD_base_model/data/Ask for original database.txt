@@ -1,0 +1,3 @@
+This project runs on the full version of the database. 
+
+Get in touch with TNO (hettie.boonman@tno.nl) to get access to the full version of the database. 
