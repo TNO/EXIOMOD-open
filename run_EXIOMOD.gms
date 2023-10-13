@@ -9,7 +9,7 @@
 ********************************************************************************
 * THIS MODEL IS A CUSTOM-LICENSE MODEL.
 * EXIOMOD 2.0 shall not be used for commercial purposes until an exploitation
-* aggreement is signed, subject to similar conditions as for the underlying
+* agreement is signed, subject to similar conditions as for the underlying
 * database (EXIOBASE). EXIOBASE limitations are based on open source license
 * agreements to be found here:
 * http://exiobase.eu/index.php/terms-of-use
